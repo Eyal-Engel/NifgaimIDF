@@ -5,8 +5,8 @@ import { MenuToggle } from "./MenuToggle";
 import { Navigation } from "./Navigation";
 
 const sidebar = {
-  open: (height = 1000) => ({
-    clipPath: `circle(${height * 2 + 200}px at 40px 40px)`,
+  open: (width = 1000) => ({
+    clipPath: `circle(${width * 2 + 200}px at calc(100% - 40px) 40px)`, // Adjusted starting position
     transition: {
       type: "spring",
       stiffness: 20,
@@ -14,7 +14,7 @@ const sidebar = {
     }
   }),
   closed: {
-    clipPath: "circle(30px at 40px 40px)",
+    clipPath: "circle(30px at calc(100% - 40px) 40px)", // Adjusted ending position
     transition: {
       delay: 0.5,
       type: "spring",
@@ -31,7 +31,7 @@ export const SideBar = () => {
 
   return (
     <motion.div
-      style={{position: "relative"}}
+      style={{direction: "rtl"}}
       initial={false}
       animate={isOpen ? "open" : "closed"}
       custom={height}
