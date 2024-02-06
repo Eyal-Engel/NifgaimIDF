@@ -6,6 +6,7 @@ const sha256 = require("js-sha256");
 require("dotenv").config();
 
 const User = require("../models/schemas/NifgaimUser");
+const Command = require("../models/schemas/NifgaimCommand");
 
 // for manage users page
 const getUsers = async (req, res, next) => {
@@ -50,7 +51,8 @@ const signup = async (req, res, next) => {
   }
   const id = uuidv4();
 
-  const { privateNumber, fullName, password, commandId, isAdmin } = req.body;
+  const { privateNumber, fullName, password, commandId, editPerm, managePerm } =
+    req.body;
 
   let existingUser;
   try {
@@ -68,13 +70,15 @@ const signup = async (req, res, next) => {
   }
 
   try {
+    const hashedPassowrd = await sha256(password);
     const newUser = await User.create({
       id,
       privateNumber,
       fullName,
-      password,
-      commandId,
-      isAdmin,
+      password: hashedPassowrd,
+      nifgaimCommandId: commandId,
+      editPerm,
+      managePerm,
     });
 
     res.status(201).json(newUser);
@@ -86,10 +90,10 @@ const signup = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const { privateNumber, passwordLogin } = req.body;
+  const { privateNumber, password } = req.body;
 
   console.log(privateNumber);
-  console.log(passwordLogin);
+  console.log(password);
 
   const secretKey = process.env.SECRET_KEY;
 
@@ -111,7 +115,7 @@ const login = async (req, res, next) => {
 
   let isValidPassword = false;
   try {
-    const hashedPassowrd = await sha256(passwordLogin);
+    const hashedPassowrd = await sha256(password);
 
     isValidPassword = hashedPassowrd === existingUser.password;
     console.log(isValidPassword);
@@ -150,7 +154,10 @@ const login = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   const userId = req.params.userId;
 
-  const { privateNumber, fullName, commandId } = req.body;
+  console.log(req.body);
+
+  const { privateNumber, fullName, nifgaimCommandId, editPerm, managePerm } =
+    req.body;
 
   try {
     // Find the user by ID
@@ -165,6 +172,16 @@ const updateUser = async (req, res, next) => {
       return next(error);
     }
 
+    const command = await Command.findByPk(nifgaimCommandId);
+    // If command not found, return null or handle accordingly
+    if (!command) {
+      const error = new Error(
+        `Could not update user ${userId}, command ${nifgaimCommandId} doesn't exist.`,
+        403
+      );
+      return next(error);
+    }
+
     // Update the user fields
     if (privateNumber !== undefined) {
       user.privateNumber = privateNumber;
@@ -174,9 +191,56 @@ const updateUser = async (req, res, next) => {
       user.fullName = fullName;
     }
 
-    if (commandId !== undefined) {
-      user.commandId = commandId;
+    if (nifgaimCommandId !== undefined) {
+      user.nifgaimCommandId = nifgaimCommandId;
     }
+
+    if (editPerm !== undefined) {
+      user.editPerm = editPerm;
+    }
+
+    if (managePerm !== undefined) {
+      user.managePerm = managePerm;
+    }
+    // Save the updated user
+    await user.save();
+
+    // Return the updated user
+    res
+      .status(200)
+      .json({ message: `User ${userId} updated successfully.`, user });
+  } catch (err) {
+    // Handle errors
+    console.error(err);
+    const error = new Error(
+      `Could not update user ${userId}, please try again later.`,
+      500
+    );
+    next(error);
+  }
+};
+
+const changePassword = async (req, res, next) => {
+  const userId = req.params.userId;
+
+  const { password } = req.body;
+
+  try {
+    // Find the user by ID
+    const user = await User.findByPk(userId);
+
+    // If user not found, return null or handle accordingly
+    if (!user) {
+      const error = new Error(
+        `Could not update user ${userId}, user doesn't exist.`,
+        403
+      );
+      return next(error);
+    }
+
+    const hashedPassowrd = await sha256(password);
+
+    user.password = hashedPassowrd;
     // Save the updated user
     await user.save();
 
@@ -234,4 +298,5 @@ exports.getUserById = getUserById;
 exports.login = login;
 exports.signup = signup;
 exports.updateUser = updateUser;
+exports.changePassword = changePassword;
 exports.deleteUser = deleteUser;

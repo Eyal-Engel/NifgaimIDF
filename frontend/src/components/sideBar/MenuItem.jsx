@@ -18,19 +18,39 @@ const variants = {
   },
 };
 
-const colors = ["#f8e094", "#ecba22", "#7700FF", "#7700FF"];
-
 export const MenuItem = ({ i }) => {
-  const style = { border: `2px solid ${colors[i]}` };
+  // const style = { border: `2px solid ${colors[i]}` };
+  const style = {
+    background: "#fffbfb",
+  };
+
+  const borderStyle = [
+    {
+      background: "#ECBA22",
+    },
+    {
+      background: "linear-gradient( #E7AF04, rgb(144,153,184))",
+    },
+    {
+      background: "linear-gradient( rgb(144,153,184), rgb(71, 111, 248))",
+    },
+    {
+      background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
+    },
+  ];
+
   return (
-    <motion.li
-      variants={variants}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <div className="icon-placeholder" style={style}></div>
-      <div className="text-placeholder" style={style}></div>
-    </motion.li>
+      <motion.li
+        variants={variants}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <div class="icon-border-wrap" style={borderStyle[i]}>
+          <div className="icon-placeholder" style={style}></div>
+        </div>
+        <div class="text-border-wrap" style={borderStyle[i]}>
+          <div className="text-placeholder" style={style}></div>
+        </div>
+      </motion.li>
   );
 };
- 

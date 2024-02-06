@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../../dbConfig");
 
-class NifgaimUser extends Model {}
+class NifgaimSoldierAccompanied extends Model {}
 
-NifgaimUser.init(
+NifgaimSoldierAccompanied.init(
   {
     id: {
       type: DataTypes.UUID,
@@ -12,6 +12,17 @@ NifgaimUser.init(
       primaryKey: true,
       unique: true,
     },
+
+    // halalId relation
+
+    fullName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        is: /^(?=.{2,30}$)[א-ת']+(\s[א-ת']{1,}){1,2}$/,
+      },
+    },
+
     privateNumber: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -21,42 +32,33 @@ NifgaimUser.init(
         len: 7,
       },
     },
-    fullName: {
+
+    rank: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        is: /^(?=.{2,30}$)[א-ת']+(\s[א-ת']{1,}){1,2}$/,
-      },
     },
 
-    password: {
+    phone: {
       type: DataTypes.STRING,
       allowNull: false,
-      // validate: {
-      //   len: [2, 30],
-      //   is: [/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,}$/],
-      // },
     },
 
-    // commandName relation
-
-    editPerm: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    unit: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    managePerm: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+
+    comments: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },
   {
     sequelize: db,
-    modelName: "nifgaimUsers",
+    modelName: "nifgaimSoldierAccompanieds",
     timestamps: false,
     createdAt: true,
   }
 );
 
-module.exports = NifgaimUser;
+module.exports = NifgaimSoldierAccompanied;

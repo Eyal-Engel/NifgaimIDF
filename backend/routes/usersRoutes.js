@@ -19,6 +19,8 @@ router.post("/signup", usersController.signup);
 
 router.patch("/:userId", usersController.updateUser);
 
+router.patch("/password/:userId", usersController.changePassword);
+
 router.delete("/:userId", usersController.deleteUser);
 
 module.exports = router;

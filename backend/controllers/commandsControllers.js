@@ -40,7 +40,7 @@ const createCommand = async (req, res, next) => {
     const newCommand = await Command.create({ id, commandName });
     res.status(201).json(newCommand);
   } catch (err) {
-    console.error(err);
+    console.log(err.errors);
     next(new Error("Create command failed.", 500));
   }
 };

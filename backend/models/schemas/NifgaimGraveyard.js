@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require("sequelize");
-const sequelize = require("../../dbConfig");
+const db = require("../../dbConfig");
 
-class NifgaimCommand extends Model {}
+class NifgaimGraveyard extends Model {}
 
-NifgaimCommand.init(
+NifgaimGraveyard.init(
   {
     id: {
       type: DataTypes.UUID,
@@ -12,18 +12,18 @@ NifgaimCommand.init(
       primaryKey: true,
       unique: true,
     },
-    commandName: {
+    graveyardName: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
   },
   {
-    sequelize,
-    modelName: "nifgaimCommands",
+    sequelize: db,
+    modelName: "nifgaimGraveyards",
     timestamps: false,
     createdAt: true,
   }
 );
 
-module.exports = NifgaimCommand;
+module.exports = NifgaimGraveyard;
