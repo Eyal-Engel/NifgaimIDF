@@ -24,22 +24,16 @@ NifgaimHalal.init(
       },
     },
 
-    // commandName relation
+    // commandId relation
 
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        is: /^(?=.{2,30}$)[א-ת']+(\s[א-ת']{1,}){1,2}$/,
-      },
     },
 
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        is: /^(?=.{2,30}$)[א-ת']+(\s[א-ת']{1,}){1,2}$/,
-      },
     },
 
     dateOfDeath: {
@@ -50,7 +44,7 @@ NifgaimHalal.init(
       type: DataTypes.ENUM(...serviceTypeOptions),
       allowNull: false,
     },
-    curcumstances: {
+    circumstances: {
       type: DataTypes.STRING,
       allowNull: false,
     },

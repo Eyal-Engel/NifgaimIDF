@@ -44,9 +44,9 @@ app.get("/", (req, res) => {
 app.use("/api/users", usersRoutes);
 app.use("/api/commands", commandsRoutes);
 app.use("/api/graveyards", graveyardsRoutes);
-// app.use("/api/halals", halalsRoutes);
-// app.use("/api/leftOvers", leftOversRoutes);
-// app.use("/api/soldierAccompanied", soldierAccompaniedRoutes);
+app.use("/api/halals", halalsRoutes);
+app.use("/api/leftOvers", leftOversRoutes);
+app.use("/api/soldierAccompanied", soldierAccompaniedRoutes);
 
 app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

@@ -32,10 +32,6 @@ NifgaimUser.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      // validate: {
-      //   len: [2, 30],
-      //   is: [/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,}$/],
-      // },
     },
 
     // commandName relation

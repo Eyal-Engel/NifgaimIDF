@@ -15,10 +15,7 @@ const getUsers = async (req, res, next) => {
 
     res.json(Users);
   } catch (err) {
-    const error = new Error("Get all users failed.", 500);
-
-    console.log(err);
-    next(error);
+    return next(err);
   }
 };
 
@@ -35,10 +32,7 @@ const getUserById = async (req, res, next) => {
 
     res.json(user);
   } catch (err) {
-    const error = new Error(`Get user by ID ${userId} failed.`, 500);
-
-    console.error(err);
-    next(error);
+    return next(err);
   }
 };
 
@@ -83,9 +77,8 @@ const signup = async (req, res, next) => {
 
     res.status(201).json(newUser);
   } catch (err) {
-    console.log("Validation errors:", err.errors);
-    const error = new Error("Signing up failed, please try again later.", 500);
-    return next(error);
+    // console.log(err.original.length);
+    return next(err);
   }
 };
 
@@ -140,8 +133,7 @@ const login = async (req, res, next) => {
       { expiresIn: "168h" }
     );
   } catch (err) {
-    const error = new Error("Logging in failed, please try again later.", 500);
-    return next(error);
+    return next(err);
   }
 
   res.json({
@@ -210,13 +202,7 @@ const updateUser = async (req, res, next) => {
       .status(200)
       .json({ message: `User ${userId} updated successfully.`, user });
   } catch (err) {
-    // Handle errors
-    console.error(err);
-    const error = new Error(
-      `Could not update user ${userId}, please try again later.`,
-      500
-    );
-    next(error);
+    return next(err);
   }
 };
 
@@ -249,13 +235,7 @@ const changePassword = async (req, res, next) => {
       .status(200)
       .json({ message: `User ${userId} updated successfully.`, user });
   } catch (err) {
-    // Handle errors
-    console.error(err);
-    const error = new Error(
-      `Could not update user ${userId}, please try again later.`,
-      500
-    );
-    next(error);
+    return next(err);
   }
 };
 
@@ -288,8 +268,8 @@ const deleteUser = async (req, res, next) => {
     }
 
     res.status(201).json({ message: `DELETE:  ${userId}` });
-  } catch (error) {
-    next(error); // Send the error to the error-handling middleware
+  } catch (err) {
+    return next(err);
   }
 };
 

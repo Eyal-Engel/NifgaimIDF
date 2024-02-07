@@ -11,9 +11,7 @@ const getAllGraveyards = async (req, res, next) => {
     const graveyards = await Graveyard.findAll();
     res.json(graveyards);
   } catch (err) {
-    console.error(err);
-    const error = new Error("Get all graveyards failed.", 500);
-    next(error);
+    return next(err);
   }
 };
 
@@ -27,8 +25,7 @@ const getGraveyardById = async (req, res, next) => {
     }
     res.json(graveyard);
   } catch (err) {
-    console.error(err);
-    next(new Error("Get graveyard by id failed.", 500));
+    return next(err);
   }
 };
 
@@ -40,8 +37,7 @@ const createGraveyard = async (req, res, next) => {
     const newGraveyard = await Graveyard.create({ id, graveyardName });
     res.status(201).json(newGraveyard);
   } catch (err) {
-    console.error(err);
-    next(new Error("Create graveyard failed.", 500));
+    return next(err);
   }
 };
 
@@ -60,8 +56,7 @@ const updateGraveyardById = async (req, res, next) => {
 
     res.json(graveyard);
   } catch (err) {
-    console.error(err);
-    next(new Error("Update graveyard failed.", 500));
+    return next(err);
   }
 };
 
@@ -77,8 +72,7 @@ const deleteGraveyardById = async (req, res, next) => {
     await graveyard.destroy();
     res.status(204).end();
   } catch (err) {
-    console.error(err);
-    next(new Error("Delete graveyard failed.", 500));
+    return next(err);
   }
 };
 

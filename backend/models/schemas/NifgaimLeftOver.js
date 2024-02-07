@@ -29,15 +29,11 @@ NifgaimLeftOver.init(
     fullName: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        is: /^(?=.{2,30}$)[א-ת']+(\s[א-ת']{1,}){1,2}$/,
-      },
     },
 
     proximity: {
       type: DataTypes.ENUM(...proximityOptions),
       allowNull: false,
-      unique: true,
     },
 
     city: {
@@ -45,7 +41,7 @@ NifgaimLeftOver.init(
       allowNull: false,
     },
 
-    adress: {
+    address: {
       type: DataTypes.STRING,
       allowNull: false,
     },

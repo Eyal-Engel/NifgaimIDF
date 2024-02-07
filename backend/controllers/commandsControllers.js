@@ -11,9 +11,7 @@ const getAllCommands = async (req, res, next) => {
     const commands = await Command.findAll();
     res.json(commands);
   } catch (err) {
-    console.error(err);
-    const error = new Error("Get all commands failed.", 500);
-    next(error);
+    return next(err);
   }
 };
 
@@ -27,8 +25,7 @@ const getCommandById = async (req, res, next) => {
     }
     res.json(command);
   } catch (err) {
-    console.error(err);
-    next(new Error("Get command by id failed.", 500));
+    return next(err);
   }
 };
 
@@ -40,8 +37,7 @@ const createCommand = async (req, res, next) => {
     const newCommand = await Command.create({ id, commandName });
     res.status(201).json(newCommand);
   } catch (err) {
-    console.log(err.errors);
-    next(new Error("Create command failed.", 500));
+    return next(err);
   }
 };
 
@@ -60,8 +56,7 @@ const updateCommandById = async (req, res, next) => {
 
     res.json(command);
   } catch (err) {
-    console.error(err);
-    next(new Error("Update command failed.", 500));
+    return next(err);
   }
 };
 
@@ -77,8 +72,7 @@ const deleteCommandById = async (req, res, next) => {
     await command.destroy();
     res.status(204).end();
   } catch (err) {
-    console.error(err);
-    next(new Error("Delete command failed.", 500));
+    return next(err);
   }
 };
 

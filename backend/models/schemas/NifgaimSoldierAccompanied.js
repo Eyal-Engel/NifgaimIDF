@@ -18,9 +18,6 @@ NifgaimSoldierAccompanied.init(
     fullName: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        is: /^(?=.{2,30}$)[א-ת']+(\s[א-ת']{1,}){1,2}$/,
-      },
     },
 
     privateNumber: {
