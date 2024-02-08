@@ -1,0 +1,106 @@
+.sideBarBackground {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 300px;
+    /* background: #f3f2ec; */
+    background: #fffbfb;
+    border-radius: 0 15px 0 15px;
+  }
+  
+  .exitButton {
+    width: 50px;
+    height: 50px;
+    background: #fffbfb;
+    border: none;
+  }
+  
+  .exitButton img {
+    width: 100%;
+  }
+  
+  .toggleButton {
+    outline: none;
+    border: none;
+    /* -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none; */
+    user-select: none;
+    cursor: pointer;
+    position: absolute;
+    top: 18px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: transparent;
+  }
+  
+  .ulSideBar {
+    position: absolute;
+    top: 100px;
+    width: 250px;
+    height: 84%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 25px;
+    padding-right: 10px;
+    margin: 0;
+  }
+  
+  .listItemSideBar {
+    list-style: none;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .listItemButton {
+    margin-top: auto;
+  }
+  .icon-border-wrap {
+    padding: 2px;
+    border-radius: 50%;
+    margin-left: 20px;
+  }
+  
+  .icon-placeholder {
+    display: flex;
+    align-content: center;
+  }
+  
+  .icon-placeholder img {
+    width: 100%;
+  }
+  
+  .text-border-wrap {
+    padding: 2px;
+    border-radius: 8px;
+  }
+  
+  .text-placeholder {
+    border-radius: 5px;
+    width: 170px;
+    height: 20px;
+    flex: 1;
+    text-align: center;
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  }
+  
+  .refresh {
+    padding: 10px;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
