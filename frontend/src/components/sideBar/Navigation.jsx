@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { MenuItem } from "./MenuItem";
+import exitIcon from "../../assets/images/icons/exitIcon.png";
 
 const variants = {
   open: {
@@ -11,12 +12,34 @@ const variants = {
   },
 };
 
+const itemVariants = {
+  open: { opacity: 1, y: 0 },
+  closed: { opacity: 0, y: 50 },
+};
+
 const itemIds = [0, 1, 2, 3];
 
 export const Navigation = () => (
   <motion.ul variants={variants}>
-    {itemIds.map((i) => (
-      <MenuItem i={i} key={i} />
-    ))}
+    <div>
+      {itemIds.map((i) => (
+        <motion.li key={i} variants={itemVariants}>
+          <MenuItem i={i} />
+        </motion.li>
+      ))}
+    </div>
+    <div>
+      <motion.li variants={itemVariants}>
+        <>
+          <motion.button
+            className="exitButton"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <img src={exitIcon} alt="" />
+          </motion.button>
+        </>
+      </motion.li>
+    </div>
   </motion.ul>
 );

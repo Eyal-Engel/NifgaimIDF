@@ -3,10 +3,11 @@ import { motion, useCycle } from "framer-motion";
 import { useDimensions } from "./use-dimensions";
 import { MenuToggle } from "./MenuToggle";
 import { Navigation } from "./Navigation";
+import exitIcon from "../../assets/images/icons/exitIcon.png";
 
 const sidebar = {
   open: (width = 1000) => ({
-    clipPath: `circle(${width * 2 + 200}px at calc(100% - 40px) 40px)`, // Adjusted starting position
+    clipPath: `circle(${width * 2 + 200}px at calc(100% - 40px) 40px)`,
     transition: {
       type: "spring",
       stiffness: 20,
@@ -14,7 +15,7 @@ const sidebar = {
     },
   }),
   closed: {
-    clipPath: "circle(30px at calc(100% - 40px) 40px)", // Adjusted ending position
+    clipPath: "circle(30px at calc(100% - 40px) 40px)",
     transition: {
       delay: 0.5,
       type: "spring",
@@ -37,9 +38,8 @@ export const SideBar = () => {
       custom={height}
       ref={containerRef}
     >
-
       <motion.div className="background" variants={sidebar} />
-      <Navigation />
+      <Navigation />   
       <MenuToggle toggle={() => toggleOpen()} />
     </motion.div>
   );
