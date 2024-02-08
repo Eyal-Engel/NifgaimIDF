@@ -20,26 +20,20 @@ const itemVariants = {
 const itemIds = [0, 1, 2, 3];
 
 export const Navigation = () => (
-  <motion.ul variants={variants}>
-    <div>
-      {itemIds.map((i) => (
-        <motion.li key={i} variants={itemVariants}>
-          <MenuItem i={i} />
-        </motion.li>
-      ))}
-    </div>
-    <div>
-      <motion.li variants={itemVariants}>
-        <>
-          <motion.button
-            className="exitButton"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <img src={exitIcon} alt="" />
-          </motion.button>
-        </>
-      </motion.li>
-    </div>
+  <motion.ul variants={variants} className="ulSideBar">
+    {itemIds.map((i) => (
+      <MenuItem key={i} i={i} variants={itemVariants} />
+    ))}
+    <motion.li variants={itemVariants} className="listItemButton">
+      <>
+        <motion.button
+          className="exitButton"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <img src={exitIcon} alt="" />
+        </motion.button>
+      </>
+    </motion.li>
   </motion.ul>
 );

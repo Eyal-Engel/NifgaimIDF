@@ -64,12 +64,13 @@ export const MenuItem = ({ i }) => {
       variants={variants}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
+      className="listItemSideBar"
     >
       {/* <div class="icon-border-wrap" style={itemListInfo[i].styles}>
         <div className="icon-placeholder" style={style}><img src={itemListInfo[i].imgSrc} alt="" style={{borderRadius: "50%" }}></img></div>
       </div> */}
       <div className="icon-placeholder">
-        <img src={itemListInfo[i].imgSrc}></img>
+        <img src={itemListInfo[i].imgSrc} alt={itemListInfo[i].name} />
       </div>
 
       <div className="text-border-wrap" style={itemListInfo[i].styles}>
