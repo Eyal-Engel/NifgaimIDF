@@ -25,7 +25,7 @@ const sidebar = {
   },
 };
 
-export const SideBar = () => {
+const SideBar = () => {
   const [isOpen, toggleOpen] = useCycle(false, true);
   const containerRef = useRef(null);
   const { height } = useDimensions(containerRef);
@@ -44,3 +44,5 @@ export const SideBar = () => {
     </motion.div>
   );
 };
+
+export default SideBar;
