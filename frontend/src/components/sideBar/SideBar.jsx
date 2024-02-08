@@ -3,7 +3,6 @@ import { motion, useCycle } from "framer-motion";
 import { useDimensions } from "./use-dimensions";
 import { MenuToggle } from "./MenuToggle";
 import { Navigation } from "./Navigation";
-import exitIcon from "../../assets/images/icons/exitIcon.png";
 
 const sidebar = {
   open: (width = 1000) => ({
@@ -25,7 +24,7 @@ const sidebar = {
   },
 };
 
-export const SideBar = () => {
+const SideBar = () => {
   const [isOpen, toggleOpen] = useCycle(false, true);
   const containerRef = useRef(null);
   const { height } = useDimensions(containerRef);
@@ -39,8 +38,10 @@ export const SideBar = () => {
       ref={containerRef}
     >
       <motion.div className="background" variants={sidebar} />
-      <Navigation />   
+      <Navigation />
       <MenuToggle toggle={() => toggleOpen()} />
     </motion.div>
   );
 };
+
+export default SideBar;
