@@ -31,13 +31,13 @@ const SideBar = () => {
 
   return (
     <motion.div
-      style={{ direction: "rtl" }}
+      style={{ direction: "rtl"}}
       initial={false}
       animate={isOpen ? "open" : "closed"}
       custom={height}
       ref={containerRef}
     >
-      <motion.div className="background" variants={sidebar} />
+      <motion.div className="sideBarBackground" variants={sidebar} />
       <Navigation />   
       <MenuToggle toggle={() => toggleOpen()} />
     </motion.div>
