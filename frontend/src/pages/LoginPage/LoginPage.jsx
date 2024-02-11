@@ -1,5 +1,6 @@
 import React from "react";
+import AccountBox from "../../components/loginForm/index.jsx"
 
 export default function Login() {
-  return <div>login page</div>;
+  return <AccountBox></AccountBox>;
 }

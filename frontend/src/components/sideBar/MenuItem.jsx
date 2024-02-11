@@ -117,7 +117,7 @@ export const MenuItem = ({ i }) => {
         <div className="text-placeholder" style={style}>
           {itemListInfo[i].name}
         </div>
-      </div>
+    </div>
     </motion.li>
   );
 };
