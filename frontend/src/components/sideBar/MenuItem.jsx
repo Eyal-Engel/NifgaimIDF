@@ -107,7 +107,7 @@ export const MenuItem = ({ i }) => {
         <div className="icon-placeholder" style={style}><img src={itemListInfo[i].imgSrc} alt="" style={{borderRadius: "50%" }}></img></div>
       </div> */}
       <div className="icon-placeholder">
-        <img src={itemListInfo[i].imgSrc}></img>
+        <img src={itemListInfo[i].imgSrc} alt=""></img>
       </div>
 
       <div
