@@ -1,7 +1,7 @@
 h5 {
   font-size: clamp(0.1rem, 0.1rem + 0.8vw, 5rem);
 }
-
+/* 
 .mekalarLogo {
   min-width: 4vw;
   max-width: 5vw;
@@ -10,4 +10,4 @@ h5 {
 .logiCorpLogo {
   min-width: 4vw;
   max-width: 5vw;
-}
+} */

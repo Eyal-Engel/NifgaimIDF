@@ -15,6 +15,7 @@ const ErrorNotFoundPage = () => {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
+        width: "85%",
       }}
     >
       <Box

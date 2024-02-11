@@ -101,18 +101,18 @@ export const MenuItem = ({ i }) => {
       variants={variants}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
+      onClick={() => navigate(itemListInfo[i].url)}
     >
       {/* <div class="icon-border-wrap" style={itemListInfo[i].styles}>
         <div className="icon-placeholder" style={style}><img src={itemListInfo[i].imgSrc} alt="" style={{borderRadius: "50%" }}></img></div>
       </div> */}
-      <div className="icon-placeholder" onClick={() => navigate(itemListInfo[i].url)}>
+      <div className="icon-placeholder">
         <img src={itemListInfo[i].imgSrc}></img>
       </div>
 
       <div
         className="text-border-wrap"
         style={itemListInfo[i].styles}
-        onClick={() => navigate(itemListInfo[i].url)}
       >
         <div className="text-placeholder" style={style}>
           {itemListInfo[i].name}
