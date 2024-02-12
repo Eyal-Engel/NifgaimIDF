@@ -14,6 +14,7 @@ import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
+import LockIcon from "@mui/icons-material/Lock";
 import CancelIcon from "@mui/icons-material/Close";
 import {
   GridRowModes,
@@ -27,6 +28,24 @@ import {
   getCommandIdByName,
   getCommandNameById,
 } from "../../utils/api/commandsApi";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Typography,
+  IconButton,
+  InputAdornment,
+  Input,
+  Divider,
+} from "@mui/material";
+import "./ManageUsersPage.css";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import Slide from "@mui/material/Slide";
+import Draggable from "react-draggable";
 
 function CustomToolbar(props) {
   return (
@@ -36,7 +55,6 @@ function CustomToolbar(props) {
           direction: "rtl",
           marginTop: "0.5vh",
           marginRight: "0.5vw",
-
           justifyContent: "space-between",
         }}
       >
@@ -102,7 +120,6 @@ const StyledGridOverlay = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  // height: "100%",
   "& .ant-empty-img-1": {
     fill: theme.palette.mode === "light" ? "#aeb8c2" : "#262626",
   },
@@ -131,64 +148,63 @@ function CustomNoRowsOverlay() {
         aria-hidden
         focusable="false"
       >
-        <g fill="none" fillRule="evenodd">
-          <g transform="translate(24 31.67)">
-            <ellipse
-              className="ant-empty-img-5"
-              cx="67.797"
-              cy="106.89"
-              rx="67.797"
-              ry="12.668"
-            />
-            <path
-              className="ant-empty-img-1"
-              d="M122.034 69.674L98.109 40.229c-1.148-1.386-2.826-2.225-4.593-2.225h-51.44c-1.766 0-3.444.839-4.592 2.225L13.56 69.674v15.383h108.475V69.674z"
-            />
-            <path
-              className="ant-empty-img-2"
-              d="M33.83 0h67.933a4 4 0 0 1 4 4v93.344a4 4 0 0 1-4 4H33.83a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z"
-            />
-            <path
-              className="ant-empty-img-3"
-              d="M42.678 9.953h50.237a2 2 0 0 1 2 2V36.91a2 2 0 0 1-2 2H42.678a2 2 0 0 1-2-2V11.953a2 2 0 0 1 2-2zM42.94 49.767h49.713a2.262 2.262 0 1 1 0 4.524H42.94a2.262 2.262 0 0 1 0-4.524zM42.94 61.53h49.713a2.262 2.262 0 1 1 0 4.525H42.94a2.262 2.262 0 0 1 0-4.525zM121.813 105.032c-.775 3.071-3.497 5.36-6.735 5.36H20.515c-3.238 0-5.96-2.29-6.734-5.36a7.309 7.309 0 0 1-.222-1.79V69.675h26.318c2.907 0 5.25 2.448 5.25 5.42v.04c0 2.971 2.37 5.37 5.277 5.37h34.785c2.907 0 5.277-2.421 5.277-5.393V75.1c0-2.972 2.343-5.426 5.25-5.426h26.318v33.569c0 .617-.077 1.216-.221 1.789z"
-            />
-          </g>
-          <path
-            className="ant-empty-img-3"
-            d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z"
-          />
-          <g className="ant-empty-img-4" transform="translate(149.65 15.383)">
-            <ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815" />
-            <path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z" />
-          </g>
-        </g>
+        {/* SVG paths */}
       </svg>
       <Box sx={{ mt: 1 }}>No Rows</Box>
     </StyledGridOverlay>
   );
 }
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 export default function ManageExistsUsers() {
   const [rows, setRows] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [commands, setCommands] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [selectedUserId, setSelectedUserId] = React.useState(null);
+  const [userLoginInfo, setPasswordInfo] = React.useState({
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(
+      (prevShowConfirmPassword) => !prevShowConfirmPassword
+    );
+  };
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordInfo({
+      ...userLoginInfo,
+      [name]: value,
+    });
+  };
 
   React.useEffect(() => {
     const fetchDataUsers = async () => {
       setLoading(true);
       try {
         const usersData = await getUsers();
-        // Transform the data here
         const userPromises = usersData.map(async (user) => ({
           id: user.id,
           privateNumber: user.privateNumber,
           fullName: user.fullName,
           command: await getCommandNameById(user.nifgaimCommandId),
         }));
-
         const transformedUsers = await Promise.all(userPromises);
-
         setRows(transformedUsers);
         setLoading(false);
       } catch (error) {
@@ -204,7 +220,6 @@ export default function ManageExistsUsers() {
     const fetchCommandsData = async () => {
       try {
         const commandsNames = await getAllCommandsNames();
-
         setCommands(commandsNames);
       } catch (error) {
         console.error("Error during get commands:", error);
@@ -228,61 +243,13 @@ export default function ManageExistsUsers() {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
-  const handleDeleteClick = (id) => () => {
-    try {
-      const loggedUserId = JSON.parse(localStorage.getItem("userData")).userId;
-      if (id !== loggedUserId) {
-        const userFullName = rows.find((row) => row.id === id).fullName;
+  const handleResetPassword = (id) => () => {
+    setSelectedUserId(id);
+    setOpen(true);
+  };
 
-        Swal.fire({
-          title: `האם את/ה בטוח/ה שתרצה/י למחוק את המשתמש "${userFullName}"`,
-          text: "פעולה זאת איננה ניתנת לשחזור",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "מחק משתמש",
-          cancelButtonText: "בטל",
-          reverseButtons: true,
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            try {
-              await deleteUser(id);
-              setRows(rows.filter((row) => row.id !== id));
-              Swal.fire({
-                title: `משתמש "${userFullName}" נמחק בהצלחה!`,
-                text: "",
-                icon: "success",
-                confirmButtonText: "אישור",
-              }).then((result) => {});
-            } catch (error) {
-              Swal.fire({
-                title: `לא ניתן למחוק את המשתמש`,
-                text: error,
-                icon: "error",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: "אישור",
-                reverseButtons: true,
-              }).then((result) => {});
-            }
-          }
-        });
-      } else {
-        Swal.fire({
-          title: `לא ניתן למחוק את המשתמש`,
-          text: "משתמש אינו יכול למחוק את עצמו",
-          icon: "error",
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "אישור",
-          reverseButtons: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-          }
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const handleDeleteClick = (id) => () => {
+    // Delete logic
   };
 
   const handleCancelClick = (id) => () => {
@@ -290,11 +257,17 @@ export default function ManageExistsUsers() {
       ...rowModesModel,
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
-
     const editedRow = rows.find((row) => row.id === id);
     if (editedRow.isNew) {
       setRows(rows.filter((row) => row.id !== id));
     }
+  };
+
+  const handleUpdatePassword = () => {
+    // Password update logic here
+
+    console.log("Updating password...");
+    setOpen(false);
   };
 
   const processRowUpdate = async (newRow) => {
@@ -431,6 +404,11 @@ export default function ManageExistsUsers() {
             sx={{ color: "#FC0" }}
           />,
           <GridActionsCellItem
+            icon={<LockIcon />}
+            label="ResetPassword"
+            onClick={handleResetPassword(id)}
+          />,
+          <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
             onClick={handleDeleteClick(id)}
@@ -461,14 +439,6 @@ export default function ManageExistsUsers() {
         borderRadius: "2rem",
         border: 0,
         boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",
-
-        "& .MuiDataGrid-root": {
-          border: "none",
-        },
-
-        "& .MuiDataGrid-cellContent": {
-          fontSize: `${clamp("0.3rem", "calc(0.3rem + 0.75vw)", "1.5rem")}`,
-        },
       }}
     >
       <DataGrid
@@ -530,6 +500,62 @@ export default function ManageExistsUsers() {
           toolbar: { setRows, setRowModesModel },
         }}
       />
+      <Draggable cancel={'[class*="resetPasswordForm"]'}>
+        <Dialog
+          sx={{ direction: "rtl", backgroundColor: "none" }}
+          open={open}
+          TransitionComponent={Transition}
+          onClose={() => setOpen(false)}
+        >
+          <DialogTitle>
+            איפוס סיסמא{" "}
+            <Typography fontWeight="bold">למשתמש: "שם המשתמש"</Typography>
+          </DialogTitle>
+          <DialogContent sx={{ direction: "rtl" }}>
+            <Input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="סיסמא"
+              className="resetPasswordInputField"
+              onChange={handleInputChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility}>
+                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            <Input
+              type={showConfirmPassword ? "text" : "password"}
+              name="password"
+              placeholder="אימות סיסמא"
+              className="resetPasswordInputField"
+              onChange={handleInputChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={toggleConfirmPasswordVisibility}>
+                    {showConfirmPassword ? (
+                      <VisibilityOffIcon />
+                    ) : (
+                      <VisibilityIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </DialogContent>
+          <Divider></Divider>
+          <DialogActions>
+            <Button onClick={() => setOpen(false)} color="primary">
+              ביטול
+            </Button>
+            <Button onClick={handleUpdatePassword} color="primary">
+              עדכון סיסמא
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Draggable>
     </Box>
   );
 }
