@@ -8,7 +8,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 
-export default function GraveyardItem({graveyardName}) {
+export default function GraveyardItem({ graveyardName }) {
   const [isInEditMode, setIsInEditMode] = useState(false);
 
   const handleEditClick = () => {
@@ -22,11 +22,11 @@ export default function GraveyardItem({graveyardName}) {
     <Card
       sx={{
         display: "flex",
-        width: "600px",
-        margin: "20px",
         flexDirection: "row-reverse",
         alignItems: "center",
         justifyContent: "space-between",
+        marginBottom: "20px",
+
         borderRadius: "10px",
         boxShadow: "2px 2px 2px 1px rgb(0 0 0 / 20%)",
       }}
