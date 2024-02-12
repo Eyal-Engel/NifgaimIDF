@@ -24,8 +24,8 @@ export function LoginForm() {
   };
 
   return (
-    <div className="box-container">
-      <form className="form-container">
+    <div className="boxLoginContainer">
+      <form className="formLoginContainer">
         <input
           type="privateNumber"
           name="privateNumber"
