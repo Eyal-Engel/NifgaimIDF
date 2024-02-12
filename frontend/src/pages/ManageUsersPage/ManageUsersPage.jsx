@@ -492,7 +492,6 @@ export default function ManageExistsUsers() {
             overflow: "unset",
             position: "sticky !important",
             left: 1,
-            zIndex: 1,
             top: 0,
           },
           "& .MuiDataGrid-columnHeadersInner > div": {
