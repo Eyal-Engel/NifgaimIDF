@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { MenuItem } from "./MenuItem";
 import exitIcon from "../../assets/images/icons/exitIcon.png";
 import { useNavigate } from "react-router-dom";
-
+import "./style.css"
 const variants = {
   open: {
     transition: { staggerChildren: 0.07, delayChildren: 0.2 },

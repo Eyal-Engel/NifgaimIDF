@@ -5,6 +5,8 @@ import pikodimIcon from "../../assets/images/icons/pikodimIcon.png";
 import usersIcon from "../../assets/images/icons/usersManageIcon.png";
 import soliderIcon from "../../assets/images/icons/soldierIcon.png";
 import { useNavigate } from "react-router-dom";
+import "./style.css"
+
 
 const variants = {
   open: {
@@ -35,7 +37,7 @@ export const MenuItem = ({ i }) => {
     background: "#fffbfb",
   };
 
-  let linksArray;
+  // let linksArray;
 
   // if (auth.isLoggedIn && loggedUserCommand === "חיל הלוגיסטיקה") {
   //   linksArray = [
@@ -102,6 +104,7 @@ export const MenuItem = ({ i }) => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
       onClick={() => navigate(itemListInfo[i].url)}
+      className="listItemSideBar"
     >
       {/* <div class="icon-border-wrap" style={itemListInfo[i].styles}>
         <div className="icon-placeholder" style={style}><img src={itemListInfo[i].imgSrc} alt="" style={{borderRadius: "50%" }}></img></div>

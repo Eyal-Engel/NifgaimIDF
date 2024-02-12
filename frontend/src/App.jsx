@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { AuthContext } from "./utils/contexts/authContext";
 import { useAuth } from "./utils/hooks/useAuth";
@@ -15,6 +15,8 @@ import HalalimPage from "./pages/HalalimPage/HalalimPage";
 import ManageUsersPage from "./pages/ManageUsersPage/ManageUsersPage";
 import ManageCommandsPage from "./pages/ManageCommandsPage/ManageCommandsPage";
 import ManageGraveyardsPage from "./pages/ManageGraveyardsPage/ManageGraveyardsPage";
+import { getCommandNameByUserId } from "./utils/api/usersApi";
+
 
 const handleRouter = (token, command) => {
   let router;
@@ -124,16 +126,16 @@ function App() {
   const { token, login, logout, userId } = useAuth();
   const [command, setCommand] = useState("");
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     if (userId) {
-  //       const commandUser = await getCommandNameByUserId(userId);
-  //       setCommand(commandUser);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      if (userId) {
+        const commandUser = await getCommandNameByUserId(userId);
+        setCommand(commandUser);
+      }
+    };
 
-  //   fetchData();
-  // }, [userId]);
+    fetchData();
+  }, [userId]);
 
   return (
     <AuthContext.Provider

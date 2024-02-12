@@ -1,7 +1,7 @@
 /* accountBox.css */
 
 .boxAccountContainer {
-  width: 28%;
+  width: 576px;
   height: 65%;
   min-width: 330px;
   min-height: 465px;
@@ -15,14 +15,17 @@
   overflow: hidden;
 }
 
+
+
 .topAccountContainer {
   width: 100%;
-  height: 200px;
+  height: 31%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
+
 
 .backdrop {
   position: absolute;
@@ -49,9 +52,15 @@
 
 .innerAccountContainer {
   width: 100%;
-  height: 350px;
+  height: 53%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+@media only screen and (max-width: 800px) {
+  .boxAccountContainer {
+    width: 71%;
+  }
 }

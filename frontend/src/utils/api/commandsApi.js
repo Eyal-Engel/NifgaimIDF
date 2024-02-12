@@ -1,4 +1,4 @@
-import { get } from "./api";
+import { get, post, patch, del } from "./api";
 
 export async function getCommands() {
   const apiUrl = "http://localhost:5000/api/commands/";
@@ -28,7 +28,6 @@ export async function getAllCommandsNames() {
     for (let i = 0; i < commands.length; i++) {
       commandsNames.push(commands[i].commandName);
     }
-
     return commandsNames;
   } catch (error) {
     console.error("Error getting all commands names: ", error);
