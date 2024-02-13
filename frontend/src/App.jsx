@@ -126,16 +126,16 @@ function App() {
   const { token, login, logout, userId } = useAuth();
   const [command, setCommand] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userId) {
-        const commandUser = await getCommandNameByUserId(userId);
-        setCommand(commandUser);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (userId) {
+  //       const commandUser = await getCommandNameByUserId(userId);
+  //       setCommand(commandUser);
+  //     }
+  //   };
 
-    fetchData();
-  }, [userId]);
+  //   fetchData();
+  // }, [userId]);
 
   return (
     <AuthContext.Provider
