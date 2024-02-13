@@ -9,14 +9,14 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 
-export default function GraveyardItem({
-  graveyardName,
-  handelGraveyardNameChange,
-  graveyardIndex,
-  handleDeleteGraveyard,
+export default function CommandItem({
+  commandName,
+  handelCommandNameChange,
+  commandIndex,
+  handleDeleteCommand,
 }) {
   const [isInEditMode, setIsInEditMode] = useState(false);
-  const [editedGraveyardName, setEditedGraveyardName] = useState(graveyardName);
+  const [editedCommandName, setEditedCommandName] = useState(commandName);
 
   const handleEditClick = () => {
     setIsInEditMode(true);
@@ -24,22 +24,22 @@ export default function GraveyardItem({
 
   const handleSaveClick = () => {
     setIsInEditMode(false);
-    handelGraveyardNameChange(graveyardIndex, editedGraveyardName);
-    // Handle saving the editedGraveyardName, e.g., make an API call.
+    handelCommandNameChange(commandIndex, editedCommandName);
+    // Handle saving the editedCommandName, e.g., make an API call.
   };
 
   const handleDeleteClick = () => {
     // Call the delete function with the index of the graveyard to delete
-    handleDeleteGraveyard(graveyardIndex);
+    handleDeleteCommand(commandIndex);
     // You may also want to handle any additional logic, like making an API call to delete the graveyard.
   };
 
   const handleCancelClick = () => {
-    setIsInEditMode(false);
-  };
+    setIsInEditMode(false)
+  }
 
   const handleInputChange = (e) => {
-    setEditedGraveyardName(e.target.value);
+    setEditedCommandName(e.target.value);
   };
 
   return (
@@ -57,12 +57,12 @@ export default function GraveyardItem({
       <CardContent sx={{ display: "flex" }}>
         {!isInEditMode ? (
           <Typography variant="h6" component="div">
-            {graveyardName}
+            {commandName}
           </Typography>
         ) : (
           <input
             type="text"
-            value={editedGraveyardName}
+            value={editedCommandName}
             onChange={handleInputChange}
             autoFocus
             style={{

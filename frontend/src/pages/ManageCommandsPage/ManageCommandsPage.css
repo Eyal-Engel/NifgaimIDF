@@ -1,0 +1,13 @@
+.commandsContainer {
+  height: 100%;
+  width: 600px;
+}
+
+.commandsContainer h1 {
+  text-align: end;
+}
+
+.commands-list {
+  list-style-type: none;
+  padding: 0;
+}
