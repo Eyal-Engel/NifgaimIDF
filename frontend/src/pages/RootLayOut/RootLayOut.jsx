@@ -8,8 +8,17 @@ import nifgaimLogo from "../../assets/images/pictures/nifgaim_logo.png";
 import "./RootLayOut.css";
 export default function RootLayout() {
   return (
-    <>
-      <div style={{ position: "absolute" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100%",
+        position: "relative",
+      }}
+    >
+      <div style={{ position: "absolute", left: "0", top: "0", width: "100%" }}>
         <Link to="/about" style={{ color: "white", textDecoration: "none" }}>
           <img
             className="mekalarLogo"
@@ -41,8 +50,9 @@ export default function RootLayout() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
+          height: "77%",
           width: "100%",
+          overflowY: "auto",
         }}
       >
         <Outlet />
@@ -62,6 +72,6 @@ export default function RootLayout() {
           פותח ע”י בית התוכנה - חיל הלוגיסטיקה
         </h5>
       </div>
-    </>
+    </div>
   );
 }

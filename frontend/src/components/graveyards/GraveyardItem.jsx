@@ -8,8 +8,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 
-export default function GraveyardItem({ graveyardName }) {
+export default function GraveyardItem({
+  graveyardName,
+  handelGraveyardNameChange,
+  graveyardIndex,
+  handleDeleteGraveyard,
+}) {
   const [isInEditMode, setIsInEditMode] = useState(false);
+  const [editedGraveyardName, setEditedGraveyardName] = useState(graveyardName);
 
   const handleEditClick = () => {
     setIsInEditMode(true);
@@ -17,7 +23,20 @@ export default function GraveyardItem({ graveyardName }) {
 
   const handleSaveClick = () => {
     setIsInEditMode(false);
+    handelGraveyardNameChange(graveyardIndex, editedGraveyardName);
+    // Handle saving the editedGraveyardName, e.g., make an API call.
   };
+
+  const handleDeleteClick = () => {
+    // Call the delete function with the index of the graveyard to delete
+    handleDeleteGraveyard(graveyardIndex);
+    // You may also want to handle any additional logic, like making an API call to delete the graveyard.
+  };
+
+  const handleInputChange = (e) => {
+    setEditedGraveyardName(e.target.value);
+  };
+
   return (
     <Card
       sx={{
@@ -26,18 +45,37 @@ export default function GraveyardItem({ graveyardName }) {
         alignItems: "center",
         justifyContent: "space-between",
         marginBottom: "20px",
-
         borderRadius: "10px",
         boxShadow: "2px 2px 2px 1px rgb(0 0 0 / 20%)",
       }}
     >
-      <CardContent>
-        <Typography variant="h6" component="div">
-          {graveyardName}
-        </Typography>
+      <CardContent sx={{ display: "flex" }}>
+        {!isInEditMode ? (
+          <Typography variant="h6" component="div">
+            {graveyardName}
+          </Typography>
+        ) : (
+          <input
+            type="text"
+            value={editedGraveyardName}
+            onChange={handleInputChange}
+            autoFocus
+            style={{
+              fontSize: "20px",
+              padding: "8px",
+              margin: "2px",
+              direction: "rtl",
+            }}
+          />
+        )}
       </CardContent>
       <CardActions>
-        <Button variant="outlined" color="error" startIcon={<DeleteIcon />}>
+        <Button
+          variant="outlined"
+          color="error"
+          startIcon={<DeleteIcon />}
+          onClick={handleDeleteClick}
+        >
           מחק
         </Button>
         {!isInEditMode ? (
