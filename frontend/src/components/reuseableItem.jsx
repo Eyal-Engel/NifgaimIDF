@@ -9,14 +9,15 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 
-export default function CommandItem({
-  commandName,
-  handelCommandNameChange,
-  commandIndex,
-  handleDeleteCommand,
-}) {
+const EditableItem = ({
+  itemName,
+  handleItemNameChange,
+  itemIndex,
+  handleDeleteItem,
+  isGraveyard,
+}) => {
   const [isInEditMode, setIsInEditMode] = useState(false);
-  const [editedCommandName, setEditedCommandName] = useState(commandName);
+  const [editedItemName, setEditedItemName] = useState(itemName);
 
   const handleEditClick = () => {
     setIsInEditMode(true);
@@ -24,22 +25,22 @@ export default function CommandItem({
 
   const handleSaveClick = () => {
     setIsInEditMode(false);
-    handelCommandNameChange(commandIndex, editedCommandName);
-    // Handle saving the editedCommandName, e.g., make an API call.
+    handleItemNameChange(itemIndex, editedItemName);
+    // Handle saving the editedItemName, e.g., make an API call.
   };
 
   const handleDeleteClick = () => {
-    // Call the delete function with the index of the graveyard to delete
-    handleDeleteCommand(commandIndex);
-    // You may also want to handle any additional logic, like making an API call to delete the graveyard.
+    // Call the delete function with the index of the item to delete
+    handleDeleteItem(itemIndex);
+    // You may also want to handle any additional logic, like making an API call to delete the item.
   };
 
   const handleCancelClick = () => {
-    setIsInEditMode(false)
-  }
+    setIsInEditMode(false);
+  };
 
   const handleInputChange = (e) => {
-    setEditedCommandName(e.target.value);
+    setEditedItemName(e.target.value);
   };
 
   return (
@@ -56,13 +57,17 @@ export default function CommandItem({
     >
       <CardContent sx={{ display: "flex" }}>
         {!isInEditMode ? (
-          <Typography variant="h6" component="div">
-            {commandName}
+          <Typography
+            sx={{ textAlign: isGraveyard ? "end" : "start" }}
+            variant="h6"
+            component="div"
+          >
+            {itemName}
           </Typography>
         ) : (
           <input
             type="text"
-            value={editedCommandName}
+            value={editedItemName}
             onChange={handleInputChange}
             autoFocus
             style={{
@@ -74,7 +79,7 @@ export default function CommandItem({
           />
         )}
       </CardContent>
-      <CardActions className="actionCommandItemButtons">
+      <CardActions className={isGraveyard ? "actionGraveyardItemButton" : "actionCommandItemButtons"}>
         {!isInEditMode ? (
           <Button
             variant="outlined"
@@ -115,4 +120,6 @@ export default function CommandItem({
       </CardActions>
     </Card>
   );
-}
+};
+
+export default EditableItem;

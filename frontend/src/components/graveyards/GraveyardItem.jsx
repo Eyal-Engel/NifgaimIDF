@@ -56,7 +56,7 @@ export default function GraveyardItem({
     >
       <CardContent sx={{ display: "flex" }}>
         {!isInEditMode ? (
-          <Typography variant="h6" component="div">
+          <Typography sx={{textAlign: "end"}}variant="h6" component="div">
             {graveyardName}
           </Typography>
         ) : (
@@ -74,7 +74,7 @@ export default function GraveyardItem({
           />
         )}
       </CardContent>
-      <CardActions>
+      <CardActions className="actionGraveyardItemButton">
         {!isInEditMode ? (
           <Button
             variant="outlined"

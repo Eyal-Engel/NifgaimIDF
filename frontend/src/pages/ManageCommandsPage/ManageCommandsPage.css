@@ -1,6 +1,8 @@
 .commandsContainer {
   height: 100%;
-  width: 600px;
+  width: 700px;
+  min-width: 290px;
+  margin: 20px;
 }
 
 .commandsContainer h1 {
@@ -10,4 +12,12 @@
 .commands-list {
   list-style-type: none;
   padding: 0;
+}
+
+@media only screen and (max-width: 400px) {
+  .actionCommandItemButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 }

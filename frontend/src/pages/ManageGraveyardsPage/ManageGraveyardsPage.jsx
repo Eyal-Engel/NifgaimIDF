@@ -1,28 +1,37 @@
 import React, { useState } from "react";
 import GraveyardItem from "../../components/graveyards/GraveyardItem";
 import "./ManageGraveyardsPage.css";
+import { TextField, ThemeProvider, createTheme } from "@mui/material";
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { prefixer } from "stylis";
+import rtlPlugin from "stylis-plugin-rtl";
+import EditableItem from "../../components/reuseableItem";
+
+const theme = createTheme({
+  direction: "rtl",
+});
+
+// Create rtl cache
+const cacheRtl = createCache({
+  key: "muirtl",
+  stylisPlugins: [prefixer, rtlPlugin],
+});
 
 export default function ManageGraveyardsPage() {
-  const [listOfGravayards, setListOfGraveyards] = useState([
+  const [searchInputValue, setSearchInputValue] = useState("");
+  const [listOfGraveyards, setListOfGraveyards] = useState([
     "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
-    "בית העלמין הצבאי חולון",
+    "בית העלמין הצבאי ראשון",
+    "בית העלמין הצבאי תל אביב",
+    "בית העלמין הצבאי בת ים",
+    "בית העלמין הצבאי רחובות",
+    "בית העלמין הצבאי ראש העין",
+    "בית העלמין הצבאי נהריה",
+    "בית העלמין הצבאי חיפה",
+    "בית העלמין הצבאי ירושלים",
+    "בית העלמין הצבאי באר שבע",
+    "בית העלמין הצבאי באר יעקב",
   ]);
 
   const handelGraveyardNameChange = (graveyardIndex, newName) => {
@@ -41,17 +50,41 @@ export default function ManageGraveyardsPage() {
     });
   };
 
+  const handelSearchInput = (e) => {
+    setSearchInputValue(e.target.value);
+  };
+
+  // Filter the list based on the search input
+  const filteredGraveyards = listOfGraveyards.filter((graveyard) =>
+    graveyard.includes(searchInputValue)
+  );
+
   return (
     <div className="graveyardContainer">
       <h1>רשימת בתי העלמין</h1>
+      <CacheProvider value={cacheRtl}>
+        <ThemeProvider theme={theme}>
+          <div style={{ direction: "rtl", display: "flex" }}>
+            <TextField
+              id="filled-search"
+              label="חפש בית עלמין"
+              type="search"
+              variant="filled"
+              onChange={handelSearchInput}
+              sx={{zIndex: 0}}
+            />
+          </div>
+        </ThemeProvider>
+      </CacheProvider>
       <ul className="graveyard-list">
-        {listOfGravayards.map((graveyard, index) => (
+        {filteredGraveyards.map((graveyard, index) => (
           <li key={index}>
-            <GraveyardItem
-              graveyardName={graveyard}
-              graveyardIndex={index}
-              handelGraveyardNameChange={handelGraveyardNameChange}
-              handleDeleteGraveyard={handleDeleteGraveyard}
+            <EditableItem
+              itemName={graveyard}
+              handleItemNameChange={handelGraveyardNameChange}
+              itemIndex={index}
+              handleDeleteItem={handleDeleteGraveyard}
+              isGraveyard
             />
           </li>
         ))}

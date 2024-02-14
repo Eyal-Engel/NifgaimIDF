@@ -16,7 +16,7 @@ import ManageUsersPage from "./pages/ManageUsersPage/ManageUsersPage";
 import ManageCommandsPage from "./pages/ManageCommandsPage/ManageCommandsPage";
 import ManageGraveyardsPage from "./pages/ManageGraveyardsPage/ManageGraveyardsPage";
 import { getCommandNameByUserId } from "./utils/api/usersApi";
-
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const handleRouter = (token, command) => {
   let router;
@@ -122,20 +122,31 @@ const handleRouter = (token, command) => {
   return router;
 };
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#ffa726",
+    },
+    secondary: {
+      main: "#3069BE",
+    },
+  },
+});
+
 function App() {
   const { token, login, logout, userId } = useAuth();
   const [command, setCommand] = useState("");
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     if (userId) {
-  //       const commandUser = await getCommandNameByUserId(userId);
-  //       setCommand(commandUser);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      if (userId) {
+        const commandUser = await getCommandNameByUserId(userId);
+        setCommand(commandUser);
+      }
+    };
 
-  //   fetchData();
-  // }, [userId]);
+    fetchData();
+  }, [userId]);
 
   return (
     <AuthContext.Provider
@@ -147,7 +158,9 @@ function App() {
         logout: logout,
       }}
     >
-      <RouterProvider router={handleRouter(token, command)} />
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={handleRouter(token, command)} />
+      </ThemeProvider>
     </AuthContext.Provider>
   );
 }

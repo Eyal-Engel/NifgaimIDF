@@ -60,34 +60,34 @@ function CustomToolbar(props) {
       >
         <div>
           <GridToolbarColumnsButton
+            color="secondary"
             sx={{
               "& .MuiButton-startIcon": {
                 marginLeft: "2px",
-                color: "#3069BE",
               },
             }}
           />
           <GridToolbarFilterButton
+            color="secondary"
             sx={{
               "& .MuiButton-startIcon": {
                 marginLeft: "2px",
-                color: "#3069BE",
               },
             }}
           />
           <GridToolbarDensitySelector
+            color="secondary"
             sx={{
               "& .MuiButton-startIcon": {
                 marginLeft: "2px",
-                color: "#3069BE",
               },
             }}
           />
           <GridToolbarExport
+            color="secondary"
             sx={{
               "& .MuiButton-startIcon": {
                 marginLeft: "2px",
-                color: "#3069BE",
               },
             }}
           />
@@ -380,9 +380,7 @@ export default function ManageExistsUsers() {
             <GridActionsCellItem
               icon={<SaveIcon />}
               label="Save"
-              sx={{
-                color: "primary.main",
-              }}
+              color="primary"
               onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
@@ -390,7 +388,7 @@ export default function ManageExistsUsers() {
               label="Cancel"
               className="textPrimary"
               onClick={handleCancelClick(id)}
-              color="inherit"
+              color="error"
             />,
           ];
         }
@@ -401,18 +399,19 @@ export default function ManageExistsUsers() {
             label="Edit"
             className="textPrimary"
             onClick={handleEditClick(id)}
-            sx={{ color: "#FC0" }}
+            color="primary"
           />,
           <GridActionsCellItem
             icon={<LockIcon />}
             label="ResetPassword"
             onClick={handleResetPassword(id)}
+            color="gray"
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
             onClick={handleDeleteClick(id)}
-            sx={{ color: "#fd3535" }}
+            color="error"
           />,
         ];
       },
@@ -437,7 +436,6 @@ export default function ManageExistsUsers() {
         // alignItems: "center",
         // justifyContent: "center",
         borderRadius: "2rem",
-        border: 0,
         boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",
       }}
     >
@@ -453,7 +451,7 @@ export default function ManageExistsUsers() {
         localeText={heIL.components.MuiDataGrid.defaultProps.localeText}
         sx={{
           direction: "rtl",
-
+          border: "none",
           "& .MuiDataGrid-virtualScroller": {
             mt: "0 !important",
           },
@@ -476,9 +474,7 @@ export default function ManageExistsUsers() {
           "& .MuiDataGrid-row:hover": {
             backgroundColor: "#EDF3F8",
           },
-          "& .MuiButton-textSizeSmall": {
-            color: "#3069BE",
-          },
+          "& .MuiButton-textSizeSmall": {},
           "& .MuiDataGrid-columnHeadersInner": {
             bgcolor: "#fccd38",
           },
@@ -546,7 +542,7 @@ export default function ManageExistsUsers() {
           </DialogContent>
           <Divider></Divider>
           <DialogActions>
-            <Button onClick={() => setOpen(false)} color="primary">
+            <Button onClick={() => setOpen(false)} color="secondary">
               ביטול
             </Button>
             <Button onClick={handleUpdatePassword} color="primary">
