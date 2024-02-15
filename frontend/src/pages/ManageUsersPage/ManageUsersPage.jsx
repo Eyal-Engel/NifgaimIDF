@@ -22,7 +22,13 @@ import {
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
 import Swal from "sweetalert2";
-import { deleteUser, updateUser, getUsers } from "../../utils/api/usersApi";
+import {
+  deleteUser,
+  updateUser,
+  getUsers,
+  changePassword,
+  getFullNameById,
+} from "../../utils/api/usersApi";
 import {
   getAllCommandsNames,
   getCommandIdByName,
@@ -40,16 +46,89 @@ import {
   InputAdornment,
   Input,
   Divider,
+  Paper,
+  DialogContentText,
 } from "@mui/material";
 import "./ManageUsersPage.css";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Slide from "@mui/material/Slide";
 import Draggable from "react-draggable";
+import {
+  VALIDATOR_PASSWORD,
+  validationPasswordsErrorType,
+} from "../../utils/validators";
+import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
+import AddIcon from "@mui/icons-material/Add";
+import AccountBox from "../../components/loginForm/AccountBox";
+import { motion } from "framer-motion";
 
 function CustomToolbar(props) {
+  const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const handleCreateNewUser = () => {
+    setOpenCreateNewUser(true);
+  };
+
+  const handleClose = () => {
+    setOpenCreateNewUser(false); // Close the dialog
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(
+      (prevShowConfirmPassword) => !prevShowConfirmPassword
+    );
+  };
+
+  const [userSignUpInfo, setUserSignUpInfo] = React.useState({
+    privateNumber: "",
+    fullName: "",
+    password: "",
+    confirmPassword: "",
+    editPerm: false,
+    managePerm: false,
+  });
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserSignUpInfo({
+      ...userSignUpInfo,
+      [name]: value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = () => {
+    // Perform your submission logic here, for example, sending the data to an API
+    console.log("Form submitted with data:", userSignUpInfo);
+  };
+
   return (
     <>
+      <Button
+        color="primary"
+        startIcon={<AddIcon />}
+        onClick={handleCreateNewUser}
+        sx={{
+          paddingRight: "60px",
+          borderRadius: "5000px 5000px 0 0",
+
+          "& .MuiButton-startIcon": {
+            marginLeft: "-125px",
+          },
+          "&:hover": {
+            backgroundColor: "#EDF3F8",
+          },
+        }}
+      >
+        צור משתמש חדש
+      </Button>
       <GridToolbarContainer
         style={{
           direction: "rtl",
@@ -111,6 +190,153 @@ function CustomToolbar(props) {
           />
         </div>
       </GridToolbarContainer>
+      <Dialog
+        sx={{
+          direction: "rtl",
+        }}
+        open={openCreateNewUser}
+        TransitionComponent={Transition}
+        PaperComponent={PaperComponent}
+        onClose={() => handleClose()}
+        aria-labelledby="draggable-dialog-title"
+      >
+        <div
+          className="boxAccountContainer"
+          style={{
+            height: "800px", // Set your desired height here
+            borderRadius: "inherit",
+          }}
+        >
+          <div
+            style={{
+              zIndex: "9999",
+              display: "flex",
+              padding: "10px",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <AiOutlineCloseCircle
+              style={{
+                cursor: "pointer",
+                fontSize: "30px",
+              }}
+              onClick={() => handleClose()}
+            />
+            <AiOutlineDrag
+              style={{
+                cursor: "move",
+                fontSize: "24px",
+              }}
+              id="draggable-dialog-title"
+            />
+          </div>
+
+          <div className="topAccountContainer">
+            <motion.div className="backdrop" style={{ marginTop: "-20px" }} />
+            <div className="header-text">הרשמה</div>
+          </div>
+          <div className="innerAccountContainer">
+            <div className="boxLoginContainer" style={{ marginTop: "-30px" }}>
+              <form className="formLoginContainer">
+                <Input
+                  type={"text"}
+                  name="privateNumber"
+                  placeholder="מספר אישי"
+                  className="resetPasswordInputField"
+                  onChange={handleInputChange}
+                />
+                <Input
+                  type={"text"}
+                  name="fullName"
+                  placeholder="שם מלא"
+                  className="resetPasswordInputField"
+                  onChange={handleInputChange}
+                />
+
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="סיסמא"
+                  className="resetPasswordInputField"
+                  onChange={handleInputChange}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility}>
+                        {showPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <Input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="אימות סיסמא"
+                  className="resetPasswordInputField"
+                  onChange={handleInputChange}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton onClick={toggleConfirmPasswordVisibility}>
+                        {showConfirmPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+
+                <h2 style={{ display: "flex", justifyContent: "center" }}>
+                  הרשאות משתמש
+                </h2>
+                <div
+                  className="perms"
+                  style={{
+                    display: "flex",
+                    flexDirection: "row", // Change flexDirection to column
+                    justifyContent: "space-around", // Center vertically
+                    alignItems: "center", // Center horizontally
+                  }}
+                >
+                  <div>
+                    <label style={{ fontSize: "1.5em" }}>עריכת הרשאות</label>{" "}
+                    {/* Increase font size */}
+                    <input
+                      type="checkbox"
+                      name="editPerm"
+                      onChange={handleInputChange}
+                      style={{ transform: "scale(1.5)" }} // Increase checkbox size
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "1.5em" }}>מנהל הרשאות</label>{" "}
+                    {/* Increase font size */}
+                    <input
+                      type="checkbox"
+                      name="managePerm"
+                      onChange={handleInputChange}
+                      style={{ transform: "scale(1.5)" }} // Increase checkbox size
+                    />
+                  </div>
+                </div>
+              </form>
+              <button
+                type="submit"
+                className="submit-button"
+                onClick={handleSubmit}
+                style={{ margin: "0 0 10px 0" }}
+              >
+                הירשם/י
+              </button>
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 }
@@ -155,6 +381,17 @@ function CustomNoRowsOverlay() {
   );
 }
 
+function PaperComponent(props) {
+  return (
+    <Draggable
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
+      <Paper {...props} sx={{ borderRadius: "10px" }} />
+    </Draggable>
+  );
+}
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -166,6 +403,7 @@ export default function ManageExistsUsers() {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [selectedUserId, setSelectedUserId] = React.useState(null);
+  const [selectedFullName, setSelectedFullName] = React.useState(null);
   const [userLoginInfo, setPasswordInfo] = React.useState({
     password: "",
     confirmPassword: "",
@@ -185,11 +423,17 @@ export default function ManageExistsUsers() {
   };
 
   // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handlePasswordInputChange = (e) => {
     setPasswordInfo({
       ...userLoginInfo,
-      [name]: value,
+      password: e.target.value,
+    });
+  };
+
+  const handleConfirmPasswordInputChange = (e) => {
+    setPasswordInfo({
+      ...userLoginInfo,
+      confirmPassword: e.target.value,
     });
   };
 
@@ -243,13 +487,70 @@ export default function ManageExistsUsers() {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
-  const handleResetPassword = (id) => () => {
+  const handleResetPassword = (id) => async () => {
     setSelectedUserId(id);
+    const selectedUserName = await getFullNameById(id);
+    setSelectedFullName(selectedUserName);
     setOpen(true);
   };
 
   const handleDeleteClick = (id) => () => {
-    // Delete logic
+    try {
+      // const loggedUserId = JSON.parse(localStorage.getItem("userData")).userId;
+
+      const loggedUserId = -1;
+      if (id !== loggedUserId) {
+        const userFullName = rows.find((row) => row.id === id).fullName;
+
+        Swal.fire({
+          title: `האם את/ה בטוח/ה שתרצה/י למחוק את המשתמש ${userFullName}`,
+          text: "פעולה זאת איננה ניתנת לשחזור",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "מחק משתמש",
+          cancelButtonText: "בטל",
+          reverseButtons: true,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              await deleteUser(id);
+              setRows(rows.filter((row) => row.id !== id));
+              Swal.fire({
+                title: `משתמש "${userFullName}" נמחק בהצלחה!`,
+                text: "",
+                icon: "success",
+                confirmButtonText: "אישור",
+              }).then((result) => {});
+            } catch (error) {
+              Swal.fire({
+                title: `לא ניתן למחוק את המשתמש`,
+                text: error,
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "אישור",
+                reverseButtons: true,
+              }).then((result) => {});
+            }
+          }
+        });
+      } else {
+        Swal.fire({
+          title: `לא ניתן למחוק את המשתמש`,
+          text: "משתמש אינו יכול למחוק את עצמו",
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleCancelClick = (id) => () => {
@@ -263,11 +564,82 @@ export default function ManageExistsUsers() {
     }
   };
 
-  const handleUpdatePassword = () => {
-    // Password update logic here
+  const handleUpdatePassword = async () => {
+    console.log(selectedUserId);
+    const newPassword = userLoginInfo.password;
+    const confirmPassword = userLoginInfo.confirmPassword;
 
-    console.log("Updating password...");
-    setOpen(false);
+    const error = validationPasswordsErrorType(
+      newPassword,
+      confirmPassword
+    ).msg;
+
+    let errorMsgForSwal = "";
+
+    if (error === "Identical and valid") {
+      errorMsgForSwal = "זהות ותקינות";
+    } else if (error === "Identical but invalid") {
+      errorMsgForSwal = "הסיסמאות שהזנת זהות, אך אינן תקינות";
+    } else if (error === "Not identical, confirm password validation failed") {
+      errorMsgForSwal = "הסיסמאות שהזנת אינן זהות, אימות סיסמא אינה תקינה";
+    } else if (error === "Identical, password validation failed") {
+      errorMsgForSwal = "הסיסמאות שהזנת זהות, סיסמא אינה תקינה";
+    } else if (error === "Not identical, both invalid") {
+      errorMsgForSwal =
+        "הסיסמאות שהזנת אינן זהות, סיסמא ואימות סיסמא אינן תקינות";
+    } else if (error === "Not identical, both invalid") {
+      errorMsgForSwal =
+        "הסיסמאות שהזנת אינן זהות, סיסמא ואימות סיסמא אינן תקינות";
+    } else if (error === "Not identical, both valid") {
+      errorMsgForSwal = "הסיסמאות שהזנת אינן זהות";
+    }
+
+    if (errorMsgForSwal !== "זהות ותקינות") {
+      Swal.fire({
+        title: `שגיאה בעדכון סיסמא`,
+        text: errorMsgForSwal,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "אישור",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      });
+    } else {
+      try {
+        await changePassword(selectedUserId, newPassword);
+        const fullName = await getFullNameById(selectedUserId);
+        Swal.fire({
+          title: `סיסמא עודכנה בהצלחה`,
+          text: `הסיסמא החדשה של המשתמש ${fullName} הינה ${newPassword}`,
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            setOpen(false);
+          }
+        });
+      } catch (error) {
+        console.log("Error processing row update:", error);
+        Swal.fire({
+          title: `שגיאה בעדכון סיסמא`,
+          text: "לא ניתן לעדכן סיסמא חדשה, נסה שוב מאוחר יותר",
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        });
+      }
+    }
   };
 
   const processRowUpdate = async (newRow) => {
@@ -305,10 +677,6 @@ export default function ManageExistsUsers() {
 
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
-  };
-
-  const clamp = (min, value, max) => {
-    return `clamp(${min}, ${value}, ${max})`;
   };
 
   const columns = [
@@ -495,62 +863,79 @@ export default function ManageExistsUsers() {
           toolbar: { setRows, setRowModesModel },
         }}
       />
-      <Draggable cancel={'[class*="resetPasswordForm"]'}>
-        <Dialog
-          sx={{ direction: "rtl", backgroundColor: "none" }}
-          open={open}
-          TransitionComponent={Transition}
-          onClose={() => setOpen(false)}
-        >
-          <DialogTitle>
-            איפוס סיסמא{" "}
-            <Typography fontWeight="bold">למשתמש: "שם המשתמש"</Typography>
-          </DialogTitle>
-          <DialogContent sx={{ direction: "rtl" }}>
-            <Input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder="סיסמא"
-              className="resetPasswordInputField"
-              onChange={handleInputChange}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility}>
-                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                  </IconButton>
-                </InputAdornment>
-              }
+      {/* <Draggable cancel={'[class*="resetPasswordForm"]'}> */}
+      <Dialog
+        sx={{ direction: "rtl", backgroundColor: "none" }}
+        open={open}
+        TransitionComponent={Transition}
+        PaperComponent={PaperComponent}
+        onClose={() => setOpen(false)}
+        aria-labelledby="draggable-dialog-title"
+      >
+        <DialogTitle>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            איפוס סיסמא
+            <AiOutlineDrag
+              style={{ cursor: "move", fontSize: "24px" }}
+              id="draggable-dialog-title"
             />
-            <Input
-              type={showConfirmPassword ? "text" : "password"}
-              name="password"
-              placeholder="אימות סיסמא"
-              className="resetPasswordInputField"
-              onChange={handleInputChange}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton onClick={toggleConfirmPasswordVisibility}>
-                    {showConfirmPassword ? (
-                      <VisibilityOffIcon />
-                    ) : (
-                      <VisibilityIcon />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </DialogContent>
-          <Divider></Divider>
-          <DialogActions>
-            <Button onClick={() => setOpen(false)} color="secondary">
-              ביטול
-            </Button>
-            <Button onClick={handleUpdatePassword} color="primary">
-              עדכון סיסמא
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Draggable>
+          </div>
+          <Typography fontWeight="bold">
+            למשתמש: "{selectedFullName}"
+          </Typography>
+        </DialogTitle>
+
+        <DialogContent sx={{ direction: "rtl" }}>
+          <Input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="סיסמא"
+            className="resetPasswordInputField"
+            onChange={handlePasswordInputChange}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton onClick={togglePasswordVisibility}>
+                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          <Input
+            type={showConfirmPassword ? "text" : "password"}
+            name="password"
+            placeholder="אימות סיסמא"
+            className="resetPasswordInputField"
+            onChange={handleConfirmPasswordInputChange}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton onClick={toggleConfirmPasswordVisibility}>
+                  {showConfirmPassword ? (
+                    <VisibilityOffIcon />
+                  ) : (
+                    <VisibilityIcon />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </DialogContent>
+        <Divider></Divider>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} color="secondary">
+            ביטול
+          </Button>
+          <Button onClick={handleUpdatePassword} color="primary">
+            עדכון סיסמא
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* </Draggable> */}
     </Box>
   );
 }
