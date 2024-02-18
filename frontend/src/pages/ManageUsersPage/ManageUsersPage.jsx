@@ -60,8 +60,8 @@ import {
 } from "../../utils/validators";
 import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
 import AddIcon from "@mui/icons-material/Add";
-import AccountBox from "../../components/loginForm/AccountBox";
 import { motion } from "framer-motion";
+import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
 
 function CustomToolbar(props) {
   const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
@@ -108,6 +108,8 @@ function CustomToolbar(props) {
     // Perform your submission logic here, for example, sending the data to an API
     console.log("Form submitted with data:", userSignUpInfo);
   };
+
+  const handleChange = (value) => console.log(value);
 
   return (
     <>
@@ -234,11 +236,14 @@ function CustomToolbar(props) {
 
           <div className="topAccountContainer">
             <motion.div className="backdrop" style={{ marginTop: "-20px" }} />
-            <div className="header-text">הרשמה</div>
+            <div className="header-text">יצירת משתמש חדש</div>
           </div>
           <div className="innerAccountContainer">
-            <div className="boxLoginContainer" style={{ marginTop: "-30px" }}>
-              <form className="formLoginContainer">
+            <div className="boxLoginContainer">
+              <form
+                className="formLoginContainer"
+                style={{ marginTop: "-60px" }}
+              >
                 <Input
                   type={"text"}
                   name="privateNumber"
@@ -254,7 +259,7 @@ function CustomToolbar(props) {
                   onChange={handleInputChange}
                 />
 
-                <Input
+                {/* <Input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="סיסמא"
@@ -271,12 +276,13 @@ function CustomToolbar(props) {
                       </IconButton>
                     </InputAdornment>
                   }
-                />
-                <Input
+                /> */}
+                {/* <Input
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   placeholder="אימות סיסמא"
                   className="resetPasswordInputField"
+                  spellCheck="false"
                   onChange={handleInputChange}
                   endAdornment={
                     <InputAdornment position="end">
@@ -289,9 +295,20 @@ function CustomToolbar(props) {
                       </IconButton>
                     </InputAdornment>
                   }
+                /> */}
+                <PasswordStrength
+                  id="confirmPasswordRegister"
+                  placeholder="אימות סיסמא"
+                  onChange={handleChange}
                 />
 
-                <h2 style={{ display: "flex", justifyContent: "center" }}>
+                <h2
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                  }}
+                >
                   הרשאות משתמש
                 </h2>
                 <div
@@ -329,9 +346,9 @@ function CustomToolbar(props) {
                 type="submit"
                 className="submit-button"
                 onClick={handleSubmit}
-                style={{ margin: "0 0 10px 0" }}
+                style={{ marginTop: "20px" }}
               >
-                הירשם/י
+                צור משתמש
               </button>
             </div>
           </div>
@@ -411,6 +428,8 @@ export default function ManageExistsUsers() {
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+  const handleChangeResetPassword = (value) => console.log(value);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -892,7 +911,7 @@ export default function ManageExistsUsers() {
         </DialogTitle>
 
         <DialogContent sx={{ direction: "rtl" }}>
-          <Input
+          {/* <Input
             type={showPassword ? "text" : "password"}
             name="password"
             placeholder="סיסמא"
@@ -905,8 +924,8 @@ export default function ManageExistsUsers() {
                 </IconButton>
               </InputAdornment>
             }
-          />
-          <Input
+          /> */}
+          {/* <Input
             type={showConfirmPassword ? "text" : "password"}
             name="password"
             placeholder="אימות סיסמא"
@@ -923,6 +942,12 @@ export default function ManageExistsUsers() {
                 </IconButton>
               </InputAdornment>
             }
+          /> */}
+
+          <PasswordStrength
+            id="confirmPasswordReset"
+            placeholder="אימות סיסמא"
+            onChange={handleChangeResetPassword}
           />
         </DialogContent>
         <Divider></Divider>

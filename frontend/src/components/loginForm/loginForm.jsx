@@ -1,12 +1,21 @@
 // loginForm.jsx
 import React, { useState } from "react";
 import "./loginForm.css"; // Import the CSS file
+import { IconButton, Input, InputAdornment } from "@mui/material";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 export function LoginForm() {
   const [userLoginInfo, setUserLoginInfo] = useState({
     privateNumber: "",
     password: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -24,24 +33,31 @@ export function LoginForm() {
   };
 
   return (
-    <div className="boxLoginContainer">
-      <form className="formLoginContainer">
-        <input
-          type="privateNumber"
+    <div className="boxLoginContainer1">
+      <form className="formLoginContainer1">
+        <Input
+          type="text"
           name="privateNumber"
+          className="input-field1"
           placeholder="מספר אישי"
-          className="input-field"
           onChange={handleInputChange}
         />
-        <input
-          type="password"
+        <Input
+          type={showPassword ? "text" : "password"}
           name="password"
-          placeholder="סיסמא"
-          className="input-field"
+          className="input-field1"
+          placeholder="אימות סיסמא"
           onChange={handleInputChange}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton onClick={togglePasswordVisibility}>
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </InputAdornment>
+          }
         />
       </form>
-      <button type="submit" className="submit-button" onClick={handleSubmit}>
+      <button type="submit" className="submit-button1" onClick={handleSubmit}>
         התחבר/י
       </button>
     </div>

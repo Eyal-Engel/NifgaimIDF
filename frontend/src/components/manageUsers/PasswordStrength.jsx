@@ -1,0 +1,83 @@
+import { useState } from "react";
+import "./styles.css";
+import { IconButton, Input, InputAdornment } from "@mui/material";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+const strengthLabels = ["חלשה", "בינונית", "בינונית", "חזקה"];
+
+export const PasswordStrength = ({ id, placeholder, onChange }) => {
+  const [strength, setStrength] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(
+      (prevShowConfirmPassword) => !prevShowConfirmPassword
+    );
+  };
+
+  const getStrength = (password) => {
+    let strengthIndicator = -1;
+
+    if (/[a-z]/.test(password)) strengthIndicator++;
+    if (/[A-Z]/.test(password)) strengthIndicator++;
+    if (/\d/.test(password)) strengthIndicator++;
+    if (/[^a-zA-Z0-9]/.test(password)) strengthIndicator++;
+
+    if (password.length >= 10) strengthIndicator++;
+
+    return strengthLabels[strengthIndicator];
+  };
+
+  const handleChange = (event) => {
+    setStrength(getStrength(event.target.value));
+    onChange(event.target.value);
+  };
+
+  return (
+    <>
+      <Input
+        id={id}
+        type={showPassword ? "text" : "password"}
+        name="password"
+        placeholder="סיסמא"
+        className="resetPasswordInputField"
+        onChange={handleChange}
+        endAdornment={
+          <InputAdornment position="end">
+            <IconButton onClick={togglePasswordVisibility}>
+              {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            </IconButton>
+          </InputAdornment>
+        }
+      />
+      <Input
+        id={id + "2"}
+        type={showConfirmPassword ? "text" : "password"}
+        name="confirmPassword"
+        placeholder={placeholder}
+        className="resetPasswordInputField"
+        endAdornment={
+          <InputAdornment position="end">
+            <IconButton onClick={togglePasswordVisibility}>
+              {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            </IconButton>
+          </InputAdornment>
+        }
+      />
+      <div className={`bars ${strength}`}>
+        <div></div>
+      </div>
+      <div className="strength">{strength && `סיסמא ${strength}`}</div>
+      <p>
+        סיסמא חזקה צריכה להיות באורך של לפחות 10 תווים ולהכיל אות גדולה, אות
+        קטנה ומספר.
+      </p>
+    </>
+  );
+};
