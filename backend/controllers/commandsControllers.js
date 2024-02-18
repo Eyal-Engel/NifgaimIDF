@@ -51,7 +51,7 @@ const updateCommandById = async (req, res, next) => {
       return next(new Error(`Command with id ${id} not found.`, 404));
     }
 
-    if (command.isNewSource) {
+    if (!command.isNewSource) {
       return next(
         new Error(`You do not have access to edit this graveyard.`, 401)
       );
