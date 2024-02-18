@@ -138,6 +138,32 @@ export async function updateUser(userId, updatedUserData) {
   }
 }
 
+export async function changePassword(userId, newPassword) {
+  const apiUrl = `http://localhost:5000/api/users/password/${userId}`;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "PATCH",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  const passwordData = {
+    password: newPassword
+  };
+
+  try {
+    const response = await patch(apiUrl, passwordData, headers);
+    return response;
+  } catch (error) {
+    console.error(`Error changing password for user with ID ${userId}:`, error);
+    throw error;
+  }
+}
+
 export async function deleteUser(userId) {
   const apiUrl = `http://localhost:5000/api/users/${userId}`;
 
