@@ -31,10 +31,10 @@ const getCommandById = async (req, res, next) => {
 
 // Post new command
 const createCommand = async (req, res, next) => {
-  const { commandName } = req.body;
+  const { commandName, isNewSource } = req.body;
   const id = uuidv4();
   try {
-    const newCommand = await Command.create({ id, commandName });
+    const newCommand = await Command.create({ id, commandName, isNewSource });
     res.status(201).json(newCommand);
   } catch (err) {
     return next(err);
