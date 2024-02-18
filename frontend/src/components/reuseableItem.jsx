@@ -14,9 +14,10 @@ const EditableItem = ({
   itemId,
   handleItemNameChange,
   handleDeleteItem,
-  isGraveyard
+  isGraveyard,
+  isNewItem,
 }) => {
-  const [isInEditMode, setIsInEditMode] = useState(false);
+  const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
 
   const handleEditClick = () => {
@@ -79,7 +80,11 @@ const EditableItem = ({
           />
         )}
       </CardContent>
-      <CardActions className={isGraveyard ? "actionGraveyardItemButton" : "actionCommandItemButtons"}>
+      <CardActions
+        className={
+          isGraveyard ? "actionGraveyardItemButton" : "actionCommandItemButtons"
+        }
+      >
         {!isInEditMode ? (
           <Button
             variant="outlined"

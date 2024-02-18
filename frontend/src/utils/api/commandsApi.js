@@ -121,8 +121,7 @@ export async function updateCommandById(commandId, updatedCommand) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = updatedCommand;
-  console.log(body)
+  const body = JSON.stringify({ updatedCommand });
   try {
     const response = await patch(apiUrl, body, headers);
     return response.data;

@@ -44,7 +44,7 @@ const createCommand = async (req, res, next) => {
 // Patch a command by id
 const updateCommandById = async (req, res, next) => {
   const id = req.params.commandId;
-  const commandName = req.body;
+  const commandName = req.body.updatedCommand;
   console.log("AAAAAAAAAAAAAAAAA");
   console.log(req);
   try {
