@@ -31,10 +31,14 @@ const getGraveyardById = async (req, res, next) => {
 
 // Post new command
 const createGraveyard = async (req, res, next) => {
-  const { graveyardName } = req.body;
+  const { graveyardName, isNewSource } = req.body;
   const id = uuidv4();
   try {
-    const newGraveyard = await Graveyard.create({ id, graveyardName });
+    const newGraveyard = await Graveyard.create({
+      id,
+      graveyardName,
+      isNewSource,
+    });
     res.status(201).json(newGraveyard);
   } catch (err) {
     return next(err);
