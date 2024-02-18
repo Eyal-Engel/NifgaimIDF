@@ -1,10 +1,12 @@
 /* accountBox.css */
 
 .boxAccountContainer {
-  width: 576px;
-  height: 65%;
+  
+  width: 30vw;
+  height: 38vw;
   min-width: 330px;
   min-height: 465px;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;

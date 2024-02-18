@@ -57,21 +57,23 @@ export default function ManageCommandsPage() {
 
   return (
     <div className="commandsContainer">
-      <h1>רשימת פיקודים</h1>
-      <CacheProvider value={cacheRtl}>
-        <ThemeProvider theme={theme}>
-          <div style={{ direction: "rtl", display: "flex" }}>
-            <TextField
-              id="filled-search"
-              label="חפש פיקוד"
-              type="search"
-              variant="filled"
-              onChange={handelSearchInput}
-              sx={{zIndex: 0}}
-            />
-          </div>
-        </ThemeProvider>
-      </CacheProvider>
+      <div className="commandsHeader">
+        <h1>רשימת פיקודים</h1>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <div style={{ direction: "rtl", display: "flex" }}>
+              <TextField
+                id="filled-search"
+                label="חפש פיקוד"
+                type="search"
+                variant="filled"
+                onChange={handelSearchInput}
+                sx={{ zIndex: 0 }}
+              />
+            </div>
+          </ThemeProvider>
+        </CacheProvider>
+      </div>
       <ul className="commands-list">
         {filteredCommands.map((command, index) => (
           <li key={index}>

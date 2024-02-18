@@ -1,23 +1,36 @@
 .graveyardContainer {
   height: 100%;
-  width: 700px;
+  width: 60vw;
   min-width: 290px;
   margin: 20px;
 }
 
-.graveyardContainer h1 {
+.graveyardHeader {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.graveyardHeader h1 {
   text-align: end;
 }
 
 .graveyard-list {
   list-style-type: none;
   padding: 0;
+  overflow-y: auto;
+  height: 70vh;
 }
 
-@media only screen and (max-width: 400px) {
+.graveyard-list li {
+  padding-right: 10px;
+}
+
+@media only screen and (max-width: 550px) {
   .actionGraveyardItemButton {
     display: flex;
     flex-direction: column;
-    gap: 5px
+    gap: 5px;
   }
 }
