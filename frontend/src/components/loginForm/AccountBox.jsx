@@ -5,7 +5,7 @@ import "./accountBox.css";
 
 export default function AccountBox(props) {
   return (
-    <div className="boxAccountContainer">
+    <div className="boxAccountContainer1">
       <div className="topAccountContainer">
         <motion.div className="backdrop" />
         <div className="header-text">התחברות</div>
