@@ -44,7 +44,9 @@ const createCommand = async (req, res, next) => {
 // Patch a command by id
 const updateCommandById = async (req, res, next) => {
   const id = req.params.commandId;
-  const commandName = req.body.commandName;
+  const commandName = req.body;
+  console.log("AAAAAAAAAAAAAAAAA");
+  console.log(req);
   try {
     const command = await Command.findByPk(id);
     if (!command) {

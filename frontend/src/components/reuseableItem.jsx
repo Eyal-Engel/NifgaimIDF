@@ -11,10 +11,10 @@ import CancelIcon from "@mui/icons-material/Close";
 
 const EditableItem = ({
   itemName,
+  itemId,
   handleItemNameChange,
-  itemIndex,
   handleDeleteItem,
-  isGraveyard,
+  isGraveyard
 }) => {
   const [isInEditMode, setIsInEditMode] = useState(false);
   const [editedItemName, setEditedItemName] = useState(itemName);
@@ -25,13 +25,13 @@ const EditableItem = ({
 
   const handleSaveClick = () => {
     setIsInEditMode(false);
-    handleItemNameChange(itemIndex, editedItemName);
+    handleItemNameChange(itemId, editedItemName);
     // Handle saving the editedItemName, e.g., make an API call.
   };
 
   const handleDeleteClick = () => {
     // Call the delete function with the index of the item to delete
-    handleDeleteItem(itemIndex);
+    handleDeleteItem(itemId, itemName);
     // You may also want to handle any additional logic, like making an API call to delete the item.
   };
 
