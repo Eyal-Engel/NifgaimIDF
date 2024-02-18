@@ -25,8 +25,6 @@ const handleRouter = (token, command) => {
       path: "/",
       element: <RootLayout />,
       children: [
-        { path: "/", element: <h1>Hello World!</h1> },
-
         { path: "/", element: <Navigate to="/login" replace /> },
         { path: "/login", element: <LoginPage /> },
         { path: "about", element: <AboutPage /> },
