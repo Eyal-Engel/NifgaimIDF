@@ -28,6 +28,7 @@ import {
   getUsers,
   changePassword,
   getFullNameById,
+  createUser,
 } from "../../utils/api/usersApi";
 import {
   getAllCommandsNames,
@@ -48,6 +49,8 @@ import {
   Divider,
   Paper,
   DialogContentText,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import "./ManageUsersPage.css";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -65,8 +68,21 @@ import { PasswordStrength } from "../../components/manageUsers/PasswordStrength"
 
 function CustomToolbar(props) {
   const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [commandsSignUp, setCommandsSignUp] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchCommandsData = async () => {
+      try {
+        const commandsNames = await getAllCommandsNames();
+        setCommandsSignUp(commandsNames);
+      } catch (error) {
+        console.error("Error during get commands:", error);
+      }
+    };
+
+    fetchCommandsData();
+  }, []);
+
   const handleCreateNewUser = () => {
     setOpenCreateNewUser(true);
   };
@@ -75,28 +91,48 @@ function CustomToolbar(props) {
     setOpenCreateNewUser(false); // Close the dialog
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(
-      (prevShowConfirmPassword) => !prevShowConfirmPassword
-    );
-  };
-
   const [userSignUpInfo, setUserSignUpInfo] = React.useState({
     privateNumber: "",
     fullName: "",
     password: "",
+    command: "",
     confirmPassword: "",
     editPerm: false,
     managePerm: false,
   });
 
+  const handleChangePassword = (value) => {
+    // setPassword(value);
+
+    setUserSignUpInfo({
+      ...userSignUpInfo,
+      password: value,
+    });
+  };
+
+  const handleChangeConfirmPassword = (value) => {
+    // setConfirmPassword(value);
+
+    setUserSignUpInfo({
+      ...userSignUpInfo,
+      confirmPassword: value,
+    });
+  };
+
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(name, value);
+    setUserSignUpInfo({
+      ...userSignUpInfo,
+      [name]: value,
+    });
+  };
+
+  const handleCheckBoxInputChange = (e) => {
+    const { name, checked } = e.target;
+    const value = checked; // Set value to true if checked, false if unchecked
+    console.log(name, value);
     setUserSignUpInfo({
       ...userSignUpInfo,
       [name]: value,
@@ -104,12 +140,134 @@ function CustomToolbar(props) {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Perform your submission logic here, for example, sending the data to an API
     console.log("Form submitted with data:", userSignUpInfo);
-  };
+    let errorsForSwalFrontendTesting = ""; // Start unordered list
 
-  const handleChange = (value) => console.log(value);
+    if (userSignUpInfo.password !== userSignUpInfo.confirmPassword) {
+      errorsForSwalFrontendTesting += "<li>סיסמא ואימות סיסמא אינם זהים</li>";
+    }
+    if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(userSignUpInfo.password)) {
+      errorsForSwalFrontendTesting +=
+        "<li>סיסמא אינה תקינה - סיסמא תקינה צריכה להיות באורך של לפחות 6 תווים ומכיל לפחות אות אחת וספרה אחת.</li>";
+    }
+
+    if (errorsForSwalFrontendTesting === "") {
+      try {
+        const commandId = await getCommandIdByName(userSignUpInfo.command);
+
+        const user = {
+          privateNumber: userSignUpInfo.privateNumber,
+          fullName: userSignUpInfo.fullName,
+          password: userSignUpInfo.password,
+          commandId: commandId,
+          editPerm: userSignUpInfo.editPerm,
+          managePerm: userSignUpInfo.managePerm,
+        };
+
+        try {
+          await createUser(user);
+          Swal.fire({
+            title: `משתמש "${userSignUpInfo.fullName}" נוצר בהצלחה!`,
+            text: "",
+            icon: "success",
+            confirmButtonText: "אישור",
+            customClass: {
+              container: "swal-dialog-custom",
+            },
+          }).then((result) => {
+            if (result.isConfirmed) {
+              handleClose();
+            }
+          });
+        } catch (error) {
+          const errors = error.response.data.body;
+          let errorsForSwal = ""; // Start unordered list
+
+          // Split the errors string by newline character
+          const errorArray = errors.split(/\r?\n/).map((errorString) => {
+            // Extract error key and message
+            const [key, ...messageParts] = errorString.split(": ");
+
+            // Join message parts back together (in case the message itself contains colons)
+            const message = messageParts.join(":").trim();
+
+            // Return an object with key and message
+            return { [key.trim()]: message };
+          });
+
+          console.log(errorArray);
+
+          let errorMessages;
+          if (errorArray.length > 1) {
+            errorMessages = errorArray.map((error) =>
+              Object.values(error)[0].replace(/,/g, "")
+            );
+
+            for (let i = 0; i < errorMessages.length; i++) {
+              console.log(errorMessages[i]);
+              if (
+                errorMessages[i] ===
+                "nifgaimUsers.nifgaimCommandId cannot be null"
+              ) {
+                errorsForSwal += "<li>פיקוד לא יכול להיות ריק</li>";
+              }
+              if (
+                errorMessages[i] ===
+                "Validation isNumeric on privateNumber failed"
+              ) {
+                errorsForSwal += "<li>מספר אישי חייב להכיל מספרים בלבד</li>";
+              }
+              if (
+                errorMessages[i] === "Validation len on privateNumber failed"
+              ) {
+                errorsForSwal +=
+                  "<li>מספר אישי חייב להיות באורך של 7 ספרות בדיוק</li>";
+              }
+              if (errorMessages[i] === "Validation is on fullName failed") {
+                errorsForSwal +=
+                  "<li>שם מלא צריך להיות עד 30 תווים ולהכיל אותיות בלבד</li>";
+              }
+            }
+          } else if (
+            Object.keys(errorArray[0])[0] ===
+            "User exists already, please login instead."
+          ) {
+            errorsForSwal += "<li>מספר אישי כבר קיים במערכת</li>";
+          }
+
+          console.log(errorsForSwal);
+
+          Swal.fire({
+            title: ` לא ניתן ליצור את המשתמש ${userSignUpInfo.fullName}`,
+            html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+            icon: "error",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "אישור",
+            reverseButtons: true,
+            customClass: {
+              container: "swal-dialog-custom",
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    } else {
+      Swal.fire({
+        title: ` לא ניתן ליצור את המשתמש ${userSignUpInfo.fullName}`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwalFrontendTesting}</ul>`, // Render errors as list items
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "אישור",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      });
+    }
+  };
 
   return (
     <>
@@ -235,11 +393,11 @@ function CustomToolbar(props) {
           </div>
 
           <div className="topAccountContainer">
-            <motion.div className="backdrop" style={{ marginTop: "-20px" }} />
+            <motion.div className="backdrop" style={{ marginTop: "-60px" }} />
             <div className="header-text">יצירת משתמש חדש</div>
           </div>
           <div className="innerAccountContainer">
-            <div className="boxLoginContainer">
+            <div className="boxLoginContainer" style={{ marginTop: "-50px" }}>
               <form
                 className="formLoginContainer"
                 style={{ marginTop: "-60px" }}
@@ -258,6 +416,30 @@ function CustomToolbar(props) {
                   className="resetPasswordInputField"
                   onChange={handleInputChange}
                 />
+                <Select
+                  sx={{ direction: "rtl" }}
+                  labelId="fullName-label"
+                  id="fullName"
+                  name="command"
+                  defaultValue=""
+                  onChange={handleInputChange}
+                  displayEmpty
+                  className="resetPasswordInputField"
+                  renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
+                >
+                  <MenuItem sx={{ direction: "rtl" }} value="" disabled>
+                    פיקוד
+                  </MenuItem>
+                  {commandsSignUp.map((command) => (
+                    <MenuItem
+                      sx={{ direction: "rtl" }}
+                      key={command}
+                      value={command}
+                    >
+                      {command}
+                    </MenuItem>
+                  ))}
+                </Select>
 
                 {/* <Input
                   type={showPassword ? "text" : "password"}
@@ -299,7 +481,8 @@ function CustomToolbar(props) {
                 <PasswordStrength
                   id="confirmPasswordRegister"
                   placeholder="אימות סיסמא"
-                  onChange={handleChange}
+                  onChangePassword={handleChangePassword}
+                  onChangeConfirmPassword={handleChangeConfirmPassword}
                 />
 
                 <h2
@@ -326,7 +509,7 @@ function CustomToolbar(props) {
                     <input
                       type="checkbox"
                       name="editPerm"
-                      onChange={handleInputChange}
+                      onChange={handleCheckBoxInputChange}
                       style={{ transform: "scale(1.5)" }} // Increase checkbox size
                     />
                   </div>
@@ -336,7 +519,7 @@ function CustomToolbar(props) {
                     <input
                       type="checkbox"
                       name="managePerm"
-                      onChange={handleInputChange}
+                      onChange={handleCheckBoxInputChange}
                       style={{ transform: "scale(1.5)" }} // Increase checkbox size
                     />
                   </div>
@@ -426,33 +609,17 @@ export default function ManageExistsUsers() {
     confirmPassword: "",
   });
 
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-
-  const handleChangeResetPassword = (value) => console.log(value);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(
-      (prevShowConfirmPassword) => !prevShowConfirmPassword
-    );
-  };
-
-  // Handle form input changes
-  const handlePasswordInputChange = (e) => {
+  const handleChangePasswordRegister = (value) => {
     setPasswordInfo({
       ...userLoginInfo,
-      password: e.target.value,
+      password: value,
     });
   };
 
-  const handleConfirmPasswordInputChange = (e) => {
+  const handleChangeConfirmRegister = (value) => {
     setPasswordInfo({
       ...userLoginInfo,
-      confirmPassword: e.target.value,
+      confirmPassword: value,
     });
   };
 
@@ -584,7 +751,6 @@ export default function ManageExistsUsers() {
   };
 
   const handleUpdatePassword = async () => {
-    console.log(selectedUserId);
     const newPassword = userLoginInfo.password;
     const confirmPassword = userLoginInfo.confirmPassword;
 
@@ -882,7 +1048,6 @@ export default function ManageExistsUsers() {
           toolbar: { setRows, setRowModesModel },
         }}
       />
-      {/* <Draggable cancel={'[class*="resetPasswordForm"]'}> */}
       <Dialog
         sx={{ direction: "rtl", backgroundColor: "none" }}
         open={open}
@@ -947,7 +1112,8 @@ export default function ManageExistsUsers() {
           <PasswordStrength
             id="confirmPasswordReset"
             placeholder="אימות סיסמא"
-            onChange={handleChangeResetPassword}
+            onChangePassword={handleChangePasswordRegister}
+            onChangeConfirmPassword={handleChangeConfirmRegister}
           />
         </DialogContent>
         <Divider></Divider>
@@ -960,7 +1126,6 @@ export default function ManageExistsUsers() {
           </Button>
         </DialogActions>
       </Dialog>
-      {/* </Draggable> */}
     </Box>
   );
 }

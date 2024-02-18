@@ -103,16 +103,18 @@ export async function createUser(newUser) {
     "Access-Control-Allow-Headers":
       "Origin, X-Requested-With, Content-Type, Accept, Authorization",
     "Access-Control-Allow-Methods": "POST",
-    Authorization:
-      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+    // Authorization:
+    //   "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify(newUser);
+
   try {
-    const response = await post(apiUrl, newUser, headers);
-    return response.data;
+    const response = await post(apiUrl, body, headers);
+    return response;
   } catch (error) {
     console.error("Error creating new user:", error);
-    return error;
+    throw error;
   }
 }
 
@@ -152,7 +154,7 @@ export async function changePassword(userId, newPassword) {
   };
 
   const passwordData = {
-    password: newPassword
+    password: newPassword,
   };
 
   try {

@@ -17,6 +17,11 @@ NifgaimCommand.init(
       allowNull: false,
       unique: true,
     },
+    isNewSource: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
   },
   {
     sequelize,

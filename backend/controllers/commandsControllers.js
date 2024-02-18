@@ -51,6 +51,12 @@ const updateCommandById = async (req, res, next) => {
       return next(new Error(`Command with id ${id} not found.`, 404));
     }
 
+    if (command.isNewSource) {
+      return next(
+        new Error(`You do not have access to edit this graveyard.`, 401)
+      );
+    }
+
     command.commandName = commandName;
     await command.save();
 
@@ -67,6 +73,12 @@ const deleteCommandById = async (req, res, next) => {
     const command = await Command.findByPk(id);
     if (!command) {
       return next(new Error(`Command with id ${id} not found.`, 404));
+    }
+
+    if (command.isNewSource) {
+      return next(
+        new Error(`You do not have access to delete this graveyard.`, 401)
+      );
     }
 
     await command.destroy();
