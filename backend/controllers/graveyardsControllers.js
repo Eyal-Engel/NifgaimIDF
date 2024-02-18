@@ -51,6 +51,12 @@ const updateGraveyardById = async (req, res, next) => {
       return next(new Error(`Graveyard with id ${id} not found.`, 404));
     }
 
+    if (graveyard.isNewSource) {
+      return next(
+        new Error(`You do not have access to edit this graveyard.`, 401)
+      );
+    }
+
     graveyard.graveyardName = graveyardName;
     await graveyard.save();
 
@@ -67,6 +73,13 @@ const deleteGraveyardById = async (req, res, next) => {
     const graveyard = await Graveyard.findByPk(id);
     if (!graveyard) {
       return next(new Error(`Graveyard with id ${id} not found.`, 404));
+    }
+
+    // command this to delete a source graveyard
+    if (graveyard.isNewSource) {
+      return next(
+        new Error(`You do not have access to delete this graveyard.`, 401)
+      );
     }
 
     await graveyard.destroy();

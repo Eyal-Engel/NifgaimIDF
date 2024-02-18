@@ -119,6 +119,26 @@
 
 .header-text {
   font-size: 70px;
-  padding-bottom: 160px;
+  padding-bottom: 200px;
 }
 
+.boxAccountContainer {
+  width: 576px;
+  height: 100%;
+  min-width: 330px;
+  min-height: 465px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 19px;
+  background-color: #fff;
+  box-shadow: 0 0 2px rgba(15, 15, 15, 0.28);
+  position: relative;
+  overflow: hidden;
+}
+
+@media only screen and (max-width: 800px) {
+  .boxAccountContainer {
+    width: 100%;
+  }
+}

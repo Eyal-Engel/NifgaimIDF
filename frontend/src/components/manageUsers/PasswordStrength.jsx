@@ -6,7 +6,14 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const strengthLabels = ["חלשה", "בינונית", "בינונית", "חזקה"];
 
-export const PasswordStrength = ({ id, placeholder, onChange }) => {
+export const PasswordStrength = ({
+  id,
+  placeholder,
+  onChangePassword,
+  onChangeConfirmPassword,
+}) => {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [strength, setStrength] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -34,9 +41,16 @@ export const PasswordStrength = ({ id, placeholder, onChange }) => {
     return strengthLabels[strengthIndicator];
   };
 
-  const handleChange = (event) => {
-    setStrength(getStrength(event.target.value));
-    onChange(event.target.value);
+  const handleChange = (event, field) => {
+    const value = event.target.value;
+    if (field === "password") {
+      setPassword(value);
+      onChangePassword(value);
+      setStrength(getStrength(value));
+    } else if (field === "confirmPassword") {
+      setConfirmPassword(value);
+      onChangeConfirmPassword(value);
+    }
   };
 
   return (
@@ -47,7 +61,7 @@ export const PasswordStrength = ({ id, placeholder, onChange }) => {
         name="password"
         placeholder="סיסמא"
         className="resetPasswordInputField"
-        onChange={handleChange}
+        onChange={(event) => handleChange(event, "password")}
         endAdornment={
           <InputAdornment position="end">
             <IconButton onClick={togglePasswordVisibility}>
@@ -62,9 +76,10 @@ export const PasswordStrength = ({ id, placeholder, onChange }) => {
         name="confirmPassword"
         placeholder={placeholder}
         className="resetPasswordInputField"
+        onChange={(event) => handleChange(event, "confirmPassword")}
         endAdornment={
           <InputAdornment position="end">
-            <IconButton onClick={togglePasswordVisibility}>
+            <IconButton onClick={toggleConfirmPasswordVisibility}>
               {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
             </IconButton>
           </InputAdornment>

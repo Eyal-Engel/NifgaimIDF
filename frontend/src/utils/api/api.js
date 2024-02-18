@@ -7,7 +7,7 @@ export const get = async (url, headers) => {
       return res;
     }
   } catch (e) {
-    return e;
+    throw e;
   }
 };
 
@@ -18,7 +18,7 @@ export const post = async (url, body, headers) => {
     }
     return res;
   } catch (e) {
-    return e;
+    throw e;
   }
 };
 
@@ -29,7 +29,7 @@ export const patch = async (url, body, headers) => {
     }
     return res;
   } catch (e) {
-    return e;
+    throw e;
   }
 };
 
@@ -40,6 +40,6 @@ export const del = async (url, headers) => {
     }
     return res;
   } catch (e) {
-    return e;
+    throw e;
   }
 };
