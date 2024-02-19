@@ -1,4 +1,4 @@
-import { post, patch, del } from "./api"; // Assuming you have functions for POST, PATCH, DELETE requests in your API
+import {get, post, patch, del } from "./api"; // Assuming you have functions for POST, PATCH, DELETE requests in your API
 
 export async function getAllGraveyards() {
   const apiUrl = "http://localhost:5000/api/graveyards/";

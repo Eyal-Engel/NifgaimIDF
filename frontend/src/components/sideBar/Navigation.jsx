@@ -57,7 +57,7 @@ export const Navigation = ({ hideNavigation }) => {
     }
   }, [loggedUserId]);
 
-  // if (auth.isLoggedIn && loggedUserCommand === "צפון") {
+  // if (auth.isLoggedIn && loggedUserCommand === "דרום") {
   //   itemIds = [0, 1, 2, 3, 4];
   // } else if (auth.isLoggedIn) {
   //   itemIds = [0];
@@ -65,7 +65,7 @@ export const Navigation = ({ hideNavigation }) => {
 
   let itemListInfo = [];
 
-  if (auth.isLoggedIn && loggedUserCommand === "צפון") {
+  if (auth.isLoggedIn && loggedUserCommand === "דרום") {
     itemListInfo = [
       // {
       //   name: "אודות המערכת",
