@@ -10,7 +10,7 @@ router.get("/", commandsController.getAllCommands);
 
 router.get("/:commandId", commandsController.getCommandById);
 
-router.use(checkAuth);
+// router.use(checkAuth);
 
 router.post("/", commandsController.createCommand);
 
