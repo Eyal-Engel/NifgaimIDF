@@ -103,7 +103,6 @@ export async function createCommand(commandName) {
     const response = await post(apiUrl, body, headers);
     return response.data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 }

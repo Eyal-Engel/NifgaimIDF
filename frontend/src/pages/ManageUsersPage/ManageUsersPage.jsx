@@ -193,60 +193,34 @@ function CustomToolbar({ setRows }) {
             }
           });
         } catch (error) {
-          const errors = error.response.data.body;
+          const errors = error.response.data.body.errors;
+          console.log(errors);
           let errorsForSwal = ""; // Start unordered list
 
-          // Split the errors string by newline character
-          const errorArray = errors.split(/\r?\n/).map((errorString) => {
-            // Extract error key and message
-            const [key, ...messageParts] = errorString.split(": ");
-
-            // Join message parts back together (in case the message itself contains colons)
-            const message = messageParts.join(":").trim();
-
-            // Return an object with key and message
-            return { [key.trim()]: message };
-          });
-
-          console.log(errorArray);
-
-          let errorMessages;
-          if (errorArray.length > 1) {
-            errorMessages = errorArray.map((error) =>
-              Object.values(error)[0].replace(/,/g, "")
-            );
-
-            for (let i = 0; i < errorMessages.length; i++) {
-              console.log(errorMessages[i]);
-              if (
-                errorMessages[i] ===
-                "nifgaimUsers.nifgaimCommandId cannot be null"
-              ) {
-                errorsForSwal += "<li>פיקוד לא יכול להיות ריק</li>";
-              }
-              if (
-                errorMessages[i] ===
-                "Validation isNumeric on privateNumber failed"
-              ) {
-                errorsForSwal += "<li>מספר אישי חייב להכיל מספרים בלבד</li>";
-              }
-              if (
-                errorMessages[i] === "Validation len on privateNumber failed"
-              ) {
-                errorsForSwal +=
-                  "<li>מספר אישי חייב להיות באורך של 7 ספרות בדיוק</li>";
-              }
-              if (errorMessages[i] === "Validation is on fullName failed") {
-                errorsForSwal +=
-                  "<li>שם מלא צריך להיות עד 30 תווים ולהכיל אותיות בלבד</li>";
-              }
+          errors.forEach((error) => {
+            console.log(error.message);
+            if (
+              error.message === "nifgaimUsers.nifgaimCommandId cannot be null"
+            ) {
+              errorsForSwal += "<li>פיקוד לא יכול להיות ריק</li>";
             }
-          } else if (
-            Object.keys(errorArray[0])[0] ===
-            "User exists already, please login instead."
-          ) {
-            errorsForSwal += "<li>מספר אישי כבר קיים במערכת</li>";
-          }
+            if (
+              error.message === "Validation isNumeric on privateNumber failed"
+            ) {
+              errorsForSwal += "<li>מספר אישי חייב להכיל מספרים בלבד</li>";
+            }
+            if (error.message === "Validation len on privateNumber failed") {
+              errorsForSwal +=
+                "<li>מספר אישי חייב להיות באורך של 7 ספרות בדיוק</li>";
+            }
+            if (error.message === "Validation is on fullName failed") {
+              errorsForSwal +=
+                "<li>שם מלא צריך להיות עד 30 תווים ולהכיל אותיות בלבד</li>";
+            }
+            if (error.message === "privateNumber must be unique") {
+              errorsForSwal += "<li>מספר אישי כבר קיים במערכת</li>";
+            }
+          });
 
           console.log(errorsForSwal);
 

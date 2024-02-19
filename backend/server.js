@@ -57,11 +57,12 @@ app.use((error, req, res, next) => {
     return next(error);
   }
 
-  console.log(error);
   //if code properties is set or default 500 => error code that something went wrong
-  console.log(error.message);
+  console.log("AAAAAAAAAAAAAAAAA");
+  console.log(error.errors);
+
   return res.status(error.code || 500).json({
-    body: error.message || "An unknown error occurred!",
+    body: error || "An unknown error occurred!",
   });
 });
 // Start the server

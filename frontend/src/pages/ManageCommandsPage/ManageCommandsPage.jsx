@@ -72,14 +72,30 @@ export default function ManageCommandsPage() {
         });
       });
     } catch (error) {
-      const name = getCommandNameById(commandId);
+      
+      const errors = error.response.data.body.errors;
+      console.log(errors);
+      let errorsForSwal = ""; // Start unordered list
+
+      errors.forEach((error) => {
+        console.log(error.message);
+        if (error.message === "commandName must be unique") {
+          errorsForSwal += `<li>הפיקוד ${newName} כבר קיים במערכת</li>`;
+        }
+      });
+
+      console.log(errorsForSwal);
+
       Swal.fire({
-        title: ` ${newName} עם השם ${name} לא ניתן לעדכן את הפיקוד`,
-        text: error,
+        title: ` לא ניתן לעדכן את הפיקוד`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
         icon: "error",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "אישור",
         reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
       });
     }
   };
@@ -142,7 +158,30 @@ export default function ManageCommandsPage() {
         },
       ]);
     } catch (error) {
-      console.log(error);
+      const errors = error.response.data.body.errors;
+      console.log(errors);
+      let errorsForSwal = ""; // Start unordered list
+
+      errors.forEach((error) => {
+        console.log(error.message);
+        if (error.message === "commandName must be unique") {
+          errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
+        }
+      });
+
+      console.log(errorsForSwal);
+
+      Swal.fire({
+        title: ` לא ניתן ליצור את הפיקוד ${value}`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "אישור",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      });
     }
   };
 
