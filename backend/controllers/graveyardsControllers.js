@@ -55,7 +55,7 @@ const updateGraveyardById = async (req, res, next) => {
       return next(new Error(`Graveyard with id ${id} not found.`, 404));
     }
 
-    if (graveyard.isNewSource) {
+    if (!graveyard.isNewSource) {
       return next(
         new Error(`You do not have access to edit this graveyard.`, 401)
       );
