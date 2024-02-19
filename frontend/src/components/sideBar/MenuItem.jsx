@@ -1,12 +1,17 @@
 import React from "react";
 import { motion } from "framer-motion";
-import graveIcon from "../../assets/images/icons/graveIcon.png";
-import pikodimIcon from "../../assets/images/icons/pikodimIcon.png";
-import usersIcon from "../../assets/images/icons/usersManageIcon.png";
-import soliderIcon from "../../assets/images/icons/soldierIcon.png";
-import { useNavigate } from "react-router-dom";
-import "./style.css"
+// import graveIcon from "../../assets/images/icons/check.png";
+// import pikodimIcon from "../../assets/images/icons/pikodimIcon.png";
+// import usersIcon from "../../assets/images/icons/usersManageIcon.png";
+// import soliderIcon from "../../assets/images/icons/soldierIcon.png";
+import halalIcon from "../../assets/images/icons/halalIcon.png";
+import userIcon from "../../assets/images/icons/userIcon.png";
+import graveyardIcon from "../../assets/images/icons/graveyardIcon.png";
+import commandIcon from "../../assets/images/icons/commandIcon.png";
+import columnIcon from "../../assets/images/icons/columnIcon.png";
 
+import { useNavigate } from "react-router-dom";
+import "./style.css";
 
 const variants = {
   open: {
@@ -67,25 +72,25 @@ export const MenuItem = ({ i }) => {
     {
       name: "נפגעים",
       styles: {
-        background: "#ECBA22",
+        background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
       },
-      imgSrc: soliderIcon,
+      imgSrc: halalIcon,
       url: "/halalim",
     },
     {
       name: "ניהול הרשאות",
       styles: {
-        background: "linear-gradient( #E7AF04, rgb(144,153,184))",
+        background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
       },
-      imgSrc: usersIcon,
+      imgSrc: userIcon,
       url: "/manageUsers",
     },
     {
       name: "בתי עלמין",
       styles: {
-        background: "linear-gradient( rgb(144,153,184), rgb(71, 111, 248))",
+        background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
       },
-      imgSrc: graveIcon,
+      imgSrc: graveyardIcon,
       url: "/manageGraveYards",
     },
     {
@@ -93,8 +98,16 @@ export const MenuItem = ({ i }) => {
       styles: {
         background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
       },
-      imgSrc: pikodimIcon,
+      imgSrc: commandIcon,
       url: "/manageCommands",
+    },
+    {
+      name: "מאפייני חלל",
+      styles: {
+        background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
+      },
+      imgSrc: columnIcon,
+      url: "/manageColumns",
     },
   ];
 
@@ -113,14 +126,11 @@ export const MenuItem = ({ i }) => {
         <img src={itemListInfo[i].imgSrc} alt=""></img>
       </div>
 
-      <div
-        className="text-border-wrap"
-        style={itemListInfo[i].styles}
-      >
+      <div className="text-border-wrap" style={itemListInfo[i].styles}>
         <div className="text-placeholder" style={style}>
           {itemListInfo[i].name}
         </div>
-    </div>
+      </div>
     </motion.li>
   );
 };

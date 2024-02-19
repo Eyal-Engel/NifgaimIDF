@@ -66,7 +66,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { motion } from "framer-motion";
 import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
 
-function CustomToolbar(props) {
+function CustomToolbar({ setRows }) {
   const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
   const [commandsSignUp, setCommandsSignUp] = React.useState([]);
 
@@ -168,6 +168,17 @@ function CustomToolbar(props) {
 
         try {
           await createUser(user);
+
+          const updatedUsers = await getUsers();
+          const userPromises = updatedUsers.map(async (user) => ({
+            id: user.id,
+            privateNumber: user.privateNumber,
+            fullName: user.fullName,
+            command: await getCommandNameById(user.nifgaimCommandId),
+          }));
+          const transformedUsers = await Promise.all(userPromises);
+          setRows(transformedUsers);
+
           Swal.fire({
             title: `משתמש "${userSignUpInfo.fullName}" נוצר בהצלחה!`,
             text: "",
@@ -904,17 +915,6 @@ export default function ManageExistsUsers() {
         const option = commands.find(
           ({ value: optionValue }) => optionValue === params.value
         );
-
-        switch (option?.value) {
-          case "declined":
-            return "red-background";
-          case "approved":
-            return "green-background";
-          case "pending":
-            return "orange-background";
-          default:
-            return "";
-        }
       },
     },
 

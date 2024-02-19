@@ -18,7 +18,7 @@ const itemVariants = {
   closed: { opacity: 0, y: 50 },
 };
 
-const itemIds = [0, 1, 2, 3];
+const itemIds = [0, 1, 2, 3, 4];
 
 export const Navigation = ({ hideNavigation }) => {
   const navigate = useNavigate();
