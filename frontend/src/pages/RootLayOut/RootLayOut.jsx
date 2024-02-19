@@ -7,6 +7,9 @@ import nifgaimLogo from "../../assets/images/pictures/nifgaim_logo.png";
 
 import "./RootLayOut.css";
 export default function RootLayout() {
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
+
   return (
     <div
       style={{
@@ -52,12 +55,12 @@ export default function RootLayout() {
           alignItems: "center",
           height: "77%",
           width: "100%",
-          
         }}
       >
         <Outlet />
       </div>
-      <SideBar />
+      {loggedUserId !== "" && <SideBar />}
+
       <div
         className="developerCredits"
         style={{ position: "absolute", bottom: "0", left: "1rem" }}

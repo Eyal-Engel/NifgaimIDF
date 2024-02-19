@@ -42,10 +42,8 @@ export const MenuItem = ({ menuItem }) => {
     if (loggedUserId !== "") {
       const fetchCommand = async () => {
         try {
-          console.log(loggedUserId);
           const command = await getCommandNameByUserId(loggedUserId);
           setLoggedUserCommand(command);
-          console.log(command);
         } catch (error) {
           console.error("Error fetching command:", error);
         }
@@ -56,8 +54,6 @@ export const MenuItem = ({ menuItem }) => {
       console.log("not logged in");
     }
   }, [loggedUserId]);
-
-  console.log(menuItem);
 
   return (
     <>

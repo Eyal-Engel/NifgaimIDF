@@ -48,7 +48,6 @@ export const Navigation = ({ hideNavigation }) => {
         try {
           const command = await getCommandNameByUserId(loggedUserId);
           setLoggedUserCommand(command);
-          console.log(command);
         } catch (error) {
           console.error("Error fetching command:", error);
         }
@@ -165,21 +164,7 @@ export const Navigation = ({ hideNavigation }) => {
         </motion.ul>
       ) : (
         // make exit icon most bottom
-        <motion.ul
-          variants={variants}
-          className={`ulSideBar ${hideNavigation ? "hidden" : ""}`}
-        >
-          <motion.li variants={itemVariants} className="listItemButton">
-            <motion.button
-              className="exitButton"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleLogout()}
-            >
-              <img src={exitIcon} alt="" />
-            </motion.button>
-          </motion.li>
-        </motion.ul>
+        <div></div>
       )}
     </>
   );

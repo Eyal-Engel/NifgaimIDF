@@ -44,7 +44,6 @@ export default function ManageCommandsPage() {
       try {
         const commands = await getCommands();
 
-        console.log(commands);
         setCommands(commands);
       } catch (error) {
         console.error("Error during get commands:", error);
@@ -72,19 +71,14 @@ export default function ManageCommandsPage() {
         });
       });
     } catch (error) {
-      
       const errors = error.response.data.body.errors;
-      console.log(errors);
       let errorsForSwal = ""; // Start unordered list
 
       errors.forEach((error) => {
-        console.log(error.message);
         if (error.message === "commandName must be unique") {
           errorsForSwal += `<li>הפיקוד ${newName} כבר קיים במערכת</li>`;
         }
       });
-
-      console.log(errorsForSwal);
 
       Swal.fire({
         title: ` לא ניתן לעדכן את הפיקוד`,
@@ -114,7 +108,6 @@ export default function ManageCommandsPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          console.log(commandId);
           await deleteCommandById(commandId);
           setCommands((prevCommands) => {
             const updatedCommands = prevCommands.filter(
@@ -148,7 +141,6 @@ export default function ManageCommandsPage() {
 
     try {
       const command = await createCommand(value);
-      console.log(command);
 
       setCommands((prev) => [
         ...prev,
@@ -159,17 +151,13 @@ export default function ManageCommandsPage() {
       ]);
     } catch (error) {
       const errors = error.response.data.body.errors;
-      console.log(errors);
       let errorsForSwal = ""; // Start unordered list
 
       errors.forEach((error) => {
-        console.log(error.message);
         if (error.message === "commandName must be unique") {
           errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
         }
       });
-
-      console.log(errorsForSwal);
 
       Swal.fire({
         title: ` לא ניתן ליצור את הפיקוד ${value}`,

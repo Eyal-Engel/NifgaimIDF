@@ -56,7 +56,7 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const error = new Error("Signing up failed, please try again later.", 500);
     return next(error);
-  } 
+  }
 
   // if (existingUser) {
   //   const error = new Error("User exists already, please login instead.", 422);
@@ -90,57 +90,56 @@ const login = async (req, res, next) => {
 
   const secretKey = process.env.SECRET_KEY;
 
-  let existingUser;
+  const hashedPassowrd = await sha256(password);
 
   try {
-    existingUser = await User.findOne({
-      where: { privateNumber: privateNumber },
+    const existingUser = await User.findOne({
+      where: { privateNumber: privateNumber, password: hashedPassowrd },
     });
-  } catch (err) {
-    const error = new Error("Logging in failed, please try again later.", 500);
-    return next(error);
-  }
 
-  if (!existingUser) {
-    const error = new Error("Invalid credentials, could not log you in.", 404);
-    return next(error);
-  }
+    let token;
+    try {
+      token = jwt.sign(
+        { userId: existingUser.id, privateNumber: existingUser.privateNumber },
+        secretKey,
+        { expiresIn: "168h" }
+      );
+    } catch (err) {
+      return next(err);
+    }
 
-  let isValidPassword = false;
-  try {
-    const hashedPassowrd = await sha256(password);
-
-    isValidPassword = hashedPassowrd === existingUser.password;
-    console.log(isValidPassword);
-  } catch (err) {
-    const error = new Error(
-      "Could not log you in, please check your credentials and try again.",
-      500
-    );
-    return next(error);
-  }
-
-  if (!isValidPassword) {
-    const error = new Error("Invalid credentials, could not log you in.", 401);
-    return next(error);
-  }
-
-  let token;
-  try {
-    token = jwt.sign(
-      { userId: existingUser.id, privateNumber: existingUser.privateNumber },
-      secretKey,
-      { expiresIn: "168h" }
-    );
+    res.json({
+      userId: existingUser.id,
+      privateNumber: existingUser.privateNumber,
+      token: token,
+    });
   } catch (err) {
     return next(err);
   }
 
-  res.json({
-    userId: existingUser.id,
-    privateNumber: existingUser.privateNumber,
-    token: token,
-  });
+  // if (!existingUser) {
+  //   const error = new Error("Invalid credentials, could not log you in.", 404);
+  //   return next(error);
+  // }
+
+  // let isValidPassword = false;
+  // try {
+  //   const hashedPassowrd = await sha256(password);
+
+  //   isValidPassword = hashedPassowrd === existingUser.password;
+  //   console.log(isValidPassword);
+  // } catch (err) {
+  //   const error = new Error(
+  //     "Could not log you in, please check your credentials and try again.",
+  //     500
+  //   );
+  //   return next(error);
+  // }
+
+  // if (!isValidPassword) {
+  //   const error = new Error("Invalid credentials, could not log you in.", 401);
+  //   return next(error);
+  // }
 };
 
 const updateUser = async (req, res, next) => {

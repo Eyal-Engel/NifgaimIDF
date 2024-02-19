@@ -58,7 +58,6 @@ app.use((error, req, res, next) => {
   }
 
   //if code properties is set or default 500 => error code that something went wrong
-  console.log("AAAAAAAAAAAAAAAAA");
   console.log(error.errors);
 
   return res.status(error.code || 500).json({

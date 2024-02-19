@@ -122,7 +122,6 @@ function CustomToolbar({ setRows }) {
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setUserSignUpInfo({
       ...userSignUpInfo,
       [name]: value,
@@ -132,7 +131,6 @@ function CustomToolbar({ setRows }) {
   const handleCheckBoxInputChange = (e) => {
     const { name, checked } = e.target;
     const value = checked; // Set value to true if checked, false if unchecked
-    console.log(name, value);
     setUserSignUpInfo({
       ...userSignUpInfo,
       [name]: value,
@@ -194,11 +192,9 @@ function CustomToolbar({ setRows }) {
           });
         } catch (error) {
           const errors = error.response.data.body.errors;
-          console.log(errors);
           let errorsForSwal = ""; // Start unordered list
 
           errors.forEach((error) => {
-            console.log(error.message);
             if (
               error.message === "nifgaimUsers.nifgaimCommandId cannot be null"
             ) {
@@ -222,7 +218,6 @@ function CustomToolbar({ setRows }) {
             }
           });
 
-          console.log(errorsForSwal);
 
           Swal.fire({
             title: ` לא ניתן ליצור את המשתמש ${userSignUpInfo.fullName}`,
@@ -796,7 +791,6 @@ export default function ManageExistsUsers() {
           }
         });
       } catch (error) {
-        console.log("Error processing row update:", error);
         Swal.fire({
           title: `שגיאה בעדכון סיסמא`,
           text: "לא ניתן לעדכן סיסמא חדשה, נסה שוב מאוחר יותר",
@@ -824,15 +818,12 @@ export default function ManageExistsUsers() {
         fullName,
         nifgaimCommandId,
       };
-      console.log(filteredUser);
-
       await updateUser(id, filteredUser);
 
       setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
       return updatedRow;
     } catch (error) {
-      console.log("Error processing row update:", error);
       Swal.fire({
         title: `אחד מהנתונים שהזנת אינו תקין, נסה שנית`,
         text: "",

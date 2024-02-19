@@ -30,6 +30,8 @@ const SideBar = () => {
   const containerRef = useRef(null);
   const { height } = useDimensions(containerRef);
   const [hideNavigation, setHideNavigation] = useState(false);
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
 
   const handleToggle = () => {
     toggleOpen();
@@ -48,20 +50,22 @@ const SideBar = () => {
   }, [isOpen]);
 
   return (
-    <motion.div
-      style={{ direction: "rtl" }}
-      initial={false}
-      animate={isOpen ? "open" : "closed"}
-      custom={height}
-      ref={containerRef}
-    >
+    <>
       <motion.div
-        className={`sideBarBackground ${hideNavigation ? "hidden" : ""}`}
-        variants={sidebar}
-      />
-      <Navigation hideNavigation={hideNavigation} />
-      <MenuToggle toggle={handleToggle} />
-    </motion.div>
+        style={{ direction: "rtl" }}
+        initial={false}
+        animate={isOpen ? "open" : "closed"}
+        custom={height}
+        ref={containerRef}
+      >
+        <motion.div
+          className={`sideBarBackground ${hideNavigation ? "hidden" : ""}`}
+          variants={sidebar}
+        />
+        <Navigation hideNavigation={hideNavigation} />
+        <MenuToggle toggle={handleToggle} />
+      </motion.div>
+    </>
   );
 };
 
