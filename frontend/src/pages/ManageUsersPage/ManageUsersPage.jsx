@@ -40,27 +40,18 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
   Button,
   Typography,
-  IconButton,
-  InputAdornment,
   Input,
   Divider,
   Paper,
-  DialogContentText,
   Select,
   MenuItem,
 } from "@mui/material";
 import "./ManageUsersPage.css";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import Slide from "@mui/material/Slide";
 import Draggable from "react-draggable";
-import {
-  VALIDATOR_PASSWORD,
-  validationPasswordsErrorType,
-} from "../../utils/validators";
+import { validationPasswordsErrorType } from "../../utils/validators";
 import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
 import AddIcon from "@mui/icons-material/Add";
 import { motion } from "framer-motion";
@@ -217,7 +208,6 @@ function CustomToolbar({ setRows }) {
               errorsForSwal += "<li>מספר אישי כבר קיים במערכת</li>";
             }
           });
-
 
           Swal.fire({
             title: ` לא ניתן ליצור את המשתמש ${userSignUpInfo.fullName}`,
@@ -875,11 +865,6 @@ export default function ManageExistsUsers() {
           ({ value: optionValue }) => optionValue === value
         );
         return option ? option.label : value; // Return the label if found, otherwise return the original value
-      },
-      cellClassName: (params) => {
-        const option = commands.find(
-          ({ value: optionValue }) => optionValue === params.value
-        );
       },
     },
 

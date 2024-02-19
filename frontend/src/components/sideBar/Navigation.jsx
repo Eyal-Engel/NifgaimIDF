@@ -29,8 +29,6 @@ const itemVariants = {
 export const Navigation = ({ hideNavigation }) => {
   const navigate = useNavigate();
 
-  let itemIds = [];
-
   const auth = useContext(AuthContext);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
@@ -56,12 +54,6 @@ export const Navigation = ({ hideNavigation }) => {
       fetchCommand();
     }
   }, [loggedUserId]);
-
-  // if (auth.isLoggedIn && loggedUserCommand === "דרום") {
-  //   itemIds = [0, 1, 2, 3, 4];
-  // } else if (auth.isLoggedIn) {
-  //   itemIds = [0];
-  // }
 
   let itemListInfo = [];
 

@@ -14,7 +14,6 @@ import {
 } from "../../utils/api/commandsApi";
 import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
-import SimpleDialogDemo from "../../components/Dialog";
 import SimpleDialog from "../../components/Dialog";
 
 const theme = createTheme({

@@ -30,8 +30,6 @@ const SideBar = () => {
   const containerRef = useRef(null);
   const { height } = useDimensions(containerRef);
   const [hideNavigation, setHideNavigation] = useState(false);
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  const loggedUserId = userData ? userData.userId : "";
 
   const handleToggle = () => {
     toggleOpen();
