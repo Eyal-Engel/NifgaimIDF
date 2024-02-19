@@ -69,7 +69,7 @@ export default function RootLayout() {
             marginBottom: "0.5rem",
           }}
         >
-          פותח ע”י בית התוכנה - חיל הלוגיסטיקה
+          פותח ע”י בית התוכנה - צפון
         </h5>
       </div>
     </div>

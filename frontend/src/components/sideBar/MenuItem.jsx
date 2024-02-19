@@ -4,11 +4,6 @@ import { motion } from "framer-motion";
 // import pikodimIcon from "../../assets/images/icons/pikodimIcon.png";
 // import usersIcon from "../../assets/images/icons/usersManageIcon.png";
 // import soliderIcon from "../../assets/images/icons/soldierIcon.png";
-import halalIcon from "../../assets/images/icons/halalIcon.png";
-import userIcon from "../../assets/images/icons/userIcon.png";
-import graveyardIcon from "../../assets/images/icons/graveyardIcon.png";
-import commandIcon from "../../assets/images/icons/commandIcon.png";
-import columnIcon from "../../assets/images/icons/columnIcon.png";
 
 import { useNavigate } from "react-router-dom";
 import "./style.css";
@@ -32,7 +27,7 @@ const variants = {
   },
 };
 
-export const MenuItem = ({ i }) => {
+export const MenuItem = ({ menuItem }) => {
   const auth = useContext(AuthContext);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
@@ -49,7 +44,6 @@ export const MenuItem = ({ i }) => {
         try {
           console.log(loggedUserId);
           const command = await getCommandNameByUserId(loggedUserId);
-          console.log("here");
           setLoggedUserCommand(command);
           console.log(command);
         } catch (error) {
@@ -63,99 +57,26 @@ export const MenuItem = ({ i }) => {
     }
   }, [loggedUserId]);
 
-  let itemListInfo = [];
+  console.log(menuItem);
 
-  if (auth.isLoggedIn && loggedUserCommand === "חיל הלוגיסטיקה") {
-    itemListInfo = [
-      // {
-      //   name: "אודות המערכת",
-      //   styles: {
-      //     background: "#ECBA22",
-      //   },
-      //   imgSrc: soliderIcon,
-      //   url: "/about",
-      // },
-      {
-        name: "נפגעים",
-        styles: {
-          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
-        },
-        imgSrc: halalIcon,
-        url: "/halalim",
-      },
-      {
-        name: "ניהול הרשאות",
-        styles: {
-          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
-        },
-        imgSrc: userIcon,
-        url: "/manageUsers",
-      },
-      {
-        name: "בתי עלמין",
-        styles: {
-          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
-        },
-        imgSrc: graveyardIcon,
-        url: "/manageGraveYards",
-      },
-      {
-        name: "פיקודים",
-        styles: {
-          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
-        },
-        imgSrc: commandIcon,
-        url: "/manageCommands",
-      },
-      {
-        name: "מאפייני חלל",
-        styles: {
-          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
-        },
-        imgSrc: columnIcon,
-        url: "/manageColumns",
-      },
-    ];
-  } else if (auth.isLoggedIn) {
-    itemListInfo = [
-      // {
-      //   name: "אודות המערכת",
-      //   styles: {
-      //     background: "#ECBA22",
-      //   },
-      //   imgSrc: soliderIcon,
-      //   url: "/about",
-      // },
-      {
-        name: "נפגעים",
-        styles: {
-          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
-        },
-        imgSrc: halalIcon,
-        url: "/halalim",
-      },
-    ];
-  }
   return (
     <>
-      {itemListInfo.length > 0 && (
-        <motion.li
-          variants={variants}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => navigate(itemListInfo[i].url)}
-          className="listItemSideBar"
-        >
-          <div className="icon-placeholder">
-            <img src={itemListInfo[i].imgSrc} alt="" />
+      <motion.li
+        variants={variants}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate(menuItem.url)}
+        className="listItemSideBar"
+      >
+        <div className="icon-placeholder">
+          <img src={menuItem.imgSrc} alt="" />
+        </div>
+        <div className="text-border-wrap" style={menuItem.styles}>
+          <div className="text-placeholder" style={style}>
+            {menuItem.name}
           </div>
-          <div className="text-border-wrap" style={itemListInfo[i].styles}>
-            <div className="text-placeholder" style={style}>
-              {itemListInfo[i].name}
-            </div>
-          </div>
-        </motion.li>
-      )}
+        </div>
+      </motion.li>
     </>
   );
 };

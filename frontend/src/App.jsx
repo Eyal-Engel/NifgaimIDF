@@ -32,7 +32,7 @@ const handleRouter = (token, command) => {
       ],
     },
   ]);
-  if (token && command === "חיל הלוגיסטיקה") {
+  if (token && command === "צפון") {
     router = createBrowserRouter([
       {
         path: "/",
