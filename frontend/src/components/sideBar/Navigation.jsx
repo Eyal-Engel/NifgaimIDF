@@ -164,6 +164,7 @@ export const Navigation = ({ hideNavigation }) => {
           </motion.li>
         </motion.ul>
       ) : (
+        // make exit icon most bottom
         <motion.ul
           variants={variants}
           className={`ulSideBar ${hideNavigation ? "hidden" : ""}`}
