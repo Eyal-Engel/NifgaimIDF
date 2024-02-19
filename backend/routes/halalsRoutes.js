@@ -6,13 +6,13 @@ const router = express.Router();
 
 const checkAuth = require("../middlewares/checkAuth");
 
+router.use(checkAuth);
+
 router.get("/", halalsCotnrollers.getHalals);
 
 router.get("/:halalId", halalsCotnrollers.getHalalById);
 
 router.get("/byCommand/:commandId", halalsCotnrollers.getHalalsByCommandId);
-
-// router.use(checkAuth);
 
 router.post("/", halalsCotnrollers.createHalal);
 

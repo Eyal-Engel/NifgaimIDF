@@ -10,9 +10,9 @@ router.get("/", graveyardsControllers.getAllGraveyards);
 
 router.get("/:graveyardId", graveyardsControllers.getGraveyardById);
 
-router.post("/", graveyardsControllers.createGraveyard);
+router.use(checkAuth);
 
-// router.use(checkAuth);
+router.post("/", graveyardsControllers.createGraveyard);
 
 router.patch("/:graveyardId", graveyardsControllers.updateGraveyardById);
 

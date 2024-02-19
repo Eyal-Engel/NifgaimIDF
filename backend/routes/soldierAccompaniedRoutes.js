@@ -6,6 +6,8 @@ const router = express.Router();
 
 const checkAuth = require("../middlewares/checkAuth");
 
+router.use(checkAuth);
+
 router.get("/", soldierAccompaniedControllers.getSoldierAccompanieds);
 
 router.get(
@@ -17,8 +19,6 @@ router.get(
   "/byHalal/:halalId",
   soldierAccompaniedControllers.getSoldierAccompaniedsByHalalId
 );
-
-// router.use(checkAuth);
 
 router.post("/", soldierAccompaniedControllers.createSoldierAccompanied);
 

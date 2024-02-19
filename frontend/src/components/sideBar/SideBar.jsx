@@ -33,7 +33,6 @@ const SideBar = () => {
 
   const handleToggle = () => {
     toggleOpen();
-    // If closing sidebar, hide navigation and background after 2 seconds
   };
 
   useEffect(() => {
@@ -47,6 +46,7 @@ const SideBar = () => {
       }, 30);
     }
   }, [isOpen]);
+
   return (
     <motion.div
       style={{ direction: "rtl" }}

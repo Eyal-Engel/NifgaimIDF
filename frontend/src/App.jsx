@@ -28,95 +28,49 @@ const handleRouter = (token, command) => {
         { path: "/", element: <Navigate to="/login" replace /> },
         { path: "/login", element: <LoginPage /> },
         { path: "about", element: <AboutPage /> },
-        {
-          path: "/halalim",
-          element: <HalalimPage />,
-        },
-        { path: "/manageUsers", element: <ManageUsersPage /> },
-        { path: "/manageGraveyards", element: <ManageGraveyardsPage /> },
-        { path: "/manageCommands", element: <ManageCommandsPage /> },
-
         { path: "*", element: <ErrorNotFoundPage /> },
       ],
     },
   ]);
-  // if (token && command === "חיל לוגיסטיקה") {
-  //   router = createBrowserRouter([
-  //     {
-  //       path: "/",
-  //       element: <RootLayout />,
-  //       children: [
-  //         { path: "/", element: <h1>Hello World!</h1> },
-
-  //         { path: "/", element: <Navigate to="/login" replace /> },
-  //         { path: "/login", element: <LoginPage /> },
-  //         { path: "about", element: <AboutPage /> },
-  //         {
-  //           path: "/halalim",
-  //           element: <HalalimPage />,
-  //         },
-  //         { path: "/manageUsers", element: <ManageUsersPage /> },
-  //         { path: "/manageCommands", element: <ManageCommandsPage /> },
-
-  //         { path: "*", element: <ErrorNotFoundPage /> },
-  //       ],
-  //     },
-  //   ]);
-  // } else if (token) {
-  //   router = createBrowserRouter([
-  //     {
-  //       path: "/",
-  //       element: <RootLayout />,
-  //       children: [
-  //         { path: "/", element: <Navigate to="/login" replace /> },
-  //         { path: "/login", element: <LoginPage /> },
-  //         // { path: "about", element: <AboutPage /> },
-  //         {
-  //           path: "/halalim",
-  //           element: <CreateEventPage />,
-  //         },
-
-  //         { path: "*", element: <ErrorNotFoundPage /> },
-  //       ],
-  //     },
-  //   ]);
-  // } else {
-  //   // router = createBrowserRouter([
-  //   //   {
-  //   //     path: "/",
-  //   //     element: <RootLayout />,
-  //   //     children: [
-  //   //       { path: "/", element: <Navigate to="/login" replace /> },
-  //   //       { path: "/login", element: <LoginPage /> },
-  //   //       // { path: "about", element: <AboutPage /> },
-  //   //       { path: "*", element: <ErrorNotFoundPage /> },
-  //   //     ],
-  //   //   },
-  //   // ]);
-  //   router = createBrowserRouter([
-  //     {
-  //       path: "/",
-  //       element: <RootLayout />,
-  //       children: [
-  //         { path: "/", element: <h1>Hello World!</h1> },
-
-  //         { path: "/", element: <Navigate to="/login" replace /> },
-  //         { path: "/login", element: <LoginPage /> },
-  //         { path: "about", element: <AboutPage /> },
-  //         {
-  //           path: "/halalim",
-  //           element: <HalalimPage />,
-  //         },
-  //         { path: "/manageUsers", element: <ManageUsersPage /> },
-  //         { path: "/manageGraveyards", element: <ManageGraveyardsPage /> },
-  //         { path: "/manageCommands", element: <ManageCommandsPage /> },
-
-  //         { path: "*", element: <ErrorNotFoundPage /> },
-  //       ],
-  //     },
-  //   ]);
-  // }
-
+  if (token && command === "חיל הלוגיסטיקה") {
+    router = createBrowserRouter([
+      {
+        path: "/",
+        element: <RootLayout />,
+        children: [
+          { path: "/", element: <Navigate to="/login" replace /> },
+          { path: "/login", element: <LoginPage /> },
+          { path: "about", element: <AboutPage /> },
+          {
+            path: "/halalim",
+            element: <HalalimPage />,
+          },
+          { path: "/manageUsers", element: <ManageUsersPage /> },
+          { path: "/manageGraveyards", element: <ManageGraveyardsPage /> },
+          { path: "/manageCommands", element: <ManageCommandsPage /> },
+          { path: "/manageColumns", element: <ManageCommandsPage /> },
+          { path: "*", element: <ErrorNotFoundPage /> },
+        ],
+      },
+    ]);
+  } else if (token) {
+    router = createBrowserRouter([
+      {
+        path: "/",
+        element: <RootLayout />,
+        children: [
+          { path: "/", element: <Navigate to="/login" replace /> },
+          { path: "/login", element: <LoginPage /> },
+          { path: "about", element: <AboutPage /> },
+          {
+            path: "/halalim",
+            element: <HalalimPage />,
+          },
+          { path: "*", element: <ErrorNotFoundPage /> },
+        ],
+      },
+    ]);
+  }
   return router;
 };
 

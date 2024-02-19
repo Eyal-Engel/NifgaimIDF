@@ -1,17 +1,21 @@
 // loginForm.jsx
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./loginForm.css"; // Import the CSS file
 import { IconButton, Input, InputAdornment } from "@mui/material";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { AuthContext } from "../../utils/contexts/authContext";
+import { loginUser } from "../../utils/api/usersApi";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm() {
   const [userLoginInfo, setUserLoginInfo] = useState({
     privateNumber: "",
     password: "",
   });
-
+  const auth = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -27,9 +31,22 @@ export function LoginForm() {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
-    // Perform your submission logic here, for example, sending the data to an API
+  const handleSubmit = async () => {
     console.log("Form submitted with data:", userLoginInfo);
+
+    const creditentials = {
+      privateNumber: userLoginInfo.privateNumber,
+      password: userLoginInfo.password,
+    };
+
+    try {
+      const response = await loginUser(creditentials);
+      console.log(response);
+      auth.login(response.data.userId, response.data.token);
+      navigate("/halalim");
+    } catch (error) {
+      console.log(error.response.data.body);
+    }
   };
 
   return (

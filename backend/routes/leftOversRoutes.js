@@ -6,13 +6,13 @@ const router = express.Router();
 
 const checkAuth = require("../middlewares/checkAuth");
 
+router.use(checkAuth);
+
 router.get("/", leftOversControllers.getLeftOvers);
 
 router.get("/:leftOverId", leftOversControllers.getLeftOverById);
 
 router.get("/byHalal/:halalId", leftOversControllers.getLeftOversByHalalId);
-
-// router.use(checkAuth);
 
 router.post("/", leftOversControllers.createLeftOver);
 

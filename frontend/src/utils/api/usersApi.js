@@ -74,7 +74,7 @@ export async function getCommandNameByUserId(userId) {
   try {
     const user = await getUserById(userId);
 
-    const commantName = await getCommandNameById(user.commandId);
+    const commantName = await getCommandNameById(user.nifgaimCommandId);
 
     return commantName;
   } catch (error) {
@@ -94,7 +94,29 @@ export async function getCommandIdByUserId(userId) {
   }
 }
 
-export async function createUser(newUser) {
+export async function loginUser(credentials) {
+  const apiUrl = "http://localhost:5000/api/users/login/";
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "POST",
+  };
+
+  const body = JSON.stringify(credentials);
+
+  try {
+    const response = await post(apiUrl, body, headers);
+    return response;
+  } catch (error) {
+    console.error("Error logging in:", error);
+    throw error;
+  }
+}
+
+export async function createUser(creditentials) {
   const apiUrl = "http://localhost:5000/api/users/signup/";
 
   const headers = {
@@ -103,11 +125,11 @@ export async function createUser(newUser) {
     "Access-Control-Allow-Headers":
       "Origin, X-Requested-With, Content-Type, Accept, Authorization",
     "Access-Control-Allow-Methods": "POST",
-    // Authorization:
-    //   "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify(newUser);
+  const body = JSON.stringify(creditentials);
 
   try {
     const response = await post(apiUrl, body, headers);
