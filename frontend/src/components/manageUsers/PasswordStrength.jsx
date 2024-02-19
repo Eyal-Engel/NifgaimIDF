@@ -12,8 +12,6 @@ export const PasswordStrength = ({
   onChangePassword,
   onChangeConfirmPassword,
 }) => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [strength, setStrength] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -44,11 +42,9 @@ export const PasswordStrength = ({
   const handleChange = (event, field) => {
     const value = event.target.value;
     if (field === "password") {
-      setPassword(value);
       onChangePassword(value);
       setStrength(getStrength(value));
     } else if (field === "confirmPassword") {
-      setConfirmPassword(value);
       onChangeConfirmPassword(value);
     }
   };
