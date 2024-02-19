@@ -1,8 +1,15 @@
 .commandsContainer {
   height: 100%;
-  width: 700px;
+  width: 60vw;
   min-width: 290px;
   margin: 20px;
+}
+
+.commandsHeader {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .commandsContainer h1 {
@@ -12,6 +19,12 @@
 .commands-list {
   list-style-type: none;
   padding: 0;
+  overflow-y: auto;
+  height: 60vh;
+}
+
+.graveyard-list li {
+  padding-right: 10px;
 }
 
 @media only screen and (max-width: 400px) {

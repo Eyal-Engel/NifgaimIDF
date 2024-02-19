@@ -52,7 +52,7 @@ export default function RootLayout() {
           alignItems: "center",
           height: "77%",
           width: "100%",
-          overflowY: "auto",
+          
         }}
       >
         <Outlet />

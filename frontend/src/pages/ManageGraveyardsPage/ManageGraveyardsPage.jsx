@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import GraveyardItem from "../../components/graveyards/GraveyardItem";
 import "./ManageGraveyardsPage.css";
 import { TextField, ThemeProvider, createTheme } from "@mui/material";
 import { CacheProvider } from "@emotion/react";
@@ -61,21 +60,23 @@ export default function ManageGraveyardsPage() {
 
   return (
     <div className="graveyardContainer">
-      <h1>רשימת בתי העלמין</h1>
-      <CacheProvider value={cacheRtl}>
-        <ThemeProvider theme={theme}>
-          <div style={{ direction: "rtl", display: "flex" }}>
-            <TextField
-              id="filled-search"
-              label="חפש בית עלמין"
-              type="search"
-              variant="filled"
-              onChange={handelSearchInput}
-              sx={{zIndex: 0}}
-            />
-          </div>
-        </ThemeProvider>
-      </CacheProvider>
+      <div className="graveyardHeader">
+        <h1>רשימת בתי העלמין</h1>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <div style={{ direction: "rtl", display: "flex" }}>
+              <TextField
+                id="filled-search"
+                label="חפש בית עלמין"
+                type="search"
+                variant="filled"
+                onChange={handelSearchInput}
+                sx={{ zIndex: 0 }}
+              />
+            </div>
+          </ThemeProvider>
+        </CacheProvider>
+      </div>
       <ul className="graveyard-list">
         {filteredGraveyards.map((graveyard, index) => (
           <li key={index}>

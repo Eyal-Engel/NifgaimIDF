@@ -5,6 +5,7 @@
   height: 100%;
   min-width: 330px;
   min-height: 465px;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -11,12 +11,13 @@ import CancelIcon from "@mui/icons-material/Close";
 
 const EditableItem = ({
   itemName,
+  itemId,
   handleItemNameChange,
-  itemIndex,
   handleDeleteItem,
   isGraveyard,
+  isNewItem,
 }) => {
-  const [isInEditMode, setIsInEditMode] = useState(false);
+  const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
 
   const handleEditClick = () => {
@@ -25,13 +26,13 @@ const EditableItem = ({
 
   const handleSaveClick = () => {
     setIsInEditMode(false);
-    handleItemNameChange(itemIndex, editedItemName);
+    handleItemNameChange(itemId, editedItemName);
     // Handle saving the editedItemName, e.g., make an API call.
   };
 
   const handleDeleteClick = () => {
     // Call the delete function with the index of the item to delete
-    handleDeleteItem(itemIndex);
+    handleDeleteItem(itemId, itemName);
     // You may also want to handle any additional logic, like making an API call to delete the item.
   };
 
@@ -79,7 +80,11 @@ const EditableItem = ({
           />
         )}
       </CardContent>
-      <CardActions className={isGraveyard ? "actionGraveyardItemButton" : "actionCommandItemButtons"}>
+      <CardActions
+        className={
+          isGraveyard ? "actionGraveyardItemButton" : "actionCommandItemButtons"
+        }
+      >
         {!isInEditMode ? (
           <Button
             variant="outlined"

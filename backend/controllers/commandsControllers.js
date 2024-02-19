@@ -44,12 +44,9 @@ const createCommand = async (req, res, next) => {
 // Patch a command by id
 const updateCommandById = async (req, res, next) => {
   const id = req.params.commandId;
-  const commandName = req.body.commandName;
+  const commandName = req.body.updatedCommand;
   try {
     const command = await Command.findByPk(id);
-    if (!command) {
-      return next(new Error(`Command with id ${id} not found.`, 404));
-    }
 
     if (!command.isNewSource) {
       return next(
@@ -71,16 +68,15 @@ const deleteCommandById = async (req, res, next) => {
   const id = req.params.commandId;
   try {
     const command = await Command.findByPk(id);
-    if (!command) {
-      return next(new Error(`Command with id ${id} not found.`, 404));
-    }
+    // if (!command) {
+    //   return next(new Error(`Command with id ${id} not found.`, 404));
+    // }
 
-    if (command.isNewSource) {
+    if (!command.isNewSource) {
       return next(
         new Error(`You do not have access to delete this graveyard.`, 401)
       );
     }
-
     await command.destroy();
     res.status(204).end();
   } catch (err) {

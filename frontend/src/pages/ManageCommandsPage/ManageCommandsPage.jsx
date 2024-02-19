@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, ThemeProvider, createTheme } from "@mui/material";
+import { Button, TextField, ThemeProvider, createTheme } from "@mui/material";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
@@ -7,11 +7,15 @@ import rtlPlugin from "stylis-plugin-rtl";
 import EditableItem from "../../components/reuseableItem";
 import "./ManageCommandsPage.css";
 import {
+  createCommand,
   deleteCommandById,
   getCommands,
   updateCommandById,
 } from "../../utils/api/commandsApi";
 import Swal from "sweetalert2";
+import AddIcon from "@mui/icons-material/Add";
+import SimpleDialogDemo from "../../components/Dialog";
+import SimpleDialog from "../../components/Dialog";
 
 const theme = createTheme({
   direction: "rtl",
@@ -25,9 +29,16 @@ const cacheRtl = createCache({
 
 export default function ManageCommandsPage() {
   const [commands, setCommands] = useState([]);
-
   const [searchInputValue, setSearchInputValue] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handelOpenDialog = () => {
+    setOpenDialog(true);
+  };
   React.useEffect(() => {
     const fetchCommandsData = async () => {
       try {
@@ -42,34 +53,56 @@ export default function ManageCommandsPage() {
 
     fetchCommandsData();
   }, []);
-  const handelCommandNameChange = async (index, commandId, name, newName) => {
+
+  function getCommandNameById(id) {
+    const item = commands.find((item) => item.id === id);
+    return item ? item.commandName : null;
+  }
+
+  const handelCommandNameChange = async (commandId, newName) => {
     try {
-      console.log(index, commandId, name, newName);
-      console.log(commandId);
-      console.log(newName);
-      console.log(typeof commandId);
-      console.log(typeof newName);
       await updateCommandById(commandId, newName);
       setCommands((prevCommands) => {
-        const updatedCommands = [...prevCommands];
-        updatedCommands[index].commandName = newName;
-        return updatedCommands;
+        return prevCommands.map((command) => {
+          if (command.id === commandId) {
+            // Update the commandName for the matching commandId
+            return { ...command, commandName: newName };
+          }
+          return command;
+        });
       });
     } catch (error) {
+      
+      const errors = error.response.data.body.errors;
+      console.log(errors);
+      let errorsForSwal = ""; // Start unordered list
+
+      errors.forEach((error) => {
+        console.log(error.message);
+        if (error.message === "commandName must be unique") {
+          errorsForSwal += `<li>הפיקוד ${newName} כבר קיים במערכת</li>`;
+        }
+      });
+
+      console.log(errorsForSwal);
+
       Swal.fire({
-        title: ` ${newName} עם השם ${name} לא ניתן לעדכן את הפיקוד`,
-        text: error,
+        title: ` לא ניתן לעדכן את הפיקוד`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
         icon: "error",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "אישור",
         reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
       });
     }
   };
 
-  const handleDeleteCommand = async (rowIndex, commandId, name) => {
+  const handleDeleteCommand = async (commandId, commandName) => {
     Swal.fire({
-      title: `האם את/ה בטוח/ה שתרצה/י למחוק את הפיקוד ${name}`,
+      title: `האם את/ה בטוח/ה שתרצה/י למחוק את הפיקוד ${commandName}`,
       text: "פעולה זאת איננה ניתנת לשחזור",
       icon: "warning",
       showCancelButton: true,
@@ -84,12 +117,13 @@ export default function ManageCommandsPage() {
           console.log(commandId);
           await deleteCommandById(commandId);
           setCommands((prevCommands) => {
-            const updatedCommands = [...prevCommands];
-            updatedCommands.splice(rowIndex, 1);
+            const updatedCommands = prevCommands.filter(
+              (command) => command.id !== commandId
+            );
             return updatedCommands;
           });
           Swal.fire({
-            title: `פיקוד "${name}" נמחק בהצלחה!`,
+            title: `פיקוד "${commandName}" נמחק בהצלחה!`,
             text: "",
             icon: "success",
             confirmButtonText: "אישור",
@@ -108,53 +142,101 @@ export default function ManageCommandsPage() {
     });
   };
 
+  const handelAddCommand = async (value) => {
+    setSearchInputValue("");
+    setOpenDialog(false);
+
+    try {
+      const command = await createCommand(value);
+      console.log(command);
+
+      setCommands((prev) => [
+        ...prev,
+        {
+          id: command.id,
+          commandName: command.commandName,
+        },
+      ]);
+    } catch (error) {
+      const errors = error.response.data.body.errors;
+      console.log(errors);
+      let errorsForSwal = ""; // Start unordered list
+
+      errors.forEach((error) => {
+        console.log(error.message);
+        if (error.message === "commandName must be unique") {
+          errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
+        }
+      });
+
+      console.log(errorsForSwal);
+
+      Swal.fire({
+        title: ` לא ניתן ליצור את הפיקוד ${value}`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "אישור",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      });
+    }
+  };
+
   const handelSearchInput = (e) => {
     setSearchInputValue(e.target.value);
   };
 
   // Filter the list based on the search input
-  const filteredCommands = commands.filter((command) =>
-    command.commandName.includes(searchInputValue)
-  );
+  const filteredCommands = commands.filter((command) => {
+    return command.commandName.includes(searchInputValue);
+  });
 
   return (
     <div className="commandsContainer">
-      <h1>רשימת פיקודים</h1>
-      <CacheProvider value={cacheRtl}>
-        <ThemeProvider theme={theme}>
-          <div style={{ direction: "rtl", display: "flex" }}>
-            <TextField
-              id="filled-search"
-              label="חפש פיקוד"
-              type="search"
-              variant="filled"
-              onChange={handelSearchInput}
-              sx={{ zIndex: 0 }}
-            />
-          </div>
-        </ThemeProvider>
-      </CacheProvider>
+      <div className="commandsHeader">
+        <h1>רשימת פיקודים</h1>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <div style={{ direction: "rtl", display: "flex" }}>
+              <TextField
+                id="filled-search"
+                label="חפש פיקוד"
+                type="search"
+                variant="filled"
+                value={searchInputValue}
+                onChange={handelSearchInput}
+                sx={{ zIndex: 0 }}
+              />
+            </div>
+          </ThemeProvider>
+        </CacheProvider>
+      </div>
       <ul className="commands-list">
-        {filteredCommands.map((command, index) => (
+        {filteredCommands.map((command) => (
           <li key={command.id}>
             <EditableItem
               itemName={command.commandName}
-              handleItemNameChange={(newName) =>
-                handelCommandNameChange(
-                  index,
-                  command.id,
-                  command.commandName,
-                  newName
-                )
-              }
-              itemIndex={index}
-              handleDeleteItem={() =>
-                handleDeleteCommand(index, command.id, command.commandName)
-              }
+              itemId={command.id}
+              handleItemNameChange={handelCommandNameChange}
+              handleDeleteItem={handleDeleteCommand}
+              isNewItem={command.isNewItem ? true : false}
             />
           </li>
         ))}
       </ul>
+      <div>
+        <Button color="secondary" onClick={handelOpenDialog}>
+          <AddIcon fontSize="large"></AddIcon>
+        </Button>
+        <SimpleDialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          onCreateClicked={handelAddCommand}
+        />
+      </div>
     </div>
   );
 }

@@ -56,12 +56,12 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const error = new Error("Signing up failed, please try again later.", 500);
     return next(error);
-  }
+  } 
 
-  if (existingUser) {
-    const error = new Error("User exists already, please login instead.", 422);
-    return next(error);
-  }
+  // if (existingUser) {
+  //   const error = new Error("User exists already, please login instead.", 422);
+  //   return next(error);
+  // }
 
   try {
     const hashedPassowrd = await sha256(password);
