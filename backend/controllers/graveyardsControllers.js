@@ -51,9 +51,6 @@ const updateGraveyardById = async (req, res, next) => {
   const graveyardName = req.body.graveyardName;
   try {
     const graveyard = await Graveyard.findByPk(id);
-    if (!graveyard) {
-      return next(new Error(`Graveyard with id ${id} not found.`, 404));
-    }
 
     if (!graveyard.isNewSource) {
       return next(
@@ -75,11 +72,7 @@ const deleteGraveyardById = async (req, res, next) => {
   const id = req.params.graveyardId;
   try {
     const graveyard = await Graveyard.findByPk(id);
-    if (!graveyard) {
-      return next(new Error(`Graveyard with id ${id} not found.`, 404));
-    }
 
-    // command this to delete a source graveyard
     if (graveyard.isNewSource) {
       return next(
         new Error(`You do not have access to delete this graveyard.`, 401)

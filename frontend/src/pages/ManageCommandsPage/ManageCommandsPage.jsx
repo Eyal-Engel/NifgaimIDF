@@ -54,11 +54,6 @@ export default function ManageCommandsPage() {
     fetchCommandsData();
   }, []);
 
-  function getCommandNameById(id) {
-    const item = commands.find((item) => item.id === id);
-    return item ? item.commandName : null;
-  }
-
   const handelCommandNameChange = async (commandId, newName) => {
     try {
       await updateCommandById(commandId, newName);
