@@ -134,17 +134,13 @@ export default function ManageCommandsPage() {
       const command = await createCommand(value);
       console.log(command);
 
-      if (command) {
-        setCommands((prev) => [
-          ...prev,
-          {
-            id: command.id,
-            commandName: command.commandName,
-          },
-        ]);
-      } else {
-        console.log("error");
-      }
+      setCommands((prev) => [
+        ...prev,
+        {
+          id: command.id,
+          commandName: command.commandName,
+        },
+      ]);
     } catch (error) {
       console.log(error);
     }
