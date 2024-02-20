@@ -17,10 +17,20 @@ export default function SimpleDialog(props) {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} sx={{width: "20rem"}}>
-      <DialogTitle>{!isGraveyard ? "יצירת פיקוד" : "יצירת בית עלמין"}</DialogTitle>
-      <TextField onChange={handleInputChange}></TextField>
-      <Button onClick={() => onCreateClicked(inputValue)}>יצירה</Button>
+    <Dialog
+      onClose={handleClose}
+      open={open}
+      sx={{ "& .MuiPaper-root": { width: "30vw", minWidth: "15rem" } }}
+    >
+      <DialogTitle sx={{ textAlign: "center" }}>
+        {!isGraveyard ? "יצירת פיקוד" : "יצירת בית עלמין"}
+      </DialogTitle>
+      <TextField
+        sx={{ width: "80%", margin: "auto", direction: "rtl"}}
+        onChange={handleInputChange}
+        placeholder={isGraveyard ? "שם בית העלמין" : "שם הפיקוד"}
+      ></TextField>
+      <Button sx={{margin: "10px", fontSize: "1.2rem"}} onClick={() => onCreateClicked(inputValue)}>יצירה</Button>
     </Dialog>
   );
 }
