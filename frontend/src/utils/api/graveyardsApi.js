@@ -1,4 +1,4 @@
-import {get, post, patch, del } from "./api"; // Assuming you have functions for POST, PATCH, DELETE requests in your API
+import { get, post, patch, del } from "./api"; // Assuming you have functions for POST, PATCH, DELETE requests in your API
 
 export async function getAllGraveyards() {
   const apiUrl = "http://localhost:5000/api/graveyards/";
@@ -80,8 +80,9 @@ export async function updateGraveyardById(graveyardId, updatedGraveyard) {
     Authorization:
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
+  console.log({ updatedGraveyard });
 
-  const body = JSON.stringify(updatedGraveyard);
+  const body = JSON.stringify({ updatedGraveyard });
 
   try {
     const response = await patch(apiUrl, body, headers);

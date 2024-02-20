@@ -48,7 +48,7 @@ const createGraveyard = async (req, res, next) => {
 // Patch a command by id
 const updateGraveyardById = async (req, res, next) => {
   const id = req.params.graveyardId;
-  const graveyardName = req.body.graveyardName;
+  const graveyardName = req.body.updatedGraveyard;
   try {
     const graveyard = await Graveyard.findByPk(id);
 
@@ -73,7 +73,7 @@ const deleteGraveyardById = async (req, res, next) => {
   try {
     const graveyard = await Graveyard.findByPk(id);
 
-    if (graveyard.isNewSource) {
+    if (!graveyard.isNewSource) {
       return next(
         new Error(`You do not have access to delete this graveyard.`, 401)
       );

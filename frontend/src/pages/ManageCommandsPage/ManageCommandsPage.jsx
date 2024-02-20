@@ -132,37 +132,47 @@ export default function ManageCommandsPage() {
   const handelAddCommand = async (value) => {
     setSearchInputValue("");
     setOpenDialog(false);
+    if (value !== "") {
+      try {
+        const command = await createCommand(value);
 
-    try {
-      const command = await createCommand(value);
+        setCommands((prev) => [
+          ...prev,
+          {
+            id: command.id,
+            commandName: command.commandName,
+          },
+        ]);
+      } catch (error) {
+        const errors = error.response.data.body.errors;
+        let errorsForSwal = ""; // Start unordered list
 
-      setCommands((prev) => [
-        ...prev,
-        {
-          id: command.id,
-          commandName: command.commandName,
-        },
-      ]);
-    } catch (error) {
-      const errors = error.response.data.body.errors;
-      let errorsForSwal = ""; // Start unordered list
+        errors.forEach((error) => {
+          if (error.message === "commandName must be unique") {
+            errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
+          }
+        });
 
-      errors.forEach((error) => {
-        if (error.message === "commandName must be unique") {
-          errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
-        }
-      });
-
+        Swal.fire({
+          title: ` לא ניתן ליצור את הפיקוד ${value}`,
+          html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        });
+      }
+    } else {
       Swal.fire({
-        title: ` לא ניתן ליצור את הפיקוד ${value}`,
-        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+        title: `לא הכנסת ערך בשדה`,
+        text: "",
         icon: "error",
         confirmButtonColor: "#3085d6",
-        confirmButtonText: "אישור",
+        confirmButtonText: "בטל",
         reverseButtons: true,
-        customClass: {
-          container: "swal-dialog-custom",
-        },
       });
     }
   };

@@ -54,14 +54,16 @@ export default function ManageCommandsPage() {
     fetchGraveyardsData();
   }, []);
 
-  const handelGraveyardNameChange = async (graveyardId, newName) => {  // Change function name
+  const handelGraveyardNameChange = async (graveyardId, newName) => {
+    // Change function name
+    console.log(newName);
     try {
-      await updateGraveyardById(graveyardId, newName);  // Change function name
+      await updateGraveyardById(graveyardId, newName); // Change function name
       setGraveyards((prevGraveyards) => {
         return prevGraveyards.map((graveyard) => {
           if (graveyard.id === graveyardId) {
             // Update the graveyardName for the matching graveyardId
-            return { ...graveyard, graveyardName: newName };  // Change property name
+            return { ...graveyard, graveyardName: newName }; // Change property name
           }
           return graveyard;
         });
@@ -96,13 +98,13 @@ export default function ManageCommandsPage() {
 
   const handleDeleteGraveyard = async (graveyardId, graveyardName) => {
     Swal.fire({
-      title: `האם את/ה בטוח/ה שתרצה/י למחוק את הפיקוד ${graveyardName}`,
+      title: `האם את/ה בטוח/ה שתרצה/י למחוק את בית העלמין ${graveyardName}`,
       text: "פעולה זאת איננה ניתנת לשחזור",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "מחק פיקוד",
+      confirmButtonText: "מחק בית עלמין",
       cancelButtonText: "בטל",
       reverseButtons: true,
     }).then(async (result) => {
@@ -136,45 +138,55 @@ export default function ManageCommandsPage() {
     });
   };
 
-  const handelAddGraveyard = async (value) => { 
+  const handelAddGraveyard = async (value) => {
     setSearchInputValue("");
     setOpenDialog(false);
+    if (value !== "") {
+      try {
+        const graveyard = await createGraveyard(value);
+        console.log(graveyard);
 
-    try {
-      const graveyard = await createGraveyard(value);
-      console.log(graveyard);
+        setGraveyards((prev) => [
+          ...prev,
+          {
+            id: graveyard.id,
+            graveyardName: graveyard.graveyardName,
+          },
+        ]);
+      } catch (error) {
+        const errors = error.response.data.body.errors;
+        console.log(errors);
+        let errorsForSwal = ""; // Start unordered list
 
-      setGraveyards((prev) => [
-        ...prev,
-        {
-          id: graveyard.id,
-          graveyardName: graveyard.graveyardName,
-        },
-      ]);
-    } catch (error) {
-      const errors = error.response.data.body.errors;
-      console.log(errors);
-      let errorsForSwal = ""; // Start unordered list
+        errors.forEach((error) => {
+          console.log(error.message);
+          if (error.message === "graveyardName must be unique") {
+            errorsForSwal += "<li>בית העלמין כבר קיים במערכת</li>";
+          }
+        });
 
-      errors.forEach((error) => {
-        console.log(error.message);
-        if (error.message === "graveyardName must be unique") {
-          errorsForSwal += "<li>בית העלמין כבר קיים במערכת</li>";
-        }
-      });
+        console.log(errorsForSwal);
 
-      console.log(errorsForSwal);
-
+        Swal.fire({
+          title: ` לא ניתן ליצור את בית העלמין ${value}`,
+          html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        });
+      }
+    } else {
       Swal.fire({
-        title: ` לא ניתן ליצור את בית העלמין ${value}`,
-        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+        title: `לא הכנסת ערך בשדה`,
+        text: "",
         icon: "error",
         confirmButtonColor: "#3085d6",
-        confirmButtonText: "אישור",
+        confirmButtonText: "בטל",
         reverseButtons: true,
-        customClass: {
-          container: "swal-dialog-custom",
-        },
       });
     }
   };
@@ -229,6 +241,7 @@ export default function ManageCommandsPage() {
           open={openDialog}
           onClose={handleCloseDialog}
           onCreateClicked={handelAddGraveyard}
+          isGraveyard={true}
         />
       </div>
     </div>

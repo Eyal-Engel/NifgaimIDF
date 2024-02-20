@@ -5,7 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import { TextField } from "@mui/material";
 
 export default function SimpleDialog(props) {
-  const { onClose, open, onCreateClicked } = props;
+  const { onClose, open, onCreateClicked, isGraveyard } = props;
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (e) => {
@@ -17,8 +17,8 @@ export default function SimpleDialog(props) {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>יצירת פיקוד</DialogTitle>
+    <Dialog onClose={handleClose} open={open} sx={{width: "20rem"}}>
+      <DialogTitle>{!isGraveyard ? "יצירת פיקוד" : "יצירת בית עלמין"}</DialogTitle>
       <TextField onChange={handleInputChange}></TextField>
       <Button onClick={() => onCreateClicked(inputValue)}>יצירה</Button>
     </Dialog>

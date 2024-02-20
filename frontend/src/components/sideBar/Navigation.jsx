@@ -57,7 +57,7 @@ export const Navigation = ({ hideNavigation }) => {
 
   let itemListInfo = [];
 
-  if (auth.isLoggedIn && loggedUserCommand === "דרום") {
+  if (auth.isLoggedIn && loggedUserCommand === "צפון") {
     itemListInfo = [
       // {
       //   name: "אודות המערכת",

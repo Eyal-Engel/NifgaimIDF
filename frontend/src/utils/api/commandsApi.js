@@ -93,8 +93,8 @@ export async function createCommand(commandName) {
     "Access-Control-Allow-Headers":
       "Origin, X-Requested-With, Content-Type, Accept, Authorization",
     "Access-Control-Allow-Methods": "POST",
-    // Authorization:
-    //   "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
   const body = JSON.stringify({ commandName });
