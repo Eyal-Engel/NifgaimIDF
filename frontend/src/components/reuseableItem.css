@@ -1,0 +1,9 @@
+#columnType {
+    text-align: start;
+}
+
+.hebrewTranslation:before {
+    content: "שם: "; /* Add your translation here */
+    color: #555; /* Customize the color if needed */
+    font-size: 1rem; /* Customize the font size if needed */
+  }

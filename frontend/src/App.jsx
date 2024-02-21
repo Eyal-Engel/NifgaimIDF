@@ -17,6 +17,7 @@ import ManageCommandsPage from "./pages/ManageCommandsPage/ManageCommandsPage";
 import ManageGraveyardsPage from "./pages/ManageGraveyardsPage/ManageGraveyardsPage";
 import { getCommandNameByUserId } from "./utils/api/usersApi";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import ManageColumnsPage from "./pages/ManageColumns/ManageColumnsPage";
 
 const handleRouter = (token, command) => {
   let router;
@@ -48,7 +49,7 @@ const handleRouter = (token, command) => {
           { path: "/manageUsers", element: <ManageUsersPage /> },
           { path: "/manageGraveyards", element: <ManageGraveyardsPage /> },
           { path: "/manageCommands", element: <ManageCommandsPage /> },
-          { path: "/manageColumns", element: <ManageCommandsPage /> },
+          { path: "/manageColumns", element: <ManageColumnsPage /> },
           { path: "*", element: <ErrorNotFoundPage /> },
         ],
       },
