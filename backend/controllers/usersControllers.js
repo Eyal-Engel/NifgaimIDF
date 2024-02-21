@@ -92,10 +92,17 @@ const login = async (req, res, next) => {
 
   const hashedPassowrd = await sha256(password);
 
+  console.log("1");
   try {
     const existingUser = await User.findOne({
       where: { privateNumber: privateNumber, password: hashedPassowrd },
     });
+
+    if (!existingUser) {
+      const error = new Error("Invalid credentials, could not log you in.");
+      error.statusCode = 401; // Unauthorized
+      throw error;
+    }
 
     let token;
     try {
@@ -114,32 +121,14 @@ const login = async (req, res, next) => {
       token: token,
     });
   } catch (err) {
-    return next(err);
+    // If it's a known error with a specific status code, return it.
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ message: err.message });
+    } else {
+      // For any other error, return a generic 500 error.
+      return res.status(500).json({ message: "Internal server error." });
+    }
   }
-
-  // if (!existingUser) {
-  //   const error = new Error("Invalid credentials, could not log you in.", 404);
-  //   return next(error);
-  // }
-
-  // let isValidPassword = false;
-  // try {
-  //   const hashedPassowrd = await sha256(password);
-
-  //   isValidPassword = hashedPassowrd === existingUser.password;
-  //   console.log(isValidPassword);
-  // } catch (err) {
-  //   const error = new Error(
-  //     "Could not log you in, please check your credentials and try again.",
-  //     500
-  //   );
-  //   return next(error);
-  // }
-
-  // if (!isValidPassword) {
-  //   const error = new Error("Invalid credentials, could not log you in.", 401);
-  //   return next(error);
-  // }
 };
 
 const updateUser = async (req, res, next) => {

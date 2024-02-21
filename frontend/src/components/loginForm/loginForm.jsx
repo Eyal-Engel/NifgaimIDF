@@ -7,6 +7,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { AuthContext } from "../../utils/contexts/authContext";
 import { loginUser } from "../../utils/api/usersApi";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export function LoginForm() {
   const [userLoginInfo, setUserLoginInfo] = useState({
@@ -45,7 +46,36 @@ export function LoginForm() {
       auth.login(response.data.userId, response.data.token);
       navigate("/halalim");
     } catch (error) {
-      console.log(error.response.data.body);
+      console.log(error);
+      if (error.response && error.response.status === 401) {
+        // Unauthorized error
+        console.log("User is not authorized. Invalid credentials.");
+        Swal.fire({
+          title: `לא ניתן להתחבר`,
+          text: "שם משתמש וסיסמא אינם תקינים",
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        });
+      } else {
+        // Handle other errors
+        console.log("An error occurred while logging in:", error.message);
+        Swal.fire({
+          title: `לא ניתן להתחבר`,
+          text: "אנא נסה שוב מאוחר יותר",
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        });
+      }
     }
   };
 
