@@ -2,7 +2,6 @@ const { validationResult } = require("express-validator");
 const Halal = require("../models/schemas/NifgaimHalal");
 const { v4: uuidv4 } = require("uuid");
 const { QueryTypes, Sequelize } = require("sequelize");
-const db = require("../dbConfig");
 const sequelize = require("../dbConfig");
 
 const getHalals = async (req, res, next) => {
@@ -16,15 +15,20 @@ const getHalals = async (req, res, next) => {
 
 const getColumnNamesAndTypes = async (req, res, next) => {
   try {
-    let columns = [];
-    const rawAttributes = Halal.rawAttributes;
-    console.log(rawAttributes);
-    for (let key in rawAttributes) {
-      const type = rawAttributes[key].type.key;
-      columns.push({ key, type });
-    }
-
-    console.log(columns);
+    // Run the SQL query to fetch detailed information about columns
+    // const columns = await sequelize.query(
+    //   `SELECT column_name, data_type, ordinal_position, is_nullable, column_default,
+    //           character_maximum_length, numeric_precision, numeric_scale, datetime_precision
+    //    FROM information_schema.columns
+    //    WHERE table_name = 'nifgaimHalals';`,
+    const columns = await sequelize.query(
+      `SELECT column_name, data_type, is_nullable, column_default
+       FROM information_schema.columns 
+       WHERE table_name = 'nifgaimHalals';`,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
 
     res.json(columns);
   } catch (error) {
