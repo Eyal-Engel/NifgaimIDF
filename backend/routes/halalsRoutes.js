@@ -6,7 +6,7 @@ const router = express.Router();
 
 const checkAuth = require("../middlewares/checkAuth");
 
-router.use(checkAuth);
+// router.use(checkAuth);
 
 router.get("/", halalsCotnrollers.getHalals);
 
@@ -19,5 +19,7 @@ router.post("/", halalsCotnrollers.createHalal);
 router.patch("/:halalId", halalsCotnrollers.updateHalal);
 
 router.delete("/:halalId", halalsCotnrollers.deleteHalal);
+
+router.get("/columns/names", halalsCotnrollers.getColumnNamesAndTypes);
 
 module.exports = router;

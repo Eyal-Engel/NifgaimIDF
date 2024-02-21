@@ -1,6 +1,23 @@
 const { validationResult } = require("express-validator");
 const Halal = require("../models/schemas/NifgaimHalal");
 const { v4: uuidv4 } = require("uuid");
+const { QueryTypes } = require("sequelize");
+const db = require("../dbConfig");
+const getColumnNamesAndTypes = async (req, res, next) => {
+  try {
+    let columns = [];
+    for (let key in Halal.rawAttributes) {
+      const type = Halal.rawAttributes[key].type.key;
+      columns.push({ key, type });
+    }
+
+    console.log(columns);
+
+    res.json(columns);
+  } catch (error) {
+    return next(error);
+  }
+};
 
 const getHalals = async (req, res, next) => {
   try {
@@ -165,4 +182,5 @@ module.exports = {
   createHalal,
   updateHalal,
   deleteHalal,
+  getColumnNamesAndTypes,
 };
