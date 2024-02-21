@@ -159,3 +159,73 @@ export async function deleteHalal(halalId) {
     throw error;
   }
 }
+
+export async function addHalalColumn(columnData) {
+  const apiUrl = "http://localhost:5000/api/halals/columns/add";
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "POST",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  try {
+    const response = await post(apiUrl, JSON.stringify(columnData), headers);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding halal column:", error);
+    throw error;
+  }
+}
+
+export async function updateHalalColumn(columnName, updatedColumnData) {
+  const apiUrl = `http://localhost:5000/api/halals/columns/update/${columnName}`;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "PATCH",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  try {
+    const response = await patch(
+      apiUrl,
+      JSON.stringify(updatedColumnData),
+      headers
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating halal column '${columnName}':`, error);
+    throw error;
+  }
+}
+
+export async function deleteHalalColumn(columnName) {
+  const apiUrl = `http://localhost:5000/api/halals/columns/delete/${columnName}`;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "DELETE",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  try {
+    const response = await del(apiUrl, headers);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting halal column '${columnName}':`, error);
+    throw error;
+  }
+}
