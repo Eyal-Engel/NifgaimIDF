@@ -22,4 +22,8 @@ router.delete("/:halalId", halalsCotnrollers.deleteHalal);
 
 router.get("/columns/names", halalsCotnrollers.getColumnNamesAndTypes);
 
+router.post("/columns/add", halalsCotnrollers.addHalalColumn);
+// router.patch("/columns/update", halalsCotnrollers.updateHalalColumn);
+// router.delete("/columns/delete", halalsCotnrollers.deleteHalalColumn);
+
 module.exports = router;
