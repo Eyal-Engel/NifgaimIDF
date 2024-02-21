@@ -1,13 +1,13 @@
 const { validationResult } = require("express-validator");
 const Halal = require("../models/schemas/NifgaimHalal");
 const { v4: uuidv4 } = require("uuid");
-const { QueryTypes } = require("sequelize");
+const { QueryTypes, Sequelize } = require("sequelize");
 const db = require("../dbConfig");
 const sequelize = require("../dbConfig");
 
 const getColumnNamesAndTypes = async (req, res, next) => {
   try {
-    let columns = [];
+    // let columns = [];
     for (let key in Halal.rawAttributes) {
       const type = Halal.rawAttributes[key].type.key;
       columns.push({ key, type });
@@ -74,61 +74,101 @@ const addHalalColumn = async (req, res, next) => {
   }
 };
 
-// const addHalalColumn = async (req, res, next) => {
-//   const { columnName, columnType } = req.body;
-//   try {
-//     // Add column using Sequelize query
-//     await db.query(
-//       `ALTER TABLE Halal ADD COLUMN "${columnName}" ${columnType}`
-//     );
-//     res
-//       .status(200)
-//       .json({
-//         message: `Added column ${columnName} (${columnType}) to Halal table`,
-//       });
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
-
-// const updateHalalColumn = async (req, res, next) => {
-//   const { columnName } = req.params;
-//   const { newName, newType } = req.body;
-//   try {
-//     // Alter column name and type using Sequelize query
-//     await db.query(
-//       `ALTER TABLE Halal RENAME COLUMN "${columnName}" TO "${newName}"`
-//     );
-//     await db.query(
-//       `ALTER TABLE Halal ALTER COLUMN "${newName}" TYPE ${newType}`
-//     );
-//     res.status(200).json({
-//       message: `Updated column ${columnName} to ${newName} (${newType})`,
-//     });
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
-
-// const deleteHalalColumn = async (req, res, next) => {
-//   const { columnName } = req.params;
-//   try {
-//     // Drop column using Sequelize query
-//     await db.query(`ALTER TABLE Halal DROP COLUMN "${columnName}"`);
-//     res
-//       .status(200)
-//       .json({ message: `Deleted column ${columnName} from Halal table` });
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
-
 const getHalals = async (req, res, next) => {
   try {
     const halals = await Halal.findAll({});
     res.json(halals);
   } catch (err) {
     return next(err);
+  }
+};
+
+const updateHalalColumn = async (req, res, next) => {
+  try {
+    const { columnName } = req.params;
+    const { newDataType } = req.body;
+
+    // Get the queryInterface from your Sequelize instance
+    const queryInterface = sequelize.getQueryInterface();
+
+    // Check if the table exists
+    const tableExists = await queryInterface.showAllTables();
+    if (!tableExists.includes("nifgaimHalals")) {
+      return res
+        .status(400)
+        .json({ message: "Table 'NifgaimHalals' does not exist." });
+    }
+
+    // Check if the column exists
+    const tableDescription = await queryInterface.describeTable(
+      "nifgaimHalals"
+    );
+    if (!(columnName in tableDescription)) {
+      return res
+        .status(400)
+        .json({ message: `Column '${columnName}' does not exist.` });
+    }
+
+    // Validate newDataType
+    if (!Sequelize.DataTypes[newDataType]) {
+      return res
+        .status(400)
+        .json({ message: `Invalid data type '${newDataType}' specified.` });
+    }
+
+    // Define the migration code to change the data type of the column
+    await queryInterface.changeColumn(
+      "nifgaimHalals", // Your model's table name
+      columnName, // Name of the column to update
+      {
+        type: Sequelize.DataTypes[newDataType], // New data type of the column
+        allowNull: true,
+      }
+    );
+
+    console.log("Column data type updated successfully.");
+
+    res.status(200).json({ message: "Column data type updated successfully." });
+  } catch (error) {
+    console.error("Error updating column data type:", error);
+    return next(error);
+  }
+};
+
+const deleteHalalColumn = async (req, res, next) => {
+  try {
+    const { columnName } = req.params;
+
+    // Get the queryInterface from your Sequelize instance
+    const queryInterface = sequelize.getQueryInterface();
+
+    // Check if the table exists
+    const tableExists = await queryInterface.showAllTables();
+    if (!tableExists.includes("nifgaimHalals")) {
+      return res
+        .status(400)
+        .json({ message: "Table 'NifgaimHalals' does not exist." });
+    }
+
+    // Check if the column exists
+    const tableDescription = await queryInterface.describeTable(
+      "nifgaimHalals"
+    );
+    if (!(columnName in tableDescription)) {
+      return res
+        .status(400)
+        .json({ message: `Column '${columnName}' does not exist.` });
+    }
+
+    // Define the migration code to remove the column
+    await queryInterface.removeColumn("nifgaimHalals", columnName);
+
+    console.log("Column deleted successfully.");
+
+    res.status(200).json({ message: "Column deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting column:", error);
+    return next(error);
   }
 };
 
@@ -288,6 +328,6 @@ module.exports = {
   deleteHalal,
   getColumnNamesAndTypes,
   addHalalColumn,
-  // updateHalalColumn,
-  // deleteHalalColumn,
+  updateHalalColumn,
+  deleteHalalColumn,
 };
