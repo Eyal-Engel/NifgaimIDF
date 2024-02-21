@@ -164,6 +164,8 @@ function CustomToolbar({ setRows }) {
             privateNumber: user.privateNumber,
             fullName: user.fullName,
             command: await getCommandNameById(user.nifgaimCommandId),
+            editPerm: user.editPerm,
+            managePerm: user.managePerm,
           }));
           const transformedUsers = await Promise.all(userPromises);
           setRows(transformedUsers);
@@ -603,6 +605,8 @@ export default function ManageExistsUsers() {
           privateNumber: user.privateNumber,
           fullName: user.fullName,
           command: await getCommandNameById(user.nifgaimCommandId),
+          editPerm: user.editPerm,
+          managePerm: user.managePerm,
         }));
         const transformedUsers = await Promise.all(userPromises);
         setRows(transformedUsers);
@@ -799,14 +803,18 @@ export default function ManageExistsUsers() {
   const processRowUpdate = async (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
 
-    const { id, privateNumber, fullName, command } = updatedRow;
+    const { id, privateNumber, fullName, command, editPerm, managePerm } =
+      updatedRow;
 
     try {
       const nifgaimCommandId = await getCommandIdByName(command);
+      console.log(nifgaimCommandId);
       const filteredUser = {
         privateNumber,
         fullName,
         nifgaimCommandId,
+        editPerm,
+        managePerm,
       };
       await updateUser(id, filteredUser);
 
@@ -857,6 +865,7 @@ export default function ManageExistsUsers() {
       headerAlign: "center",
       tfontColor: "white",
       type: "singleSelect",
+      align: "center",
       editable: true,
       flex: 1,
       valueOptions: commands,
@@ -866,6 +875,35 @@ export default function ManageExistsUsers() {
         );
         return option ? option.label : value; // Return the label if found, otherwise return the original value
       },
+    },
+
+    {
+      field: "editPerm",
+      headerName: "הרשאות עריכה",
+      headerAlign: "center",
+      type: "boolean",
+      editable: true,
+      flex: 1,
+      renderCell: (params) =>
+        params.value ? (
+          <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
+        ) : (
+          <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
+        ),
+    },
+    {
+      field: "managePerm",
+      headerName: "הרשאות ניהול",
+      headerAlign: "center",
+      type: "boolean",
+      editable: true,
+      flex: 1,
+      renderCell: (params) =>
+        params.value ? (
+          <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
+        ) : (
+          <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
+        ),
     },
 
     {
@@ -924,10 +962,10 @@ export default function ManageExistsUsers() {
   return (
     <Box
       sx={{
-        width: "35vw",
+        width: "40vw",
         height: "70vh",
-        maxHeight: "40rem",
-        maxWidth: "40rem",
+        maxHeight: "70rem",
+        maxWidth: "70rem",
         "@media screen and (max-width: 1200px)": {
           width: "50vw",
           height: "70vh",
