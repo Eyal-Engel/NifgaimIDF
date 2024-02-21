@@ -5,11 +5,22 @@ const { QueryTypes, Sequelize } = require("sequelize");
 const db = require("../dbConfig");
 const sequelize = require("../dbConfig");
 
+const getHalals = async (req, res, next) => {
+  try {
+    const halals = await Halal.findAll({});
+    res.json(halals);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const getColumnNamesAndTypes = async (req, res, next) => {
   try {
-    // let columns = [];
-    for (let key in Halal.rawAttributes) {
-      const type = Halal.rawAttributes[key].type.key;
+    let columns = [];
+    const rawAttributes = Halal.rawAttributes;
+    console.log(rawAttributes);
+    for (let key in rawAttributes) {
+      const type = rawAttributes[key].type.key;
       columns.push({ key, type });
     }
 
@@ -20,9 +31,10 @@ const getColumnNamesAndTypes = async (req, res, next) => {
     return next(error);
   }
 };
+
 const addHalalColumn = async (req, res, next) => {
   try {
-    const { columnName, dataType } = req.body;
+    const { columnName, dataType, defaultValue } = req.body;
 
     if (!columnName || !dataType) {
       return res
@@ -37,7 +49,6 @@ const addHalalColumn = async (req, res, next) => {
     const tableExists =
       await queryInterface.sequelize.queryInterface.showAllTables();
 
-    console.log(tableExists);
     if (!tableExists.includes("nifgaimHalals")) {
       return res
         .status(400)
@@ -54,6 +65,13 @@ const addHalalColumn = async (req, res, next) => {
         .json({ message: `Column '${columnName}' already exists.` });
     }
 
+    // Validate the default value for the specified data type
+    if (!isValidDefaultValue(dataType, defaultValue)) {
+      return res.status(400).json({
+        message: `Default value '${defaultValue}' is not valid for data type '${dataType}'.`,
+      });
+    }
+
     // Define the migration code to add the new column
     await queryInterface.addColumn(
       "nifgaimHalals", // Your model's table name
@@ -61,7 +79,7 @@ const addHalalColumn = async (req, res, next) => {
       {
         type: sequelize.Sequelize.DataTypes[dataType], // Data type of the new column
         allowNull: true, // or false based on your requirement
-        defaultValue: "",
+        defaultValue: defaultValue || null,
       }
     );
 
@@ -74,19 +92,15 @@ const addHalalColumn = async (req, res, next) => {
   }
 };
 
-const getHalals = async (req, res, next) => {
-  try {
-    const halals = await Halal.findAll({});
-    res.json(halals);
-  } catch (err) {
-    return next(err);
-  }
-};
+// Function to validate default value based on data type
+function isValidDefaultValue(dataType, defaultValue) {
+  return typeof defaultValue === dataType || defaultValue === null;
+}
 
 const updateHalalColumn = async (req, res, next) => {
   try {
     const { columnName } = req.params;
-    const { newDataType } = req.body;
+    const { newColumnName } = req.body;
 
     // Get the queryInterface from your Sequelize instance
     const queryInterface = sequelize.getQueryInterface();
@@ -109,28 +123,18 @@ const updateHalalColumn = async (req, res, next) => {
         .json({ message: `Column '${columnName}' does not exist.` });
     }
 
-    // Validate newDataType
-    if (!Sequelize.DataTypes[newDataType]) {
-      return res
-        .status(400)
-        .json({ message: `Invalid data type '${newDataType}' specified.` });
-    }
-
-    // Define the migration code to change the data type of the column
-    await queryInterface.changeColumn(
+    // Rename the column
+    await queryInterface.renameColumn(
       "nifgaimHalals", // Your model's table name
-      columnName, // Name of the column to update
-      {
-        type: Sequelize.DataTypes[newDataType], // New data type of the column
-        allowNull: true,
-      }
+      columnName, // Current name of the column
+      newColumnName // New name for the column
     );
 
-    console.log("Column data type updated successfully.");
+    console.log("Column name updated successfully.");
 
-    res.status(200).json({ message: "Column data type updated successfully." });
+    res.status(200).json({ message: "Column name updated successfully." });
   } catch (error) {
-    console.error("Error updating column data type:", error);
+    console.error("Error updating column name:", error);
     return next(error);
   }
 };
