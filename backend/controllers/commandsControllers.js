@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 
 const Command = require("../models/schemas/NifgaimCommand");
+const User = require("../models/schemas/NifgaimUser");
 
 // Get all commands
 const getAllCommands = async (req, res, next) => {
@@ -31,11 +32,28 @@ const getCommandById = async (req, res, next) => {
 
 // Post new command
 const createCommand = async (req, res, next) => {
-  const { commandName, isNewSource } = req.body;
+  const { commandName, userId, isNewSource } = req.body;
+
   const id = uuidv4();
   try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (user.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const newCommand = await Command.create({ id, commandName, isNewSource });
-    res.status(201).json(newCommand);
+
+    // Return a flag indicating whether the command is related to logistics for the user
+    res.status(201).json({ newCommand });
   } catch (err) {
     return next(err);
   }
@@ -43,9 +61,23 @@ const createCommand = async (req, res, next) => {
 
 // Patch a command by id
 const updateCommandById = async (req, res, next) => {
-  const id = req.params.commandId;
-  const commandName = req.body.updatedCommand;
+  const { updatedCommand, userId } = req.body;
+
   try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (user.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const command = await Command.findByPk(id);
 
     if (!command.isNewSource) {
@@ -54,7 +86,7 @@ const updateCommandById = async (req, res, next) => {
       );
     }
 
-    command.commandName = commandName;
+    command.commandName = updatedCommand;
     await command.save();
 
     res.json(command);
@@ -66,11 +98,24 @@ const updateCommandById = async (req, res, next) => {
 // Delete command by id
 const deleteCommandById = async (req, res, next) => {
   const id = req.params.commandId;
+  const { userId } = req.body;
+
   try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (user.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const command = await Command.findByPk(id);
-    // if (!command) {
-    //   return next(new Error(`Command with id ${id} not found.`, 404));
-    // }
 
     if (!command.isNewSource) {
       return next(

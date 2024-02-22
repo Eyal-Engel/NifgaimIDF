@@ -1,4 +1,5 @@
 import { get, post, patch, del } from "./api"; // Assuming you have functions for POST, PATCH, DELETE requests in your API
+import { getCommandNameByUserId } from "./usersApi";
 
 export async function getAllGraveyards() {
   const apiUrl = "http://localhost:5000/api/graveyards/";
@@ -44,7 +45,10 @@ export async function getGraveyardById(graveyardId) {
   }
 }
 
-export async function createGraveyard(graveyardName) {
+export async function createGraveyard(userId, graveyardName) {
+  // const commandUserId = getCommandNameByUserId(userId);
+
+  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = "http://localhost:5000/api/graveyards/";
 
   const headers = {
@@ -57,7 +61,7 @@ export async function createGraveyard(graveyardName) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify({ graveyardName });
+  const body = JSON.stringify({ graveyardName, userId });
 
   try {
     const response = await post(apiUrl, body, headers);
@@ -66,9 +70,20 @@ export async function createGraveyard(graveyardName) {
     console.error("Error creating graveyard:", error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
 
-export async function updateGraveyardById(graveyardId, updatedGraveyard) {
+export async function updateGraveyardById(
+  userId,
+  graveyardId,
+  updatedGraveyard
+) {
+  // const commandUserId = getCommandNameByUserId(userId);
+
+  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:5000/api/graveyards/${graveyardId}`;
 
   const headers = {
@@ -82,7 +97,7 @@ export async function updateGraveyardById(graveyardId, updatedGraveyard) {
   };
   console.log({ updatedGraveyard });
 
-  const body = JSON.stringify({ updatedGraveyard });
+  const body = JSON.stringify({ updatedGraveyard, userId });
 
   try {
     const response = await patch(apiUrl, body, headers);
@@ -91,26 +106,40 @@ export async function updateGraveyardById(graveyardId, updatedGraveyard) {
     console.error(`Error updating graveyard with id ${graveyardId}:`, error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
 
-export async function deleteGraveyardById(graveyardId) {
-  const apiUrl = `http://localhost:5000/api/graveyards/${graveyardId}`;
+export async function deleteGraveyardById(userId, graveyardId) {
+  const commandUserId = getCommandNameByUserId(userId);
 
-  const headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers":
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-    "Access-Control-Allow-Methods": "DELETE",
-    Authorization:
-      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
-  };
+  if (commandUserId === "חיל הלוגיסטיקה") {
+    const apiUrl = `http://localhost:5000/api/graveyards/${graveyardId}`;
 
-  try {
-    const response = await del(apiUrl, headers);
-    return response.data;
-  } catch (error) {
-    console.error(`Error deleting graveyard with id ${graveyardId}:`, error);
+    const headers = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers":
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+      "Access-Control-Allow-Methods": "DELETE",
+      Authorization:
+        "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+    };
+
+    const body = JSON.stringify({ userId });
+
+    try {
+      const response = await del(apiUrl, body, headers);
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting graveyard with id ${graveyardId}:`, error);
+      throw error;
+    }
+  } else {
+    const error = { body: { errors: [{ message: "User is not authorized" }] } };
     throw error;
   }
 }

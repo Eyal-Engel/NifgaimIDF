@@ -1,5 +1,7 @@
 const { validationResult } = require("express-validator");
 const Halal = require("../models/schemas/NifgaimHalal");
+const User = require("../models/schemas/NifgaimUser");
+
 const { v4: uuidv4 } = require("uuid");
 const { QueryTypes, Sequelize } = require("sequelize");
 const sequelize = require("../dbConfig");
@@ -38,7 +40,22 @@ const getColumnNamesAndTypes = async (req, res, next) => {
 
 const addHalalColumn = async (req, res, next) => {
   try {
-    const { columnName, dataType, defaultValue } = req.body;
+    const { columnName, dataType, defaultValue } = req.body.columnData;
+    const { userId } = req.body.userId;
+
+    const userRequested = await User.findByPk(userId);
+
+    if (!userRequested) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (userRequested.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
 
     if (!columnName || !dataType) {
       return res
@@ -104,7 +121,29 @@ function isValidDefaultValue(dataType, defaultValue) {
 const updateHalalColumn = async (req, res, next) => {
   try {
     const { columnName } = req.params;
-    const { newColumnName } = req.body;
+    const { newColumnName } = req.body.updatedColumnData;
+
+    const { userId } = req.body.userId;
+
+    const userRequested = await User.findByPk(userId);
+
+    if (!userRequested) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (userRequested.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
+    if (!columnName || !dataType) {
+      return res
+        .status(400)
+        .json({ message: "Column name and data type are required." });
+    }
 
     // Get the queryInterface from your Sequelize instance
     const queryInterface = sequelize.getQueryInterface();
@@ -146,6 +185,27 @@ const updateHalalColumn = async (req, res, next) => {
 const deleteHalalColumn = async (req, res, next) => {
   try {
     const { columnName } = req.params;
+    const { userId } = req.body.userId;
+
+    const userRequested = await User.findByPk(userId);
+
+    if (!userRequested) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (userRequested.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
+    if (!columnName || !dataType) {
+      return res
+        .status(400)
+        .json({ message: "Column name and data type are required." });
+    }
 
     // Get the queryInterface from your Sequelize instance
     const queryInterface = sequelize.getQueryInterface();

@@ -1,4 +1,5 @@
 import { get, post, patch, del } from "./api";
+import { getCommandNameByUserId } from "./usersApi";
 
 export async function getCommands() {
   const apiUrl = "http://localhost:5000/api/commands/";
@@ -84,7 +85,11 @@ export async function getCommandNameById(commandId) {
   }
 }
 
-export async function createCommand(commandName) {
+export async function createCommand(userId, commandName) {
+  // {body:{ errors: [{message:}]}}
+  // const commandUserId = getCommandNameByUserId(userId);
+
+  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = "http://localhost:5000/api/commands/";
 
   const headers = {
@@ -97,7 +102,7 @@ export async function createCommand(commandName) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify({ commandName });
+  const body = JSON.stringify({ commandName, userId });
 
   try {
     const response = await post(apiUrl, body, headers);
@@ -105,9 +110,16 @@ export async function createCommand(commandName) {
   } catch (error) {
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
 
-export async function updateCommandById(commandId, updatedCommand) {
+export async function updateCommandById(userId, commandId, updatedCommand) {
+  // const commandUserId = getCommandNameByUserId(userId);
+
+  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:5000/api/commands/${commandId}`;
 
   const headers = {
@@ -120,7 +132,7 @@ export async function updateCommandById(commandId, updatedCommand) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify({ updatedCommand });
+  const body = JSON.stringify({ updatedCommand, userId });
   try {
     const response = await patch(apiUrl, body, headers);
     return response.data;
@@ -128,9 +140,16 @@ export async function updateCommandById(commandId, updatedCommand) {
     console.error(`Error updating command with id ${commandId}:`, error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
 
-export async function deleteCommandById(commandId) {
+export async function deleteCommandById(userId, commandId) {
+  // const commandUserId = getCommandNameByUserId(userId);
+
+  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:5000/api/commands/${commandId}`;
 
   const headers = {
@@ -143,11 +162,17 @@ export async function deleteCommandById(commandId) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ userId });
+
   try {
-    const response = await del(apiUrl, headers);
+    const response = await del(apiUrl, body, headers);
     return response.data;
   } catch (error) {
     console.error(`Error deleting command with id ${commandId}:`, error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }

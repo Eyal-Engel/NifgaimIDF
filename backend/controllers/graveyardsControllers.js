@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 
 const Graveyard = require("../models/schemas/NifgaimGraveyard");
+const User = require("../models/schemas/NifgaimUser");
 
 // Get all commands
 const getAllGraveyards = async (req, res, next) => {
@@ -31,9 +32,23 @@ const getGraveyardById = async (req, res, next) => {
 
 // Post new command
 const createGraveyard = async (req, res, next) => {
-  const { graveyardName, isNewSource } = req.body;
+  const { graveyardName, userId, isNewSource } = req.body;
   const id = uuidv4();
   try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (user.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const newGraveyard = await Graveyard.create({
       id,
       graveyardName,
@@ -49,7 +64,23 @@ const createGraveyard = async (req, res, next) => {
 const updateGraveyardById = async (req, res, next) => {
   const id = req.params.graveyardId;
   const graveyardName = req.body.updatedGraveyard;
+  const userId = req.body.userId;
+
   try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (user.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const graveyard = await Graveyard.findByPk(id);
 
     if (!graveyard.isNewSource) {
@@ -70,7 +101,23 @@ const updateGraveyardById = async (req, res, next) => {
 // Delete command by id
 const deleteGraveyardById = async (req, res, next) => {
   const id = req.params.graveyardId;
+  const userId = req.body.userId;
+
   try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (user.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const graveyard = await Graveyard.findByPk(id);
 
     if (!graveyard.isNewSource) {
