@@ -116,7 +116,10 @@ export async function loginUser(credentials) {
   }
 }
 
-export async function createUser(creditentials) {
+export async function createUser(userId, creditentials) {
+  // const commandUserId = getCommandNameByUserId(userId);
+
+  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = "http://localhost:5000/api/users/signup/";
 
   const headers = {
@@ -129,7 +132,7 @@ export async function createUser(creditentials) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify(creditentials);
+  const body = JSON.stringify(userId, creditentials);
 
   try {
     const response = await post(apiUrl, body, headers);
@@ -138,9 +141,16 @@ export async function createUser(creditentials) {
     console.error("Error creating new user:", error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
 
-export async function updateUser(userId, updatedUserData) {
+export async function updateUser(userUpdatingUserId, userId, updatedUserData) {
+  // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
+
+  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:5000/api/users/${userId}`;
 
   const headers = {
@@ -153,16 +163,25 @@ export async function updateUser(userId, updatedUserData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify(userUpdatingUserId, updatedUserData);
+
   try {
-    const response = await patch(apiUrl, updatedUserData, headers);
+    const response = await patch(apiUrl, body, headers);
     return response;
   } catch (error) {
     console.error(`Error updating user with ID ${userId}:`, error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
 
-export async function changePassword(userId, newPassword) {
+export async function changePassword(userUpdatingUserId, userId, newPassword) {
+  // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
+
+  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:5000/api/users/password/${userId}`;
 
   const headers = {
@@ -179,33 +198,48 @@ export async function changePassword(userId, newPassword) {
     password: newPassword,
   };
 
+  const body = JSON.stringify(userUpdatingUserId, passwordData);
+
   try {
-    const response = await patch(apiUrl, passwordData, headers);
+    const response = await patch(apiUrl, body, headers);
     return response;
   } catch (error) {
     console.error(`Error changing password for user with ID ${userId}:`, error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
 
-export async function deleteUser(userId) {
-  const apiUrl = `http://localhost:5000/api/users/${userId}`;
+export async function deleteUser(userUpdatingUserId, userId) {
+  const commandUserId = getCommandNameByUserId(userUpdatingUserId);
 
-  const headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers":
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-    "Access-Control-Allow-Methods": "DELETE",
-    Authorization:
-      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
-  };
+  if (commandUserId === "חיל הלוגיסטיקה") {
+    const apiUrl = `http://localhost:5000/api/users/${userId}`;
 
-  try {
-    const response = await del(apiUrl, headers);
-    return response.data;
-  } catch (error) {
-    console.error(`Error deleting user with ID ${userId}:`, error);
+    const headers = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers":
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+      "Access-Control-Allow-Methods": "DELETE",
+      Authorization:
+        "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+    };
+
+    const body = JSON.stringify(userUpdatingUserId);
+
+    try {
+      const response = await del(apiUrl, body, headers);
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting user with ID ${userId}:`, error);
+      throw error;
+    }
+  } else {
+    const error = { body: { errors: [{ message: "User is not authorized" }] } };
     throw error;
   }
 }

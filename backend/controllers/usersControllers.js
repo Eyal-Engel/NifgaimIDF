@@ -46,10 +46,26 @@ const signup = async (req, res, next) => {
   const id = uuidv4();
 
   const { privateNumber, fullName, password, commandId, editPerm, managePerm } =
-    req.body;
+    req.body.creditentials;
+
+  const userId = req.body.userId;
 
   let existingUser;
   try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (user.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     existingUser = await User.findOne({
       where: { privateNumber },
     });
@@ -92,7 +108,6 @@ const login = async (req, res, next) => {
 
   const hashedPassowrd = await sha256(password);
 
-  console.log("1");
   try {
     const existingUser = await User.findOne({
       where: { privateNumber: privateNumber, password: hashedPassowrd },
@@ -134,12 +149,26 @@ const login = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   const userId = req.params.userId;
 
-  console.log(req.body);
-
   const { privateNumber, fullName, nifgaimCommandId, editPerm, managePerm } =
-    req.body;
+    req.body.updatedUserData;
+
+  const userUpdatingUserId = req.body.userUpdatingUserId;
 
   try {
+    const userRequested = await User.findByPk(userUpdatingUserId);
+
+    if (!userRequested) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (userRequested.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     // Find the user by ID
     const user = await User.findByPk(userId);
 
@@ -197,9 +226,23 @@ const updateUser = async (req, res, next) => {
 const changePassword = async (req, res, next) => {
   const userId = req.params.userId;
 
-  const { password } = req.body;
+  const { passwordData, userUpdatingUserId } = req.body;
 
   try {
+    const userRequested = await User.findByPk(userUpdatingUserId);
+
+    if (!userRequested) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (userRequested.command !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     // Find the user by ID
     const user = await User.findByPk(userId);
 
@@ -212,7 +255,7 @@ const changePassword = async (req, res, next) => {
       return next(error);
     }
 
-    const hashedPassowrd = await sha256(password);
+    const hashedPassowrd = await sha256(passwordData);
 
     user.password = hashedPassowrd;
     // Save the updated user
@@ -237,7 +280,22 @@ const deleteUser = async (req, res, next) => {
     const userId = req.params.userId;
 
     let userById;
+    const { userUpdatingUserId } = req.body;
+
     try {
+      const userRequested = await User.findByPk(userUpdatingUserId);
+
+      if (!userRequested) {
+        return res
+          .status(404)
+          .json({ body: { errors: [{ message: "User is not exist" }] } });
+      }
+
+      if (userRequested.command !== "חיל הלוגיסטיקה") {
+        return res
+          .status(403)
+          .json({ body: { errors: [{ message: "User is not authorized" }] } });
+      }
       userById = await User.findOne({
         where: { id: userId },
       });
