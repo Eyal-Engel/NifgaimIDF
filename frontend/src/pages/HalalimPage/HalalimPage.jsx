@@ -47,7 +47,7 @@ export default function HalalimPage() {
     };
 
     fetchData();
-  }, []);
+  }, [loggedUserId]);
 
   return <div>Halalim page</div>;
 }

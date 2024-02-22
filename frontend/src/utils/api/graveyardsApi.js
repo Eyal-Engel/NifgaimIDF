@@ -1,5 +1,4 @@
 import { get, post, patch, del } from "./api"; // Assuming you have functions for POST, PATCH, DELETE requests in your API
-import { getCommandNameByUserId } from "./usersApi";
 
 export async function getAllGraveyards() {
   const apiUrl = "http://localhost:5000/api/graveyards/";

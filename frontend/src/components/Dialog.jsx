@@ -39,12 +39,16 @@ const cacheRtl = createCache({
 
 export default function SimpleDialog(props) {
   const { onClose, open, onCreateClicked, isGraveyard, isColumn } = props;
-  const [inputValue, setInputValue] = useState("");
-  const [typeOfColumn, setTypeOfColumn] = useState("character varying");
+  const [newColumnName, setNewColumnName] = useState("");
+  const [typeOfColumn, setTypeOfColumn] = useState("STRING");
   const [defaultValue, setDefaultValue] = useState(null);
 
   const handeldefaultValueChange = (event) => {
-    setDefaultValue(event.target.value);
+    if (typeOfColumn === "DATE") {
+      setDefaultValue(event.$d);
+    } else {
+      setDefaultValue(event.target.value);
+    }
   };
 
   const handleTypeOfColumnChange = (event) => {
@@ -52,12 +56,20 @@ export default function SimpleDialog(props) {
     setDefaultValue(null);
   };
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+  const handleNewNameChange = (e) => {
+    setNewColumnName(e.target.value);
   };
 
   const handleClose = () => {
-    onClose(inputValue);
+    onClose();
+  };
+
+  const handleCreateClicked = () => {
+    if (isColumn) {
+      onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+    } else {
+      onCreateClicked(newColumnName);
+    }
   };
   useEffect(() => {
     console.log(typeOfColumn);
@@ -79,7 +91,7 @@ export default function SimpleDialog(props) {
       </DialogTitle>
       <TextField
         sx={{ width: "80%", margin: "auto", direction: "rtl" }}
-        onChange={handleInputChange}
+        onChange={handleNewNameChange}
         placeholder={
           !isGraveyard && !isColumn
             ? "שם פיקוד"
@@ -112,36 +124,36 @@ export default function SimpleDialog(props) {
               >
                 <MenuItem
                   dir="rtl"
-                  value={"number"}
-                  selected={typeOfColumn === "number"}
+                  value={"INTEGER"}
+                  selected={typeOfColumn === "INTEGER"}
                 >
                   מספר
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"character varying"}
-                  selected={typeOfColumn === "character varying"}
+                  value={"STRING"}
+                  selected={typeOfColumn === "STRING"}
                 >
                   טקסט
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"timestamp with time zone"}
-                  selected={typeOfColumn === "timestamp with time zone"}
+                  value={"DATE"}
+                  selected={typeOfColumn === "DATE"}
                 >
                   תאריך
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"USER-DEFINED"}
-                  selected={typeOfColumn === "USER-DEFINED"}
+                  value={"ENUM"}
+                  selected={typeOfColumn === "ENUM"}
                 >
                   בחירה
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"boolean"}
-                  selected={typeOfColumn === "boolean"}
+                  value={"BOOLEAN"}
+                  selected={typeOfColumn === "BOOLEAN"}
                 >
                   כן/לא
                 </MenuItem>
@@ -150,7 +162,7 @@ export default function SimpleDialog(props) {
           </ThemeProvider>
         </CacheProvider>
       )}
-      {isColumn && typeOfColumn === "character varying" && (
+      {isColumn && typeOfColumn === "STRING" && (
         <TextField
           sx={{
             width: "80%",
@@ -162,7 +174,7 @@ export default function SimpleDialog(props) {
           placeholder={"ערך ברירת מחדל"}
         />
       )}
-      {isColumn && typeOfColumn === "boolean" && (
+      {isColumn && typeOfColumn === "BOOLEAN" && (
         <FormControl
           sx={{
             width: "80%",
@@ -185,13 +197,13 @@ export default function SimpleDialog(props) {
           </RadioGroup>
         </FormControl>
       )}
-      {isColumn && typeOfColumn === "number" && (
+      {isColumn && typeOfColumn === "INTEGER" && (
         <CacheProvider value={cacheRtl}>
           <ThemeProvider theme={theme}>
             <TextField
               dir="rtl"
               id="outlined-number"
-              label="Number"
+              label="מספר ברירת מחדל"
               type="number"
               onChange={handeldefaultValueChange}
               InputLabelProps={{
@@ -206,7 +218,7 @@ export default function SimpleDialog(props) {
           </ThemeProvider>
         </CacheProvider>
       )}
-      {isColumn && typeOfColumn === "timestamp with time zone" && (
+      {isColumn && typeOfColumn === "DATE" && (
         <CacheProvider value={cacheRtl}>
           <div
             dir="rtl"
@@ -215,7 +227,7 @@ export default function SimpleDialog(props) {
             <ThemeProvider theme={theme}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  label="Basic date picker"
+                  label="תאריך ברירת מחדל"
                   onChange={handeldefaultValueChange}
                 />
               </LocalizationProvider>
@@ -225,7 +237,7 @@ export default function SimpleDialog(props) {
       )}
       <Button
         sx={{ margin: "10px", fontSize: "1.2rem" }}
-        onClick={() => onCreateClicked(inputValue)}
+        onClick={handleCreateClicked}
       >
         יצירה
       </Button>

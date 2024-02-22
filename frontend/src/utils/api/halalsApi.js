@@ -1,5 +1,4 @@
 import { get, post, patch, del } from "./api";
-import { getCommandNameByUserId } from "./usersApi";
 
 export async function getHalalColumnsAndTypes() {
   const apiUrl = "http://localhost:5000/api/halals/columns/names/";
@@ -161,7 +160,7 @@ export async function deleteHalal(halalId) {
   }
 }
 
-export async function addHalalColumn(userId, columnData) {
+export async function addHalalColumn(userId, columnName, dataType, defaultValue) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
@@ -177,7 +176,7 @@ export async function addHalalColumn(userId, columnData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify({ userId, columnData });
+  const body = JSON.stringify({ userId, columnName, dataType, defaultValue });
 
   try {
     const response = await post(apiUrl, body, headers);
@@ -208,9 +207,7 @@ export async function updateHalalColumn(userId, columnName, updatedColumnData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const newColumnName = columnName;
-
-  const body = JSON.stringify({ userId, newColumnName, updatedColumnData });
+  const body = JSON.stringify({ userId, updatedColumnData });
 
   try {
     const response = await patch(apiUrl, body, headers);
@@ -241,6 +238,7 @@ export async function deleteHalalColumn(userId, columnName) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  console.log(userId, columnName);
   const body = JSON.stringify({ userId });
 
   try {

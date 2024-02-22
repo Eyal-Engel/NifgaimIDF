@@ -167,6 +167,13 @@ const EditableItem = ({
                 >
                   כן/לא
                 </MenuItem>
+                <MenuItem
+                  dir="rtl"
+                  value={"integer"}
+                  selected={typeOfColumn === "integer"}
+                >
+                  מספר
+                </MenuItem>
               </Select>
             </FormControl>
           </ThemeProvider>

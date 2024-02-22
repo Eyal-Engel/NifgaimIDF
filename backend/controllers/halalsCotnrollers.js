@@ -48,6 +48,9 @@ const addHalalColumn = async (req, res, next) => {
     const userCommandName = userCommand.commandName;
     let defaultValuePost = defaultValue;
 
+    console.log("AAAAAAAAAAAAAAAAA");
+    console.log(userId, columnName, dataType, defaultValue);
+    console.log(dataType);
     if (
       !userRequested ||
       userRequested === null ||
@@ -65,9 +68,11 @@ const addHalalColumn = async (req, res, next) => {
     }
 
     if (!columnName || !dataType) {
-      return res
-        .status(400)
-        .json({ message: "Column name and data type are required." });
+      return res.status(400).json({
+        body: {
+          errors: [{ message: "Column name and data type are required." }],
+        },
+      });
     }
 
     if (defaultValuePost === undefined) {
@@ -82,9 +87,11 @@ const addHalalColumn = async (req, res, next) => {
       await queryInterface.sequelize.queryInterface.showAllTables();
 
     if (!tableExists.includes("nifgaimHalals")) {
-      return res
-        .status(400)
-        .json({ message: "Table 'NifgaimHalals' does not exist." });
+      return res.status(400).json({
+        body: {
+          errors: [{ message: "Table 'NifgaimHalals' does not exist." }],
+        },
+      });
     }
 
     // Check if the column already exists
@@ -92,15 +99,23 @@ const addHalalColumn = async (req, res, next) => {
       "nifgaimHalals"
     );
     if (columnName in tableDescription) {
-      return res
-        .status(400)
-        .json({ message: `Column '${columnName}' already exists.` });
+      return res.status(400).json({
+        body: {
+          errors: [{ message: `Column '${columnName}' already exists.` }],
+        },
+      });
     }
 
     // Validate the default value for the specified data type
     if (!isValidDefaultValue(dataType, defaultValuePost)) {
       return res.status(400).json({
-        message: `Default value '${defaultValuePost}' is not valid for data type '${dataType}'.`,
+        body: {
+          errors: [
+            {
+              message: `Default value '${defaultValuePost}' is not valid for data type '${dataType}'.`,
+            },
+          ],
+        },
       });
     }
 
@@ -134,9 +149,9 @@ const updateHalalColumn = async (req, res, next) => {
     const { columnName } = req.params;
     console.log("object");
     console.log(req.body);
-    const { newColumnName } = req.body;
-    const { userId } = req.body;
+    const { userId, updatedColumnData } = req.body;
 
+    const { newColumnName } = updatedColumnData;
     const userRequested = await User.findByPk(userId);
     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
     const userCommandName = userCommand.commandName;
@@ -224,9 +239,7 @@ const deleteHalalColumn = async (req, res, next) => {
     }
 
     if (!columnName) {
-      return res
-        .status(400)
-        .json({ message: "Column name is required." });
+      return res.status(400).json({ message: "Column name is required." });
     }
 
     // Get the queryInterface from your Sequelize instance

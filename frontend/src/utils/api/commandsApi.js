@@ -1,5 +1,4 @@
 import { get, post, patch, del } from "./api";
-import { getCommandNameByUserId } from "./usersApi";
 
 export async function getCommands() {
   const apiUrl = "http://localhost:5000/api/commands/";
