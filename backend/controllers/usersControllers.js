@@ -60,7 +60,7 @@ const signup = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.command !== "חיל הלוגיסטיקה") {
+    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -163,7 +163,7 @@ const updateUser = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.command !== "חיל הלוגיסטיקה") {
+    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -237,7 +237,7 @@ const changePassword = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.command !== "חיל הלוגיסטיקה") {
+    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -291,7 +291,7 @@ const deleteUser = async (req, res, next) => {
           .json({ body: { errors: [{ message: "User is not exist" }] } });
       }
 
-      if (userRequested.command !== "חיל הלוגיסטיקה") {
+      if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
         return res
           .status(403)
           .json({ body: { errors: [{ message: "User is not authorized" }] } });

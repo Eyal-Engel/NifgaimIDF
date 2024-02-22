@@ -37,6 +37,7 @@ const createCommand = async (req, res, next) => {
   const id = uuidv4();
   try {
     const user = await User.findByPk(userId);
+    console.log(user);
 
     if (!user) {
       return res
@@ -44,7 +45,7 @@ const createCommand = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.command !== "חיל הלוגיסטיקה") {
+    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -72,7 +73,7 @@ const updateCommandById = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.command !== "חיל הלוגיסטיקה") {
+    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -109,7 +110,7 @@ const deleteCommandById = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.command !== "חיל הלוגיסטיקה") {
+    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });

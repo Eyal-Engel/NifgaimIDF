@@ -43,7 +43,7 @@ const createGraveyard = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.command !== "חיל הלוגיסטיקה") {
+    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -75,7 +75,7 @@ const updateGraveyardById = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.command !== "חיל הלוגיסטיקה") {
+    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -112,7 +112,7 @@ const deleteGraveyardById = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.command !== "חיל הלוגיסטיקה") {
+    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });

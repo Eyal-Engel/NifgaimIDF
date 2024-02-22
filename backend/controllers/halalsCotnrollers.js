@@ -51,7 +51,7 @@ const addHalalColumn = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.command !== "חיל הלוגיסטיקה") {
+    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -133,7 +133,7 @@ const updateHalalColumn = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.command !== "חיל הלוגיסטיקה") {
+    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -195,7 +195,7 @@ const deleteHalalColumn = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.command !== "חיל הלוגיסטיקה") {
+    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
