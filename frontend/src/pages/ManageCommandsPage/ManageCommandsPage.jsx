@@ -30,6 +30,8 @@ export default function ManageCommandsPage() {
   const [commands, setCommands] = useState([]);
   const [searchInputValue, setSearchInputValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -54,7 +56,7 @@ export default function ManageCommandsPage() {
 
   const handelCommandNameChange = async (commandId, newName) => {
     try {
-      await updateCommandById(commandId, newName);
+      await updateCommandById(loggedUserId, commandId, newName);
       setCommands((prevCommands) => {
         return prevCommands.map((command) => {
           if (command.id === commandId) {
@@ -102,7 +104,7 @@ export default function ManageCommandsPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await deleteCommandById(commandId);
+          await deleteCommandById(loggedUserId, commandId);
           setCommands((prevCommands) => {
             const updatedCommands = prevCommands.filter(
               (command) => command.id !== commandId
@@ -134,7 +136,7 @@ export default function ManageCommandsPage() {
     setOpenDialog(false);
     if (value !== "") {
       try {
-        const command = await createCommand(value);
+        const command = await createCommand(loggedUserId, value);
 
         setCommands((prev) => [
           ...prev,

@@ -30,6 +30,8 @@ export default function ManageCommandsPage() {
   const [graveyards, setGraveyards] = useState([]);
   const [searchInputValue, setSearchInputValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -58,7 +60,7 @@ export default function ManageCommandsPage() {
     // Change function name
     console.log(newName);
     try {
-      await updateGraveyardById(graveyardId, newName); // Change function name
+      await updateGraveyardById(loggedUserId, graveyardId, newName); // Change function name
       setGraveyards((prevGraveyards) => {
         return prevGraveyards.map((graveyard) => {
           if (graveyard.id === graveyardId) {
@@ -111,7 +113,7 @@ export default function ManageCommandsPage() {
       if (result.isConfirmed) {
         try {
           console.log(graveyardId);
-          await deleteGraveyardById(graveyardId);
+          await deleteGraveyardById(loggedUserId, graveyardId);
           setGraveyards((prevGraveyards) => {
             const updatedGraveyards = prevGraveyards.filter(
               (graveyard) => graveyard.id !== graveyardId
@@ -143,7 +145,7 @@ export default function ManageCommandsPage() {
     setOpenDialog(false);
     if (value !== "") {
       try {
-        const graveyard = await createGraveyard(value);
+        const graveyard = await createGraveyard(loggedUserId, value);
         console.log(graveyard);
 
         setGraveyards((prev) => [

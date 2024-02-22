@@ -95,7 +95,6 @@ export async function updateGraveyardById(
     Authorization:
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
-  console.log({ updatedGraveyard });
 
   const body = JSON.stringify({ updatedGraveyard, userId });
 

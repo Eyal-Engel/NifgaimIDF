@@ -177,7 +177,7 @@ export async function addHalalColumn(userId, columnData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify(columnData, userId);
+  const body = JSON.stringify({ userId, columnData });
 
   try {
     const response = await post(apiUrl, body, headers);
@@ -208,7 +208,9 @@ export async function updateHalalColumn(userId, columnName, updatedColumnData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify(updatedColumnData, userId);
+  const newColumnName = columnName;
+
+  const body = JSON.stringify({ userId, newColumnName, updatedColumnData });
 
   try {
     const response = await patch(apiUrl, body, headers);
@@ -239,7 +241,7 @@ export async function deleteHalalColumn(userId, columnName) {
         "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
     };
 
-    const body = JSON.stringify(userId);
+    const body = JSON.stringify({ userId });
 
     try {
       const response = await del(apiUrl, body, headers);

@@ -6,6 +6,9 @@ import {
 } from "../../utils/api/halalsApi";
 
 export default function HalalimPage() {
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -17,28 +20,28 @@ export default function HalalimPage() {
 
       try {
         const columnData = {
-          columnName: "checkcheck",
+          columnName: "cc3",
           dataType: "STRING", // or any other supported data type
           defaultValue: null, // or any other supported afault value
         };
-        const response = await addHalalColumn(columnData);
+        const response = await addHalalColumn(loggedUserId, columnData);
         console.log(response);
       } catch (error) {
-        console.log(error.response.data.message)
+        console.log(error.response.data.message);
       }
 
       try {
         const data = await getHalalColumnsAndTypes();
         console.log(data); // Assuming you want to do something with the data
       } catch (error) {
-        console.log(error.response.data.message)
+        console.log(error);
       }
 
       try {
-        const data = await deleteHalalColumn("hello4");
+        const data = await deleteHalalColumn(loggedUserId, "cc3");
         console.log(data); // Assuming you want to do something with the data
       } catch (error) {
-        console.log(error.response.data.message)
+        console.log(error);
         // console.error("Error fetching data:", error);
       }
     };

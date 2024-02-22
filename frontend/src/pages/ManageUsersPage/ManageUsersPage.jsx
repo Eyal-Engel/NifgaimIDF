@@ -60,6 +60,8 @@ import { PasswordStrength } from "../../components/manageUsers/PasswordStrength"
 function CustomToolbar({ setRows }) {
   const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
   const [commandsSignUp, setCommandsSignUp] = React.useState([]);
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
 
   React.useEffect(() => {
     const fetchCommandsData = async () => {
@@ -156,7 +158,7 @@ function CustomToolbar({ setRows }) {
         };
 
         try {
-          await createUser(user);
+          await createUser(loggedUserId, user);
 
           const updatedUsers = await getUsers();
           const userPromises = updatedUsers.map(async (user) => ({
@@ -580,6 +582,8 @@ export default function ManageExistsUsers() {
     password: "",
     confirmPassword: "",
   });
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
 
   const handleChangePasswordRegister = (value) => {
     setPasswordInfo({
@@ -675,7 +679,7 @@ export default function ManageExistsUsers() {
         }).then(async (result) => {
           if (result.isConfirmed) {
             try {
-              await deleteUser(id);
+              await deleteUser(loggedUserId, id);
               setRows(rows.filter((row) => row.id !== id));
               Swal.fire({
                 title: `משתמש "${userFullName}" נמחק בהצלחה!`,
@@ -767,7 +771,7 @@ export default function ManageExistsUsers() {
       });
     } else {
       try {
-        await changePassword(selectedUserId, newPassword);
+        await changePassword(loggedUserId, selectedUserId, newPassword);
         const fullName = await getFullNameById(selectedUserId);
         Swal.fire({
           title: `סיסמא עודכנה בהצלחה`,
@@ -816,7 +820,7 @@ export default function ManageExistsUsers() {
         editPerm,
         managePerm,
       };
-      await updateUser(id, filteredUser);
+      await updateUser(loggedUserId, id, filteredUser);
 
       setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 

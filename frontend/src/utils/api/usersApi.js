@@ -132,7 +132,7 @@ export async function createUser(userId, creditentials) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify(userId, creditentials);
+  const body = JSON.stringify({ userId, creditentials });
 
   try {
     const response = await post(apiUrl, body, headers);
@@ -163,7 +163,7 @@ export async function updateUser(userUpdatingUserId, userId, updatedUserData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify(userUpdatingUserId, updatedUserData);
+  const body = JSON.stringify({ userUpdatingUserId, updatedUserData });
 
   try {
     const response = await patch(apiUrl, body, headers);
@@ -198,7 +198,7 @@ export async function changePassword(userUpdatingUserId, userId, newPassword) {
     password: newPassword,
   };
 
-  const body = JSON.stringify(userUpdatingUserId, passwordData);
+  const body = JSON.stringify({ userUpdatingUserId, passwordData });
 
   try {
     const response = await patch(apiUrl, body, headers);
@@ -229,7 +229,7 @@ export async function deleteUser(userUpdatingUserId, userId) {
         "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
     };
 
-    const body = JSON.stringify(userUpdatingUserId);
+    const body = JSON.stringify({ userUpdatingUserId });
 
     try {
       const response = await del(apiUrl, body, headers);

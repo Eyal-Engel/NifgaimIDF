@@ -45,22 +45,25 @@ const signup = async (req, res, next) => {
   }
   const id = uuidv4();
 
+  console.log(req.body);
   const { privateNumber, fullName, password, commandId, editPerm, managePerm } =
-    req.body.creditentials;
+    req.body;
 
   const userId = req.body.userId;
 
   let existingUser;
   try {
     const user = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!user) {
+    if (!user || user === null || user === undefined) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -148,22 +151,27 @@ const login = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
   const userId = req.params.userId;
-
   const { privateNumber, fullName, nifgaimCommandId, editPerm, managePerm } =
-    req.body.updatedUserData;
+    req.body;
 
   const userUpdatingUserId = req.body.userUpdatingUserId;
 
   try {
     const userRequested = await User.findByPk(userUpdatingUserId);
+    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!userRequested) {
+    if (
+      !userRequested ||
+      userRequested === null ||
+      userRequested === undefined
+    ) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -181,11 +189,11 @@ const updateUser = async (req, res, next) => {
       return next(error);
     }
 
-    const command = await Command.findByPk(nifgaimCommandId);
+    const command = await Command.findByPk(userRequested.nifgaimCommandId);
     // If command not found, return null or handle accordingly
     if (!command) {
       const error = new Error(
-        `Could not update user ${userId}, command ${nifgaimCommandId} doesn't exist.`,
+        `Could not update user ${userId}, command ${userRequested.nifgaimCommandId} doesn't exist.`,
         403
       );
       return next(error);
@@ -230,14 +238,20 @@ const changePassword = async (req, res, next) => {
 
   try {
     const userRequested = await User.findByPk(userUpdatingUserId);
+    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!userRequested) {
+    if (
+      !userRequested ||
+      userRequested === null ||
+      userRequested === undefined
+    ) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -278,12 +292,17 @@ const deleteUser = async (req, res, next) => {
     }
 
     const userId = req.params.userId;
+    console.log(userId);
 
     let userById;
     const { userUpdatingUserId } = req.body;
 
     try {
       const userRequested = await User.findByPk(userUpdatingUserId);
+      const userCommand = await Command.findByPk(
+        userRequested.nifgaimCommandId
+      );
+      const userCommandName = userCommand.commandName;
 
       if (!userRequested) {
         return res
@@ -291,7 +310,7 @@ const deleteUser = async (req, res, next) => {
           .json({ body: { errors: [{ message: "User is not exist" }] } });
       }
 
-      if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+      if (userCommandName !== "חיל הלוגיסטיקה") {
         return res
           .status(403)
           .json({ body: { errors: [{ message: "User is not authorized" }] } });
