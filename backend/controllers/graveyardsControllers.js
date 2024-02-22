@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const Graveyard = require("../models/schemas/NifgaimGraveyard");
 const User = require("../models/schemas/NifgaimUser");
+const Command = require("../models/schemas/NifgaimCommand");
 
 // Get all commands
 const getAllGraveyards = async (req, res, next) => {
@@ -36,14 +37,16 @@ const createGraveyard = async (req, res, next) => {
   const id = uuidv4();
   try {
     const user = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!user) {
+    if (!user || user === null || user === undefined) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -63,19 +66,21 @@ const createGraveyard = async (req, res, next) => {
 // Patch a command by id
 const updateGraveyardById = async (req, res, next) => {
   const id = req.params.graveyardId;
-  const graveyardName = req.body.updatedGraveyard;
-  const userId = req.body.userId;
+  const { graveyardName } = req.body;
+  const { userId } = req.body;
 
   try {
     const user = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!user) {
+    if (!user || user === null || user === undefined) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -105,14 +110,16 @@ const deleteGraveyardById = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!user) {
+    if (!user || user === null || user === undefined) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });

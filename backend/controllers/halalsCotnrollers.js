@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const Halal = require("../models/schemas/NifgaimHalal");
 const User = require("../models/schemas/NifgaimUser");
+const Command = require("../models/schemas/NifgaimCommand");
 
 const { v4: uuidv4 } = require("uuid");
 const { QueryTypes, Sequelize } = require("sequelize");
@@ -40,18 +41,24 @@ const getColumnNamesAndTypes = async (req, res, next) => {
 
 const addHalalColumn = async (req, res, next) => {
   try {
-    const { columnName, dataType, defaultValue } = req.body.columnData;
-    const { userId } = req.body.userId;
-
+    const { columnName, dataType, defaultValue } = req.body;
+    const { userId } = req.body;
     const userRequested = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
+    let defaultValuePost = defaultValue;
 
-    if (!userRequested) {
+    if (
+      !userRequested ||
+      userRequested === null ||
+      userRequested === undefined
+    ) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -61,6 +68,10 @@ const addHalalColumn = async (req, res, next) => {
       return res
         .status(400)
         .json({ message: "Column name and data type are required." });
+    }
+
+    if (defaultValuePost === undefined) {
+      defaultValuePost = null;
     }
 
     // Get the queryInterface from your Sequelize instance
@@ -87,9 +98,9 @@ const addHalalColumn = async (req, res, next) => {
     }
 
     // Validate the default value for the specified data type
-    if (!isValidDefaultValue(dataType, defaultValue)) {
+    if (!isValidDefaultValue(dataType, defaultValuePost)) {
       return res.status(400).json({
-        message: `Default value '${defaultValue}' is not valid for data type '${dataType}'.`,
+        message: `Default value '${defaultValuePost}' is not valid for data type '${dataType}'.`,
       });
     }
 
@@ -100,7 +111,7 @@ const addHalalColumn = async (req, res, next) => {
       {
         type: sequelize.Sequelize.DataTypes[dataType], // Data type of the new column
         allowNull: true, // or false based on your requirement
-        defaultValue: defaultValue || null,
+        defaultValue: defaultValuePost || null,
       }
     );
 
@@ -121,28 +132,33 @@ function isValidDefaultValue(dataType, defaultValue) {
 const updateHalalColumn = async (req, res, next) => {
   try {
     const { columnName } = req.params;
-    const { newColumnName } = req.body.updatedColumnData;
-
-    const { userId } = req.body.userId;
+    console.log("object");
+    console.log(req.body);
+    const { newColumnName } = req.body;
+    const { userId } = req.body;
 
     const userRequested = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!userRequested) {
+    if (
+      !userRequested ||
+      userRequested === null ||
+      userRequested === undefined
+    ) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
 
-    if (!columnName || !dataType) {
-      return res
-        .status(400)
-        .json({ message: "Column name and data type are required." });
+    if (!columnName) {
+      return res.status(400).json({ message: "Column name is required." });
     }
 
     // Get the queryInterface from your Sequelize instance
@@ -185,26 +201,32 @@ const updateHalalColumn = async (req, res, next) => {
 const deleteHalalColumn = async (req, res, next) => {
   try {
     const { columnName } = req.params;
-    const { userId } = req.body.userId;
+    const { userId } = req.body;
 
     const userRequested = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!userRequested) {
+    if (
+      !userRequested ||
+      userRequested === null ||
+      userRequested === undefined
+    ) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userRequested.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
 
-    if (!columnName || !dataType) {
+    if (!columnName) {
       return res
         .status(400)
-        .json({ message: "Column name and data type are required." });
+        .json({ message: "Column name is required." });
     }
 
     // Get the queryInterface from your Sequelize instance

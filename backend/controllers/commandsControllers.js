@@ -37,15 +37,16 @@ const createCommand = async (req, res, next) => {
   const id = uuidv4();
   try {
     const user = await User.findByPk(userId);
-    console.log(user);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!user) {
+    if (!user || user === null || user === undefined) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -62,18 +63,20 @@ const createCommand = async (req, res, next) => {
 
 // Patch a command by id
 const updateCommandById = async (req, res, next) => {
-  const { updatedCommand, userId } = req.body;
+  const { commandName, userId } = req.body;
+  const id = req.params.commandId;
 
   try {
     const user = await User.findByPk(userId);
-
-    if (!user) {
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
+    if (!user || user === null || user === undefined) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -87,7 +90,7 @@ const updateCommandById = async (req, res, next) => {
       );
     }
 
-    command.commandName = updatedCommand;
+    command.commandName = commandName;
     await command.save();
 
     res.json(command);
@@ -103,14 +106,16 @@ const deleteCommandById = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
 
-    if (!user) {
+    if (!user || user === null || user === undefined) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (user.nifgaimCommandId !== "חיל הלוגיסטיקה") {
+    if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });

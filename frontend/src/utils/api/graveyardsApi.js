@@ -95,7 +95,6 @@ export async function updateGraveyardById(
     Authorization:
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
-  console.log({ updatedGraveyard });
 
   const body = JSON.stringify({ updatedGraveyard, userId });
 
@@ -113,33 +112,33 @@ export async function updateGraveyardById(
 }
 
 export async function deleteGraveyardById(userId, graveyardId) {
-  const commandUserId = getCommandNameByUserId(userId);
+  // const commandUserId = getCommandNameByUserId(userId);
 
-  if (commandUserId === "חיל הלוגיסטיקה") {
-    const apiUrl = `http://localhost:5000/api/graveyards/${graveyardId}`;
+  // if (commandUserId === "חיל הלוגיסטיקה") {
+  const apiUrl = `http://localhost:5000/api/graveyards/${graveyardId}`;
 
-    const headers = {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers":
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-      "Access-Control-Allow-Methods": "DELETE",
-      Authorization:
-        "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
-    };
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "DELETE",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
 
-    const body = JSON.stringify({ userId });
+  const body = JSON.stringify({ userId });
 
-    try {
-      const response = await del(apiUrl, body, headers);
+  try {
+    const response = await del(apiUrl, body, headers);
 
-      return response.data;
-    } catch (error) {
-      console.error(`Error deleting graveyard with id ${graveyardId}:`, error);
-      throw error;
-    }
-  } else {
-    const error = { body: { errors: [{ message: "User is not authorized" }] } };
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting graveyard with id ${graveyardId}:`, error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
