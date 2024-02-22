@@ -214,32 +214,32 @@ export async function changePassword(userUpdatingUserId, userId, newPassword) {
 }
 
 export async function deleteUser(userUpdatingUserId, userId) {
-  const commandUserId = getCommandNameByUserId(userUpdatingUserId);
+  // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
 
-  if (commandUserId === "חיל הלוגיסטיקה") {
-    const apiUrl = `http://localhost:5000/api/users/${userId}`;
+  // if (commandUserId === "חיל הלוגיסטיקה") {
+  const apiUrl = `http://localhost:5000/api/users/${userId}`;
 
-    const headers = {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers":
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-      "Access-Control-Allow-Methods": "DELETE",
-      Authorization:
-        "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
-    };
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "DELETE",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
 
-    const body = JSON.stringify({ userUpdatingUserId });
+  const body = JSON.stringify({ userUpdatingUserId });
 
-    try {
-      const response = await del(apiUrl, body, headers);
-      return response.data;
-    } catch (error) {
-      console.error(`Error deleting user with ID ${userId}:`, error);
-      throw error;
-    }
-  } else {
-    const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  try {
+    const response = await del(apiUrl, body, headers);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting user with ID ${userId}:`, error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }

@@ -226,32 +226,32 @@ export async function updateHalalColumn(userId, columnName, updatedColumnData) {
 }
 
 export async function deleteHalalColumn(userId, columnName) {
-  const commandUserId = getCommandNameByUserId(userId);
+  // const commandUserId = getCommandNameByUserId(userId);
 
-  if (commandUserId === "חיל הלוגיסטיקה") {
-    const apiUrl = `http://localhost:5000/api/halals/columns/delete/${columnName}`;
+  // if (commandUserId === "חיל הלוגיסטיקה") {
+  const apiUrl = `http://localhost:5000/api/halals/columns/delete/${columnName}`;
 
-    const headers = {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers":
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-      "Access-Control-Allow-Methods": "DELETE",
-      Authorization:
-        "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
-    };
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "DELETE",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
 
-    const body = JSON.stringify({ userId });
+  const body = JSON.stringify({ userId });
 
-    try {
-      const response = await del(apiUrl, body, headers);
-      return response.data;
-    } catch (error) {
-      console.error(`Error deleting halal column '${columnName}':`, error);
-      throw error;
-    }
-  } else {
-    const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  try {
+    const response = await del(apiUrl, body, headers);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting halal column '${columnName}':`, error);
     throw error;
   }
+  // } else {
+  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
+  //   throw error;
+  // }
 }
