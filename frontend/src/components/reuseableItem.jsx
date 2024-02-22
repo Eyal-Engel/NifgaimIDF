@@ -134,36 +134,36 @@ const EditableItem = ({
               >
                 <MenuItem
                   dir="rtl"
-                  value={"UUID"}
-                  selected={typeOfColumn === "UUID"}
+                  value={"uuid"}
+                  selected={typeOfColumn === "uuid"}
                 >
                   מספר יחודי
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"STRING"}
-                  selected={typeOfColumn === "STRING"}
+                  value={"character varying"}
+                  selected={typeOfColumn === "character varying"}
                 >
                   טקסט
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"DATE"}
-                  selected={typeOfColumn === "DATE"}
+                  value={"timestamp with time zone"}
+                  selected={typeOfColumn === "timestamp with time zone"}
                 >
                   תאריך
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"ENUM"}
-                  selected={typeOfColumn === "ENUM"}
+                  value={"USER-DEFINED"}
+                  selected={typeOfColumn === "USER-DEFINED"}
                 >
                   בחירה
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"BOOLEAN"}
-                  selected={typeOfColumn === "BOOLEAN"}
+                  value={"boolean"}
+                  selected={typeOfColumn === "boolean"}
                 >
                   כן/לא
                 </MenuItem>
