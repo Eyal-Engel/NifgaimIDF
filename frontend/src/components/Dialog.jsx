@@ -225,7 +225,10 @@ export default function SimpleDialog(props) {
             style={{ margin: "auto", width: "80%", marginTop: "15px" }}
           >
             <ThemeProvider theme={theme}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="il"
+              >
                 <DatePicker
                   label="תאריך ברירת מחדל"
                   onChange={handeldefaultValueChange}

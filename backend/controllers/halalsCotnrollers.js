@@ -148,9 +148,28 @@ const addHalalColumn = async (req, res, next) => {
   }
 };
 
+const determineType = (input) => {
+  if (!isNaN(input)) {
+    // Check if input is a number
+    return "Integer";
+  } else if (input === "true" || input === "false") {
+    // Check if input is a boolean
+    return "Boolean";
+  } else if (!isNaN(Date.parse(input))) {
+    // Check if input is a date
+    return "Date";
+  } else {
+    return "String"; // Default to String if none of the above conditions match
+  }
+};
+
 // Function to validate default value based on data type
 function isValidDefaultValue(dataType, defaultValue) {
-  return typeof defaultValue === dataType || defaultValue === null;
+  const typeOfDefaultValue = determineType(defaultValue);
+  return (
+    typeOfDefaultValue.toLowerCase() === dataType.toLowerCase() ||
+    defaultValue === null
+  );
 }
 
 const updateHalalColumn = async (req, res, next) => {
@@ -200,6 +219,7 @@ const updateHalalColumn = async (req, res, next) => {
     const tableDescription = await queryInterface.describeTable(
       "nifgaimHalals"
     );
+
     if (!(columnName in tableDescription)) {
       return res
         .status(400)
@@ -217,6 +237,7 @@ const updateHalalColumn = async (req, res, next) => {
 
     res.status(200).json({ message: "Column name updated successfully." });
   } catch (error) {
+    console.log("hello there");
     console.error("Error updating column name:", error);
     return next(error);
   }

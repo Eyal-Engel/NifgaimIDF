@@ -674,6 +674,9 @@ export default function ManageExistsUsers() {
           confirmButtonText: "מחק משתמש",
           cancelButtonText: "בטל",
           reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
         }).then(async (result) => {
           if (result.isConfirmed) {
             try {
@@ -684,6 +687,9 @@ export default function ManageExistsUsers() {
                 text: "",
                 icon: "success",
                 confirmButtonText: "אישור",
+                customClass: {
+                  container: "swal-dialog-custom",
+                },
               }).then((result) => {});
             } catch (error) {
               Swal.fire({
@@ -693,6 +699,9 @@ export default function ManageExistsUsers() {
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "אישור",
                 reverseButtons: true,
+                customClass: {
+                  container: "swal-dialog-custom",
+                },
               }).then((result) => {});
             }
           }
@@ -705,6 +714,9 @@ export default function ManageExistsUsers() {
           confirmButtonColor: "#3085d6",
           confirmButtonText: "אישור",
           reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
         }).then((result) => {
           if (result.isConfirmed) {
           }
@@ -831,6 +843,9 @@ export default function ManageExistsUsers() {
         confirmButtonColor: "#3085d6",
         confirmButtonText: "אישור",
         reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
       }).then((result) => {});
       throw error;
     }

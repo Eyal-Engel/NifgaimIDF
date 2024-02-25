@@ -16,6 +16,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
+import LockIcon from "@mui/icons-material/Lock";
 import { IconButton, ThemeProvider, createTheme } from "@mui/material";
 import "./reuseableItem.css";
 import { getOriginalColumns } from "../utils/api/halalsApi";
@@ -40,12 +41,43 @@ const EditableItem = ({
   isGraveyard,
   isNewItem,
   isColumn,
+  defaultValue,
   isNewColumn,
   columnType,
 }) => {
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
   const [typeOfColumn, setTypeOfColumn] = useState(columnType);
+  const [defaultValueFormmated, setDefaultValueFormmated] = useState(
+    handleDefaultValue(defaultValue)
+  );
+
+  console.log(itemName);
+  console.log(typeOfColumn);
+
+  function handleDefaultValue(defaultValue) {
+    let result = defaultValue;
+    console.log(typeof defaultValue);
+
+    if (defaultValue instanceof Date) {
+      const day = String(defaultValue.getDate()).padStart(2, "0");
+      const month = String(defaultValue.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+      const year = defaultValue.getFullYear();
+      result = `${day}/${month}/${year}`;
+    } else {
+      if (defaultValue === null || defaultValue.includes("NULL")) {
+        return "לא הוגדר ערך ברירת מחדל";
+      }
+      if (
+        defaultValue.includes("timestamp with time zone") ||
+        defaultValue.includes("character varying")
+      ) {
+        result = defaultValue.match(/'([^']+)'/)[1];
+      }
+    }
+
+    return result;
+  }
 
   const handleTypeOfColumnChange = (event) => {
     setTypeOfColumn(event.target.value);
@@ -96,7 +128,7 @@ const EditableItem = ({
             // textAlign: isGraveyard ? "end" : "start",
             textAlign: "end",
             padding: "10px",
-            width: isColumn ? "30%" : "75%",
+            width: isColumn ? "20%" : "75%",
           }}
           variant="h6"
           component="div"
@@ -135,7 +167,7 @@ const EditableItem = ({
                 dir="rtl"
                 labelId="columnType"
                 id="columnType"
-                value={typeOfColumn}
+                value={typeOfColumn.toLowerCase()}
                 label="סוג"
                 onChange={handleTypeOfColumnChange}
                 disabled
@@ -143,42 +175,60 @@ const EditableItem = ({
                 <MenuItem
                   dir="rtl"
                   value={"uuid"}
-                  selected={typeOfColumn === "uuid"}
+                  selected={typeOfColumn.toLowerCase() === "uuid"}
                 >
                   מספר יחודי
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value={"character varying"}
-                  selected={typeOfColumn === "character varying"}
+                  selected={typeOfColumn.toLowerCase() === "character varying"}
+                >
+                  טקסט
+                </MenuItem>
+                <MenuItem
+                  dir="rtl"
+                  value={"string"}
+                  selected={typeOfColumn.toLowerCase() === "string"}
                 >
                   טקסט
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value={"timestamp with time zone"}
-                  selected={typeOfColumn === "timestamp with time zone"}
+                  selected={
+                    typeOfColumn.toLowerCase() === "timestamp with time zone"
+                  }
                 >
                   תאריך
                 </MenuItem>
+
+                <MenuItem
+                  dir="rtl"
+                  value={"date"}
+                  selected={typeOfColumn.toLowerCase() === "date"}
+                >
+                  תאריך
+                </MenuItem>
+
                 <MenuItem
                   dir="rtl"
                   value={"USER-DEFINED"}
-                  selected={typeOfColumn === "USER-DEFINED"}
+                  selected={typeOfColumn.toLowerCase() === "user-defined"}
                 >
                   בחירה
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value={"boolean"}
-                  selected={typeOfColumn === "boolean"}
+                  selected={typeOfColumn.toLowerCase() === "boolean"}
                 >
                   כן/לא
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value={"integer"}
-                  selected={typeOfColumn === "integer"}
+                  selected={typeOfColumn.toLowerCase() === "integer"}
                 >
                   מספר
                 </MenuItem>
@@ -204,19 +254,16 @@ const EditableItem = ({
               </InputLabel>
               <Select
                 dir="rtl"
-                labelId="columnType"
-                id="columnType"
-                value={typeOfColumn}
-                label="סוג"
-                onChange={handleTypeOfColumnChange}
+                value={defaultValueFormmated}
                 disabled
+                sx={{ textAlign: "left" }}
               >
                 <MenuItem
                   dir="rtl"
-                  value={"uuid"}
-                  selected={typeOfColumn === "uuid"}
+                  value={defaultValueFormmated}
+                  selected={defaultValueFormmated !== null}
                 >
-                  ערך ממש ממש ארוך רצח
+                  {defaultValueFormmated}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -251,7 +298,12 @@ const EditableItem = ({
               <SaveIcon color="primary" />
             </IconButton>
           ) : (
-            <Button variant="outlined" color="primary" startIcon={<SaveIcon />}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              startIcon={<LockIcon />}
+              // sx={{ marginRight: "46px" }}
+            >
               עמודה קבועה
             </Button>
           ))}

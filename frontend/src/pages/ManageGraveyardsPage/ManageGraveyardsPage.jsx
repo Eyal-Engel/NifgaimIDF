@@ -109,6 +109,9 @@ export default function ManageCommandsPage() {
       confirmButtonText: "מחק בית עלמין",
       cancelButtonText: "בטל",
       reverseButtons: true,
+      customClass: {
+        container: "swal-dialog-custom",
+      },
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -125,6 +128,9 @@ export default function ManageCommandsPage() {
             text: "",
             icon: "success",
             confirmButtonText: "אישור",
+            customClass: {
+              container: "swal-dialog-custom",
+            },
           });
         } catch (error) {
           Swal.fire({
@@ -134,6 +140,9 @@ export default function ManageCommandsPage() {
             confirmButtonColor: "#3085d6",
             confirmButtonText: "אישור",
             reverseButtons: true,
+            customClass: {
+              container: "swal-dialog-custom",
+            },
           });
         }
       }

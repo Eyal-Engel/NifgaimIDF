@@ -57,7 +57,6 @@ export default function ManageColumnsPage() {
             columnDefault: column.column_default,
           };
         });
-        console.log(columns);
         setColumns(columns); // changed from setCommands
       } catch (error) {
         console.error("Error during get columns:", error); // changed from get commands
@@ -73,8 +72,6 @@ export default function ManageColumnsPage() {
     const updatedColumnData = {
       newColumnName: newName,
     };
-    console.log(columnName); // changed from hand))
-    console.log(updatedColumnData); // changed from hand)
     try {
       await updateHalalColumn(loggedUserId, columnName, updatedColumnData); // changed from updateCommandById
       setColumns((prevColumns) => {
@@ -117,6 +114,9 @@ export default function ManageColumnsPage() {
       confirmButtonText: "מחק עמודה",
       cancelButtonText: "בטל",
       reverseButtons: true,
+      customClass: {
+        container: "swal-dialog-custom",
+      },
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -142,6 +142,9 @@ export default function ManageColumnsPage() {
             confirmButtonColor: "#3085d6",
             confirmButtonText: "אישור",
             reverseButtons: true,
+            customClass: {
+              container: "swal-dialog-custom",
+            },
           });
         }
       }
@@ -151,23 +154,23 @@ export default function ManageColumnsPage() {
   const handelAddColumn = async (newColumnName, typeOfColumn, defaultValue) => {
     // changed from handelAddCommand
     setSearchInputValue("");
-    setOpenDialog(false);
-    console.log(newColumnName, typeOfColumn, defaultValue);
     if (newColumnName !== "") {
       try {
-        const column = await addHalalColumn(
+        await addHalalColumn(
           loggedUserId,
           newColumnName,
           typeOfColumn,
           defaultValue
         ); // changed from createCommand
-        console.log(column);
         setColumns((prev) => [
           ...prev,
           {
-            columnName: column.columnName,
+            columnName: newColumnName,
+            columnType: typeOfColumn,
+            columnDefault: defaultValue,
           },
         ]);
+        setOpenDialog(false);
       } catch (error) {
         const errors = error.response.data.body.errors;
         let errorsForSwal = ""; // Start unordered list
@@ -199,6 +202,9 @@ export default function ManageColumnsPage() {
         confirmButtonColor: "#3085d6",
         confirmButtonText: "בטל",
         reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
       });
     }
   };
@@ -234,7 +240,7 @@ export default function ManageColumnsPage() {
   );
 
   // Combine the matching and non-matching columns
-  const sortedFilteredColumns = [...matchingColumns, ...nonMatchingColumns];
+  const sortedFilteredColumns = [...nonMatchingColumns, ...matchingColumns];
 
   return (
     <div className="columnsContainer">
@@ -272,6 +278,7 @@ export default function ManageColumnsPage() {
                 )}
                 itemName={column.columnName} // changed from commandName
                 itemId={column.columnName}
+                defaultValue={column.columnDefault}
                 handleItemNameChange={handelColumnNameChange} // changed from handelCommandNameChange
                 handleDeleteItem={handleDeleteColumn} // changed from handleDeleteCommand
                 isNewItem={column.isNewItem ? true : false}
