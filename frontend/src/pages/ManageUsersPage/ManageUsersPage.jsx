@@ -626,6 +626,13 @@ export default function ManageExistsUsers() {
   }, []);
 
   React.useEffect(() => {
+    const sortedRows = [...rows].sort(
+      (a, b) => a.privateNumber - b.privateNumber
+    );
+    setRows(sortedRows);
+  }, [rows]);
+
+  React.useEffect(() => {
     const fetchCommandsData = async () => {
       try {
         const commandsNames = await getAllCommandsNames();

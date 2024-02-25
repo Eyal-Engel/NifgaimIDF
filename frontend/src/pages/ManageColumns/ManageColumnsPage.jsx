@@ -247,7 +247,7 @@ export default function ManageColumnsPage() {
       {/* changed from commandsContainer */}
       <div className="columnsHeader">
         {/* changed from commandsHeader */}
-        <h1>עמודות שהוספו</h1>
+        <h1>מאפייני חלל</h1>
         <CacheProvider value={cacheRtl}>
           <ThemeProvider theme={theme}>
             <div style={{ direction: "rtl", display: "flex" }}>
