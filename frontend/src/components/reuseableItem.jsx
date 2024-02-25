@@ -19,7 +19,6 @@ import FormControl from "@mui/material/FormControl";
 import LockIcon from "@mui/icons-material/Lock";
 import { IconButton, ThemeProvider, createTheme } from "@mui/material";
 import "./reuseableItem.css";
-import { getOriginalColumns } from "../utils/api/halalsApi";
 const theme = (outerTheme) =>
   createTheme({
     direction: "rtl",
@@ -48,12 +47,13 @@ const EditableItem = ({
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
   const [typeOfColumn, setTypeOfColumn] = useState(columnType);
-  const [defaultValueFormmated, setDefaultValueFormmated] = useState(
-    handleDefaultValue(defaultValue)
-  );
+  const defaultValueFormmated = useState(null);
 
-  console.log(itemName);
-  console.log(typeOfColumn);
+  if (isColumn) {
+    handleDefaultValue(defaultValue);
+    console.log(itemName);
+    console.log(typeOfColumn);
+  }
 
   function handleDefaultValue(defaultValue) {
     let result = defaultValue;
