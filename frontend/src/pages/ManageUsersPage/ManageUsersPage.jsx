@@ -186,6 +186,7 @@ function CustomToolbar({ setRows }) {
             }
           });
         } catch (error) {
+          console.log(error);
           const errors = error.response.data.body.errors;
           let errorsForSwal = ""; // Start unordered list
 
@@ -660,9 +661,6 @@ export default function ManageExistsUsers() {
 
   const handleDeleteClick = (id) => () => {
     try {
-      // const loggedUserId = JSON.parse(localStorage.getItem("userData")).userId;
-
-      const loggedUserId = -1;
       if (id !== loggedUserId) {
         const userFullName = rows.find((row) => row.id === id).fullName;
 

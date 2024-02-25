@@ -101,6 +101,8 @@ const updateCommandById = async (req, res, next) => {
 
 // Delete command by id
 const deleteCommandById = async (req, res, next) => {
+  console.log("hello");
+  console.log(req.params.commandId);
   const id = req.params.commandId;
   const { userId } = req.body;
 

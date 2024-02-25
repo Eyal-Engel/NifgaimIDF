@@ -18,6 +18,7 @@ import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import { IconButton, ThemeProvider, createTheme } from "@mui/material";
 import "./reuseableItem.css";
+import { getOriginalColumns } from "../utils/api/halalsApi";
 const theme = (outerTheme) =>
   createTheme({
     direction: "rtl",
@@ -39,11 +40,12 @@ const EditableItem = ({
   isGraveyard,
   isNewItem,
   isColumn,
+  isNewColumn,
   columnType,
 }) => {
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
-  const [typeOfColumn, setTypeOfColumn] = React.useState(columnType);
+  const [typeOfColumn, setTypeOfColumn] = useState(columnType);
 
   const handleTypeOfColumnChange = (event) => {
     setTypeOfColumn(event.target.value);
@@ -90,7 +92,12 @@ const EditableItem = ({
     >
       {!isInEditMode ? (
         <Typography
-          sx={{ textAlign: isGraveyard ? "end" : "start", padding: "10px" }}
+          sx={{
+            // textAlign: isGraveyard ? "end" : "start",
+            textAlign: "end",
+            padding: "10px",
+            width: isColumn ? "30%" : "75%",
+          }}
           variant="h6"
           component="div"
         >
@@ -118,7 +125,7 @@ const EditableItem = ({
               className="selectTypeOfColumn"
               sx={{
                 m: 1,
-                width: "30%",
+                width: "15%",
                 zIndex: 0,
               }}
               size="small"
@@ -131,6 +138,7 @@ const EditableItem = ({
                 value={typeOfColumn}
                 label="סוג"
                 onChange={handleTypeOfColumnChange}
+                disabled
               >
                 <MenuItem
                   dir="rtl"
@@ -176,6 +184,42 @@ const EditableItem = ({
                 </MenuItem>
               </Select>
             </FormControl>
+            <FormControl
+              className="selectTypeOfColumn"
+              sx={{
+                m: 1,
+                width: "20%",
+                zIndex: 0,
+              }}
+              size="small"
+            >
+              <InputLabel
+                id="defaultValue"
+                sx={{
+                  background: "white",
+                  paddingRight: "5px",
+                }}
+              >
+                ערך ברירת מחדל
+              </InputLabel>
+              <Select
+                dir="rtl"
+                labelId="columnType"
+                id="columnType"
+                value={typeOfColumn}
+                label="סוג"
+                onChange={handleTypeOfColumnChange}
+                disabled
+              >
+                <MenuItem
+                  dir="rtl"
+                  value={"uuid"}
+                  selected={typeOfColumn === "uuid"}
+                >
+                  ערך ממש ממש ארוך רצח
+                </MenuItem>
+              </Select>
+            </FormControl>
           </ThemeProvider>
         </CacheProvider>
       )}
@@ -184,9 +228,10 @@ const EditableItem = ({
           isGraveyard ? "actionGraveyardItemButton" : "actionCommandItemButtons"
         }
       >
-        {!isInEditMode ? (
-          isScreenSmall ? (
-            <IconButton onClick={handleDeleteClick}>
+        {!isNewColumn &&
+          !isInEditMode &&
+          (isScreenSmall ? (
+            <IconButton>
               <DeleteIcon color="error" />
             </IconButton>
           ) : (
@@ -198,23 +243,21 @@ const EditableItem = ({
             >
               מחק
             </Button>
-          )
-        ) : isScreenSmall ? (
-          <IconButton onClick={handleCancelClick}>
-            <CancelIcon color="error" />
-          </IconButton>
-        ) : (
-          <Button
-            color="error"
-            variant="outlined"
-            startIcon={<CancelIcon />}
-            onClick={handleCancelClick}
-          >
-            בטל
-          </Button>
-        )}
-        {!isInEditMode ? (
-          isScreenSmall ? (
+          ))}
+        {isNewColumn &&
+          !isInEditMode &&
+          (isScreenSmall ? (
+            <IconButton>
+              <SaveIcon color="primary" />
+            </IconButton>
+          ) : (
+            <Button variant="outlined" color="primary" startIcon={<SaveIcon />}>
+              עמודה קבועה
+            </Button>
+          ))}
+        {!isNewColumn &&
+          !isInEditMode &&
+          (isScreenSmall ? (
             <IconButton onClick={handleEditClick} color="primary">
               <EditIcon />
             </IconButton>
@@ -226,21 +269,39 @@ const EditableItem = ({
             >
               עריכה
             </Button>
-          )
-        ) : isScreenSmall ? (
-          <IconButton onClick={handleSaveClick}>
-            <SaveIcon color="success" />
-          </IconButton>
-        ) : (
-          <Button
-            variant="outlined"
-            color="success"
-            startIcon={<SaveIcon />}
-            onClick={handleSaveClick}
-          >
-            שמור
-          </Button>
-        )}
+          ))}
+        {!isNewColumn &&
+          isInEditMode &&
+          (isScreenSmall ? (
+            <IconButton onClick={handleSaveClick}>
+              <SaveIcon color="success" />
+            </IconButton>
+          ) : (
+            <Button
+              variant="outlined"
+              color="success"
+              startIcon={<SaveIcon />}
+              onClick={handleSaveClick}
+            >
+              שמור
+            </Button>
+          ))}
+        {!isNewColumn &&
+          isInEditMode &&
+          (isScreenSmall ? (
+            <IconButton onClick={handleCancelClick}>
+              <CancelIcon color="error" />
+            </IconButton>
+          ) : (
+            <Button
+              color="error"
+              variant="outlined"
+              startIcon={<CancelIcon />}
+              onClick={handleCancelClick}
+            >
+              בטל
+            </Button>
+          ))}
       </CardActions>
     </Card>
   );

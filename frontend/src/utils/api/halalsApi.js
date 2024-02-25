@@ -46,6 +46,27 @@ export async function getHalals() {
   }
 }
 
+export async function getOriginalColumns() {
+  const apiUrl = "http://localhost:5000/api/halals/originalColumns";
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "GET",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  try {
+    const response = await get(apiUrl, headers);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getHalalById(halalId) {
   const apiUrl = `http://localhost:5000/api/halals/${halalId}`;
 
@@ -160,7 +181,12 @@ export async function deleteHalal(halalId) {
   }
 }
 
-export async function addHalalColumn(userId, columnName, dataType, defaultValue) {
+export async function addHalalColumn(
+  userId,
+  columnName,
+  dataType,
+  defaultValue
+) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
@@ -242,7 +268,7 @@ export async function deleteHalalColumn(userId, columnName) {
   const body = JSON.stringify({ userId });
 
   try {
-    const response = await del(apiUrl, body, headers);
+    const response = await del(apiUrl, headers, body);
     return response.data;
   } catch (error) {
     console.error(`Error deleting halal column '${columnName}':`, error);

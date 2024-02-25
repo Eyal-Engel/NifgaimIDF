@@ -33,11 +33,11 @@ export const patch = async (url, body, headers) => {
   }
 };
 
-export const del = async (url, headers) => {
+// api.js
+export const del = async (url, headers, body) => {
+  // Modify the del function to accept a body parameter
   try {
-    const res = await axios.delete(url, { headers });
-    if (res) {
-    }
+    const res = await axios.delete(url, { headers, data: body }); // Pass the body in the axios options
     return res;
   } catch (e) {
     throw e;

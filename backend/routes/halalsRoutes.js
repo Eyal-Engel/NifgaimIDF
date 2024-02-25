@@ -6,9 +6,11 @@ const router = express.Router();
 
 const checkAuth = require("../middlewares/checkAuth");
 
-router.use(checkAuth);
+// router.use(checkAuth);
 
 router.get("/", halalsCotnrollers.getHalals);
+
+router.get("/originalColumns", halalsCotnrollers.getOriginalColumns);
 
 router.get("/:halalId", halalsCotnrollers.getHalalById);
 

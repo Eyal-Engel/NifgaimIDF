@@ -194,11 +194,7 @@ export async function changePassword(userUpdatingUserId, userId, newPassword) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const passwordData = {
-    password: newPassword,
-  };
-
-  const body = JSON.stringify({ userUpdatingUserId, passwordData });
+  const body = JSON.stringify({ newPassword, userUpdatingUserId });
 
   try {
     const response = await patch(apiUrl, body, headers);
@@ -232,7 +228,8 @@ export async function deleteUser(userUpdatingUserId, userId) {
   const body = JSON.stringify({ userUpdatingUserId });
 
   try {
-    const response = await del(apiUrl, body, headers);
+    const response = await del(apiUrl, headers, body);
+
     return response.data;
   } catch (error) {
     console.error(`Error deleting user with ID ${userId}:`, error);

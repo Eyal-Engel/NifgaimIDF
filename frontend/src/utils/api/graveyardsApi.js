@@ -75,11 +75,7 @@ export async function createGraveyard(userId, graveyardName) {
   // }
 }
 
-export async function updateGraveyardById(
-  userId,
-  graveyardId,
-  updatedGraveyard
-) {
+export async function updateGraveyardById(userId, graveyardId, graveyardName) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
@@ -95,7 +91,7 @@ export async function updateGraveyardById(
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify({ updatedGraveyard, userId });
+  const body = JSON.stringify({ graveyardName, userId });
 
   try {
     const response = await patch(apiUrl, body, headers);
@@ -129,8 +125,7 @@ export async function deleteGraveyardById(userId, graveyardId) {
   const body = JSON.stringify({ userId });
 
   try {
-    const response = await del(apiUrl, body, headers);
-
+    const response = await del(apiUrl, headers, body);
     return response.data;
   } catch (error) {
     console.error(`Error deleting graveyard with id ${graveyardId}:`, error);

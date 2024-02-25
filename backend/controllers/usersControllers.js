@@ -47,11 +47,10 @@ const signup = async (req, res, next) => {
 
   console.log(req.body);
   const { privateNumber, fullName, password, commandId, editPerm, managePerm } =
-    req.body;
+    req.body.creditentials;
 
   const userId = req.body.userId;
 
-  let existingUser;
   try {
     const user = await User.findByPk(userId);
     const userCommand = await Command.findByPk(user.nifgaimCommandId);
@@ -73,8 +72,7 @@ const signup = async (req, res, next) => {
       where: { privateNumber },
     });
   } catch (err) {
-    const error = new Error("Signing up failed, please try again later.", 500);
-    return next(error);
+    return next(err);
   }
 
   // if (existingUser) {
@@ -232,10 +230,11 @@ const updateUser = async (req, res, next) => {
 };
 
 const changePassword = async (req, res, next) => {
+  console.log(req.body);
   const userId = req.params.userId;
 
-  const { passwordData, userUpdatingUserId } = req.body;
-
+  const { newPassword, userUpdatingUserId } = req.body;
+  console.log(newPassword, userUpdatingUserId);
   try {
     const userRequested = await User.findByPk(userUpdatingUserId);
     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
@@ -269,7 +268,7 @@ const changePassword = async (req, res, next) => {
       return next(error);
     }
 
-    const hashedPassowrd = await sha256(passwordData);
+    const hashedPassowrd = await sha256(newPassword);
 
     user.password = hashedPassowrd;
     // Save the updated user
@@ -296,6 +295,8 @@ const deleteUser = async (req, res, next) => {
 
     let userById;
     const { userUpdatingUserId } = req.body;
+
+    console.log(req.body);
 
     try {
       const userRequested = await User.findByPk(userUpdatingUserId);

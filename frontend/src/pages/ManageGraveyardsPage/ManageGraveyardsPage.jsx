@@ -142,7 +142,6 @@ export default function ManageCommandsPage() {
 
   const handelAddGraveyard = async (value) => {
     setSearchInputValue("");
-    setOpenDialog(false);
     if (value !== "") {
       try {
         const graveyard = await createGraveyard(loggedUserId, value);
@@ -155,6 +154,7 @@ export default function ManageCommandsPage() {
             graveyardName: graveyard.graveyardName,
           },
         ]);
+        setOpenDialog(false);
       } catch (error) {
         const errors = error.response.data.body.errors;
         console.log(errors);
@@ -189,6 +189,9 @@ export default function ManageCommandsPage() {
         confirmButtonColor: "#3085d6",
         confirmButtonText: "בטל",
         reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
       });
     }
   };
@@ -200,6 +203,13 @@ export default function ManageCommandsPage() {
   // Filter the list based on the search input
   const filteredGraveyards = graveyards.filter((graveyard) => {
     return graveyard.graveyardName.includes(searchInputValue);
+  });
+
+  // Sort the filtered list alphabetically
+  filteredGraveyards.sort((a, b) => {
+    return a.graveyardName.localeCompare(b.graveyardName, undefined, {
+      sensitivity: "base",
+    });
   });
 
   return (

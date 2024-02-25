@@ -16,6 +16,16 @@ const getHalals = async (req, res, next) => {
   }
 };
 
+const getOriginalColumns = async (req, res, next) => {
+  try {
+    console.log("Halal.rawAttributes");
+    const columns = Object.keys(Halal.rawAttributes);
+    res.json(columns);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const getColumnNamesAndTypes = async (req, res, next) => {
   try {
     // Run the SQL query to fetch detailed information about columns
@@ -48,7 +58,6 @@ const addHalalColumn = async (req, res, next) => {
     const userCommandName = userCommand.commandName;
     let defaultValuePost = defaultValue;
 
-    console.log("AAAAAAAAAAAAAAAAA");
     console.log(userId, columnName, dataType, defaultValue);
     console.log(dataType);
     if (
@@ -424,6 +433,7 @@ const deleteHalal = async (req, res, next) => {
 
 module.exports = {
   getHalals,
+  getOriginalColumns,
   getHalalById,
   getHalalsByCommandId,
   createHalal,

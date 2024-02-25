@@ -115,7 +115,7 @@ export async function createCommand(userId, commandName) {
   // }
 }
 
-export async function updateCommandById(userId, commandId, updatedCommand) {
+export async function updateCommandById(userId, commandId, commandName) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
@@ -131,11 +131,14 @@ export async function updateCommandById(userId, commandId, updatedCommand) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify({ updatedCommand, userId });
+  const body = JSON.stringify({ commandName, userId });
+
+  console.log(body);
   try {
     const response = await patch(apiUrl, body, headers);
     return response.data;
   } catch (error) {
+    console.log(error);
     console.error(`Error updating command with id ${commandId}:`, error);
     throw error;
   }
@@ -145,10 +148,8 @@ export async function updateCommandById(userId, commandId, updatedCommand) {
   // }
 }
 
+// frontend code
 export async function deleteCommandById(userId, commandId) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:5000/api/commands/${commandId}`;
 
   const headers = {
@@ -161,17 +162,14 @@ export async function deleteCommandById(userId, commandId) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify({ userId });
+  const body = JSON.stringify({ userId }); // Include userId in the body
 
   try {
-    const response = await del(apiUrl, body, headers);
+    const response = await del(apiUrl, headers, body); // Pass the body parameter to the del function
     return response.data;
   } catch (error) {
+    console.log(error);
     console.error(`Error deleting command with id ${commandId}:`, error);
     throw error;
   }
-  // } else {
-  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
-  //   throw error;
-  // }
 }

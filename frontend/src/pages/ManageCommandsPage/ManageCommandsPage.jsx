@@ -133,18 +133,19 @@ export default function ManageCommandsPage() {
 
   const handelAddCommand = async (value) => {
     setSearchInputValue("");
-    setOpenDialog(false);
     if (value !== "") {
       try {
         const command = await createCommand(loggedUserId, value);
+        console.log("commandcommandcommandcommand");
 
         setCommands((prev) => [
           ...prev,
           {
-            id: command.id,
-            commandName: command.commandName,
+            id: command.newCommand.id,
+            commandName: command.newCommand.commandName,
           },
         ]);
+        setOpenDialog(false);
       } catch (error) {
         const errors = error.response.data.body.errors;
         let errorsForSwal = ""; // Start unordered list
@@ -175,6 +176,9 @@ export default function ManageCommandsPage() {
         confirmButtonColor: "#3085d6",
         confirmButtonText: "בטל",
         reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
       });
     }
   };
@@ -186,6 +190,13 @@ export default function ManageCommandsPage() {
   // Filter the list based on the search input
   const filteredCommands = commands.filter((command) => {
     return command.commandName.includes(searchInputValue);
+  });
+
+  // Sort the filtered list alphabetically
+  filteredCommands.sort((a, b) => {
+    return a.commandName.localeCompare(b.commandName, undefined, {
+      sensitivity: "base",
+    });
   });
 
   return (

@@ -10,6 +10,7 @@ import {
   addHalalColumn,
   deleteHalalColumn,
   getHalalColumnsAndTypes,
+  getOriginalColumns,
   updateHalalColumn,
 } from "../../utils/api/halalsApi";
 import Swal from "sweetalert2";
@@ -32,6 +33,7 @@ export default function ManageColumnsPage() {
   const [openDialog, setOpenDialog] = useState(false);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+  const [originalColumns, setOriginalColumns] = useState([]);
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -42,9 +44,12 @@ export default function ManageColumnsPage() {
   };
   useEffect(() => {
     const fetchColumnsData = async () => {
-      // changed from fetchCommandsData
       try {
         const columnsWithAllData = await getHalalColumnsAndTypes(); // changed from getCommands
+
+        const originColumns = await getOriginalColumns();
+
+        setOriginalColumns(originColumns);
         const columns = columnsWithAllData.map((column) => {
           return {
             columnName: column.column_name,
@@ -53,7 +58,6 @@ export default function ManageColumnsPage() {
           };
         });
         console.log(columns);
-        // changed from setCommands)
         setColumns(columns); // changed from setCommands
       } catch (error) {
         console.error("Error during get columns:", error); // changed from get commands
@@ -209,12 +213,33 @@ export default function ManageColumnsPage() {
     return column.columnName?.includes(searchInputValue); // changed from commandName
   });
 
+  // Separate the columns that match the condition
+  const matchingColumns = filteredColumns.filter((column) =>
+    originalColumns.some((originColumn) => originColumn === column.columnName)
+  );
+
+  // Separate the columns that do not match the condition
+  const nonMatchingColumns = filteredColumns.filter(
+    (column) =>
+      !originalColumns.some(
+        (originColumn) => originColumn === column.columnName
+      )
+  );
+
+  // Sort the matching columns by their position in the originalColumns array
+  matchingColumns.sort(
+    (a, b) =>
+      originalColumns.indexOf(a.columnName) -
+      originalColumns.indexOf(b.columnName)
+  );
+
+  // Combine the matching and non-matching columns
+  const sortedFilteredColumns = [...matchingColumns, ...nonMatchingColumns];
+
   return (
     <div className="columnsContainer">
-      {" "}
       {/* changed from commandsContainer */}
       <div className="columnsHeader">
-        {" "}
         {/* changed from commandsHeader */}
         <h1>עמודות שהוספו</h1>
         <CacheProvider value={cacheRtl}>
@@ -234,15 +259,17 @@ export default function ManageColumnsPage() {
         </CacheProvider>
       </div>
       <ul className="columns-list">
-        {" "}
         {/* changed from commands-list */}
-        {filteredColumns.map(
+        {sortedFilteredColumns.map(
           (
             column // changed from command
           ) => (
             <li key={column.columnName}>
               <EditableItem
                 isColumn={true}
+                isNewColumn={originalColumns.some(
+                  (originColumn) => originColumn === column.columnName
+                )}
                 itemName={column.columnName} // changed from commandName
                 itemId={column.columnName}
                 handleItemNameChange={handelColumnNameChange} // changed from handelCommandNameChange
