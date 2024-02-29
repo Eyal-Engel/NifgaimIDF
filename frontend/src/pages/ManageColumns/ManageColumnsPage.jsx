@@ -69,21 +69,31 @@ export default function ManageColumnsPage() {
     fetchColumnsData();
   }, []);
 
-  const handelColumnNameChange = async (columnName, newName) => {
-    // changed from handelCommandNameChange
-
-    const updatedColumnData = {
-      newColumnName: newName,
-    };
+  const handelColumnNameChange = async (
+    columnName,
+    newName,
+    newType,
+    newDefaultValue
+  ) => {
     try {
-      await updateHalalColumn(loggedUserId, columnName, updatedColumnData); // changed from updateCommandById
+      console.log(loggedUserId, columnName, newName, newDefaultValue);
+      await updateHalalColumn(
+        loggedUserId,
+        columnName,
+        newName,
+        newDefaultValue
+      ); // changed from updateCommandById
       setColumns((prevColumns) => {
         // changed from setCommands
         return prevColumns.map((column) => {
           // changed from command
           if (column.columnName === columnName) {
             // Update the columnName for the matching columnId  // changed from commandName
-            return { ...column, columnName: newName }; // changed from commandName
+            return {
+              ...column,
+              columnName: newName,
+              defaultValue: newDefaultValue,
+            }; // changed from commandName
           }
           return column; // changed from command
         });
@@ -155,9 +165,8 @@ export default function ManageColumnsPage() {
   };
 
   const handelAddColumn = async (newColumnName, typeOfColumn, defaultValue) => {
-    console.log(defaultValue);
+    console.log(newColumnName, typeOfColumn, defaultValue);
     // changed from handelAddCommand
-    setSearchInputValue("");
     if (newColumnName !== "") {
       try {
         await addHalalColumn(
@@ -174,6 +183,8 @@ export default function ManageColumnsPage() {
             columnDefault: defaultValue,
           },
         ]);
+        setSearchInputValue("");
+
         setOpenDialog(false);
       } catch (error) {
         const errors = error.response.data.body.errors;

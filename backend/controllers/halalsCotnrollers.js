@@ -199,13 +199,23 @@ function isValidDefaultValue(dataType, defaultValue) {
   );
 }
 
+// body example:
+// {
+//   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48",
+//   "columnName": "column12345",
+//   "newColumnName": "column12345",
+//   "columnDefault": 510
+// }
 const updateHalalColumn = async (req, res, next) => {
   try {
-    const { columnName } = req.params;
-    console.log(req.body);
-    const { userId, updatedColumnData } = req.body;
+    const { userId, columnName, newColumnName, columnDefault } = req.body;
 
-    const { newColumnName } = updatedColumnData;
+    console.log(req.body);
+    console.log(userId);
+    console.log(columnName);
+    console.log(newColumnName);
+    console.log(columnDefault);
+
     const userRequested = await User.findByPk(userId);
     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
     const userCommandName = userCommand.commandName;
@@ -217,17 +227,19 @@ const updateHalalColumn = async (req, res, next) => {
     ) {
       return res
         .status(404)
-        .json({ body: { errors: [{ message: "User is not exist" }] } });
+        .json({ body: { errors: [{ message: "User does not exist." }] } });
     }
 
     if (userCommandName !== "חיל הלוגיסטיקה") {
       return res
         .status(403)
-        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+        .json({ body: { errors: [{ message: "User is not authorized." }] } });
     }
 
-    if (!columnName) {
-      return res.status(400).json({ message: "Column name is required." });
+    if (!columnName && !columnDefault) {
+      return res.status(400).json({
+        message: "at least 1 of new column name or columnDefault are required.",
+      });
     }
 
     // Get the queryInterface from your Sequelize instance
@@ -238,30 +250,74 @@ const updateHalalColumn = async (req, res, next) => {
     if (!tableExists.includes("nifgaimHalals")) {
       return res
         .status(400)
-        .json({ message: "Table 'NifgaimHalals' does not exist." });
+        .json({ message: "Table 'nifgaimHalals' does not exist." });
     }
 
     // Check if the column exists
     const tableDescription = await queryInterface.describeTable(
       "nifgaimHalals"
     );
-
     if (!(columnName in tableDescription)) {
       return res
         .status(400)
         .json({ message: `Column '${columnName}' does not exist.` });
     }
 
-    // Rename the column
-    await queryInterface.renameColumn(
-      "nifgaimHalals", // Your model's table name
-      columnName, // Current name of the column
-      newColumnName // New name for the column
-    );
+    if (
+      newColumnName !== undefined &&
+      newColumnName !== null &&
+      newColumnName !== "" &&
+      columnName !== newColumnName
+    ) {
+      await queryInterface.renameColumn(
+        "nifgaimHalals", // Your model's table name
+        columnName, // Current name of the column
+        newColumnName // New name for the column
+      );
 
-    console.log("Column name updated successfully.");
+      console.log("Column name updated successfully.");
 
-    res.status(200).json({ message: "Column name updated successfully." });
+      if (
+        columnDefault !== undefined &&
+        columnDefault !== null &&
+        columnDefault !== ""
+      ) {
+        await queryInterface.changeColumn(
+          "nifgaimHalals", // Table name
+          newColumnName, // Column name
+          {
+            defaultValue: columnDefault, // New default value
+          }
+        );
+        console.log(
+          `Default value for column '${newColumnName}' updated successfully.`
+        );
+      }
+    } else {
+      if (
+        columnDefault !== undefined &&
+        columnDefault !== null &&
+        columnDefault !== ""
+      ) {
+        await queryInterface.changeColumn(
+          "nifgaimHalals", // Your model's table name
+          columnName, // Current name of the column
+          {
+            // type: sequelize.Sequelize.DataTypes[dataType], // Assuming the column type is INTEGER, change it accordingly
+            defaultValue: columnDefault, // New default value
+          }
+        );
+        console.log(
+          `Default value for column '${newColumnName}' updated successfully.`
+        );
+      }
+    }
+
+    console.log(columnDefault); // Check if columnDefault is provided, if yes, alter column to change its default value
+
+    res
+      .status(200)
+      .json({ message: "Column name and default value updated successfully." });
   } catch (error) {
     console.error("Error updating column name:", error);
     return next(error);
@@ -277,8 +333,8 @@ const updateHalalColumn = async (req, res, next) => {
 // }
 const updateHalalSelectColumn = async (req, res, next) => {
   try {
-    const { columnName } = req.params;
-    const { userId, newColumnName, newEnumValues, column_default } = req.body;
+    const { userId, columnName, newColumnName, newEnumValues, column_default } =
+      req.body;
 
     const userRequested = await User.findByPk(userId);
     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
@@ -405,9 +461,7 @@ const updateHalalSelectColumn = async (req, res, next) => {
 
 const replaceColumnValue = async (req, res, next) => {
   try {
-    const { columnName } = req.params;
-
-    const { prevValue, newValue } = req.body;
+    const { prevValue, newValue, columnName } = req.body;
 
     // Check if the column name, previous value, and new value are provided
     if (!columnName || !prevValue || !newValue) {
@@ -539,8 +593,7 @@ const replaceColumnValue = async (req, res, next) => {
 // }
 const deleteHalalColumn = async (req, res, next) => {
   try {
-    const { columnName } = req.params;
-    const { userId } = req.body;
+    const { userId, columnName } = req.body;
 
     const userRequested = await User.findByPk(userId);
     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);

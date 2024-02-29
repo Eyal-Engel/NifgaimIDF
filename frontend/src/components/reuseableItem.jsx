@@ -3,7 +3,14 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-import { useMediaQuery } from "@mui/material";
+import {
+  Chip,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  useMediaQuery,
+} from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
@@ -19,6 +26,10 @@ import FormControl from "@mui/material/FormControl";
 import LockIcon from "@mui/icons-material/Lock";
 import { IconButton, ThemeProvider, createTheme } from "@mui/material";
 import "./reuseableItem.css";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+
 const theme = (outerTheme) =>
   createTheme({
     direction: "rtl",
@@ -46,29 +57,54 @@ const EditableItem = ({
 }) => {
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
-  const [typeOfColumn, setTypeOfColumn] = useState(columnType);
-  const [defaultValueFormmated, setDefaultValueFormmated] = useState(null);
+  const [editedColumnType, setEditedColumnType] = useState(columnType);
+  const [editedDefaultValue, setEditedDefaultValue] = useState(defaultValue);
 
+  const [typeOfColumn, setTypeOfColumn] = useState(columnType);
+  const [defaultValueFormmated, setDefaultValueFormmated] =
+    useState(defaultValue);
+
+  // console.log(columnType);
+  // if (
+  //   isColumn &&
+  //   columnType === "timestamp with time zone" &&
+  //   defaultValue !== null
+  // ) {
+  //   console.log(defaultValue);
+  //   console.log(defaultValue.substring(22));
+  // }
   useEffect(() => {
-    console.log(defaultValue);
+    console.log(editedDefaultValue);
     if (isColumn) {
-      const temp = handleDefaultValue(defaultValue);
+      const temp = handleDefaultValue(editedDefaultValue);
       console.log(itemName);
       console.log(defaultValue);
       console.log(temp);
       setDefaultValueFormmated(temp);
     }
-  }, []);
+  }, [editedDefaultValue]);
 
   function handleDefaultValue(defaultValue) {
-    console.log(defaultValue);
-
     let result = defaultValue;
 
-    if (defaultValue === null || defaultValue.includes("NULL")) {
+    console.log(defaultValue);
+
+    if (
+      defaultValue === null ||
+      (typeof defaultValue === "string" &&
+        columnType !== "boolean" &&
+        defaultValue.includes("NULL"))
+    ) {
       console.log(null);
       return "לא הוגדר ערך ברירת מחדל";
       // result = null;
+    } else if (columnType === "boolean") {
+      console.log("should work");
+      return defaultValue;
+    } else if (defaultValue.includes("enum_nifgaimHalals_")) {
+      const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
+      const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
+      return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
     } else {
       if (defaultValue instanceof Date) {
         const day = String(defaultValue.getDate()).padStart(2, "0");
@@ -99,8 +135,16 @@ const EditableItem = ({
 
   const handleSaveClick = () => {
     setIsInEditMode(false);
-    handleItemNameChange(itemId, editedItemName);
-    // Handle saving the editedItemName, e.g., make an API call.
+    if (isColumn) {
+      handleItemNameChange(
+        itemId,
+        editedItemName,
+        editedColumnType,
+        editedDefaultValue
+      );
+    } else {
+      handleItemNameChange(itemId, editedItemName);
+    }
   };
 
   const handleDeleteClick = () => {
@@ -115,6 +159,10 @@ const EditableItem = ({
 
   const handleInputChange = (e) => {
     setEditedItemName(e.target.value);
+  };
+
+  const handleInputDefaultValueChange = (e) => {
+    setEditedDefaultValue(e.target.value);
   };
 
   const isScreenSmall = useMediaQuery("(max-width:650px)");
@@ -184,6 +232,13 @@ const EditableItem = ({
               >
                 <MenuItem
                   dir="rtl"
+                  value={typeOfColumn}
+                  selected={typeOfColumn.toLowerCase().includes("select")}
+                >
+                  בחירה
+                </MenuItem>
+                <MenuItem
+                  dir="rtl"
                   value={"uuid"}
                   selected={typeOfColumn.toLowerCase() === "uuid"}
                 >
@@ -223,11 +278,12 @@ const EditableItem = ({
 
                 <MenuItem
                   dir="rtl"
-                  value={"USER-DEFINED"}
+                  value={"user-defined"}
                   selected={typeOfColumn.toLowerCase() === "user-defined"}
                 >
                   בחירה
                 </MenuItem>
+
                 <MenuItem
                   dir="rtl"
                   value={"boolean"}
@@ -235,6 +291,7 @@ const EditableItem = ({
                 >
                   כן/לא
                 </MenuItem>
+
                 <MenuItem
                   dir="rtl"
                   value={"integer"}
@@ -259,27 +316,217 @@ const EditableItem = ({
                   background: "white",
                   paddingRight: "5px",
                   paddingLeft: "5px",
-                  marginTop: "-17px",
-                  fontSize: "12px"
+                  marginTop: "0px",
+                  fontSize: "15px",
                 }}
               >
                 ערך ברירת מחדל
               </InputLabel>
-              <Select
-                dir="rtl"
-                value={defaultValueFormmated}
-                disabled
-                sx={{ textAlign: "left" }}
-              >
-                <MenuItem
+              {!isInEditMode ? (
+                <Select
                   dir="rtl"
                   value={defaultValueFormmated}
-                  selected={defaultValueFormmated !== null}
+                  disabled
+                  sx={{ textAlign: "left" }}
                 >
-                  {defaultValueFormmated}
-                </MenuItem>
-              </Select>
+                  <MenuItem
+                    dir="rtl"
+                    value={defaultValueFormmated}
+                    selected={defaultValueFormmated !== null}
+                  >
+                    {defaultValueFormmated}
+                  </MenuItem>
+                </Select>
+              ) : (
+                <>
+                  {columnType === "character varying" && (
+                    <input
+                      type="text"
+                      value={defaultValueFormmated}
+                      onChange={handleInputDefaultValueChange}
+                      style={{
+                        // width: "30%",
+                        fontSize: "1.2rem",
+                        padding: "8px",
+                        margin: "10px",
+                        direction: "rtl",
+                      }}
+                    />
+                  )}
+                  {columnType === "integer" && (
+                    <input
+                      type="number"
+                      value={defaultValueFormmated}
+                      onChange={handleInputDefaultValueChange}
+                      style={{
+                        // width: "30%",
+                        fontSize: "1.2rem",
+                        padding: "8px",
+                        margin: "10px",
+                        direction: "rtl",
+                      }}
+                    />
+                  )}
+                  {columnType === "timestamp with time zone" && (
+                    <ThemeProvider theme={theme}>
+                      <LocalizationProvider
+                        dateAdapter={AdapterDayjs}
+                        adapterLocale="il"
+                      >
+                        <DatePicker
+                          value={dayjs(defaultValueFormmated)}
+                          // onChange={handeldefaultValueChange}
+                        />
+                      </LocalizationProvider>
+                    </ThemeProvider>
+                  )}
+                  {columnType === "boolean" && (
+                    <FormControl
+                      sx={{
+                        width: "90%",
+                        marginTop: "10px",
+                        display: "flex",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <RadioGroup
+                        aria-labelledby="booleanSelect"
+                        name="controlled-radio-buttons-group"
+                        value={defaultValueFormmated} // Convert boolean to string
+                        onChange={handleInputDefaultValueChange}
+                        row
+                      >
+                        <FormControlLabel
+                          value={true}
+                          control={<Radio />}
+                          label="כן"
+                        />
+                        <FormControlLabel
+                          value="false"
+                          control={<Radio />}
+                          label="לא"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  )}
+                </>
+              )}
             </FormControl>
+            {columnType === "USER-DEFINED" && (
+              <FormControl
+                className="selectEnums"
+                sx={{
+                  m: 1,
+                  width: "20%",
+                  zIndex: 0,
+                }}
+                size="small"
+              >
+                <Select
+                  labelId="defaultValue"
+                  id="defaultValue-select"
+                  multiple
+                  disabled
+                  value={["value1", "value2", "value3"]}
+                  renderValue={(selected) => (
+                    <div style={{ display: "flex", flexWrap: "wrap" }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} style={{ margin: 2 }} />
+                      ))}
+                    </div>
+                  )}
+                  sx={{
+                    background: "white",
+                    paddingRight: "5px",
+                    paddingLeft: "5px",
+                    marginTop: "0px",
+                    fontSize: "15px",
+                  }}
+                >
+                  <MenuItem value="option1">Option 1</MenuItem>
+                  <MenuItem value="option2">Option 2</MenuItem>
+                  <MenuItem value="option3">Option 3</MenuItem>
+                </Select>
+                {!isInEditMode ? (
+                  <></>
+                ) : (
+                  <>
+                    {columnType === "character varying" && (
+                      <input
+                        type="text"
+                        value={defaultValueFormmated}
+                        onChange={handleInputDefaultValueChange}
+                        style={{
+                          // width: "30%",
+                          fontSize: "1.2rem",
+                          padding: "8px",
+                          margin: "10px",
+                          direction: "rtl",
+                        }}
+                      />
+                    )}
+                    {columnType === "integer" && (
+                      <input
+                        type="number"
+                        value={defaultValueFormmated}
+                        onChange={handleInputDefaultValueChange}
+                        style={{
+                          // width: "30%",
+                          fontSize: "1.2rem",
+                          padding: "8px",
+                          margin: "10px",
+                          direction: "rtl",
+                        }}
+                      />
+                    )}
+                    {columnType === "timestamp with time zone" && (
+                      <ThemeProvider theme={theme}>
+                        <LocalizationProvider
+                          dateAdapter={AdapterDayjs}
+                          adapterLocale="il"
+                        >
+                          <DatePicker
+                            value={dayjs(defaultValueFormmated)}
+                            // onChange={handeldefaultValueChange}
+                          />
+                        </LocalizationProvider>
+                      </ThemeProvider>
+                    )}
+                    {columnType === "boolean" && (
+                      <FormControl
+                        sx={{
+                          width: "90%",
+                          marginTop: "10px",
+                          display: "flex",
+                          alignItems: "flex-end",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <RadioGroup
+                          aria-labelledby="booleanSelect"
+                          name="controlled-radio-buttons-group"
+                          value={defaultValueFormmated} // Convert boolean to string
+                          onChange={handleInputDefaultValueChange}
+                          row
+                        >
+                          <FormControlLabel
+                            value={true}
+                            control={<Radio />}
+                            label="כן"
+                          />
+                          <FormControlLabel
+                            value="false"
+                            control={<Radio />}
+                            label="לא"
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                    )}
+                  </>
+                )}
+              </FormControl>
+            )}
           </ThemeProvider>
         </CacheProvider>
       )}

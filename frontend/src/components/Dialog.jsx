@@ -6,6 +6,7 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Radio,
@@ -14,6 +15,7 @@ import {
   TextField,
   ThemeProvider,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import { CacheProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
 import createCache from "@emotion/cache";
@@ -22,6 +24,7 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import AddIcon from "@mui/icons-material/Add";
 
 const theme = (outerTheme) =>
   createTheme({
@@ -42,7 +45,65 @@ export default function SimpleDialog(props) {
   const [newColumnName, setNewColumnName] = useState("");
   const [typeOfColumn, setTypeOfColumn] = useState("STRING");
   const [defaultValue, setDefaultValue] = useState(null);
+  // const [values, setValues] = useState([1, 2]);
+  const [enumValues, setEnumValues] = useState(["", ""]);
 
+  const handleEnumValueChange = (index, event) => {
+    const newEnumValues = [...enumValues];
+    newEnumValues[index] = event.target.value;
+    setEnumValues(newEnumValues);
+  };
+
+  const addEnumValueField = () => {
+    setEnumValues([...enumValues, ""]);
+  };
+
+  const deleteEnumValueField = (index) => {
+    if (enumValues.length <= 2) return; // Ensures there are at least 2 options
+    const newEnumValues = [...enumValues];
+    newEnumValues.splice(index, 1);
+    setEnumValues(newEnumValues);
+  };
+
+  const handleCreateClicked = () => {
+    if (isColumn) {
+      if (typeOfColumn === "ENUM") {
+        // typeOfColumn === "ENUM"
+        // enumValues = ["value1", "value2", "value3"]
+
+        const columnTypeFormatted = `select: [${enumValues.join(", ")}]`;
+
+        console.log(columnTypeFormatted);
+
+        onCreateClicked(newColumnName, columnTypeFormatted, defaultValue);
+      } else {
+        onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+      }
+      // }
+    } else {
+      onCreateClicked(newColumnName);
+    }
+  };
+
+  // const handleDefaultValueChange = (index, event) => {
+  //   const newValues = [...values];
+  //   newValues[index] = event.target.value;
+  //   setValues(newValues);
+  //   setDefaultValue(newValues[index]);
+  // };
+
+  // const addTextField = () => {
+  //   const newValues = [...values, `${values.length + 1}`];
+  //   setValues(newValues);
+  // };
+
+  // const deleteTextField = (index) => {
+  //   if (values.length <= 2) return; // Ensures there are at least 2 options
+  //   const newValues = values.filter((_, i) => i !== index);
+  //   // Update placeholder names
+  //   const updatedValues = newValues.map((value, idx) => ` ${idx + 1}`);
+  //   setValues(updatedValues);
+  // };
   const handeldefaultValueChange = (event) => {
     if (typeOfColumn === "DATE") {
       setDefaultValue(event.$d);
@@ -64,17 +125,11 @@ export default function SimpleDialog(props) {
     onClose();
   };
 
-  const handleCreateClicked = () => {
-    if (isColumn) {
-      onCreateClicked(newColumnName, typeOfColumn, defaultValue);
-    } else {
-      onCreateClicked(newColumnName);
-    }
-  };
   useEffect(() => {
+    console.log(defaultValue);
     console.log(typeOfColumn);
     console.log(defaultValue);
-  }, [typeOfColumn, defaultValue]);
+  }, [typeOfColumn, defaultValue, defaultValue]);
 
   return (
     <Dialog
@@ -238,6 +293,66 @@ export default function SimpleDialog(props) {
           </div>
         </CacheProvider>
       )}
+      {isColumn && typeOfColumn === "ENUM" && (
+        <>
+          {enumValues.map((value, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {index > 1 && (
+                <IconButton>
+                  <DeleteIcon
+                    color="error"
+                    onClick={() => deleteEnumValueField(index)}
+                  />
+                </IconButton>
+              )}
+              <TextField
+                sx={{
+                  width: "80%",
+                  marginTop: "15px",
+                  direction: "rtl",
+                }}
+                onChange={(event) => handleEnumValueChange(index, event)}
+                value={value}
+                placeholder={`ערך ${index + 1}`}
+              />
+            </div>
+          ))}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <Button
+              color="secondary"
+              onClick={addEnumValueField}
+              style={{ marginTop: "15px" }}
+            >
+              <AddIcon />
+            </Button>
+            <Select
+              sx={{
+                width: "80%",
+                margin: "auto",
+                marginTop: "15px",
+                direction: "rtl",
+              }}
+              value={defaultValue}
+              onChange={(event) => setDefaultValue(event.target.value)}
+            >
+              {enumValues.map((value, index) => (
+                <MenuItem key={index} value={value}>
+                  {value}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
+        </>
+      )}
+
       <Button
         sx={{ margin: "10px", fontSize: "1.2rem" }}
         onClick={handleCreateClicked}
