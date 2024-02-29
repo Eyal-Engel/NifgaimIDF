@@ -49,6 +49,8 @@ export default function ManageColumnsPage() {
 
         const originColumns = await getOriginalColumns();
 
+        console.log(columnsWithAllData);
+        console.log(originColumns);
         setOriginalColumns(originColumns);
         const columns = columnsWithAllData.map((column) => {
           return {
@@ -57,6 +59,7 @@ export default function ManageColumnsPage() {
             columnDefault: column.column_default,
           };
         });
+
         setColumns(columns); // changed from setCommands
       } catch (error) {
         console.error("Error during get columns:", error); // changed from get commands
@@ -152,6 +155,7 @@ export default function ManageColumnsPage() {
   };
 
   const handelAddColumn = async (newColumnName, typeOfColumn, defaultValue) => {
+    console.log(defaultValue);
     // changed from handelAddCommand
     setSearchInputValue("");
     if (newColumnName !== "") {
@@ -241,6 +245,9 @@ export default function ManageColumnsPage() {
 
   // Combine the matching and non-matching columns
   const sortedFilteredColumns = [...nonMatchingColumns, ...matchingColumns];
+
+  console.log("sortedFilteredColumns");
+  console.log(sortedFilteredColumns);
 
   return (
     <div className="columnsContainer">

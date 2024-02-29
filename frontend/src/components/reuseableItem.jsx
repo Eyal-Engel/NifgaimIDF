@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
@@ -47,34 +47,44 @@ const EditableItem = ({
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
   const [typeOfColumn, setTypeOfColumn] = useState(columnType);
-  const defaultValueFormmated = useState(null);
+  const [defaultValueFormmated, setDefaultValueFormmated] = useState(null);
 
-  if (isColumn) {
-    handleDefaultValue(defaultValue);
-    console.log(itemName);
-    console.log(typeOfColumn);
-  }
+  useEffect(() => {
+    console.log(defaultValue);
+    if (isColumn) {
+      const temp = handleDefaultValue(defaultValue);
+      console.log(itemName);
+      console.log(defaultValue);
+      console.log(temp);
+      setDefaultValueFormmated(temp);
+    }
+  }, []);
 
   function handleDefaultValue(defaultValue) {
-    let result = defaultValue;
-    console.log(typeof defaultValue);
+    console.log(defaultValue);
 
-    if (defaultValue instanceof Date) {
-      const day = String(defaultValue.getDate()).padStart(2, "0");
-      const month = String(defaultValue.getMonth() + 1).padStart(2, "0"); // Month is zero-based
-      const year = defaultValue.getFullYear();
-      result = `${day}/${month}/${year}`;
+    let result = defaultValue;
+
+    if (defaultValue === null || defaultValue.includes("NULL")) {
+      console.log(null);
+      return "לא הוגדר ערך ברירת מחדל";
+      // result = null;
     } else {
-      if (defaultValue === null || defaultValue.includes("NULL")) {
-        return "לא הוגדר ערך ברירת מחדל";
-      }
-      if (
+      if (defaultValue instanceof Date) {
+        const day = String(defaultValue.getDate()).padStart(2, "0");
+        const month = String(defaultValue.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+        const year = defaultValue.getFullYear();
+        result = `${day}/${month}/${year}`;
+      } else if (
         defaultValue.includes("timestamp with time zone") ||
         defaultValue.includes("character varying")
       ) {
-        result = defaultValue.match(/'([^']+)'/)[1];
+        const temp = defaultValue.match(/'([^']+)'/)[1];
+        result = temp.substring(0, 10);
+        // result = `${day}/${month}/${year}`;
       }
     }
+    console.log(result);
 
     return result;
   }
@@ -248,6 +258,9 @@ const EditableItem = ({
                 sx={{
                   background: "white",
                   paddingRight: "5px",
+                  paddingLeft: "5px",
+                  marginTop: "-17px",
+                  fontSize: "12px"
                 }}
               >
                 ערך ברירת מחדל

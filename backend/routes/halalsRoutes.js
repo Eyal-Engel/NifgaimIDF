@@ -25,13 +25,26 @@ router.delete("/:halalId", halalsCotnrollers.deleteHalal);
 router.get("/columns/names", halalsCotnrollers.getColumnNamesAndTypes);
 
 router.post("/columns/add", halalsCotnrollers.addHalalColumn);
+
+router.patch(
+  "/columns/update/select/:columnName",
+  halalsCotnrollers.updateHalalSelectColumn
+);
 router.patch(
   "/columns/update/:columnName",
   halalsCotnrollers.updateHalalColumn
 );
-router.delete(
-  "/columns/delete/:columnName",
-  halalsCotnrollers.deleteHalalColumn
+
+router.patch(
+  "/columns/replaceValue:columnName",
+  halalsCotnrollers.replaceColumnValue
 );
+
+// router.delete(
+//   "/columns/select/:columnName",
+//   halalsCotnrollers.deleteHalalSelectColumn
+// );
+
+router.delete("/columns/:columnName", halalsCotnrollers.deleteHalalColumn);
 
 module.exports = router;
