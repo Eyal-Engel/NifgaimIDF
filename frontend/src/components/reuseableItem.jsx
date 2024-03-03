@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
@@ -6,7 +6,6 @@ import rtlPlugin from "stylis-plugin-rtl";
 import {
   Chip,
   FormControlLabel,
-  FormLabel,
   Radio,
   RadioGroup,
   useMediaQuery,
@@ -57,21 +56,16 @@ const EditableItem = ({
 }) => {
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
-  const [editedColumnType, setEditedColumnType] = useState(columnType);
-  const [editedDefaultValue, setEditedDefaultValue] = useState(defaultValue);
+  const [editedDefaultValue, setEditedDefaultValue] = useState(
+    defaultValue || ""
+  );
 
   const [typeOfColumn, setTypeOfColumn] = useState(columnType);
-  const [defaultValueFormmated, setDefaultValueFormmated] =
-    useState(defaultValue);
+  const [defaultValueFormmated, setDefaultValueFormmated] = useState(
+    defaultValue || ""
+  );
 
-  useEffect(() => {
-    if (isColumn) {
-      const temp = handleDefaultValue(editedDefaultValue);
-      setDefaultValueFormmated(temp);
-    }
-  }, [editedDefaultValue]);
-
-  function handleDefaultValue(defaultValue) {
+  const handleDefaultValue = useCallback((defaultValue) => {
     let result = defaultValue;
 
     if (
@@ -105,7 +99,14 @@ const EditableItem = ({
     }
 
     return result;
-  }
+  }, [columnType]);
+
+  useEffect(() => {
+    if (isColumn) {
+      const temp = handleDefaultValue(editedDefaultValue);
+      setDefaultValueFormmated(temp);
+    }
+  }, [editedDefaultValue, handleDefaultValue, isColumn]);
 
   const handleTypeOfColumnChange = (event) => {
     setTypeOfColumn(event.target.value);
@@ -121,7 +122,7 @@ const EditableItem = ({
       handleItemNameChange(
         itemId,
         editedItemName,
-        editedColumnType,
+        columnType,
         editedDefaultValue
       );
     } else {
@@ -355,7 +356,7 @@ const EditableItem = ({
                     <ThemeProvider theme={theme}>
                       <LocalizationProvider
                         dateAdapter={AdapterDayjs}
-                        adapterLocale="il"
+                        
                       >
                         <DatePicker
                           value={dayjs(defaultValueFormmated)}
@@ -468,7 +469,7 @@ const EditableItem = ({
                       <ThemeProvider theme={theme}>
                         <LocalizationProvider
                           dateAdapter={AdapterDayjs}
-                          adapterLocale="il"
+                          
                         >
                           <DatePicker
                             value={dayjs(defaultValueFormmated)}

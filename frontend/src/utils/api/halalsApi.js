@@ -15,7 +15,6 @@ export async function getHalalColumnsAndTypes() {
 
   try {
     const response = await get(apiUrl, headers);
-    console.log(response);
     return response.data;
   } catch (error) {
     console.log("Error fetching halal columns and types:", error);

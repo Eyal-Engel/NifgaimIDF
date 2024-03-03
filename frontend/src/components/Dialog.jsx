@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
@@ -274,7 +274,6 @@ export default function SimpleDialog(props) {
             <ThemeProvider theme={theme}>
               <LocalizationProvider
                 dateAdapter={AdapterDayjs}
-                adapterLocale="il"
               >
                 <DatePicker
                   label="תאריך ברירת מחדל"
