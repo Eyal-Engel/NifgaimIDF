@@ -88,6 +88,7 @@ const EditableItem = ({
     let result = defaultValue;
 
     console.log(defaultValue);
+    console.log(typeof defaultValue);
 
     if (
       defaultValue === null ||
@@ -163,6 +164,8 @@ const EditableItem = ({
 
   const handleInputDefaultValueChange = (e) => {
     setEditedDefaultValue(e.target.value);
+    const formmated = handleDefaultValue(e.target.value);
+    setDefaultValueFormmated(formmated);
   };
 
   const isScreenSmall = useMediaQuery("(max-width:650px)");
@@ -239,28 +242,28 @@ const EditableItem = ({
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"uuid"}
+                  value="uuid"
                   selected={typeOfColumn.toLowerCase() === "uuid"}
                 >
                   מספר יחודי
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"character varying"}
+                  value="character varying"
                   selected={typeOfColumn.toLowerCase() === "character varying"}
                 >
                   טקסט
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"string"}
+                  value="string"
                   selected={typeOfColumn.toLowerCase() === "string"}
                 >
                   טקסט
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
-                  value={"timestamp with time zone"}
+                  value="timestamp with time zone"
                   selected={
                     typeOfColumn.toLowerCase() === "timestamp with time zone"
                   }
@@ -270,7 +273,7 @@ const EditableItem = ({
 
                 <MenuItem
                   dir="rtl"
-                  value={"date"}
+                  value="date"
                   selected={typeOfColumn.toLowerCase() === "date"}
                 >
                   תאריך
@@ -278,7 +281,7 @@ const EditableItem = ({
 
                 <MenuItem
                   dir="rtl"
-                  value={"user-defined"}
+                  value="user-defined"
                   selected={typeOfColumn.toLowerCase() === "user-defined"}
                 >
                   בחירה
@@ -286,7 +289,7 @@ const EditableItem = ({
 
                 <MenuItem
                   dir="rtl"
-                  value={"boolean"}
+                  value="boolean"
                   selected={typeOfColumn.toLowerCase() === "boolean"}
                 >
                   כן/לא
@@ -294,7 +297,7 @@ const EditableItem = ({
 
                 <MenuItem
                   dir="rtl"
-                  value={"integer"}
+                  value="integer"
                   selected={typeOfColumn.toLowerCase() === "integer"}
                 >
                   מספר

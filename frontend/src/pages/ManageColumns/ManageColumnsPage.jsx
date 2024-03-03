@@ -165,8 +165,10 @@ export default function ManageColumnsPage() {
   };
 
   const handelAddColumn = async (newColumnName, typeOfColumn, defaultValue) => {
-    console.log(newColumnName, typeOfColumn, defaultValue);
+    // console.log(newColumnName, typeOfColumn, defaultValue);
     // changed from handelAddCommand
+    console.log("checkcheck");
+
     if (newColumnName !== "") {
       try {
         await addHalalColumn(
@@ -187,6 +189,8 @@ export default function ManageColumnsPage() {
 
         setOpenDialog(false);
       } catch (error) {
+        console.log("checkcheck");
+
         const errors = error.response.data.body.errors;
         let errorsForSwal = ""; // Start unordered list
 

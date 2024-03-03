@@ -9,7 +9,20 @@ const sequelize = require("../dbConfig");
 
 const getHalals = async (req, res, next) => {
   try {
-    const halals = await Halal.findAll({});
+    // Get all column names dynamically
+    const columns = await sequelize.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+      { type: QueryTypes.SELECT }
+    );
+
+    // Extract column names from the query result
+    const columnNames = columns.map((column) => column.column_name);
+
+    // Fetch all halals with all columns
+    const halals = await Halal.findAll({
+      attributes: columnNames, // Fetch all columns dynamically
+    });
+
     res.json(halals);
   } catch (err) {
     return next(err);
@@ -655,11 +668,23 @@ const deleteHalalColumn = async (req, res, next) => {
 const getHalalById = async (req, res, next) => {
   const halalId = req.params.halalId;
   try {
-    const halal = await Halal.findByPk(halalId);
+    // Get all column names dynamically
+    const columns = await sequelize.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+      { type: QueryTypes.SELECT }
+    );
+
+    // Extract column names from the query result
+    const columnNames = columns.map((column) => column.column_name);
+
+    // Fetch halal by ID with all columns
+    const halal = await Halal.findByPk(halalId, { attributes: columnNames });
+
     if (!halal) {
       const error = new Error(`Halal with ID ${halalId} not found.`, 404);
       return next(error);
     }
+
     res.json(halal);
   } catch (err) {
     return next(err);
@@ -669,15 +694,26 @@ const getHalalById = async (req, res, next) => {
 const getHalalsByCommandId = async (req, res, next) => {
   const commandId = req.params.commandId;
   try {
+    // Get all column names dynamically
+    const columns = await sequelize.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+      { type: QueryTypes.SELECT }
+    );
+
+    // Extract column names from the query result
+    const columnNames = columns.map((column) => column.column_name);
+
+    // Fetch halals by command ID with all columns
     const halals = await Halal.findAll({
       where: { nifgaimCommandId: commandId },
+      attributes: columnNames,
     });
+
     res.json(halals);
   } catch (err) {
     return next(err);
   }
 };
-
 const createHalal = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -687,48 +723,57 @@ const createHalal = async (req, res, next) => {
   }
   const id = uuidv4();
 
-  const {
-    privateNumber,
-    lastName,
-    firstName,
-    dateOfDeath,
-    serviceType,
-    circumstances,
-    nifgaimGraveyardId,
-    unit,
-    division,
-    specialCommunity,
-    area,
-    plot,
-    line,
-    graveNumber,
-    permanentRelationship,
-    comments,
-    commandId,
-  } = req.body;
-
   try {
-    const newHalal = await Halal.create({
-      id,
-      privateNumber,
-      lastName,
-      firstName,
-      dateOfDeath,
-      serviceType,
-      circumstances,
-      nifgaimGraveyardId,
-      unit,
-      division,
-      specialCommunity,
-      area,
-      plot,
-      line,
-      graveNumber,
-      permanentRelationship,
-      comments,
-      nifgaimCommandId: commandId,
-    });
-    res.status(201).json(newHalal);
+    const columns = await sequelize.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+
+      { type: QueryTypes.SELECT }
+    );
+
+    // Extract column names from the query result
+    const columnNames = columns.map((column) => column.column_name);
+
+    // Create new Halal entry with all columns
+    const newHalalData = { id, ...req.body };
+
+    // Construct SQL INSERT statement dynamically
+    const insertColumns = [];
+    const insertValues = [];
+    const placeholders = [];
+    for (const columnName in newHalalData) {
+      if (columnNames.includes(columnName)) {
+        insertColumns.push(columnName);
+        insertValues.push(newHalalData[columnName]);
+        placeholders.push("?");
+      }
+    }
+
+    const insertQuery = `
+    INSERT INTO nifgaimHalals (${insertColumns.join(", ")})
+    VALUES (${placeholders.join(", ")})
+  `;
+
+    console.log("Insert Values:", insertValues);
+
+    console.log(insertColumns);
+    console.log(placeholders);
+    console.log(insertQuery);
+
+    try {
+      // Execute the SQL INSERT statement
+      await sequelize.query(insertQuery, {
+        replacements: insertValues,
+        type: QueryTypes.INSERT,
+      });
+
+      res.status(201).json({ id, ...req.body });
+    } catch (err) {
+      console.error("Error executing query createHalal:", err);
+      return next(err.message);
+      // return next(err);
+    }
+
+    res.status(201).json({ id, ...req.body });
   } catch (err) {
     return next(err);
   }
@@ -736,24 +781,7 @@ const createHalal = async (req, res, next) => {
 
 const updateHalal = async (req, res, next) => {
   const halalId = req.params.halalId;
-  const {
-    privateNumber,
-    lastName,
-    firstName,
-    dateOfDeath,
-    serviceType,
-    circumstances,
-    unit,
-    division,
-    specialCommunity,
-    area,
-    plot,
-    line,
-    graveNumber,
-    permanentRelationship,
-    comments,
-    commandId,
-  } = req.body;
+  const requestBody = req.body;
 
   try {
     const halal = await Halal.findByPk(halalId);
@@ -761,24 +789,45 @@ const updateHalal = async (req, res, next) => {
       const error = new Error(`Halal with ID ${halalId} not found.`, 404);
       return next(error);
     }
-    halal.privateNumber = privateNumber;
-    halal.lastName = lastName;
-    halal.firstName = firstName;
-    halal.dateOfDeath = dateOfDeath;
-    halal.serviceType = serviceType;
-    halal.circumstances = circumstances;
-    halal.unit = unit;
-    halal.division = division;
-    halal.specialCommunity = specialCommunity;
-    halal.area = area;
-    halal.plot = plot;
-    halal.line = line;
-    halal.graveNumber = graveNumber;
-    halal.permanentRelationship = permanentRelationship;
-    halal.comments = comments;
-    halal.nifgaimCommandId = commandId;
-    await halal.save();
-    res.json(halal);
+
+    // Update all properties of the halal instance with the values from the request body
+    Object.keys(requestBody).forEach((key) => {
+      halal[key] = requestBody[key];
+    });
+
+    // Get all column names dynamically
+    const columns = await sequelize.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+      { type: QueryTypes.SELECT }
+    );
+
+    // Extract column names from the query result
+    const columnNames = columns.map((column) => column.column_name);
+
+    // Filter out keys not present in columnNames
+    const filteredRequestData = filterObjectKeys(requestBody, columnNames);
+
+    // Construct SQL query to update only the columns present in the filtered request data
+    const updates = Object.keys(filteredRequestData).map((key) => {
+      const value =
+        typeof filteredRequestData[key] === "string"
+          ? `'${filteredRequestData[key]}'`
+          : filteredRequestData[key];
+      return `${key} = ${value}`;
+    });
+
+    // Execute the SQL query to update the halal instance
+    await sequelize.query(
+      `UPDATE nifgaimHalals SET ${updates.join(
+        ", "
+      )} WHERE id = '${halalId}' RETURNING *;`,
+      { type: QueryTypes.UPDATE }
+    );
+
+    // Fetch the updated halal instance
+    const updatedHalal = await Halal.findByPk(halalId);
+
+    res.json(updatedHalal);
   } catch (err) {
     return next(err);
   }
