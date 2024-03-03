@@ -46,7 +46,6 @@ export default function ManageCommandsPage() {
       try {
         const graveyards = await getAllGraveyards(); // Change function name
 
-        console.log(graveyards);
         setGraveyards(graveyards); // Change state variable name
       } catch (error) {
         console.error("Error during get graveyards:", error); // Change error message
@@ -58,7 +57,6 @@ export default function ManageCommandsPage() {
 
   const handelGraveyardNameChange = async (graveyardId, newName) => {
     // Change function name
-    console.log(newName);
     try {
       await updateGraveyardById(loggedUserId, graveyardId, newName); // Change function name
       setGraveyards((prevGraveyards) => {
@@ -115,7 +113,6 @@ export default function ManageCommandsPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          console.log(graveyardId);
           await deleteGraveyardById(loggedUserId, graveyardId);
           setGraveyards((prevGraveyards) => {
             const updatedGraveyards = prevGraveyards.filter(
@@ -154,7 +151,6 @@ export default function ManageCommandsPage() {
     if (value !== "") {
       try {
         const graveyard = await createGraveyard(loggedUserId, value);
-        console.log(graveyard);
 
         setGraveyards((prev) => [
           ...prev,

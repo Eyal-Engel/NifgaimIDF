@@ -64,22 +64,9 @@ const EditableItem = ({
   const [defaultValueFormmated, setDefaultValueFormmated] =
     useState(defaultValue);
 
-  // console.log(columnType);
-  // if (
-  //   isColumn &&
-  //   columnType === "timestamp with time zone" &&
-  //   defaultValue !== null
-  // ) {
-  //   console.log(defaultValue);
-  //   console.log(defaultValue.substring(22));
-  // }
   useEffect(() => {
-    console.log(editedDefaultValue);
     if (isColumn) {
       const temp = handleDefaultValue(editedDefaultValue);
-      console.log(itemName);
-      console.log(defaultValue);
-      console.log(temp);
       setDefaultValueFormmated(temp);
     }
   }, [editedDefaultValue]);
@@ -87,20 +74,15 @@ const EditableItem = ({
   function handleDefaultValue(defaultValue) {
     let result = defaultValue;
 
-    console.log(defaultValue);
-    console.log(typeof defaultValue);
-
     if (
       defaultValue === null ||
       (typeof defaultValue === "string" &&
         columnType !== "boolean" &&
         defaultValue.includes("NULL"))
     ) {
-      console.log(null);
       return "לא הוגדר ערך ברירת מחדל";
       // result = null;
     } else if (columnType === "boolean") {
-      console.log("should work");
       return defaultValue;
     } else if (defaultValue.includes("enum_nifgaimHalals_")) {
       const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
@@ -121,7 +103,6 @@ const EditableItem = ({
         // result = `${day}/${month}/${year}`;
       }
     }
-    console.log(result);
 
     return result;
   }

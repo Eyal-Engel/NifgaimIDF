@@ -73,8 +73,6 @@ export default function SimpleDialog(props) {
 
         const columnTypeFormatted = `select: [${enumValues.join(", ")}]`;
 
-        console.log(columnTypeFormatted);
-
         onCreateClicked(newColumnName, columnTypeFormatted, defaultValue);
       } else {
         onCreateClicked(newColumnName, typeOfColumn, defaultValue);
@@ -124,12 +122,6 @@ export default function SimpleDialog(props) {
   const handleClose = () => {
     onClose();
   };
-
-  useEffect(() => {
-    console.log(defaultValue);
-    console.log(typeOfColumn);
-    console.log(defaultValue);
-  }, [typeOfColumn, defaultValue, defaultValue]);
 
   return (
     <Dialog

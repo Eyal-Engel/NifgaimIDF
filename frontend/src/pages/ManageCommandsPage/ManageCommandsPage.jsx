@@ -145,7 +145,6 @@ export default function ManageCommandsPage() {
     if (value !== "") {
       try {
         const command = await createCommand(loggedUserId, value);
-        console.log("commandcommandcommandcommand");
 
         setCommands((prev) => [
           ...prev,

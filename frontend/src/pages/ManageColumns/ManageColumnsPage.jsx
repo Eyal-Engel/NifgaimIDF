@@ -49,8 +49,6 @@ export default function ManageColumnsPage() {
 
         const originColumns = await getOriginalColumns();
 
-        console.log(columnsWithAllData);
-        console.log(originColumns);
         setOriginalColumns(originColumns);
         const columns = columnsWithAllData.map((column) => {
           return {
@@ -76,7 +74,6 @@ export default function ManageColumnsPage() {
     newDefaultValue
   ) => {
     try {
-      console.log(loggedUserId, columnName, newName, newDefaultValue);
       await updateHalalColumn(
         loggedUserId,
         columnName,
@@ -165,10 +162,6 @@ export default function ManageColumnsPage() {
   };
 
   const handelAddColumn = async (newColumnName, typeOfColumn, defaultValue) => {
-    // console.log(newColumnName, typeOfColumn, defaultValue);
-    // changed from handelAddCommand
-    console.log("checkcheck");
-
     if (newColumnName !== "") {
       try {
         await addHalalColumn(
@@ -189,8 +182,6 @@ export default function ManageColumnsPage() {
 
         setOpenDialog(false);
       } catch (error) {
-        console.log("checkcheck");
-
         const errors = error.response.data.body.errors;
         let errorsForSwal = ""; // Start unordered list
 
@@ -260,9 +251,6 @@ export default function ManageColumnsPage() {
 
   // Combine the matching and non-matching columns
   const sortedFilteredColumns = [...nonMatchingColumns, ...matchingColumns];
-
-  console.log("sortedFilteredColumns");
-  console.log(sortedFilteredColumns);
 
   return (
     <div className="columnsContainer">
