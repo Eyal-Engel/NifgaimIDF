@@ -742,22 +742,35 @@ const createHalal = async (req, res, next) => {
     const placeholders = [];
     for (const columnName in newHalalData) {
       if (columnNames.includes(columnName)) {
-        insertColumns.push(columnName);
-        insertValues.push(newHalalData[columnName]);
+        insertColumns.push(`"${columnName}"`); // Quote column names
+        const value = newHalalData[columnName];
+        if (typeof value === "boolean") {
+          // Convert boolean values to strings
+          insertValues.push(value.toString());
+        } else {
+          insertValues.push(value);
+        }
         placeholders.push("?");
       }
     }
 
     const insertQuery = `
-    INSERT INTO nifgaimHalals (${insertColumns.join(", ")})
+    INSERT INTO "nifgaimHalals" (${insertColumns.join(", ")})
     VALUES (${placeholders.join(", ")})
   `;
 
-    console.log("Insert Values:", insertValues);
-
-    console.log(insertColumns);
-    console.log(placeholders);
-    console.log(insertQuery);
+    //   INSERT INTO "nifgaimHalals" (
+    //     id, "privateNumber", "lastName", "firstName", "dateOfDeath",
+    //     "serviceType", "circumstances", "unit", "division", "specialCommunity",
+    //     "area", "plot", "line", "graveNumber", "permanentRelationship", "comments",
+    //     "nifgaimCommandId", "nifgaimGraveyardId"
+    // )
+    // VALUES (
+    //     '69017620-49f2-40b0-8648-e2b981df90e7', '1020202', 'Doe', 'John', '2024-03-03',
+    //     'קבע', 'Combat', 'Alpha Company', '1st Division', 'Veterans',
+    //     'Section A', 'Plot 123', 'Line 1', '456', 'false', 'Lorem ipsum dolor sit.',
+    //     '07ec94ec-d900-4633-8c40-b47f25ac6a9c', '286ad23d-450c-47c4-b23d-377ac18b993b'
+    // );
 
     try {
       // Execute the SQL INSERT statement
@@ -770,14 +783,22 @@ const createHalal = async (req, res, next) => {
     } catch (err) {
       console.error("Error executing query createHalal:", err);
       return next(err.message);
-      // return next(err);
     }
-
-    res.status(201).json({ id, ...req.body });
   } catch (err) {
     return next(err);
   }
 };
+
+// Function to filter out keys not present in columnNames
+function filterObjectKeys(object, allowedKeys) {
+  const filtered = {};
+  for (const key in object) {
+    if (allowedKeys.includes(key)) {
+      filtered[key] = object[key];
+    }
+  }
+  return filtered;
+}
 
 const updateHalal = async (req, res, next) => {
   const halalId = req.params.halalId;
@@ -786,8 +807,9 @@ const updateHalal = async (req, res, next) => {
   try {
     const halal = await Halal.findByPk(halalId);
     if (!halal) {
-      const error = new Error(`Halal with ID ${halalId} not found.`, 404);
-      return next(error);
+      const error = new Error(`Halal with ID ${halalId} not found.`);
+      error.statusCode = 404;
+      throw error;
     }
 
     // Update all properties of the halal instance with the values from the request body
@@ -813,23 +835,24 @@ const updateHalal = async (req, res, next) => {
         typeof filteredRequestData[key] === "string"
           ? `'${filteredRequestData[key]}'`
           : filteredRequestData[key];
-      return `${key} = ${value}`;
+      return `"${key}" = ${value}`;
     });
 
     // Execute the SQL query to update the halal instance
-    await sequelize.query(
-      `UPDATE nifgaimHalals SET ${updates.join(
-        ", "
-      )} WHERE id = '${halalId}' RETURNING *;`,
-      { type: QueryTypes.UPDATE }
-    );
+    const updateQuery = `
+      UPDATE "nifgaimHalals" 
+      SET ${updates.join(", ")} 
+      WHERE "id" = '${halalId}' 
+      RETURNING *;
+    `;
 
-    // Fetch the updated halal instance
-    const updatedHalal = await Halal.findByPk(halalId);
+    const updatedHalal = await sequelize.query(updateQuery, {
+      type: QueryTypes.UPDATE,
+    });
 
-    res.json(updatedHalal);
+    res.json(updatedHalal[0][0]); // Return the updated instance
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 

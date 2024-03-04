@@ -698,7 +698,7 @@ export default function HalalimPage() {
                       ? "rgba(0, 128, 0, 0.8)" // Green with 80% opacity
                       : params.value === "סדיר"
                       ? "rgba(0, 200, 255, 0.8)" // Green with 80% opacity
-                      : "rgba(20, 20, 20, 0.2)", // Cyan with 80% opacity
+                      : "rgba(40, 40, 40, 0.15)", // Cyan with 80% opacity
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -709,9 +709,9 @@ export default function HalalimPage() {
                   style={{
                     color:
                       params.value === "מילואים"
-                        ? "black"
+                        ? "white"
                         : params.value === "קבע"
-                        ? "black"
+                        ? "white"
                         : params.value === "סדיר"
                         ? "black"
                         : "black",
