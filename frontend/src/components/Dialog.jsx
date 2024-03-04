@@ -25,6 +25,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AddIcon from "@mui/icons-material/Add";
+import dayjs from "dayjs";
 
 const theme = (outerTheme) =>
   createTheme({
@@ -40,8 +41,13 @@ const cacheRtl = createCache({
   stylisPlugins: [prefixer, rtlPlugin],
 });
 
-export default function SimpleDialog(props) {
-  const { onClose, open, onCreateClicked, isGraveyard, isColumn } = props;
+export default function SimpleDialog({
+  onClose,
+  open,
+  onCreateClicked,
+  isGraveyard,
+  isColumn,
+}) {
   const [newColumnName, setNewColumnName] = useState("");
   const [typeOfColumn, setTypeOfColumn] = useState("STRING");
 
@@ -75,6 +81,16 @@ export default function SimpleDialog(props) {
         const columnTypeFormatted = `select: [${enumValues.join(", ")}]`;
 
         onCreateClicked(newColumnName, columnTypeFormatted, defaultValue);
+      } else if (typeOfColumn === "DATE") {
+        const dateObject = new Date(defaultValue);
+
+        const day = dateObject.getDate().toString().padStart(2, "0");
+        const month = (dateObject.getMonth() + 1).toString().padStart(2, "0");
+        const year = dateObject.getFullYear();
+
+        const formatDate = `${day}/${month}/${year}`;
+        console.log(formatDate);
+        onCreateClicked(newColumnName, typeOfColumn, formatDate);
       } else {
         onCreateClicked(newColumnName, typeOfColumn, defaultValue);
       }
