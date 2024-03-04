@@ -25,6 +25,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AddIcon from "@mui/icons-material/Add";
+import RtlPlugin from "./rtlPlugin/RtlPlugin";
 
 const theme = (outerTheme) =>
   createTheme({
@@ -245,44 +246,35 @@ export default function SimpleDialog(props) {
         </FormControl>
       )}
       {isColumn && typeOfColumn === "INTEGER" && (
-        <CacheProvider value={cacheRtl}>
-          <ThemeProvider theme={theme}>
-            <TextField
-              dir="rtl"
-              id="outlined-number"
-              label="מספר ברירת מחדל"
-              type="number"
-              onChange={handeldefaultValueChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              sx={{
-                width: "80%",
-                margin: "auto",
-                marginTop: "10px",
-              }}
-            />
-          </ThemeProvider>
-        </CacheProvider>
+        <RtlPlugin
+          style={{ margin: "auto", width: "80%", marginTop: "15px" }}
+        >
+          <TextField
+            dir="rtl"
+            id="outlined-number"
+            label="מספר ברירת מחדל"
+            type="number"
+            onChange={handeldefaultValueChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{
+              width: "80%",
+              margin: "auto",
+              marginTop: "10px",
+            }}
+          />{" "}
+        </RtlPlugin>
       )}
       {isColumn && typeOfColumn === "DATE" && (
-        <CacheProvider value={cacheRtl}>
-          <div
-            dir="rtl"
-            style={{ margin: "auto", width: "80%", marginTop: "15px" }}
-          >
-            <ThemeProvider theme={theme}>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-              >
-                <DatePicker
-                  label="תאריך ברירת מחדל"
-                  onChange={handeldefaultValueChange}
-                />
-              </LocalizationProvider>
-            </ThemeProvider>
-          </div>
-        </CacheProvider>
+        <RtlPlugin
+          style={{ margin: "auto", width: "80%", marginTop: "15px" }}
+        >
+          <DatePicker
+            label="תאריך ברירת מחדל"
+            onChange={handeldefaultValueChange}
+          />
+        </RtlPlugin>
       )}
       {isColumn && typeOfColumn === "ENUM" && (
         <>
