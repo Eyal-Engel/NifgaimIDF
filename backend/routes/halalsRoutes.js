@@ -12,6 +12,8 @@ router.get("/", halalsCotnrollers.getHalals);
 
 router.get("/originalColumns", halalsCotnrollers.getOriginalColumns);
 
+router.get("/columnEnums", halalsCotnrollers.getEnumsForColumn);
+
 router.get("/:halalId", halalsCotnrollers.getHalalById);
 
 router.get("/byCommand/:commandId", halalsCotnrollers.getHalalsByCommandId);

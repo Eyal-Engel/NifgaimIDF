@@ -62,6 +62,39 @@ const getColumnNamesAndTypes = async (req, res, next) => {
   }
 };
 
+const getEnumsForColumn = async (req, res, next) => {
+  const { columnName } = req.body;
+  console.log(columnName);
+  try {
+    // Check if the column exists
+    const columns = await sequelize.query(
+      `SELECT format_type(a.atttypid, NULL) AS enum_name, array_agg(e.enumlabel) AS enum_values
+       FROM pg_attribute a
+       JOIN pg_type t ON a.atttypid = t.oid
+       JOIN pg_enum e ON t.oid = e.enumtypid
+       JOIN pg_namespace n ON t.typnamespace = n.oid
+       WHERE n.nspname = 'public' AND a.attname = $columnName
+       GROUP BY enum_name;`,
+      {
+        type: QueryTypes.SELECT,
+        bind: { columnName },
+      }
+    );
+
+    if (columns.length === 0) {
+      return res.status(400).json({
+        message: `Column '${columnName}' does not exist or is not of type ENUM.`,
+      });
+    }
+
+    const enumValues = columns[0].enum_values;
+
+    res.json(enumValues);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 // expected input to addHalalColumn
 // {
 //   "columnName": "example_column",
@@ -69,6 +102,7 @@ const getColumnNamesAndTypes = async (req, res, next) => {
 //   "defaultValue": "value1",
 //   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
 // }
+
 const addHalalColumn = async (req, res, next) => {
   try {
     const { columnName, dataType, defaultValue } = req.body;
@@ -876,6 +910,7 @@ module.exports = {
   getOriginalColumns,
   getHalalById,
   getHalalsByCommandId,
+  getEnumsForColumn,
   createHalal,
   updateHalal,
   deleteHalal,

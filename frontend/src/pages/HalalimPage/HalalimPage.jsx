@@ -49,6 +49,11 @@ import {
   MenuItem,
   TextField,
   InputLabel,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import "./HalalimPage.css";
 import Slide from "@mui/material/Slide";
@@ -59,6 +64,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { motion } from "framer-motion";
 import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
 import {
+  getColumnEnums,
   getHalalColumnsAndTypes,
   getHalals,
   getOriginalColumns,
@@ -66,6 +72,8 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import dayjs from "dayjs";
+import { useEffect } from "react";
+import EditHalalDialog from "./EditHalalDialog";
 
 function CustomToolbar({ setRows }) {
   const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
@@ -616,9 +624,9 @@ export default function HalalimPage() {
     setOpenDialog(true);
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
+  // const handleCloseDialog = () => {
+  //   setOpenDialog(false);
+  // };
 
   React.useEffect(() => {
     const fetchCommandsData = async () => {
@@ -648,6 +656,7 @@ export default function HalalimPage() {
   }, []);
 
   function getColumnByName(columnName) {
+    console.log(allDataOfHalalsColumns);
     return allDataOfHalalsColumns.find(
       (column) => column.column_name === columnName
     );
@@ -841,64 +850,12 @@ export default function HalalimPage() {
           toolbar: { setRows, setRowModesModel },
         }}
       />
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        TransitionComponent={Transition}
-        PaperComponent={PaperComponent}
-        aria-labelledby="draggable-dialog-title"
-        sx={{
-          direction: "rtl",
-          "& .MuiDialog-paper": {
-            width: "100%",
-          },
-        }}
-      >
-        <DialogTitle>
-          {selectedRow && selectedRow.firstName + " " + selectedRow.lastName}
-        </DialogTitle>
-        <Divider></Divider>
-
-        <DialogContent>
-          {selectedRow &&
-            Object.entries(selectedRow).map(([key, value]) => {
-              const column = getColumnByName(key);
-              const isTimestamp =
-                column.data_type === "timestamp with time zone";
-
-              return (
-                <div key={key} style={{ marginBottom: "10px" }}>
-                  <InputLabel id={key}>
-                    {translationDict[key] ? translationDict[key] : key}
-                  </InputLabel>
-                  {isTimestamp ? (
-                    <RtlPlugin
-                      style={{
-                        margin: "auto",
-                        width: "80%",
-                        marginTop: "15px",
-                      }}
-                    >
-                      <DatePicker
-                        label="תאריך ברירת מחדל"
-                        defaultValue={dayjs(value)}
-                        fullWidth // onChange={handeldefaultValueChange}
-                      />
-                    </RtlPlugin>
-                  ) : (
-                    <Input defaultValue={value} fullWidth />
-                  )}
-                </div>
-              );
-            })}
-        </DialogContent>
-
-        <Divider></Divider>
-
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Close</Button>
-        </DialogActions>
-      </Dialog>
+      <EditHalalDialog
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+        selectedRow={selectedRow}
+        allDataOfHalalsColumns={allDataOfHalalsColumns}
+      />
     </Box>
   );
 }
