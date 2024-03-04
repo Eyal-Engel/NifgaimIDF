@@ -88,9 +88,28 @@ const EditableItem = ({
         defaultValue.includes("timestamp with time zone") ||
         defaultValue.includes("character varying")
       ) {
-        const temp = defaultValue.match(/'([^']+)'/)[1];
-        result = temp.substring(0, 10);
-        // result = `${day}/${month}/${year}`;
+        return "לא הוגדר ערך ברירת מחדל";
+        // result = null;
+      } else if (columnType === "boolean") {
+        return defaultValue;
+      } else if (defaultValue.includes("enum_nifgaimHalals_")) {
+        const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
+        const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
+        return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
+      } else {
+        if (defaultValue instanceof Date) {
+          const day = String(defaultValue.getDate()).padStart(2, "0");
+          const month = String(defaultValue.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+          const year = defaultValue.getFullYear();
+          result = `${day}/${month}/${year}`;
+        } else if (
+          defaultValue.includes("timestamp with time zone") ||
+          defaultValue.includes("character varying")
+        ) {
+          const temp = defaultValue.match(/'([^']+)'/)[1];
+          result = temp.substring(0, 10);
+          // result = `${day}/${month}/${year}`;
+        }
       }
       return result;
     },

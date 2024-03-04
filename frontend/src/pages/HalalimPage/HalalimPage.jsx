@@ -63,6 +63,9 @@ import {
   getHalals,
   getOriginalColumns,
 } from "../../utils/api/halalsApi";
+import { DatePicker } from "@mui/x-date-pickers";
+import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
+import dayjs from "dayjs";
 
 function CustomToolbar({ setRows }) {
   const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
@@ -644,6 +647,12 @@ export default function HalalimPage() {
     fetchOringialColumns();
   }, []);
 
+  function getColumnByName(columnName) {
+    return allDataOfHalalsColumns.find(
+      (column) => column.column_name === columnName
+    );
+  }
+
   React.useEffect(() => {
     // Function to fetch columns data from the API or local storage
     const fetchColumnsData = async () => {
@@ -675,9 +684,46 @@ export default function HalalimPage() {
                 )}
               </div>
             );
+          } else if (type === "USER-DEFINED") {
+            renderCell1 = (params) => (
+              <div
+                style={{
+                  textAlign: "center",
+                  borderRadius: "10px",
+                  width: "100%",
+                  background:
+                    params.value === "מילואים"
+                      ? "rgba(255, 0, 0, 0.8)" // Red with 80% opacity
+                      : params.value === "קבע"
+                      ? "rgba(0, 128, 0, 0.8)" // Green with 80% opacity
+                      : params.value === "סדיר"
+                      ? "rgba(0, 200, 255, 0.8)" // Green with 80% opacity
+                      : "rgba(40, 40, 40, 0.15)", // Cyan with 80% opacity
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {/* can adjust the font color by the value here */}
+                <p
+                  style={{
+                    color:
+                      params.value === "מילואים"
+                        ? "white"
+                        : params.value === "קבע"
+                        ? "white"
+                        : params.value === "סדיר"
+                        ? "black"
+                        : "black",
+                  }}
+                >
+                  {params.value}
+                </p>
+              </div>
+            );
           }
 
-          console.log(type);
+          console.log(type === "USER-DEFINED");
           return {
             field: column.column_name,
             headerName: column.column_name,
@@ -690,7 +736,9 @@ export default function HalalimPage() {
             ...(type === "timestamp with time zone" && {
               valueFormatter: (params) => formatDate(params.value),
             }),
-            ...(type === "boolean" && { renderCell: renderCell1 }),
+            ...((type === "boolean" || type === "USER-DEFINED") && {
+              renderCell: renderCell1,
+            }),
           };
         });
 
@@ -813,14 +861,36 @@ export default function HalalimPage() {
 
         <DialogContent>
           {selectedRow &&
-            Object.entries(selectedRow).map(([key, value]) => (
-              <div key={key} style={{ marginBottom: "10px" }}>
-                <InputLabel id={key}>
-                  {translationDict[key] ? translationDict[key] : key}
-                </InputLabel>
-                <Input value={value} fullWidth readOnly />
-              </div>
-            ))}
+            Object.entries(selectedRow).map(([key, value]) => {
+              const column = getColumnByName(key);
+              const isTimestamp =
+                column.data_type === "timestamp with time zone";
+
+              return (
+                <div key={key} style={{ marginBottom: "10px" }}>
+                  <InputLabel id={key}>
+                    {translationDict[key] ? translationDict[key] : key}
+                  </InputLabel>
+                  {isTimestamp ? (
+                    <RtlPlugin
+                      style={{
+                        margin: "auto",
+                        width: "80%",
+                        marginTop: "15px",
+                      }}
+                    >
+                      <DatePicker
+                        label="תאריך ברירת מחדל"
+                        defaultValue={dayjs(value)}
+                        fullWidth // onChange={handeldefaultValueChange}
+                      />
+                    </RtlPlugin>
+                  ) : (
+                    <Input defaultValue={value} fullWidth />
+                  )}
+                </div>
+              );
+            })}
         </DialogContent>
 
         <Divider></Divider>
