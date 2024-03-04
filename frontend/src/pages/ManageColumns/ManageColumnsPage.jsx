@@ -252,7 +252,6 @@ export default function ManageColumnsPage() {
 
   // Combine the matching and non-matching columns
   const sortedFilteredColumns = [...nonMatchingColumns, ...matchingColumns];
-console.log(sortedFilteredColumns)
   return (
     <div className="columnsContainer">
       {/* changed from commandsContainer */}

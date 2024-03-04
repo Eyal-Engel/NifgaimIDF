@@ -225,13 +225,13 @@ const EditableItem = ({
                 label="סוג"
                 disabled
               >
-                {/* <MenuItem
+                <MenuItem
                   dir="rtl"
-                  value={typeOfColumn}
-                  selected={typeOfColumn.toLowerCase().includes("select")}
+                  value={columnType.toLowerCase()}
+                  selected={columnType.toLowerCase().includes("select")}
                 >
                   בחירה
-                </MenuItem> */}
+                </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value="uuid"
