@@ -16,6 +16,7 @@ import {
 import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
 import SimpleDialog from "../../components/Dialog";
+import dayjs from "dayjs";
 
 const theme = createTheme({
   direction: "rtl",
@@ -168,7 +169,7 @@ export default function ManageColumnsPage() {
           loggedUserId,
           newColumnName,
           typeOfColumn,
-          defaultValue
+          typeOfColumn === "DATE" ? dayjs(defaultValue) : defaultValue
         ); // changed from createCommand
         setColumns((prev) => [
           ...prev,
@@ -251,7 +252,6 @@ export default function ManageColumnsPage() {
 
   // Combine the matching and non-matching columns
   const sortedFilteredColumns = [...nonMatchingColumns, ...matchingColumns];
-
   return (
     <div className="columnsContainer">
       {/* changed from commandsContainer */}

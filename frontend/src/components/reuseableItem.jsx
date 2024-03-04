@@ -60,24 +60,33 @@ const EditableItem = ({
     defaultValue || ""
   );
 
-  const [typeOfColumn, setTypeOfColumn] = useState(columnType);
   const [defaultValueFormmated, setDefaultValueFormmated] = useState(
     defaultValue || ""
   );
 
-  console.log(itemName);
-  console.log(defaultValue);
-  console.log(columnType);
-
   const handleDefaultValue = useCallback(
     (defaultValue) => {
       let result = defaultValue;
-
       if (
         defaultValue === null ||
         (typeof defaultValue === "string" &&
           columnType !== "boolean" &&
           defaultValue.includes("NULL"))
+      ) {
+        return "לא הוגדר ערך ברירת מחדל";
+        // result = null;
+      } else if (columnType === "boolean") {
+        return defaultValue;
+      } else if (defaultValue.includes("enum_nifgaimHalals_")) {
+        const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
+        const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
+        return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
+      } else if (defaultValue.includes("timestamp with time zone")) {
+        const formatDate = defaultValue.split("'")[1].split(" ")[0];
+        return formatDate
+      } else if (
+        defaultValue.includes("timestamp with time zone") ||
+        defaultValue.includes("character varying")
       ) {
         return "לא הוגדר ערך ברירת מחדל";
         // result = null;
@@ -102,7 +111,6 @@ const EditableItem = ({
           // result = `${day}/${month}/${year}`;
         }
       }
-
       return result;
     },
     [columnType]
@@ -114,10 +122,6 @@ const EditableItem = ({
       setDefaultValueFormmated(temp);
     }
   }, [editedDefaultValue, handleDefaultValue, isColumn]);
-
-  const handleTypeOfColumnChange = (event) => {
-    setTypeOfColumn(event.target.value);
-  };
 
   const handleEditClick = () => {
     setIsInEditMode(true);
@@ -217,36 +221,35 @@ const EditableItem = ({
                 dir="rtl"
                 labelId="columnType"
                 id="columnType"
-                value={typeOfColumn.toLowerCase()}
+                value={columnType.toLowerCase()}
                 label="סוג"
-                onChange={handleTypeOfColumnChange}
                 disabled
               >
                 <MenuItem
                   dir="rtl"
-                  value={typeOfColumn}
-                  selected={typeOfColumn.toLowerCase().includes("select")}
+                  value={columnType.toLowerCase()}
+                  selected={columnType.toLowerCase().includes("select")}
                 >
                   בחירה
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value="uuid"
-                  selected={typeOfColumn.toLowerCase() === "uuid"}
+                  selected={columnType.toLowerCase() === "uuid"}
                 >
                   מספר יחודי
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value="character varying"
-                  selected={typeOfColumn.toLowerCase() === "character varying"}
+                  selected={columnType.toLowerCase() === "character varying"}
                 >
                   טקסט
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value="string"
-                  selected={typeOfColumn.toLowerCase() === "string"}
+                  selected={columnType.toLowerCase() === "string"}
                 >
                   טקסט
                 </MenuItem>
@@ -254,7 +257,7 @@ const EditableItem = ({
                   dir="rtl"
                   value="timestamp with time zone"
                   selected={
-                    typeOfColumn.toLowerCase() === "timestamp with time zone"
+                    columnType.toLowerCase() === "timestamp with time zone"
                   }
                 >
                   תאריך
@@ -263,7 +266,7 @@ const EditableItem = ({
                 <MenuItem
                   dir="rtl"
                   value="date"
-                  selected={typeOfColumn.toLowerCase() === "date"}
+                  selected={columnType.toLowerCase() === "date"}
                 >
                   תאריך
                 </MenuItem>
@@ -271,7 +274,7 @@ const EditableItem = ({
                 <MenuItem
                   dir="rtl"
                   value="user-defined"
-                  selected={typeOfColumn.toLowerCase() === "user-defined"}
+                  selected={columnType.toLowerCase() === "user-defined"}
                 >
                   בחירה
                 </MenuItem>
@@ -279,7 +282,7 @@ const EditableItem = ({
                 <MenuItem
                   dir="rtl"
                   value="boolean"
-                  selected={typeOfColumn.toLowerCase() === "boolean"}
+                  selected={columnType.toLowerCase() === "boolean"}
                 >
                   כן/לא
                 </MenuItem>
@@ -287,7 +290,7 @@ const EditableItem = ({
                 <MenuItem
                   dir="rtl"
                   value="integer"
-                  selected={typeOfColumn.toLowerCase() === "integer"}
+                  selected={columnType.toLowerCase() === "integer"}
                 >
                   מספר
                 </MenuItem>
@@ -382,7 +385,7 @@ const EditableItem = ({
                       <RadioGroup
                         aria-labelledby="booleanSelect"
                         name="controlled-radio-buttons-group"
-                        value={defaultValueFormmated} // Convert boolean to string
+                        value={true} // Convert boolean to string
                         onChange={handleInputDefaultValueChange}
                         row
                       >
@@ -392,7 +395,7 @@ const EditableItem = ({
                           label="כן"
                         />
                         <FormControlLabel
-                          value="false"
+                          value={false}
                           control={<Radio />}
                           label="לא"
                         />
