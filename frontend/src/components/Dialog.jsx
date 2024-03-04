@@ -44,9 +44,10 @@ export default function SimpleDialog(props) {
   const { onClose, open, onCreateClicked, isGraveyard, isColumn } = props;
   const [newColumnName, setNewColumnName] = useState("");
   const [typeOfColumn, setTypeOfColumn] = useState("STRING");
-  const [defaultValue, setDefaultValue] = useState(null);
+
   // const [values, setValues] = useState([1, 2]);
   const [enumValues, setEnumValues] = useState(["", ""]);
+  const [defaultValue, setDefaultValue] = useState(enumValues[0]);
 
   const handleEnumValueChange = (index, event) => {
     const newEnumValues = [...enumValues];
@@ -112,7 +113,11 @@ export default function SimpleDialog(props) {
 
   const handleTypeOfColumnChange = (event) => {
     setTypeOfColumn(event.target.value);
-    setDefaultValue(null);
+    if (event.target.value === "ENUM") {
+      setDefaultValue(""); // Set defaultValue to an empty string
+    } else {
+      setDefaultValue(null);
+    }
   };
 
   const handleNewNameChange = (e) => {
@@ -272,9 +277,7 @@ export default function SimpleDialog(props) {
             style={{ margin: "auto", width: "80%", marginTop: "15px" }}
           >
             <ThemeProvider theme={theme}>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-              >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="תאריך ברירת מחדל"
                   onChange={handeldefaultValueChange}
@@ -297,11 +300,8 @@ export default function SimpleDialog(props) {
               }}
             >
               {index > 1 && (
-                <IconButton>
-                  <DeleteIcon
-                    color="error"
-                    onClick={() => deleteEnumValueField(index)}
-                  />
+                <IconButton onClick={() => deleteEnumValueField(index)}>
+                  <DeleteIcon color="error" />
                 </IconButton>
               )}
               <TextField
