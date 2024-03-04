@@ -661,25 +661,55 @@ export default function HalalimPage() {
           const calculatedWidth = column.column_name.length * 10;
           const width = calculatedWidth > 120 ? calculatedWidth : 120;
 
+          let type = column.data_type;
+          // Check if the type is 'date' and format accordingly
+
+          let renderCell1;
+          if (type === "boolean") {
+            renderCell1 = (params) => (
+              <div style={{ textAlign: "center" }}>
+                {params.value === true ? (
+                  <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
+                ) : (
+                  <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
+                )}
+              </div>
+            );
+          }
+
+          console.log(type);
           return {
             field: column.column_name,
             headerName: column.column_name,
-            type: column.data_type,
+            type: type,
             width: width,
             editable: false,
             headerAlign: "center",
             align: "center",
+            // If it's a date, specify the date format
+            ...(type === "timestamp with time zone" && {
+              valueFormatter: (params) => formatDate(params.value),
+            }),
+            ...(type === "boolean" && { renderCell: renderCell1 }),
           };
         });
 
         const halalim = await getHalals();
-        console.log(halalim);
         console.log(halalim);
         setColumns(formattedColumns);
         setRows(halalim);
       } catch (error) {
         console.error("Error fetching column data:", error);
       }
+    };
+
+    // Function to format date as 'dd/mm/yyyy'
+    const formatDate = (date) => {
+      const d = new Date(date);
+      const day = d.getDate().toString().padStart(2, "0");
+      const month = (d.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
     };
 
     // Call the function to fetch columns data
