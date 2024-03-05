@@ -221,7 +221,7 @@ export default function HalalimPage() {
   const [columns, setColumns] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [commands, setCommands] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [open, setOpen] = React.useState(false);
 
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -241,9 +241,13 @@ export default function HalalimPage() {
 
   React.useEffect(() => {
     const fetchCommandsData = async () => {
+      setLoading(true);
+
       try {
         const commandsNames = await getAllCommandsNames();
         setCommands(commandsNames);
+
+        setLoading(false);
       } catch (error) {
         console.error("Error during get commands:", error);
       }

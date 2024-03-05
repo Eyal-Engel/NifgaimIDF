@@ -32,6 +32,7 @@ export default function ManageCommandsPage() {
   const [openDialog, setOpenDialog] = useState(false);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+  const [loading, setLoading] = useState(true); // State for loading indicator
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -42,10 +43,12 @@ export default function ManageCommandsPage() {
   };
   React.useEffect(() => {
     const fetchCommandsData = async () => {
+      setLoading(true);
       try {
         const commands = await getCommands();
 
         setCommands(commands);
+        setLoading(false); // Data fetching completed, set loading to false
       } catch (error) {
         console.error("Error during get commands:", error);
       }
@@ -53,6 +56,10 @@ export default function ManageCommandsPage() {
 
     fetchCommandsData();
   }, []);
+
+  if (loading) {
+    return <span class="loader"></span>; // Render loading indicator
+  }
 
   const handelCommandNameChange = async (commandId, newName) => {
     try {

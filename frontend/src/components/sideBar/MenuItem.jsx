@@ -20,11 +20,16 @@ const variants = {
   },
 };
 
-export const MenuItem = ({ menuItem }) => {
+export const MenuItem = ({ menuItem, toggleOpen }) => {
   const navigate = useNavigate();
 
   const style = {
     background: "#fffbfb",
+  };
+
+  const handleNavigate = () => {
+    navigate(menuItem.url);
+    toggleOpen();
   };
 
   return (
@@ -33,7 +38,7 @@ export const MenuItem = ({ menuItem }) => {
         variants={variants}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => navigate(menuItem.url)}
+        onClick={() => handleNavigate()}
         className="listItemSideBar"
       >
         <div className="icon-placeholder">

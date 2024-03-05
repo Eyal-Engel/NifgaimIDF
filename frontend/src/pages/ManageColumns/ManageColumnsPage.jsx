@@ -35,6 +35,7 @@ export default function ManageColumnsPage() {
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
   const [originalColumns, setOriginalColumns] = useState([]);
+  const [loading, setLoading] = useState(true); // State for loading indicator
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -43,8 +44,10 @@ export default function ManageColumnsPage() {
   const handelOpenDialog = () => {
     setOpenDialog(true);
   };
+
   useEffect(() => {
     const fetchColumnsData = async () => {
+      setLoading(true);
       try {
         const columnsWithAllData = await getHalalColumnsAndTypes(); // changed from getCommands
 
@@ -60,6 +63,8 @@ export default function ManageColumnsPage() {
         });
 
         setColumns(columns); // changed from setCommands
+
+        setLoading(false); // Data fetching completed, set loading to false
       } catch (error) {
         console.error("Error during get columns:", error); // changed from get commands
       }
@@ -67,6 +72,10 @@ export default function ManageColumnsPage() {
 
     fetchColumnsData();
   }, []);
+
+  if (loading) {
+    return <span class="loader"></span>; // Render loading indicator
+  }
 
   const handelColumnNameChange = async (
     columnName,

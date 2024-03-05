@@ -26,7 +26,7 @@ const itemVariants = {
   closed: { opacity: 0, y: 50 },
 };
 
-export const Navigation = ({ hideNavigation }) => {
+export const Navigation = ({ hideNavigation, toggleOpen}) => {
   const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
@@ -141,6 +141,7 @@ export const Navigation = ({ hideNavigation }) => {
               key={menuItem.url}
               menuItem={menuItem}
               variants={itemVariants}
+              toggleOpen={toggleOpen}
             />
           ))}
           <motion.li variants={itemVariants} className="listItemButton">

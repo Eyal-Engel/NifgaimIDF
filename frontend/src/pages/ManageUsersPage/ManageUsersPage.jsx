@@ -575,7 +575,7 @@ export default function ManageExistsUsers() {
   const [rows, setRows] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [commands, setCommands] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [open, setOpen] = React.useState(false);
   const [selectedUserId, setSelectedUserId] = React.useState(null);
   const [selectedFullName, setSelectedFullName] = React.useState(null);
@@ -618,7 +618,6 @@ export default function ManageExistsUsers() {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching or transforming users:", error);
-        setLoading(false);
       }
     };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Button,
   Dialog,
@@ -21,7 +21,7 @@ import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
 import Draggable from "react-draggable";
 import dayjs from "dayjs";
-import { getColumnEnums } from "../../utils/api/halalsApi";
+import { createHalal, getColumnEnums } from "../../utils/api/halalsApi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -38,16 +38,26 @@ function PaperComponent(props) {
   );
 }
 
+const MemoizedSelect = React.memo(Select);
+
 export default function CreateHalalDialog({
   openDialog,
   setOpenDialog,
   allDataOfHalalsColumns,
 }) {
   const [enums, setEnums] = useState({});
+  const [inputValues, setInputValues] = useState({});
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
+
+  const handleInputChange = useCallback((column, value) => {
+    setInputValues((prevValues) => ({
+      ...prevValues,
+      [column]: value,
+    }));
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,6 +83,20 @@ export default function CreateHalalDialog({
     fetchData();
   }, [allDataOfHalalsColumns]);
 
+  const handleSubmit = async () => {
+    try {
+      // Here you can send inputValues to your backend using a POST request
+      console.log("Input values:", inputValues);
+      await createHalal(inputValues);
+      handleCloseDialog();
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle error appropriately, e.g., show a message to the user
+    }
+  };
+
+
+
   return (
     <div>
       <Dialog
@@ -96,7 +120,7 @@ export default function CreateHalalDialog({
               justifyContent: "space-between",
             }}
           >
-            <p style={{ fontSize: "large" }}>Create Halal</p>
+            <p style={{ fontSize: "large" }}>הוסף חלל חדש</p>
           </div>
         </DialogTitle>
         <Divider />
@@ -124,21 +148,27 @@ export default function CreateHalalDialog({
                 >
                   <DatePicker
                     label="תאריך ברירת מחדל"
-                    // fullWidth
                     sx={{ width: "100%" }}
-                    // onChange={handeldefaultValueChange}
+                    onChange={(date) =>
+                      handleInputChange(column.column_name, date)
+                    }
                   />
                 </RtlPlugin>
               ) : column.data_type === "integer" ? (
                 <Input
                   type="number"
-                  //  sx={{ width: "47%" }}
+                  onChange={(e) =>
+                    handleInputChange(column.column_name, e.target.value)
+                  }
                 />
               ) : column.data_type === "boolean" ? (
                 <RadioGroup
                   aria-labelledby="booleanSelect"
                   name="controlled-radio-buttons-group"
                   row
+                  onChange={(e) =>
+                    handleInputChange(column.column_name, e.target.value)
+                  }
                 >
                   <FormControlLabel
                     value={true}
@@ -157,23 +187,27 @@ export default function CreateHalalDialog({
                   <InputLabel id={column.column_name}>
                     בחר אחת מהאפשרויות
                   </InputLabel>
-                  <Select
+                  <MemoizedSelect
                     labelId={column.column_name}
-                    //   sx={{ width: "47%" }}
                     label="בחר אחת מהאפשרויות"
+                    value={inputValues[column.column_name] || ""}
+                    onChange={(e) =>
+                      handleInputChange(column.column_name, e.target.value)
+                    }
                   >
-                    {/* Render menu items based on enums state */}
                     {enums[column.column_name] &&
                       enums[column.column_name].map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
                       ))}
-                  </Select>
+                  </MemoizedSelect>
                 </FormControl>
               ) : (
                 <Input
-                // sx={{ width: "47%" }}
+                  onChange={(e) =>
+                    handleInputChange(column.column_name, e.target.value)
+                  }
                 />
               )}
             </div>
@@ -181,9 +215,9 @@ export default function CreateHalalDialog({
         </DialogContent>
         <Divider />
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button variant="contained" onClick={handleCloseDialog}>
-            Create
+          <Button onClick={handleCloseDialog}>ביטול</Button>
+          <Button variant="contained" onClick={handleSubmit}>
+            צור חלל
           </Button>
         </DialogActions>
       </Dialog>

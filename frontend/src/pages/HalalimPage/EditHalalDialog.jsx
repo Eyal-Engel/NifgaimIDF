@@ -79,16 +79,12 @@ export default function EditHalalDIalog({
 
       if (selectedRow) {
         for (const key of Object.keys(selectedRow)) {
-          console.log(key);
           const column = getColumnByName(key);
           if (column.data_type === "USER-DEFINED") {
-            console.log(key);
             const columnEnums = await getColumnEnums(key);
-            console.log(columnEnums);
             if (columnEnums) {
               if (columnEnums) {
                 const enumArray = columnEnums.replace(/[{}]/g, "").split(",");
-                console.log(enumArray);
                 enumsObject[key] = enumArray;
               } else {
                 enumsObject[key] = [];
@@ -99,8 +95,6 @@ export default function EditHalalDIalog({
           }
         }
       }
-      console.log(enumsObject["serviceType"]);
-      console.log(enumsObject);
       setEnums(enumsObject);
     };
     fetchData();
@@ -136,7 +130,7 @@ export default function EditHalalDIalog({
             </p>
           </div>
         </DialogTitle>
-        <Divider></Divider>;
+        <Divider></Divider>
         <DialogContent>
           {selectedRow &&
             Object.entries(selectedRow).map(([key, value]) => {
@@ -231,7 +225,22 @@ export default function EditHalalDIalog({
         </DialogContent>
         <Divider></Divider>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>ביטול</Button>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Button onClick={handleCloseDialog}>ביטול</Button>
+            <div>
+              <Button variant="contained" style={{marginLeft: "10px"}}>שמור שינויים</Button>
+              <Button variant="contained" color="error">
+                מחיקה
+              </Button>
+            </div>
+          </div>
         </DialogActions>
       </Dialog>
     </div>

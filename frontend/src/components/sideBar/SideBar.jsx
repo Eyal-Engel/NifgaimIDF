@@ -60,7 +60,7 @@ const SideBar = () => {
           className={`sideBarBackground ${hideNavigation ? "hidden" : ""}`}
           variants={sidebar}
         />
-        <Navigation hideNavigation={hideNavigation} />
+        <Navigation hideNavigation={hideNavigation} toggleOpen={toggleOpen} />
         <MenuToggle toggle={handleToggle} />
       </motion.div>
     </>

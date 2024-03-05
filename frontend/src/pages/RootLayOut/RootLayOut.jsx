@@ -6,6 +6,7 @@ import mekalarLogo from "../../assets/images/pictures/mekalr_logo.png";
 import nifgaimLogo from "../../assets/images/pictures/nifgaim_logo.png";
 
 import "./RootLayOut.css";
+
 export default function RootLayout() {
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
@@ -28,6 +29,7 @@ export default function RootLayout() {
             src={mekalarLogo}
             alt=""
             width={"100px"}
+            loading="lazy"
           />
         </Link>
         <Link to="/about" style={{ color: "white", textDecoration: "none" }}>
@@ -36,6 +38,7 @@ export default function RootLayout() {
             src={logiCorpLogo}
             alt=""
             width={"100px"}
+            loading="lazy"
           />
         </Link>
         <Link to="/about" style={{ color: "white", textDecoration: "none" }}>
@@ -44,6 +47,7 @@ export default function RootLayout() {
             src={nifgaimLogo}
             alt=""
             width={"100px"}
+            loading="lazy"
           />
         </Link>
       </div>

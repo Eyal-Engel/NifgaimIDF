@@ -32,6 +32,7 @@ export default function ManageCommandsPage() {
   const [openDialog, setOpenDialog] = useState(false);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+  const [loading, setLoading] = useState(true); // State for loading indicator
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -42,11 +43,14 @@ export default function ManageCommandsPage() {
   };
   React.useEffect(() => {
     const fetchGraveyardsData = async () => {
+      setLoading(true);
       // Change function name
       try {
         const graveyards = await getAllGraveyards(); // Change function name
 
         setGraveyards(graveyards); // Change state variable name
+        setLoading(false); // Data fetching completed, set loading to false
+
       } catch (error) {
         console.error("Error during get graveyards:", error); // Change error message
       }
@@ -54,6 +58,10 @@ export default function ManageCommandsPage() {
 
     fetchGraveyardsData();
   }, []);
+
+  if (loading) {
+    return <span class="loader"></span>; // Render loading indicator
+  }
 
   const handelGraveyardNameChange = async (graveyardId, newName) => {
     // Change function name
