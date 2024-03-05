@@ -244,7 +244,8 @@ export async function updateHalalColumn(
   userId,
   columnName,
   newColumnName,
-  columnDefault
+  columnDefault,
+  dataType
 ) {
   console.log("no way bro");
   // const commandUserId = getCommandNameByUserId(userId);
@@ -267,6 +268,7 @@ export async function updateHalalColumn(
     columnName,
     newColumnName,
     columnDefault,
+    dataType
   });
 
   console.log(body);

@@ -129,12 +129,13 @@ const EditableItem = ({
 
   const handleSaveClick = () => {
     setIsInEditMode(false);
+    
     if (isColumn) {
       handleItemNameChange(
         itemId,
         editedItemName,
         columnType,
-        editedDefaultValue
+        columnType === "DATE" ? dayjs(defaultValueFormmated) : defaultValueFormmated
       );
     } else {
       handleItemNameChange(itemId, editedItemName);
