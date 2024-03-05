@@ -255,13 +255,28 @@ function isValidDefaultValue(dataType, defaultValue) {
 // }
 const updateHalalColumn = async (req, res, next) => {
   try {
-    const { userId, columnName, newColumnName, columnDefault } = req.body;
+    const { userId, columnName, newColumnName, columnDefault, dataType } =
+      req.body;
 
-    console.log(req.body);
-    console.log(userId);
-    console.log(columnName);
-    console.log(newColumnName);
-    console.log(columnDefault);
+    // Check if the dataType is valid
+    const validDataTypes = [
+      "STRING",
+      "INTEGER",
+      "BOOLEAN",
+      "FLOAT",
+      "DOUBLE",
+      "DATE",
+      "UUID",
+      "ENUM",
+    ];
+    if (!validDataTypes.includes(dataType)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid data type: ${dataType}` });
+    }
+
+    // Dynamically create the Sequelize data type based on the dataType from the request body
+    const sequelizeDataType = Sequelize[dataType];
 
     const userRequested = await User.findByPk(userId);
     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
@@ -316,6 +331,7 @@ const updateHalalColumn = async (req, res, next) => {
       newColumnName !== "" &&
       columnName !== newColumnName
     ) {
+      console.log("new column name");
       await queryInterface.renameColumn(
         "nifgaimHalals", // Your model's table name
         columnName, // Current name of the column
@@ -333,9 +349,13 @@ const updateHalalColumn = async (req, res, next) => {
           "nifgaimHalals", // Table name
           newColumnName, // Column name
           {
-            defaultValue: columnDefault, // New default value
+            type: sequelizeDataType, // Use dynamically created Sequelize data type
+            defaultValue: columnDefault,
+
+            // defaultValue: columnDefault, // New default value
           }
         );
+
         console.log(
           `Default value for column '${newColumnName}' updated successfully.`
         );
@@ -346,14 +366,19 @@ const updateHalalColumn = async (req, res, next) => {
         columnDefault !== null &&
         columnDefault !== ""
       ) {
+        console.log("check default");
+        console.log(columnDefault);
+        console.log(typeof columnDefault);
+
         await queryInterface.changeColumn(
           "nifgaimHalals", // Your model's table name
           columnName, // Current name of the column
           {
-            // type: sequelize.Sequelize.DataTypes[dataType], // Assuming the column type is INTEGER, change it accordingly
+            type: sequelizeDataType, // Use dynamically created Sequelize data type
             defaultValue: columnDefault, // New default value
           }
         );
+
         console.log(
           `Default value for column '${newColumnName}' updated successfully.`
         );
@@ -374,6 +399,7 @@ const updateHalalColumn = async (req, res, next) => {
 // body example:
 // {
 //   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48",
+// "columnName": "example_column",
 //   "newColumnName": "column1234",
 //   "newEnumValues": ["value1", "value2", "value3"],
 //   "column_default": "value"
