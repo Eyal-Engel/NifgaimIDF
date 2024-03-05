@@ -271,8 +271,6 @@ export async function updateHalalColumn(
     dataType,
   });
 
-  console.log(body);
-
   try {
     const response = await patch(apiUrl, body, headers);
     return response.data;
@@ -345,7 +343,6 @@ export async function deleteHalalColumn(userId, columnName) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  console.log(userId, columnName);
   const body = JSON.stringify({ userId, columnName });
 
   try {

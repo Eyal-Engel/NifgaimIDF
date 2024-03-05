@@ -133,7 +133,6 @@ function CustomToolbar({ setRows }) {
   // Handle form submission
   const handleSubmit = async () => {
     // Perform your submission logic here, for example, sending the data to an API
-    console.log("Form submitted with data:", userSignUpInfo);
     let errorsForSwalFrontendTesting = ""; // Start unordered list
 
     if (userSignUpInfo.password !== userSignUpInfo.confirmPassword) {

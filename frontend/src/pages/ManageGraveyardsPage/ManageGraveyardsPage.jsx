@@ -82,13 +82,11 @@ export default function ManageCommandsPage() {
       let errorsForSwal = ""; // Start unordered list
 
       errors.forEach((error) => {
-        console.log(error.message);
         if (error.message === "graveyardName must be unique") {
           errorsForSwal += `<li>בית העלמין ${newName} כבר קיים במערכת</li>`;
         }
       });
 
-      console.log(errorsForSwal);
 
       Swal.fire({
         title: ` לא ניתן לעדכן את שם בית העלמין`,
@@ -174,13 +172,11 @@ export default function ManageCommandsPage() {
         let errorsForSwal = ""; // Start unordered list
 
         errors.forEach((error) => {
-          console.log(error.message);
           if (error.message === "graveyardName must be unique") {
             errorsForSwal += "<li>בית העלמין כבר קיים במערכת</li>";
           }
         });
 
-        console.log(errorsForSwal);
 
         Swal.fire({
           title: ` לא ניתן ליצור את בית העלמין ${value}`,

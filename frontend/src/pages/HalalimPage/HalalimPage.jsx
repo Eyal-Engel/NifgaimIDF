@@ -11,68 +11,14 @@ import {
 import { heIL } from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import LockIcon from "@mui/icons-material/Lock";
-import CancelIcon from "@mui/icons-material/Close";
-import {
-  GridRowModes,
-  GridActionsCellItem,
-  GridRowEditStopReasons,
-} from "@mui/x-data-grid";
-import Swal from "sweetalert2";
-import {
-  deleteUser,
-  updateUser,
-  getUsers,
-  changePassword,
-  getFullNameById,
-  createUser,
-} from "../../utils/api/usersApi";
-import {
-  getAllCommandsNames,
-  getCommandIdByName,
-  getCommandNameById,
-} from "../../utils/api/commandsApi";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Input,
-  Divider,
-  Paper,
-  Select,
-  MenuItem,
-  TextField,
-  InputLabel,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from "@mui/material";
+import { Button } from "@mui/material";
 import "./HalalimPage.css";
-import Slide from "@mui/material/Slide";
-import Draggable from "react-draggable";
-import { validationPasswordsErrorType } from "../../utils/validators";
-import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
 import AddIcon from "@mui/icons-material/Add";
-import { motion } from "framer-motion";
-import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
 import {
-  getColumnEnums,
   getHalalColumnsAndTypes,
   getHalals,
   getOriginalColumns,
 } from "../../utils/api/halalsApi";
-import { DatePicker } from "@mui/x-date-pickers";
-import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import dayjs from "dayjs";
-import { useEffect } from "react";
 import EditHalalDialog from "./EditHalalDialog";
 import CreateHalalDialog from "./CreateHalalDialog";
 function CustomToolbar({ setRows, allDataOfHalalsColumns }) {
@@ -82,9 +28,9 @@ function CustomToolbar({ setRows, allDataOfHalalsColumns }) {
     setOpenCreateNewHalal(true);
   };
 
-  const handleClose = () => {
-    setOpenCreateNewHalal(false);
-  };
+  // const handleClose = () => {
+  //   setOpenCreateNewHalal(false);
+  // };
 
   return (
     <>
@@ -220,7 +166,7 @@ export default function HalalimPage() {
   const [rows, setRows] = React.useState([]);
   const [columns, setColumns] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
-  const [commands, setCommands] = React.useState([]);
+  // const [commands, setCommands] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [open, setOpen] = React.useState(false);
 
@@ -232,58 +178,54 @@ export default function HalalimPage() {
 
   const handleRowClick = (params) => {
     // Store the selected row
-    console.log(params);
     setSelectedRow(params.row);
-    console.log(params.row);
     // Open the dialog
     setOpenDialog(true);
   };
 
-  React.useEffect(() => {
-    const fetchCommandsData = async () => {
-      setLoading(true);
+  // React.useEffect(() => {
+  //   const fetchCommandsData = async () => {
+  //     setLoading(true);
 
-      try {
-        const commandsNames = await getAllCommandsNames();
-        setCommands(commandsNames);
+  //     try {
+  //       const commandsNames = await getAllCommandsNames();
+  //       setCommands(commandsNames);
 
-        setLoading(false);
-      } catch (error) {
-        console.error("Error during get commands:", error);
-      }
-    };
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error during get commands:", error);
+  //     }
+  //   };
 
-    fetchCommandsData();
-  }, []);
+  //   fetchCommandsData();
+  // }, []);
 
-  React.useEffect(() => {
-    const fetchOringialColumns = async () => {
-      try {
-        const original = await getOriginalColumns();
-        console.log(original);
-        // setOriginalColumns(original);
-      } catch (error) {
-        console.error("Error during get orignialColumns:", error);
-      }
-    };
+  // React.useEffect(() => {
+  //   const fetchOringialColumns = async () => {
+  //     try {
+  //       const original = await getOriginalColumns();
+  //       // setOriginalColumns(original);
+  //     } catch (error) {
+  //       console.error("Error during get orignialColumns:", error);
+  //     }
+  //   };
 
-    fetchOringialColumns();
-  }, []);
+  //   fetchOringialColumns();
+  // }, []);
 
-  function getColumnByName(columnName) {
-    console.log(allDataOfHalalsColumns);
-    return allDataOfHalalsColumns.find(
-      (column) => column.column_name === columnName
-    );
-  }
+  // function getColumnByName(columnName) {
+  //   return allDataOfHalalsColumns.find(
+  //     (column) => column.column_name === columnName
+  //   );
+  // }
 
   React.useEffect(() => {
     // Function to fetch columns data from the API or local storage
     const fetchColumnsData = async () => {
+      setLoading(true);
       try {
         // Replace this with your actual method to fetch column data
         const currentColumns = await getHalalColumnsAndTypes(); // This should fetch your columns data
-        console.log(currentColumns);
         setAllDataOfHalalsColumns(currentColumns);
         // Sort the columns alphabetically by column name
         currentColumns.sort((a, b) =>
@@ -347,7 +289,6 @@ export default function HalalimPage() {
             );
           }
 
-          console.log(type === "USER-DEFINED");
           return {
             field: column.column_name,
             headerName: column.column_name,
@@ -367,9 +308,9 @@ export default function HalalimPage() {
         });
 
         const halalim = await getHalals();
-        console.log(halalim);
         setColumns(formattedColumns);
         setRows(halalim);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching column data:", error);
       }

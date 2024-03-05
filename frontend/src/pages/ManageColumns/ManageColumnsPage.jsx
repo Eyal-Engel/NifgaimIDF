@@ -104,11 +104,9 @@ export default function ManageColumnsPage() {
     columnType,
     newDefaultValue
   ) => {
-    console.log(columnType)
     try {
       if (columnType === "ENUM") {
         // updateHalalSelectColumn
-        console.log(columnType)
         const newEnum = ["value1", "value2", "value3"];
         const columnDefault = "value1";
         await updateHalalSelectColumn(
@@ -119,7 +117,6 @@ export default function ManageColumnsPage() {
           columnDefault
         );
       } else {
-        console.log(columnType)
         await updateHalalColumn(
           loggedUserId,
           columnName,
@@ -211,7 +208,6 @@ export default function ManageColumnsPage() {
   };
 
   const handelAddColumn = async (newColumnName, typeOfColumn, defaultValue) => {
-    console.log(typeOfColumn)
     if (newColumnName !== "") {
       try {
         await addHalalColumn(

@@ -133,7 +133,6 @@ export async function updateCommandById(userId, commandId, commandName) {
 
   const body = JSON.stringify({ commandName, userId });
 
-  console.log(body);
   try {
     const response = await patch(apiUrl, body, headers);
     return response.data;
