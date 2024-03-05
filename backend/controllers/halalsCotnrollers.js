@@ -249,9 +249,10 @@ function isValidDefaultValue(dataType, defaultValue) {
 // body example:
 // {
 //   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48",
-//   "columnName": "column12345",
-//   "newColumnName": "column12345",
-//   "columnDefault": 510
+//   "columnName": "sect",
+//   "newColumnName": "sect",
+//   "columnDefault": "WORLD",
+//   "dataType": "STRING"
 // }
 const updateHalalColumn = async (req, res, next) => {
   try {
@@ -399,10 +400,10 @@ const updateHalalColumn = async (req, res, next) => {
 // body example:
 // {
 //   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48",
-// "columnName": "example_column",
-//   "newColumnName": "column1234",
-//   "newEnumValues": ["value1", "value2", "value3"],
-//   "column_default": "value"
+//   "columnName": "example_column",
+//   "newColumnName": "example_columnexample_column",
+//   "newEnumValues": ["value1", "value2", "value4"],
+//   "column_default": "value4"
 // }
 const updateHalalSelectColumn = async (req, res, next) => {
   try {
