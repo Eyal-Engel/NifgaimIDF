@@ -276,11 +276,12 @@ export default function SimpleDialog({
             InputLabelProps={{
               shrink: true,
             }}
-            sx={{
-              width: "80%",
-              margin: "auto",
-              marginTop: "10px",
-            }}
+            fullWidth
+            // sx={{
+            //   // width: "80%",
+            //   margin: "auto",
+            //   marginTop: "10px",
+            // }}
           />{" "}
         </RtlPlugin>
       )}
@@ -291,6 +292,7 @@ export default function SimpleDialog({
           <DatePicker
             label="תאריך ברירת מחדל"
             onChange={handeldefaultValueChange}
+            sx={{width: "100%"}}
           />
         </RtlPlugin>
       )}

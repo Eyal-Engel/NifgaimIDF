@@ -74,179 +74,16 @@ import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import EditHalalDialog from "./EditHalalDialog";
+import CreateHalalDialog from "./CreateHalalDialog";
+function CustomToolbar({ setRows, allDataOfHalalsColumns }) {
+  const [openCreateNewHalal, setOpenCreateNewHalal] = React.useState(false);
 
-function CustomToolbar({ setRows }) {
-  const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
-  const [commandsSignUp, setCommandsSignUp] = React.useState([]);
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  const loggedUserId = userData ? userData.userId : "";
-
-  const handleCreateNewUser = () => {
-    setOpenCreateNewUser(true);
+  const handleCreateNewHalal = () => {
+    setOpenCreateNewHalal(true);
   };
 
   const handleClose = () => {
-    setOpenCreateNewUser(false); // Close the dialog
-  };
-
-  const [userSignUpInfo, setUserSignUpInfo] = React.useState({
-    privateNumber: "",
-    fullName: "",
-    password: "",
-    command: "",
-    confirmPassword: "",
-    editPerm: false,
-    managePerm: false,
-  });
-
-  const handleChangePassword = (value) => {
-    // setPassword(value);
-
-    setUserSignUpInfo({
-      ...userSignUpInfo,
-      password: value,
-    });
-  };
-
-  const handleChangeConfirmPassword = (value) => {
-    // setConfirmPassword(value);
-
-    setUserSignUpInfo({
-      ...userSignUpInfo,
-      confirmPassword: value,
-    });
-  };
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserSignUpInfo({
-      ...userSignUpInfo,
-      [name]: value,
-    });
-  };
-
-  const handleCheckBoxInputChange = (e) => {
-    const { name, checked } = e.target;
-    const value = checked; // Set value to true if checked, false if unchecked
-    setUserSignUpInfo({
-      ...userSignUpInfo,
-      [name]: value,
-    });
-  };
-
-  // Handle form submission
-  const handleSubmit = async () => {
-    // Perform your submission logic here, for example, sending the data to an API
-    console.log("Form submitted with data:", userSignUpInfo);
-    let errorsForSwalFrontendTesting = ""; // Start unordered list
-
-    if (userSignUpInfo.password !== userSignUpInfo.confirmPassword) {
-      errorsForSwalFrontendTesting += "<li>סיסמא ואימות סיסמא אינם זהים</li>";
-    }
-    if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(userSignUpInfo.password)) {
-      errorsForSwalFrontendTesting +=
-        "<li>סיסמא אינה תקינה - סיסמא תקינה צריכה להיות באורך של לפחות 6 תווים ומכיל לפחות אות אחת וספרה אחת.</li>";
-    }
-
-    if (errorsForSwalFrontendTesting === "") {
-      try {
-        const commandId = await getCommandIdByName(userSignUpInfo.command);
-
-        const user = {
-          privateNumber: userSignUpInfo.privateNumber,
-          fullName: userSignUpInfo.fullName,
-          password: userSignUpInfo.password,
-          commandId: commandId,
-          editPerm: userSignUpInfo.editPerm,
-          managePerm: userSignUpInfo.managePerm,
-        };
-
-        try {
-          await createUser(loggedUserId, user);
-
-          const updatedUsers = await getUsers();
-          const userPromises = updatedUsers.map(async (user) => ({
-            id: user.id,
-            privateNumber: user.privateNumber,
-            fullName: user.fullName,
-            command: await getCommandNameById(user.nifgaimCommandId),
-            editPerm: user.editPerm,
-            managePerm: user.managePerm,
-          }));
-          const transformedUsers = await Promise.all(userPromises);
-          setRows(transformedUsers);
-
-          Swal.fire({
-            title: `משתמש "${userSignUpInfo.fullName}" נוצר בהצלחה!`,
-            text: "",
-            icon: "success",
-            confirmButtonText: "אישור",
-            customClass: {
-              container: "swal-dialog-custom",
-            },
-          }).then((result) => {
-            if (result.isConfirmed) {
-              handleClose();
-            }
-          });
-        } catch (error) {
-          console.log(error);
-          const errors = error.response.data.body.errors;
-          let errorsForSwal = ""; // Start unordered list
-
-          errors.forEach((error) => {
-            if (
-              error.message === "nifgaimUsers.nifgaimCommandId cannot be null"
-            ) {
-              errorsForSwal += "<li>פיקוד לא יכול להיות ריק</li>";
-            }
-            if (
-              error.message === "Validation isNumeric on privateNumber failed"
-            ) {
-              errorsForSwal += "<li>מספר אישי חייב להכיל מספרים בלבד</li>";
-            }
-            if (error.message === "Validation len on privateNumber failed") {
-              errorsForSwal +=
-                "<li>מספר אישי חייב להיות באורך של 7 ספרות בדיוק</li>";
-            }
-            if (error.message === "Validation is on fullName failed") {
-              errorsForSwal +=
-                "<li>שם מלא צריך להיות עד 30 תווים ולהכיל אותיות בלבד</li>";
-            }
-            if (error.message === "privateNumber must be unique") {
-              errorsForSwal += "<li>מספר אישי כבר קיים במערכת</li>";
-            }
-          });
-
-          Swal.fire({
-            title: ` לא ניתן ליצור את המשתמש ${userSignUpInfo.fullName}`,
-            html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
-            icon: "error",
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "אישור",
-            reverseButtons: true,
-            customClass: {
-              container: "swal-dialog-custom",
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    } else {
-      Swal.fire({
-        title: ` לא ניתן ליצור את המשתמש ${userSignUpInfo.fullName}`,
-        html: `<ul style="direction: rtl; text-align: right">${errorsForSwalFrontendTesting}</ul>`, // Render errors as list items
-        icon: "error",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "אישור",
-        reverseButtons: true,
-        customClass: {
-          container: "swal-dialog-custom",
-        },
-      });
-    }
+    setOpenCreateNewHalal(false);
   };
 
   return (
@@ -254,7 +91,7 @@ function CustomToolbar({ setRows }) {
       <Button
         color="primary"
         startIcon={<AddIcon />}
-        onClick={handleCreateNewUser}
+        onClick={handleCreateNewHalal}
         sx={{
           paddingRight: "60px",
           borderRadius: "5000px 5000px 0 0",
@@ -269,6 +106,13 @@ function CustomToolbar({ setRows }) {
       >
         הוסף חלל חדש
       </Button>
+      <CreateHalalDialog
+        openDialog={openCreateNewHalal}
+        setOpenDialog={setOpenCreateNewHalal}
+        allDataOfHalalsColumns={allDataOfHalalsColumns}
+        // Add any other necessary props
+      />
+
       <GridToolbarContainer
         style={{
           direction: "rtl",
@@ -330,193 +174,6 @@ function CustomToolbar({ setRows }) {
           />
         </div>
       </GridToolbarContainer>
-      <Dialog
-        sx={{
-          direction: "rtl",
-        }}
-        open={openCreateNewUser}
-        TransitionComponent={Transition}
-        PaperComponent={PaperComponent}
-        onClose={() => handleClose()}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <div
-          className="boxAccountContainer"
-          style={{
-            height: "800px", // Set your desired height here
-            borderRadius: "inherit",
-          }}
-        >
-          <div
-            style={{
-              zIndex: "9999",
-              display: "flex",
-              padding: "10px",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <AiOutlineCloseCircle
-              style={{
-                cursor: "pointer",
-                fontSize: "30px",
-              }}
-              onClick={() => handleClose()}
-            />
-            <AiOutlineDrag
-              style={{
-                cursor: "move",
-                fontSize: "24px",
-              }}
-              id="draggable-dialog-title"
-            />
-          </div>
-
-          <div className="topAccountContainer">
-            <motion.div className="backdrop" style={{ marginTop: "-60px" }} />
-            <div className="header-text">יצירת משתמש חדש</div>
-          </div>
-          <div className="innerAccountContainer">
-            <div className="boxLoginContainer" style={{ marginTop: "-50px" }}>
-              <form
-                className="formLoginContainer"
-                style={{ marginTop: "-60px" }}
-              >
-                <Input
-                  type={"text"}
-                  name="privateNumber"
-                  placeholder="מספר אישי"
-                  className="resetPasswordInputField"
-                  onChange={handleInputChange}
-                />
-                <Input
-                  type={"text"}
-                  name="fullName"
-                  placeholder="שם מלא"
-                  className="resetPasswordInputField"
-                  onChange={handleInputChange}
-                />
-                <Select
-                  sx={{ direction: "rtl" }}
-                  labelId="fullName-label"
-                  id="fullName"
-                  name="command"
-                  defaultValue=""
-                  onChange={handleInputChange}
-                  displayEmpty
-                  className="resetPasswordInputField"
-                  renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
-                >
-                  <MenuItem sx={{ direction: "rtl" }} value="" disabled>
-                    פיקוד
-                  </MenuItem>
-                  {commandsSignUp.map((command) => (
-                    <MenuItem
-                      sx={{ direction: "rtl" }}
-                      key={command}
-                      value={command}
-                    >
-                      {command}
-                    </MenuItem>
-                  ))}
-                </Select>
-
-                {/* <Input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="סיסמא"
-                  className="resetPasswordInputField"
-                  onChange={handleInputChange}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={togglePasswordVisibility}>
-                        {showPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
-                          <VisibilityIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                /> */}
-                {/* <Input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="אימות סיסמא"
-                  className="resetPasswordInputField"
-                  spellCheck="false"
-                  onChange={handleInputChange}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={toggleConfirmPasswordVisibility}>
-                        {showConfirmPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
-                          <VisibilityIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                /> */}
-                <PasswordStrength
-                  id="confirmPasswordRegister"
-                  placeholder="אימות סיסמא"
-                  onChangePassword={handleChangePassword}
-                  onChangeConfirmPassword={handleChangeConfirmPassword}
-                />
-
-                <h2
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "20px",
-                  }}
-                >
-                  הרשאות משתמש
-                </h2>
-                <div
-                  className="perms"
-                  style={{
-                    display: "flex",
-                    flexDirection: "row", // Change flexDirection to column
-                    justifyContent: "space-around", // Center vertically
-                    alignItems: "center", // Center horizontally
-                  }}
-                >
-                  <div>
-                    <label style={{ fontSize: "1.5em" }}>עריכת הרשאות</label>{" "}
-                    {/* Increase font size */}
-                    <input
-                      type="checkbox"
-                      name="editPerm"
-                      onChange={handleCheckBoxInputChange}
-                      style={{ transform: "scale(1.5)" }} // Increase checkbox size
-                    />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: "1.5em" }}>מנהל הרשאות</label>{" "}
-                    {/* Increase font size */}
-                    <input
-                      type="checkbox"
-                      name="managePerm"
-                      onChange={handleCheckBoxInputChange}
-                      style={{ transform: "scale(1.5)" }} // Increase checkbox size
-                    />
-                  </div>
-                </div>
-              </form>
-              <button
-                type="submit"
-                className="submit-button"
-                onClick={handleSubmit}
-                style={{ marginTop: "20px" }}
-              >
-                צור משתמש
-              </button>
-            </div>
-          </div>
-        </div>
-      </Dialog>
     </>
   );
 }
@@ -553,67 +210,25 @@ function CustomNoRowsOverlay() {
         viewBox="0 0 184 152"
         aria-hidden
         focusable="false"
-      >
-        {/* SVG paths */}
-      </svg>
+      ></svg>
       <Box sx={{ mt: 1 }}>No Rows</Box>
     </StyledGridOverlay>
   );
 }
 
-function PaperComponent(props) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} sx={{ borderRadius: "10px" }} />
-    </Draggable>
-  );
-}
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
 export default function HalalimPage() {
   const [rows, setRows] = React.useState([]);
   const [columns, setColumns] = React.useState([]);
-  const [columnsFromDb, setColumnsFromDb] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [commands, setCommands] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [selectedUserId, setSelectedUserId] = React.useState(null);
-  const [selectedFullName, setSelectedFullName] = React.useState(null);
 
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  const loggedUserId = userData ? userData.userId : "";
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [allDataOfHalalsColumns, setAllDataOfHalalsColumns] = React.useState(
     []
   );
-  const translationDict = {
-    id: "מספר זיהוי",
-    privateNumber: "מספר פרטי",
-    lastName: "שם משפחה",
-    firstName: "שם פרטי",
-    dateOfDeath: "תאריך פטירה",
-    serviceType: "סוג שירות",
-    circumstances: "נסיבות המוות",
-    unit: "יחידה",
-    division: "חטיבה",
-    specialCommunity: "קהילה מיוחדת",
-    area: "אזור",
-    plot: "חלקה",
-    line: "שורה",
-    graveNumber: "מספר קבר",
-    permanentRelationship: "קשר קבוע",
-    comments: "הערות",
-    nifgaimGraveyardId: "קבר",
-    nifgaimCommandId: "פיקוד",
-  };
 
   const handleRowClick = (params) => {
     // Store the selected row
@@ -623,10 +238,6 @@ export default function HalalimPage() {
     // Open the dialog
     setOpenDialog(true);
   };
-
-  // const handleCloseDialog = () => {
-  //   setOpenDialog(false);
-  // };
 
   React.useEffect(() => {
     const fetchCommandsData = async () => {
@@ -847,7 +458,7 @@ export default function HalalimPage() {
           noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { setRows, allDataOfHalalsColumns, setRowModesModel },
         }}
       />
       <EditHalalDialog

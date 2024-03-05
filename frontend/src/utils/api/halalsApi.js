@@ -110,7 +110,7 @@ export async function getHalalsByCommandId(commandId) {
 }
 
 export async function getColumnEnums(columnName) {
-  const apiUrl = `http://localhost:5000/api/halals/columnEnums`;
+  const apiUrl = `http://localhost:5000/api/halals/columnEnums/${columnName}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -123,7 +123,7 @@ export async function getColumnEnums(columnName) {
   };
 
   try {
-    const response = await get(apiUrl, { params: { columnName }, headers });
+    const response = await get(apiUrl, headers);
     return response.data;
   } catch (error) {
     console.error(
