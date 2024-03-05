@@ -12,6 +12,7 @@ import {
   getHalalColumnsAndTypes,
   getOriginalColumns,
   updateHalalColumn,
+  updateHalalSelectColumn,
 } from "../../utils/api/halalsApi";
 import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
@@ -45,6 +46,25 @@ export default function ManageColumnsPage() {
     setOpenDialog(true);
   };
 
+  const handleDataTypeName = (dataType) => {
+    switch (dataType) {
+      case "character varying":
+        return "STRING";
+      case "timestamp with time zone":
+        return "DATE";
+      case "boolean":
+        return "BOOLEAN";
+      case "USER-DEFINED":
+        return "ENUM";
+      case "integer":
+        return "INTEGER";
+      case "uuid":
+        return "UUID";
+
+      default:
+        break;
+    }
+  };
   useEffect(() => {
     const fetchColumnsData = async () => {
       setLoading(true);
@@ -55,9 +75,10 @@ export default function ManageColumnsPage() {
 
         setOriginalColumns(originColumns);
         const columns = columnsWithAllData.map((column) => {
+          const columnType = handleDataTypeName(column.data_type);
           return {
             columnName: column.column_name,
-            columnType: column.data_type,
+            columnType: columnType,
             columnDefault: column.column_default,
           };
         });
@@ -80,16 +101,34 @@ export default function ManageColumnsPage() {
   const handelColumnNameChange = async (
     columnName,
     newName,
-    newType,
+    columnType,
     newDefaultValue
   ) => {
+    console.log(columnType)
     try {
-      await updateHalalColumn(
-        loggedUserId,
-        columnName,
-        newName,
-        newDefaultValue
-      ); // changed from updateCommandById
+      if (columnType === "ENUM") {
+        // updateHalalSelectColumn
+        console.log(columnType)
+        const newEnum = ["value1", "value2", "value3"];
+        const columnDefault = "value1";
+        await updateHalalSelectColumn(
+          loggedUserId,
+          columnName,
+          newName,
+          newEnum,
+          columnDefault
+        );
+      } else {
+        console.log(columnType)
+        await updateHalalColumn(
+          loggedUserId,
+          columnName,
+          newName,
+          newDefaultValue,
+          columnType
+        ); // changed from updateCommandById
+      }
+
       setColumns((prevColumns) => {
         // changed from setCommands
         return prevColumns.map((column) => {
@@ -172,6 +211,7 @@ export default function ManageColumnsPage() {
   };
 
   const handelAddColumn = async (newColumnName, typeOfColumn, defaultValue) => {
+    console.log(typeOfColumn)
     if (newColumnName !== "") {
       try {
         await addHalalColumn(
@@ -180,6 +220,9 @@ export default function ManageColumnsPage() {
           typeOfColumn,
           typeOfColumn === "DATE" ? dayjs(defaultValue) : defaultValue
         ); // changed from createCommand
+        if (typeOfColumn.includes("select")) {
+          typeOfColumn = "ENUM";
+        }
         setColumns((prev) => [
           ...prev,
           {
@@ -263,9 +306,7 @@ export default function ManageColumnsPage() {
   const sortedFilteredColumns = [...nonMatchingColumns, ...matchingColumns];
   return (
     <div className="columnsContainer">
-      {/* changed from commandsContainer */}
       <div className="columnsHeader">
-        {/* changed from commandsHeader */}
         <h1>מאפייני חלל</h1>
         <CacheProvider value={cacheRtl}>
           <ThemeProvider theme={theme}>
@@ -284,7 +325,6 @@ export default function ManageColumnsPage() {
         </CacheProvider>
       </div>
       <ul className="columns-list">
-        {/* changed from commands-list */}
         {sortedFilteredColumns.map(
           (
             column // changed from command

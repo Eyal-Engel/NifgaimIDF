@@ -247,8 +247,8 @@ function isValidDefaultValue(dataType, defaultValue) {
 }
 
 // body example:
-// {
-//   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48",
+//DataTypes
+//dataType
 //   "columnName": "sect",
 //   "newColumnName": "sect",
 //   "columnDefault": "WORLD",
@@ -270,6 +270,8 @@ const updateHalalColumn = async (req, res, next) => {
       "UUID",
       "ENUM",
     ];
+
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     if (!validDataTypes.includes(dataType)) {
       return res
         .status(400)

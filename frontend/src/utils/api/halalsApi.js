@@ -244,7 +244,8 @@ export async function updateHalalColumn(
   userId,
   columnName,
   newColumnName,
-  columnDefault
+  columnDefault,
+  dataType
 ) {
   console.log("no way bro");
   // const commandUserId = getCommandNameByUserId(userId);
@@ -267,6 +268,7 @@ export async function updateHalalColumn(
     columnName,
     newColumnName,
     columnDefault,
+    dataType,
   });
 
   console.log(body);
@@ -287,12 +289,14 @@ export async function updateHalalColumn(
 export async function updateHalalSelectColumn(
   userId,
   columnName,
-  updatedColumnData
+  newColumnName,
+  newEnumValues,
+  column_default
 ) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/halals/columns/update`;
+  const apiUrl = `http://localhost:5000/api/halals/columns/update/select`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -304,7 +308,13 @@ export async function updateHalalSelectColumn(
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
-  const body = JSON.stringify({ userId, updatedColumnData, columnName });
+  const body = JSON.stringify({
+    userId,
+    columnName,
+    newColumnName,
+    newEnumValues,
+    column_default,
+  });
 
   try {
     const response = await patch(apiUrl, body, headers);

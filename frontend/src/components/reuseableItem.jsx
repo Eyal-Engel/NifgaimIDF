@@ -70,12 +70,12 @@ const EditableItem = ({
       if (
         defaultValue === null ||
         (typeof defaultValue === "string" &&
-          columnType !== "boolean" &&
+          columnType !== "BOOLEAN" &&
           defaultValue.includes("NULL"))
       ) {
         return "לא הוגדר ערך ברירת מחדל";
         // result = null;
-      } else if (columnType === "boolean") {
+      } else if (columnType === "BOOLEAN") {
         return defaultValue;
       } else if (defaultValue.includes("enum_nifgaimHalals_")) {
         const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
@@ -90,7 +90,7 @@ const EditableItem = ({
       ) {
         return "לא הוגדר ערך ברירת מחדל";
         // result = null;
-      } else if (columnType === "boolean") {
+      } else if (columnType === "BOOLEAN") {
         return defaultValue;
       } else if (defaultValue.includes("enum_nifgaimHalals_")) {
         const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
@@ -129,12 +129,13 @@ const EditableItem = ({
 
   const handleSaveClick = () => {
     setIsInEditMode(false);
+    
     if (isColumn) {
       handleItemNameChange(
         itemId,
         editedItemName,
         columnType,
-        editedDefaultValue
+        columnType === "DATE" ? dayjs(defaultValueFormmated) : defaultValueFormmated
       );
     } else {
       handleItemNameChange(itemId, editedItemName);
@@ -221,39 +222,39 @@ const EditableItem = ({
                 dir="rtl"
                 labelId="columnType"
                 id="columnType"
-                value={columnType.toLowerCase()}
+                value={columnType}
                 label="סוג"
                 disabled
               >
                 <MenuItem
                   dir="rtl"
-                  value={columnType.toLowerCase()}
-                  selected={columnType.toLowerCase().includes("select")}
+                  value={columnType}
+                  selected={columnType.includes("select")}
                 >
                   בחירה
                 </MenuItem>
                 <MenuItem
                   dir="rtl"
                   value="uuid"
-                  selected={columnType.toLowerCase() === "uuid"}
+                  selected={columnType === "UUID"}
                 >
                   מספר יחודי
                 </MenuItem>
-                <MenuItem
+                {/* <MenuItem
                   dir="rtl"
                   value="character varying"
                   selected={columnType.toLowerCase() === "character varying"}
                 >
                   טקסט
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem
                   dir="rtl"
-                  value="string"
-                  selected={columnType.toLowerCase() === "string"}
+                  value="STRING"
+                  selected={columnType === "STRING"}
                 >
                   טקסט
                 </MenuItem>
-                <MenuItem
+                {/* <MenuItem
                   dir="rtl"
                   value="timestamp with time zone"
                   selected={
@@ -261,36 +262,36 @@ const EditableItem = ({
                   }
                 >
                   תאריך
-                </MenuItem>
+                </MenuItem> */}
 
                 <MenuItem
                   dir="rtl"
-                  value="date"
-                  selected={columnType.toLowerCase() === "date"}
+                  value="DATE"
+                  selected={columnType === "DATE"}
                 >
                   תאריך
                 </MenuItem>
 
                 <MenuItem
                   dir="rtl"
-                  value="user-defined"
-                  selected={columnType.toLowerCase() === "user-defined"}
+                  value="ENUM"
+                  selected={columnType === "ENUM"}
                 >
                   בחירה
                 </MenuItem>
 
                 <MenuItem
                   dir="rtl"
-                  value="boolean"
-                  selected={columnType.toLowerCase() === "boolean"}
+                  value="BOOLEAN"
+                  selected={columnType === "BOOLEAN"}
                 >
                   כן/לא
                 </MenuItem>
 
                 <MenuItem
                   dir="rtl"
-                  value="integer"
-                  selected={columnType.toLowerCase() === "integer"}
+                  value="INTEGER"
+                  selected={columnType === "INTEGER"}
                 >
                   מספר
                 </MenuItem>
@@ -334,7 +335,7 @@ const EditableItem = ({
                 </Select>
               ) : (
                 <>
-                  {columnType === "character varying" && (
+                  {columnType === "STRING" && (
                     <input
                       type="text"
                       value={defaultValueFormmated}
@@ -348,7 +349,7 @@ const EditableItem = ({
                       }}
                     />
                   )}
-                  {columnType === "integer" && (
+                  {columnType === "INTEGER" && (
                     <input
                       type="number"
                       value={defaultValueFormmated}
@@ -362,7 +363,7 @@ const EditableItem = ({
                       }}
                     />
                   )}
-                  {columnType === "timestamp with time zone" && (
+                  {columnType === "DATE" && (
                     <ThemeProvider theme={theme}>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
@@ -372,7 +373,7 @@ const EditableItem = ({
                       </LocalizationProvider>
                     </ThemeProvider>
                   )}
-                  {columnType === "boolean" && (
+                  {columnType === "BOOLEAN" && (
                     <FormControl
                       sx={{
                         width: "90%",
@@ -405,7 +406,7 @@ const EditableItem = ({
                 </>
               )}
             </FormControl>
-            {columnType === "USER-DEFINED" && (
+            {columnType === "ENUM" && (
               <FormControl
                 className="selectEnums"
                 sx={{
@@ -444,7 +445,7 @@ const EditableItem = ({
                   <></>
                 ) : (
                   <>
-                    {columnType === "character varying" && (
+                    {columnType === "STRING" && (
                       <input
                         type="text"
                         value={defaultValueFormmated}
@@ -458,7 +459,7 @@ const EditableItem = ({
                         }}
                       />
                     )}
-                    {columnType === "integer" && (
+                    {columnType === "INTEGER" && (
                       <input
                         type="number"
                         value={defaultValueFormmated}
@@ -472,7 +473,7 @@ const EditableItem = ({
                         }}
                       />
                     )}
-                    {columnType === "timestamp with time zone" && (
+                    {columnType === "DATE" && (
                       <ThemeProvider theme={theme}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
@@ -482,7 +483,7 @@ const EditableItem = ({
                         </LocalizationProvider>
                       </ThemeProvider>
                     )}
-                    {columnType === "boolean" && (
+                    {columnType === "BOOLEAN" && (
                       <FormControl
                         sx={{
                           width: "90%",
