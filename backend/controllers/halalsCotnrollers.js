@@ -270,6 +270,8 @@ const updateHalalColumn = async (req, res, next) => {
       "UUID",
       "ENUM",
     ];
+
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     if (!validDataTypes.includes(dataType)) {
       return res
         .status(400)

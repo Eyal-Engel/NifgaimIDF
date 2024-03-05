@@ -98,25 +98,6 @@ export default function SimpleDialog({
     }
   };
 
-  // const handleDefaultValueChange = (index, event) => {
-  //   const newValues = [...values];
-  //   newValues[index] = event.target.value;
-  //   setValues(newValues);
-  //   setDefaultValue(newValues[index]);
-  // };
-
-  // const addTextField = () => {
-  //   const newValues = [...values, `${values.length + 1}`];
-  //   setValues(newValues);
-  // };
-
-  // const deleteTextField = (index) => {
-  //   if (values.length <= 2) return; // Ensures there are at least 2 options
-  //   const newValues = values.filter((_, i) => i !== index);
-  //   // Update placeholder names
-  //   const updatedValues = newValues.map((value, idx) => ` ${idx + 1}`);
-  //   setValues(updatedValues);
-  // };
   const handeldefaultValueChange = (event) => {
     if (typeOfColumn === "DATE") {
       setDefaultValue(event.$d);

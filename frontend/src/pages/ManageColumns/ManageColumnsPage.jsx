@@ -101,6 +101,7 @@ export default function ManageColumnsPage() {
     try {
       if (columnType === "ENUM") {
         // updateHalalSelectColumn
+        console.log(columnType)
         const newEnum = ["value1", "value2", "value3"];
         const columnDefault = "value1";
         await updateHalalSelectColumn(
@@ -111,6 +112,7 @@ export default function ManageColumnsPage() {
           columnDefault
         );
       } else {
+        console.log(columnType)
         await updateHalalColumn(
           loggedUserId,
           columnName,
@@ -211,6 +213,9 @@ export default function ManageColumnsPage() {
           typeOfColumn,
           typeOfColumn === "DATE" ? dayjs(defaultValue) : defaultValue
         ); // changed from createCommand
+        if (typeOfColumn.includes("select")) {
+          typeOfColumn = "ENUM";
+        }
         setColumns((prev) => [
           ...prev,
           {
