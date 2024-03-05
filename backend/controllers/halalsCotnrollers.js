@@ -63,7 +63,7 @@ const getColumnNamesAndTypes = async (req, res, next) => {
 };
 
 const getEnumsForColumn = async (req, res, next) => {
-  const { columnName } = req.body;
+  const { columnName } = req.params;
   console.log(columnName);
   try {
     // Check if the column exists

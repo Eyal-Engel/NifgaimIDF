@@ -82,15 +82,25 @@ export default function EditHalalDIalog({
           console.log(key);
           const column = getColumnByName(key);
           if (column.data_type === "USER-DEFINED") {
-            console.log(key)
+            console.log(key);
             const columnEnums = await getColumnEnums(key);
             console.log(columnEnums);
-            enumsObject[key] = columnEnums || [];
+            if (columnEnums) {
+              if (columnEnums) {
+                const enumArray = columnEnums.replace(/[{}]/g, "").split(",");
+                console.log(enumArray);
+                enumsObject[key] = enumArray;
+              } else {
+                enumsObject[key] = [];
+              }
+            }
           } else {
             enumsObject[key] = [];
           }
         }
       }
+      console.log(enumsObject["serviceType"]);
+      console.log(enumsObject);
       setEnums(enumsObject);
     };
     fetchData();
@@ -164,19 +174,22 @@ export default function EditHalalDIalog({
                       <DatePicker
                         label="תאריך ברירת מחדל"
                         defaultValue={dayjs(value)}
-                        fullWidth // onChange={handeldefaultValueChange}
+                        sx={{ width: "100%" }}
+
+                        // fullWidth // onChange={handeldefaultValueChange}
                       />
                     </RtlPlugin>
                   ) : isInteger ? (
                     <Input
                       type="number"
                       defaultValue={value}
-                      sx={{ width: "47%" }}
+                      // sx={{ width: "47%" }}
                     />
                   ) : isBoolean ? (
                     <RadioGroup
                       aria-labelledby="booleanSelect"
                       name="controlled-radio-buttons-group"
+                      defaultValue={value}
                       // onChange={handeldefaultValueChange}
                       row
                     >
@@ -196,17 +209,21 @@ export default function EditHalalDIalog({
                     <Select
                       labelId={key}
                       defaultValue={value}
-                      sx={{ width: "47%" }}
+                      // sx={{ width: "47%" }}
                     >
-                      {/* Render menu items based on your user-defined options */}
-                      {["enums", value].map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
+                      {/* Render menu items based on enums state */}
+                      {enums[key] &&
+                        enums[key].map((option) => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
                     </Select>
                   ) : (
-                    <Input defaultValue={value} sx={{ width: "47%" }} />
+                    <Input
+                      defaultValue={value}
+                      // sx={{ width: "47%" }}
+                    />
                   )}
                 </div>
               );
