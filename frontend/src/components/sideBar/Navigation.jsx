@@ -26,7 +26,7 @@ const itemVariants = {
   closed: { opacity: 0, y: 50 },
 };
 
-export const Navigation = ({ hideNavigation, toggleOpen}) => {
+export const Navigation = ({ hideNavigation, toggleOpen }) => {
   const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
@@ -106,6 +106,22 @@ export const Navigation = ({ hideNavigation, toggleOpen}) => {
         },
         imgSrc: columnIcon,
         url: "/manageColumns",
+      },
+      {
+        name: "ניהול מלווים",
+        styles: {
+          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
+        },
+        imgSrc: columnIcon,
+        url: "/manageSoldierAccompanied",
+      },
+      {
+        name: "ניהול שארים",
+        styles: {
+          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
+        },
+        imgSrc: columnIcon,
+        url: "/manageLeftOvers",
       },
     ];
   } else if (auth.isLoggedIn) {

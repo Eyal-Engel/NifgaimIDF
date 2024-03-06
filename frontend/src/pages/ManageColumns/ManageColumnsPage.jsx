@@ -95,7 +95,7 @@ export default function ManageColumnsPage() {
   }, []);
 
   if (loading) {
-    return <span class="loader"></span>; // Render loading indicator
+    return <span className="loader"></span>; // Render loading indicator
   }
 
   const handelColumnNameChange = async (

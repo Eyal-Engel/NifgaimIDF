@@ -66,7 +66,7 @@ export async function getLeftOversByHalalId(halalId) {
   }
 }
 
-export async function createLeftOver(leftOverData) {
+export async function createLeftOver(userId, leftOverData) {
   const apiUrl = "http://localhost:5000/api/leftovers/";
 
   const headers = {
@@ -79,8 +79,11 @@ export async function createLeftOver(leftOverData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ userId, leftOverData });
+
+  console.log(body);
   try {
-    const response = await post(apiUrl, JSON.stringify(leftOverData), headers);
+    const response = await post(apiUrl, body, headers);
     return response.data;
   } catch (error) {
     console.error("Error creating leftover:", error);
@@ -88,7 +91,7 @@ export async function createLeftOver(leftOverData) {
   }
 }
 
-export async function updateLeftOver(leftOverId, updatedLeftOverData) {
+export async function updateLeftOver(userId, leftOverId, updatedLeftOverData) {
   const apiUrl = `http://localhost:5000/api/leftovers/${leftOverId}`;
 
   const headers = {
@@ -101,12 +104,10 @@ export async function updateLeftOver(leftOverId, updatedLeftOverData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ userId, updatedLeftOverData });
+
   try {
-    const response = await patch(
-      apiUrl,
-      JSON.stringify(updatedLeftOverData),
-      headers
-    );
+    const response = await patch(apiUrl, body, headers);
     return response.data;
   } catch (error) {
     console.error(`Error updating leftover with id ${leftOverId}:`, error);
@@ -114,7 +115,7 @@ export async function updateLeftOver(leftOverId, updatedLeftOverData) {
   }
 }
 
-export async function deleteLeftOver(leftOverId) {
+export async function deleteLeftOver(userId, leftOverId) {
   const apiUrl = `http://localhost:5000/api/leftovers/${leftOverId}`;
 
   const headers = {
@@ -127,8 +128,10 @@ export async function deleteLeftOver(leftOverId) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ userId });
+
   try {
-    const response = await del(apiUrl, headers);
+    const response = await del(apiUrl, headers, body);
     return response.data;
   } catch (error) {
     console.error(`Error deleting leftover with id ${leftOverId}:`, error);

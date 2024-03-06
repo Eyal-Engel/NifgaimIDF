@@ -58,7 +58,7 @@ export default function ManageCommandsPage() {
   }, []);
 
   if (loading) {
-    return <span class="loader"></span>; // Render loading indicator
+    return <span className="loader"></span>; // Render loading indicator
   }
 
   const handelCommandNameChange = async (commandId, newName) => {

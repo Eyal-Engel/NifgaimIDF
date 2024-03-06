@@ -17,7 +17,6 @@ import AddIcon from "@mui/icons-material/Add";
 import {
   getHalalColumnsAndTypes,
   getHalals,
-  getOriginalColumns,
 } from "../../utils/api/halalsApi";
 import EditHalalDialog from "./EditHalalDialog";
 import CreateHalalDialog from "./CreateHalalDialog";
@@ -182,42 +181,6 @@ export default function HalalimPage() {
     // Open the dialog
     setOpenDialog(true);
   };
-
-  // React.useEffect(() => {
-  //   const fetchCommandsData = async () => {
-  //     setLoading(true);
-
-  //     try {
-  //       const commandsNames = await getAllCommandsNames();
-  //       setCommands(commandsNames);
-
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error during get commands:", error);
-  //     }
-  //   };
-
-  //   fetchCommandsData();
-  // }, []);
-
-  // React.useEffect(() => {
-  //   const fetchOringialColumns = async () => {
-  //     try {
-  //       const original = await getOriginalColumns();
-  //       // setOriginalColumns(original);
-  //     } catch (error) {
-  //       console.error("Error during get orignialColumns:", error);
-  //     }
-  //   };
-
-  //   fetchOringialColumns();
-  // }, []);
-
-  // function getColumnByName(columnName) {
-  //   return allDataOfHalalsColumns.find(
-  //     (column) => column.column_name === columnName
-  //   );
-  // }
 
   React.useEffect(() => {
     // Function to fetch columns data from the API or local storage
