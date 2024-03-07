@@ -29,6 +29,7 @@ import {
   getHalalByPrivateNumber,
   getHalals,
 } from "../../utils/api/halalsApi";
+import { deleteSoldierAccompanied } from "../../utils/api/soldierAccompaniedsApi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -164,7 +165,7 @@ const EditSoldierAccompaniedDialog = ({
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await deleteLeftOver(loggedUserId, selectedRow.id);
+            await deleteSoldierAccompanied(loggedUserId, selectedRow.id);
             setRows((prevRows) =>
               prevRows.filter((row) => row.id !== selectedRow.id)
             );
