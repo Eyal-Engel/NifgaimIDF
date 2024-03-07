@@ -32,6 +32,7 @@ import {
 import { createLeftOver } from "../../utils/api/leftOversApi";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
+import { createSoldierAccompanied } from "../../utils/api/soldierAccompaniedsApi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -50,7 +51,7 @@ function PaperComponent(props) {
 
 const MemoizedSelect = React.memo(Select);
 
-export default function CreateLeftOverDialog({
+export default function CreateSoldierAccompaniedDialog({
   openDialog,
   setOpenDialog,
   rows,
@@ -92,7 +93,10 @@ export default function CreateLeftOverDialog({
 
   const handleSubmit = async () => {
     try {
-      const newLeftOVer = await createLeftOver(loggedUserId, inputValues);
+      const newLeftOVer = await createSoldierAccompanied(
+        loggedUserId,
+        inputValues
+      );
 
       const formmatedLeftOver = {
         ...newLeftOVer,
@@ -171,7 +175,7 @@ export default function CreateLeftOverDialog({
               justifyContent: "space-between",
             }}
           >
-            <p style={{ fontSize: "large" }}>הוסף שאר חדש</p>
+            <p style={{ fontSize: "large" }}>הוסף נציג חדש</p>
           </div>
         </DialogTitle>
         <Divider />
@@ -214,89 +218,19 @@ export default function CreateLeftOverDialog({
                 )}
               />
             </RtlPlugin>
-            {/* <RtlPlugin>
-              <Select
-                fullWidth
-                labelId="halal-label"
-                id="halal-select"
-                value={inputValues.halal || ""}
-                onChange={(e) => handleInputChange("halfal", e.target.value)}
-              >
-                {halals.map((halal, index) => (
-                  <MenuItem
-                    key={index}
-                    value={halal.privateNumber}
-                    style={{
-                      display: "flex",
-                      direction: "rtl",
-                    }}
-                  >
-                    <div style={{ marginLeft: "10%" }}>
-                      <span style={{ fontSize: "small", color: "grey" }}>
-                        שם מלא:
-                      </span>
-                      {"   "}
-                      <span>
-                        {halal.firstName} {halal.lastName}
-                      </span>
-                    </div>
-                    {/* <div style={{ display: "flex", flexDirection: "column" }}> */}
-            {/* <span style={{ fontSize: "small", color: "grey" }}>
-                      מספר אישי:
-                    </span>
-                    {"   "}
-                    <span>{halal.privateNumber}</span>
-                    {/* </div> */}
-            {/* <div style={{ display: "flex", flexDirection: "column" }}> */}
-            {/* </div> */}
-            {/* </MenuItem>
-                ))}
-              </Select>
-            </RtlPlugin>   */}
-            <RtlPlugin>
-              <FormControl fullWidth style={{ marginTop: "20px" }}>
-                <InputLabel id="demo-simple-select-label">
-                  קרבה משפחתית
-                </InputLabel>
-
-                <Select
-                  labelId="proximity-select-label"
-                  id="proximity-select"
-                  fullWidth
-                  value={selectedValue}
-                  style={{
-                    direction: "rtl",
-                  }}
-                  label="קרבה משפחתית"
-                  onChange={(e) =>
-                    handleInputChange("proximity", e.target.value)
-                  }
-                >
-                  {proximityOptions.map((option, index) => (
-                    <MenuItem
-                      key={index}
-                      value={option}
-                      style={{
-                        direction: "rtl",
-                      }}
-                    >
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </RtlPlugin>
-            <InputLabel id={"city"} style={{ marginTop: "20px" }}>
-              עיר
+            <InputLabel id={"privateNumber"} style={{ marginTop: "20px" }}>
+              מספר אישי
             </InputLabel>
             <Input
-              onChange={(e) => handleInputChange("city", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("privateNumber", e.target.value)
+              }
             />
-            <InputLabel id={"address"} style={{ marginTop: "20px" }}>
-              כתובת
+            <InputLabel id={"rank"} style={{ marginTop: "20px" }}>
+              דרגה
             </InputLabel>
             <Input
-              onChange={(e) => handleInputChange("address", e.target.value)}
+              onChange={(e) => handleInputChange("rank", e.target.value)}
             />
             <InputLabel id={"phone"} style={{ marginTop: "20px" }}>
               מספר טלפון
@@ -308,23 +242,12 @@ export default function CreateLeftOverDialog({
               onChange={(value) => handleInputChange("phone", value)}
             />
 
-            <InputLabel id={"isReligious"} style={{ marginTop: "20px" }}>
-              דת
+            <InputLabel id={"unit"} style={{ marginTop: "20px" }}>
+              יחידה
             </InputLabel>
-            <RadioGroup
-              aria-labelledby="booleanSelect"
-              name="controlled-radio-buttons-group"
-              row
-              onChange={(e) => handleInputChange("isReligious", e.target.value)}
-            >
-              <FormControlLabel
-                value={true}
-                control={<Radio />}
-                sx={{ marginRight: 0 }}
-                label="כן"
-              />
-              <FormControlLabel value={false} control={<Radio />} label="לא" />
-            </RadioGroup>
+            <Input
+              onChange={(e) => handleInputChange("unit", e.target.value)}
+            />
             <InputLabel id={"comments"} style={{ marginTop: "20px" }}>
               הערות
             </InputLabel>
@@ -337,7 +260,7 @@ export default function CreateLeftOverDialog({
         <DialogActions>
           <Button onClick={handleCloseDialog}>ביטול</Button>
           <Button variant="contained" onClick={handleSubmit}>
-            צור שאר
+            צור מלווה
           </Button>
         </DialogActions>
       </Dialog>

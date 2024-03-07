@@ -47,7 +47,7 @@ NifgaimSoldierAccompanied.init(
 
     comments: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {

@@ -227,7 +227,6 @@ export default function ManageLeftOversPage() {
   const [selectedRow, setSelectedRow] = React.useState(null);
 
   const handleRowClick = (params) => {
-    console.log([params]);
     setSelectedRow(params.row);
     setOpenDialog(true);
   };
@@ -333,8 +332,19 @@ export default function ManageLeftOversPage() {
       editable: false,
       flex: 1,
       align: "center",
+      renderCell: (params) => {
+        const words = params.value.split(" ");
+        if (words.length > 0) {
+          const firstWord = words[0];
+          if (firstWord.length > 1) {
+            const lastChar = firstWord.charAt(0);
+            words[0] = firstWord.substring(1, firstWord.length) + lastChar;
+          }
+        }
+        const reversedWords = words.reverse().join(" ");
+        return <div>{reversedWords}</div>;
+      },
     },
-
     {
       field: "isReligious",
       headerName: "דת",
@@ -470,6 +480,7 @@ export default function ManageLeftOversPage() {
         }}
         initialState={{
           pagination: { paginationModel: { pageSize: 10 } },
+          sortModel: [{ field: "halalId", sort: "asc" }], // Set default sorting by halalId in ascending order
         }}
         pageSizeOptions={[5, 10, 25]}
         slots={{

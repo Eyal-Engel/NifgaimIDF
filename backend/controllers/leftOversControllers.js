@@ -122,8 +122,9 @@ const updateLeftOver = async (req, res, next) => {
     phone,
     comments,
     isReligious,
-    userId,
-  } = req.body;
+    nifgaimHalalId,
+  } = req.body.updatedLeftOverData;
+  const { userId } = req.body;
 
   try {
     const user = await User.findByPk(userId);
@@ -157,6 +158,7 @@ const updateLeftOver = async (req, res, next) => {
     leftOver.phone = phone;
     leftOver.comments = comments;
     leftOver.isReligious = isReligious;
+    leftOver.nifgaimHalalId = nifgaimHalalId;
     await leftOver.save();
     res.json(leftOver);
   } catch (err) {

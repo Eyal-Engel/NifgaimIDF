@@ -88,6 +88,31 @@ export async function getHalalById(halalId) {
   }
 }
 
+export async function getHalalByPrivateNumber(privateNumber) {
+  const apiUrl = `http://localhost:5000/api/halals/byPrivateNumber/${privateNumber}`;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "GET",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  try {
+    const response = await get(apiUrl, headers);
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error fetching halal with privaye number ${privateNumber}:`,
+      error
+    );
+    throw error;
+  }
+}
+
 export async function getHalalsByCommandId(commandId) {
   const apiUrl = `http://localhost:5000/api/halals/command/${commandId}`;
 

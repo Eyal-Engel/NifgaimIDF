@@ -45,7 +45,7 @@ function PaperComponent(props) {
   );
 }
 
-const EditLeftOverDialog = ({
+const EditSoldierAccompaniedDialog = ({
   openDialog,
   setOpenDialog,
   selectedRow,
@@ -61,6 +61,7 @@ const EditLeftOverDialog = ({
   const loggedUserId = userData ? userData.userId : "";
 
   console.log("check infinte");
+  console.log(selectedRow);
 
   useEffect(() => {
     const fetchHalalsData = async () => {
@@ -85,17 +86,6 @@ const EditLeftOverDialog = ({
     fetchHalalsData();
   }, [selectedRow.halalId, selectedRow.proximity, selectedRow.phone]);
 
-  const proximityOptions = [
-    "אבא",
-    "אמא",
-    "בן זוג",
-    "בת זוג",
-    "אח",
-    "אחות",
-    "בת",
-    "בן",
-  ];
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -116,27 +106,24 @@ const EditLeftOverDialog = ({
     try {
       // Here you can send inputValues to your backend using a PATCH request
 
-      const updatedLeftOverData = {
+      const updatedSoldierAccompaniedsData = {
         fullName: inputValues.fullName || selectedRow.fullName,
-        proximity: inputValues.proximity || selectedRow.proximity,
-        city: inputValues.city || selectedRow.city,
-        address: inputValues.address || selectedRow.address,
+        privateNumber: inputValues.privateNumber || selectedRow.privateNumber,
+        rank: inputValues.rank || selectedRow.rank,
         phone: phone || selectedRow.phone,
+        unit: inputValues.unit || selectedRow.unit,
         comments: inputValues.comments || selectedRow.comments,
-        isReligious:
-          inputValues.isReligious === "true" ||
-          inputValues.isReligious === true,
         nifgaimHalalId: selectedHalal.id,
       };
 
-      const updatedLeftOver = await updateLeftOver(
+      const updatedSoldierAccompanieds = await updateLeftOver(
         loggedUserId,
         selectedRow.id,
-        updatedLeftOverData
+        updatedSoldierAccompaniedsData
       );
 
-      const updatedLeftOverDataWithHalalId = {
-        ...updatedLeftOverData,
+      const updatedSoldierAccompaniedsDataWithHalalId = {
+        ...updatedSoldierAccompanieds,
         halalId: selectedHalal.privateNumber,
       };
 
@@ -144,7 +131,7 @@ const EditLeftOverDialog = ({
       setRows((prevRows) =>
         prevRows.map((row) => {
           if (row.id === selectedRow.id) {
-            return { ...row, ...updatedLeftOverDataWithHalalId };
+            return { ...row, ...updatedSoldierAccompaniedsDataWithHalalId };
           }
           return row;
         })
@@ -162,7 +149,7 @@ const EditLeftOverDialog = ({
       const leftOverName = selectedRow.fullName;
 
       Swal.fire({
-        title: `האם את/ה בטוח/ה שתרצה/י למחוק את השאר ${leftOverName}`,
+        title: `האם את/ה בטוח/ה שתרצה/י למחוק את המלווה ${leftOverName}`,
         text: "פעולה זאת איננה ניתנת לשחזור",
         icon: "warning",
         showCancelButton: true,
@@ -182,7 +169,7 @@ const EditLeftOverDialog = ({
               prevRows.filter((row) => row.id !== selectedRow.id)
             );
             Swal.fire({
-              title: `חלל "${leftOverName}" נמחק בהצלחה!`,
+              title: `נציג "${leftOverName}" נמחק בהצלחה!`,
               text: "",
               icon: "success",
               confirmButtonText: "אישור",
@@ -194,7 +181,7 @@ const EditLeftOverDialog = ({
             });
           } catch (error) {
             Swal.fire({
-              title: `לא ניתן למחוק את החלל`,
+              title: `לא ניתן למחוק את הנציג`,
               text: error,
               icon: "error",
               confirmButtonColor: "#3085d6",
@@ -235,7 +222,7 @@ const EditLeftOverDialog = ({
               justifyContent: "space-between",
             }}
           >
-            <p style={{ fontSize: "large" }}>ערוך שאר</p>
+            <p style={{ fontSize: "large" }}>ערוך מלווה</p>
           </div>
         </DialogTitle>
         <Divider />
@@ -276,45 +263,21 @@ const EditLeftOverDialog = ({
                 )}
               />
             </RtlPlugin>
-            <InputLabel id={"proximity"} style={{ marginTop: "20px" }}>
-              קרבה משפחתית
-            </InputLabel>
-            <Select
-              labelId="proximity-select-label"
-              id="proximity-select"
-              fullWidth
-              value={selectedValue}
-              style={{
-                direction: "rtl",
-              }}
-              label="קרבה משפחתית"
-              onChange={(e) => handleInputChange("proximity", e.target.value)}
-            >
-              {proximityOptions.map((option, index) => (
-                <MenuItem
-                  key={index}
-                  value={option}
-                  style={{
-                    direction: "rtl",
-                  }}
-                >
-                  {option}
-                </MenuItem>
-              ))}
-            </Select>
-            <InputLabel id={"city"} style={{ marginTop: "20px" }}>
-              עיר
+            <InputLabel id={"privateNumber"} style={{ marginTop: "20px" }}>
+              מספר אישי
             </InputLabel>
             <Input
-              defaultValue={selectedRow.city || ""}
-              onChange={(e) => handleInputChange("city", e.target.value)}
+              defaultValue={selectedRow.privateNumber || ""}
+              onChange={(e) =>
+                handleInputChange("privateNumber", e.target.value)
+              }
             />
-            <InputLabel id={"address"} style={{ marginTop: "20px" }}>
-              כתובת
+            <InputLabel id={"rank"} style={{ marginTop: "20px" }}>
+              דרגה
             </InputLabel>
             <Input
-              defaultValue={selectedRow.address || ""}
-              onChange={(e) => handleInputChange("address", e.target.value)}
+              defaultValue={selectedRow.rank || ""}
+              onChange={(e) => handleInputChange("rank", e.target.value)}
             />
             <InputLabel id={"phone"} style={{ marginTop: "20px" }}>
               מספר טלפון
@@ -325,29 +288,13 @@ const EditLeftOverDialog = ({
               excludecountries={["pa"]}
               onChange={(value) => handleInputChange("phone", value)}
             />
-            <InputLabel id={"isReligious"} style={{ marginTop: "20px" }}>
-              דת
+            <InputLabel id={"unit"} style={{ marginTop: "20px" }}>
+              יחידה
             </InputLabel>
-            <RadioGroup
-              aria-labelledby="booleanSelect"
-              name="controlled-radio-buttons-group"
-              row
-              defaultValue={selectedRow.isReligious.toString()}
-              onChange={(e) => handleInputChange("isReligious", e.target.value)}
-            >
-              <FormControlLabel
-                value={"true"}
-                control={<Radio />}
-                sx={{ marginRight: 0 }}
-                label="כן"
-              />
-              <FormControlLabel
-                value={"false"}
-                control={<Radio />}
-                label="לא"
-              />
-            </RadioGroup>
-
+            <Input
+              defaultValue={selectedRow.unit || ""}
+              onChange={(e) => handleInputChange("unit", e.target.value)}
+            />
             <InputLabel id={"comments"} style={{ marginTop: "20px" }}>
               הערות
             </InputLabel>
@@ -392,4 +339,4 @@ const EditLeftOverDialog = ({
   );
 };
 
-export default EditLeftOverDialog;
+export default EditSoldierAccompaniedDialog;

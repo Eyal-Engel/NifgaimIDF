@@ -1,7 +1,7 @@
 import { get, post, patch, del } from "./api";
 
 export async function getSoldierAccompanieds() {
-  const apiUrl = "http://localhost:5000/api/soldierAccompanieds/";
+  const apiUrl = "http://localhost:5000/api/soldierAccompanied/";
 
   const headers = {
     "Content-Type": "application/json",
@@ -23,7 +23,7 @@ export async function getSoldierAccompanieds() {
 }
 
 export async function getSoldierAccompaniedById(soldierAccompaniedId) {
-  const apiUrl = `http://localhost:5000/api/soldierAccompanieds/${soldierAccompaniedId}`;
+  const apiUrl = `http://localhost:5000/api/soldierAccompanied/${soldierAccompaniedId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export async function getSoldierAccompaniedById(soldierAccompaniedId) {
 }
 
 export async function getSoldierAccompaniedsByHalalId(halalId) {
-  const apiUrl = `http://localhost:5000/api/soldierAccompanieds/byHalal/${halalId}`;
+  const apiUrl = `http://localhost:5000/api/soldierAccompanied/byHalal/${halalId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -72,8 +72,21 @@ export async function getSoldierAccompaniedsByHalalId(halalId) {
   }
 }
 
-export async function createSoldierAccompanied(soldierAccompaniedData) {
-  const apiUrl = "http://localhost:5000/api/soldierAccompanieds/";
+// body example:
+// {
+//   "soldierAccompaniedData": {
+//     "fullName": "John Doe",
+//     "privateNumber": "8523691",
+//     "rank": "Sergeant",
+//     "phone": "+972 50 299 6949",
+//     "unit": "Unit XYZ",
+//     "comments": "Some comments",
+//     "nifgaimHalalId": "8d03738b-10f8-4831-b830-4c38b864d36d"
+//   },
+//   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
+// }
+export async function createSoldierAccompanied(userId, soldierAccompaniedData) {
+  const apiUrl = "http://localhost:5000/api/soldierAccompanied/";
 
   const headers = {
     "Content-Type": "application/json",
@@ -85,12 +98,10 @@ export async function createSoldierAccompanied(soldierAccompaniedData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ userId, soldierAccompaniedData });
+
   try {
-    const response = await post(
-      apiUrl,
-      JSON.stringify(soldierAccompaniedData),
-      headers
-    );
+    const response = await post(apiUrl, body, headers);
     return response.data;
   } catch (error) {
     console.error("Error creating soldier accompanied:", error);
@@ -98,11 +109,25 @@ export async function createSoldierAccompanied(soldierAccompaniedData) {
   }
 }
 
+// body example:
+// {
+//   "updatedSoldierAccompaniedData": {
+//     "fullName": "Updated Name",
+//     "privateNumber": "1234560",
+//     "rank": "Lieutenant",
+//     "phone": "987-654-3210",
+//     "unit": "Updated Unit XYZ",
+//     "comments": "Updated comments",
+//     "halalId": "DEF456"
+//   },
+//   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
+// }
 export async function updateSoldierAccompanied(
+  userId,
   soldierAccompaniedId,
   updatedSoldierAccompaniedData
 ) {
-  const apiUrl = `http://localhost:5000/api/soldierAccompanieds/${soldierAccompaniedId}`;
+  const apiUrl = `http://localhost:5000/api/soldierAccompanied/${soldierAccompaniedId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -114,12 +139,14 @@ export async function updateSoldierAccompanied(
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({
+    userId,
+    soldierAccompaniedId,
+    updatedSoldierAccompaniedData,
+  });
+
   try {
-    const response = await patch(
-      apiUrl,
-      JSON.stringify(updatedSoldierAccompaniedData),
-      headers
-    );
+    const response = await patch(apiUrl, body, headers);
     return response.data;
   } catch (error) {
     console.error(
@@ -130,8 +157,12 @@ export async function updateSoldierAccompanied(
   }
 }
 
-export async function deleteSoldierAccompanied(soldierAccompaniedId) {
-  const apiUrl = `http://localhost:5000/api/soldierAccompanieds/${soldierAccompaniedId}`;
+// body example:
+// {
+//   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
+// }
+export async function deleteSoldierAccompanied(userId, soldierAccompaniedId) {
+  const apiUrl = `http://localhost:5000/api/soldierAccompanied/${soldierAccompaniedId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -143,8 +174,10 @@ export async function deleteSoldierAccompanied(soldierAccompaniedId) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ userId });
+
   try {
-    const response = await del(apiUrl, headers);
+    const response = await del(apiUrl, headers, body);
     return response.data;
   } catch (error) {
     console.error(

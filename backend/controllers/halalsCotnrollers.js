@@ -29,6 +29,31 @@ const getHalals = async (req, res, next) => {
   }
 };
 
+const getHalalByPrivateNumber = async (req, res, next) => {
+  try {
+    const { privateNumber } = req.params;
+
+    // Check if the private number is provided
+    if (!privateNumber) {
+      return res.status(400).json({ message: "Private number is required." });
+    }
+
+    // Find the halal by private number
+    const halal = await Halal.findOne({ where: { privateNumber } });
+
+    // If halal is not found, return 404 status
+    if (!halal) {
+      return res.status(404).json({ message: "Halal not found." });
+    }
+
+    // If halal is found, return it
+    res.json(halal);
+  } catch (err) {
+    // Handle errors
+    return next(err);
+  }
+};
+
 const getOriginalColumns = async (req, res, next) => {
   try {
     console.log("Halal.rawAttributes");
@@ -271,7 +296,9 @@ const updateHalalColumn = async (req, res, next) => {
       "ENUM",
     ];
 
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    console.log(
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    );
     if (!validDataTypes.includes(dataType)) {
       return res
         .status(400)
@@ -959,6 +986,7 @@ module.exports = {
   getHalals,
   getOriginalColumns,
   getHalalById,
+  getHalalByPrivateNumber,
   getHalalsByCommandId,
   getEnumsForColumn,
   createHalal,

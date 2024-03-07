@@ -56,191 +56,18 @@ import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
 import AddIcon from "@mui/icons-material/Add";
 import { motion } from "framer-motion";
 import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
+import { deleteLeftOver, getLeftOvers } from "../../utils/api/leftOversApi";
+import { getHalalById } from "../../utils/api/halalsApi";
+import CreateSoldierAccompaniedDialog from "./CreateSoldierAccompaniedDialog";
+import EditSoldierAccompaniedDialog from "./EditSoldierAccompaniedDialog";
+import { getSoldierAccompanieds } from "../../utils/api/soldierAccompaniedsApi";
 
-function CustomToolbar({ setRows }) {
-  const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
-  const [commandsSignUp, setCommandsSignUp] = React.useState([]);
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  const loggedUserId = userData ? userData.userId : "";
+function CustomToolbar({ rows, setRows }) {
+  const [openCreateNewLeftOver, setOpenCreateNewLeftOver] =
+    React.useState(false);
 
-  React.useEffect(() => {
-    const fetchCommandsData = async () => {
-      try {
-        const commandsNames = await getAllCommandsNames();
-        setCommandsSignUp(commandsNames);
-      } catch (error) {
-        console.error("Error during get commands:", error);
-      }
-    };
-
-    fetchCommandsData();
-  }, []);
-
-  const handleCreateNewUser = () => {
-    setOpenCreateNewUser(true);
-  };
-
-  const handleClose = () => {
-    setOpenCreateNewUser(false); // Close the dialog
-  };
-
-  const [userSignUpInfo, setUserSignUpInfo] = React.useState({
-    privateNumber: "",
-    fullName: "",
-    password: "",
-    command: "",
-    confirmPassword: "",
-    editPerm: false,
-    managePerm: false,
-  });
-
-  const handleChangePassword = (value) => {
-    // setPassword(value);
-
-    setUserSignUpInfo({
-      ...userSignUpInfo,
-      password: value,
-    });
-  };
-
-  const handleChangeConfirmPassword = (value) => {
-    // setConfirmPassword(value);
-
-    setUserSignUpInfo({
-      ...userSignUpInfo,
-      confirmPassword: value,
-    });
-  };
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserSignUpInfo({
-      ...userSignUpInfo,
-      [name]: value,
-    });
-  };
-
-  const handleCheckBoxInputChange = (e) => {
-    const { name, checked } = e.target;
-    const value = checked; // Set value to true if checked, false if unchecked
-    setUserSignUpInfo({
-      ...userSignUpInfo,
-      [name]: value,
-    });
-  };
-
-  // Handle form submission
-  const handleSubmit = async () => {
-    // Perform your submission logic here, for example, sending the data to an API
-    let errorsForSwalFrontendTesting = ""; // Start unordered list
-
-    if (userSignUpInfo.password !== userSignUpInfo.confirmPassword) {
-      errorsForSwalFrontendTesting += "<li>סיסמא ואימות סיסמא אינם זהים</li>";
-    }
-    if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(userSignUpInfo.password)) {
-      errorsForSwalFrontendTesting +=
-        "<li>סיסמא אינה תקינה - סיסמא תקינה צריכה להיות באורך של לפחות 6 תווים ומכיל לפחות אות אחת וספרה אחת.</li>";
-    }
-
-    if (errorsForSwalFrontendTesting === "") {
-      try {
-        const commandId = await getCommandIdByName(userSignUpInfo.command);
-
-        const user = {
-          privateNumber: userSignUpInfo.privateNumber,
-          fullName: userSignUpInfo.fullName,
-          password: userSignUpInfo.password,
-          commandId: commandId,
-          editPerm: userSignUpInfo.editPerm,
-          managePerm: userSignUpInfo.managePerm,
-        };
-
-        try {
-          await createUser(loggedUserId, user);
-
-          const updatedUsers = await getUsers();
-          const userPromises = updatedUsers.map(async (user) => ({
-            id: user.id,
-            privateNumber: user.privateNumber,
-            fullName: user.fullName,
-            command: await getCommandNameById(user.nifgaimCommandId),
-            editPerm: user.editPerm,
-            managePerm: user.managePerm,
-          }));
-          const transformedUsers = await Promise.all(userPromises);
-          setRows(transformedUsers);
-
-          Swal.fire({
-            title: `משתמש "${userSignUpInfo.fullName}" נוצר בהצלחה!`,
-            text: "",
-            icon: "success",
-            confirmButtonText: "אישור",
-            customClass: {
-              container: "swal-dialog-custom",
-            },
-          }).then((result) => {
-            if (result.isConfirmed) {
-              handleClose();
-            }
-          });
-        } catch (error) {
-          console.log(error);
-          const errors = error.response.data.body.errors;
-          let errorsForSwal = ""; // Start unordered list
-
-          errors.forEach((error) => {
-            if (
-              error.message === "nifgaimUsers.nifgaimCommandId cannot be null"
-            ) {
-              errorsForSwal += "<li>פיקוד לא יכול להיות ריק</li>";
-            }
-            if (
-              error.message === "Validation isNumeric on privateNumber failed"
-            ) {
-              errorsForSwal += "<li>מספר אישי חייב להכיל מספרים בלבד</li>";
-            }
-            if (error.message === "Validation len on privateNumber failed") {
-              errorsForSwal +=
-                "<li>מספר אישי חייב להיות באורך של 7 ספרות בדיוק</li>";
-            }
-            if (error.message === "Validation is on fullName failed") {
-              errorsForSwal +=
-                "<li>שם מלא צריך להיות עד 30 תווים ולהכיל אותיות בלבד</li>";
-            }
-            if (error.message === "privateNumber must be unique") {
-              errorsForSwal += "<li>מספר אישי כבר קיים במערכת</li>";
-            }
-          });
-
-          Swal.fire({
-            title: ` לא ניתן ליצור את המשתמש ${userSignUpInfo.fullName}`,
-            html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
-            icon: "error",
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "אישור",
-            reverseButtons: true,
-            customClass: {
-              container: "swal-dialog-custom",
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    } else {
-      Swal.fire({
-        title: ` לא ניתן ליצור את המשתמש ${userSignUpInfo.fullName}`,
-        html: `<ul style="direction: rtl; text-align: right">${errorsForSwalFrontendTesting}</ul>`, // Render errors as list items
-        icon: "error",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "אישור",
-        reverseButtons: true,
-        customClass: {
-          container: "swal-dialog-custom",
-        },
-      });
-    }
+  const handleCreateNewLeftOver = () => {
+    setOpenCreateNewLeftOver(true);
   };
 
   return (
@@ -248,7 +75,7 @@ function CustomToolbar({ setRows }) {
       <Button
         color="primary"
         startIcon={<AddIcon />}
-        onClick={handleCreateNewUser}
+        onClick={handleCreateNewLeftOver}
         sx={{
           paddingRight: "60px",
           borderRadius: "5000px 5000px 0 0",
@@ -261,8 +88,14 @@ function CustomToolbar({ setRows }) {
           },
         }}
       >
-        צור משתמש חדש
+        יצירת מלווה חדש
       </Button>
+      <CreateSoldierAccompaniedDialog
+        openDialog={openCreateNewLeftOver}
+        setOpenDialog={setOpenCreateNewLeftOver}
+        rows={rows}
+        setRows={setRows}
+      />
       <GridToolbarContainer
         style={{
           direction: "rtl",
@@ -324,193 +157,6 @@ function CustomToolbar({ setRows }) {
           />
         </div>
       </GridToolbarContainer>
-      <Dialog
-        sx={{
-          direction: "rtl",
-        }}
-        open={openCreateNewUser}
-        TransitionComponent={Transition}
-        PaperComponent={PaperComponent}
-        onClose={() => handleClose()}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <div
-          className="boxAccountContainer"
-          style={{
-            height: "800px", // Set your desired height here
-            borderRadius: "inherit",
-          }}
-        >
-          <div
-            style={{
-              zIndex: "9999",
-              display: "flex",
-              padding: "10px",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <AiOutlineCloseCircle
-              style={{
-                cursor: "pointer",
-                fontSize: "30px",
-              }}
-              onClick={() => handleClose()}
-            />
-            <AiOutlineDrag
-              style={{
-                cursor: "move",
-                fontSize: "24px",
-              }}
-              id="draggable-dialog-title"
-            />
-          </div>
-
-          <div className="topAccountContainer">
-            <motion.div className="backdrop" style={{ marginTop: "-60px" }} />
-            <div className="header-text">יצירת משתמש חדש</div>
-          </div>
-          <div className="innerAccountContainer">
-            <div className="boxLoginContainer" style={{ marginTop: "-50px" }}>
-              <form
-                className="formLoginContainer"
-                style={{ marginTop: "-60px" }}
-              >
-                <Input
-                  type={"text"}
-                  name="privateNumber"
-                  placeholder="מספר אישי"
-                  className="resetPasswordInputField"
-                  onChange={handleInputChange}
-                />
-                <Input
-                  type={"text"}
-                  name="fullName"
-                  placeholder="שם מלא"
-                  className="resetPasswordInputField"
-                  onChange={handleInputChange}
-                />
-                <Select
-                  sx={{ direction: "rtl" }}
-                  labelId="fullName-label"
-                  id="fullName"
-                  name="command"
-                  defaultValue=""
-                  onChange={handleInputChange}
-                  displayEmpty
-                  className="resetPasswordInputField"
-                  renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
-                >
-                  <MenuItem sx={{ direction: "rtl" }} value="" disabled>
-                    פיקוד
-                  </MenuItem>
-                  {commandsSignUp.map((command) => (
-                    <MenuItem
-                      sx={{ direction: "rtl" }}
-                      key={command}
-                      value={command}
-                    >
-                      {command}
-                    </MenuItem>
-                  ))}
-                </Select>
-
-                {/* <Input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="סיסמא"
-                  className="resetPasswordInputField"
-                  onChange={handleInputChange}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={togglePasswordVisibility}>
-                        {showPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
-                          <VisibilityIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                /> */}
-                {/* <Input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="אימות סיסמא"
-                  className="resetPasswordInputField"
-                  spellCheck="false"
-                  onChange={handleInputChange}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={toggleConfirmPasswordVisibility}>
-                        {showConfirmPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
-                          <VisibilityIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                /> */}
-                <PasswordStrength
-                  id="confirmPasswordRegister"
-                  placeholder="אימות סיסמא"
-                  onChangePassword={handleChangePassword}
-                  onChangeConfirmPassword={handleChangeConfirmPassword}
-                />
-
-                <h2
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "20px",
-                  }}
-                >
-                  הרשאות משתמש
-                </h2>
-                <div
-                  className="perms"
-                  style={{
-                    display: "flex",
-                    flexDirection: "row", // Change flexDirection to column
-                    justifyContent: "space-around", // Center vertically
-                    alignItems: "center", // Center horizontally
-                  }}
-                >
-                  <div>
-                    <label style={{ fontSize: "1.5em" }}>עריכת הרשאות</label>{" "}
-                    {/* Increase font size */}
-                    <input
-                      type="checkbox"
-                      name="editPerm"
-                      onChange={handleCheckBoxInputChange}
-                      style={{ transform: "scale(1.5)" }} // Increase checkbox size
-                    />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: "1.5em" }}>מנהל הרשאות</label>{" "}
-                    {/* Increase font size */}
-                    <input
-                      type="checkbox"
-                      name="managePerm"
-                      onChange={handleCheckBoxInputChange}
-                      style={{ transform: "scale(1.5)" }} // Increase checkbox size
-                    />
-                  </div>
-                </div>
-              </form>
-              <button
-                type="submit"
-                className="submit-button"
-                onClick={handleSubmit}
-                style={{ marginTop: "20px" }}
-              >
-                צור משתמש
-              </button>
-            </div>
-          </div>
-        </div>
-      </Dialog>
     </>
   );
 }
@@ -570,7 +216,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ManageSoldierAccompaniedPage() {
+export default function ManageLeftOversPage() {
   const [rows, setRows] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [commands, setCommands] = React.useState([]);
@@ -578,42 +224,36 @@ export default function ManageSoldierAccompaniedPage() {
   const [open, setOpen] = React.useState(false);
   const [selectedUserId, setSelectedUserId] = React.useState(null);
   const [selectedFullName, setSelectedFullName] = React.useState(null);
-  const [userLoginInfo, setPasswordInfo] = React.useState({
-    password: "",
-    confirmPassword: "",
-  });
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  const loggedUserId = userData ? userData.userId : "";
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [selectedRow, setSelectedRow] = React.useState(null);
 
-  const handleChangePasswordRegister = (value) => {
-    setPasswordInfo({
-      ...userLoginInfo,
-      password: value,
-    });
-  };
-
-  const handleChangeConfirmRegister = (value) => {
-    setPasswordInfo({
-      ...userLoginInfo,
-      confirmPassword: value,
-    });
+  const handleRowClick = (params) => {
+    setSelectedRow(params.row);
+    setOpenDialog(true);
   };
 
   React.useEffect(() => {
     const fetchDataUsers = async () => {
       setLoading(true);
       try {
-        const usersData = await getUsers();
-        const userPromises = usersData.map(async (user) => ({
-          id: user.id,
-          privateNumber: user.privateNumber,
-          fullName: user.fullName,
-          command: await getCommandNameById(user.nifgaimCommandId),
-          editPerm: user.editPerm,
-          managePerm: user.managePerm,
-        }));
-        const transformedUsers = await Promise.all(userPromises);
-        setRows(transformedUsers);
+        const soldierAccompaniedsData = await getSoldierAccompanieds();
+        const soldierAccompaniedsPromises = soldierAccompaniedsData.map(
+          async (soldierAccompanieds) => ({
+            id: soldierAccompanieds.id,
+            fullName: soldierAccompanieds.fullName,
+            halalId: (await getHalalById(soldierAccompanieds.nifgaimHalalId))
+              .privateNumber,
+            privateNumber: soldierAccompanieds.privateNumber,
+            rank: soldierAccompanieds.rank,
+            phone: soldierAccompanieds.phone,
+            unit: soldierAccompanieds.unit,
+            comments: soldierAccompanieds.comments,
+          })
+        );
+        const transformedSoldierAccompanieds = await Promise.all(
+          soldierAccompaniedsPromises
+        );
+        setRows(transformedSoldierAccompanieds);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching or transforming users:", error);
@@ -643,354 +283,139 @@ export default function ManageSoldierAccompaniedPage() {
     fetchCommandsData();
   }, []);
 
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
-  };
-
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleResetPassword = (id) => async () => {
-    setSelectedUserId(id);
-    const selectedUserName = await getFullNameById(id);
-    setSelectedFullName(selectedUserName);
-    setOpen(true);
-  };
-
-  const handleDeleteClick = (id) => () => {
-    try {
-      if (id !== loggedUserId) {
-        const userFullName = rows.find((row) => row.id === id).fullName;
-
-        Swal.fire({
-          title: `האם את/ה בטוח/ה שתרצה/י למחוק את המשתמש ${userFullName}`,
-          text: "פעולה זאת איננה ניתנת לשחזור",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "מחק משתמש",
-          cancelButtonText: "בטל",
-          reverseButtons: true,
-          customClass: {
-            container: "swal-dialog-custom",
-          },
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            try {
-              await deleteUser(loggedUserId, id);
-              setRows(rows.filter((row) => row.id !== id));
-              Swal.fire({
-                title: `משתמש "${userFullName}" נמחק בהצלחה!`,
-                text: "",
-                icon: "success",
-                confirmButtonText: "אישור",
-                customClass: {
-                  container: "swal-dialog-custom",
-                },
-              }).then((result) => {});
-            } catch (error) {
-              Swal.fire({
-                title: `לא ניתן למחוק את המשתמש`,
-                text: error,
-                icon: "error",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: "אישור",
-                reverseButtons: true,
-                customClass: {
-                  container: "swal-dialog-custom",
-                },
-              }).then((result) => {});
-            }
-          }
-        });
-      } else {
-        Swal.fire({
-          title: `לא ניתן למחוק את המשתמש`,
-          text: "משתמש אינו יכול למחוק את עצמו",
-          icon: "error",
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "אישור",
-          reverseButtons: true,
-          customClass: {
-            container: "swal-dialog-custom",
-          },
-        }).then((result) => {
-          if (result.isConfirmed) {
-          }
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
-
-  const handleUpdatePassword = async () => {
-    const newPassword = userLoginInfo.password;
-    const confirmPassword = userLoginInfo.confirmPassword;
-
-    const error = validationPasswordsErrorType(
-      newPassword,
-      confirmPassword
-    ).msg;
-
-    let errorMsgForSwal = "";
-
-    if (error === "Identical and valid") {
-      errorMsgForSwal = "זהות ותקינות";
-    } else if (error === "Identical but invalid") {
-      errorMsgForSwal = "הסיסמאות שהזנת זהות, אך אינן תקינות";
-    } else if (error === "Not identical, confirm password validation failed") {
-      errorMsgForSwal = "הסיסמאות שהזנת אינן זהות, אימות סיסמא אינה תקינה";
-    } else if (error === "Identical, password validation failed") {
-      errorMsgForSwal = "הסיסמאות שהזנת זהות, סיסמא אינה תקינה";
-    } else if (error === "Not identical, both invalid") {
-      errorMsgForSwal =
-        "הסיסמאות שהזנת אינן זהות, סיסמא ואימות סיסמא אינן תקינות";
-    } else if (error === "Not identical, both invalid") {
-      errorMsgForSwal =
-        "הסיסמאות שהזנת אינן זהות, סיסמא ואימות סיסמא אינן תקינות";
-    } else if (error === "Not identical, both valid") {
-      errorMsgForSwal = "הסיסמאות שהזנת אינן זהות";
-    }
-
-    if (errorMsgForSwal !== "זהות ותקינות") {
-      Swal.fire({
-        title: `שגיאה בעדכון סיסמא`,
-        text: errorMsgForSwal,
-        icon: "error",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "אישור",
-        reverseButtons: true,
-        customClass: {
-          container: "swal-dialog-custom",
-        },
-      });
-    } else {
-      try {
-        await changePassword(loggedUserId, selectedUserId, newPassword);
-        const fullName = await getFullNameById(selectedUserId);
-        Swal.fire({
-          title: `סיסמא עודכנה בהצלחה`,
-          text: `הסיסמא החדשה של המשתמש ${fullName} הינה ${newPassword}`,
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "אישור",
-          reverseButtons: true,
-          customClass: {
-            container: "swal-dialog-custom",
-          },
-        }).then((result) => {
-          if (result.isConfirmed) {
-            setOpen(false);
-          }
-        });
-      } catch (error) {
-        Swal.fire({
-          title: `שגיאה בעדכון סיסמא`,
-          text: "לא ניתן לעדכן סיסמא חדשה, נסה שוב מאוחר יותר",
-          icon: "error",
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "אישור",
-          reverseButtons: true,
-          customClass: {
-            container: "swal-dialog-custom",
-          },
-        });
-      }
-    }
-  };
-
-  const processRowUpdate = async (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-
-    const { id, privateNumber, fullName, command, editPerm, managePerm } =
-      updatedRow;
-
-    try {
-      const nifgaimCommandId = await getCommandIdByName(command);
-      console.log(nifgaimCommandId);
-      const filteredUser = {
-        privateNumber,
-        fullName,
-        nifgaimCommandId,
-        editPerm,
-        managePerm,
-      };
-      await updateUser(loggedUserId, id, filteredUser);
-
-      setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-
-      return updatedRow;
-    } catch (error) {
-      Swal.fire({
-        title: `אחד מהנתונים שהזנת אינו תקין, נסה שנית`,
-        text: "",
-        icon: "error",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "אישור",
-        reverseButtons: true,
-        customClass: {
-          container: "swal-dialog-custom",
-        },
-      }).then((result) => {});
-      throw error;
-    }
-  };
-
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  };
-
   const columns = [
-    {
-      field: "privateNumber",
-      headerName: "מספר אישי",
-      headerAlign: "center",
-      align: "center",
-      type: "string",
-      editable: true,
-      flex: 1,
-    },
-
     {
       field: "fullName",
       headerName: "שם מלא",
       headerAlign: "center",
+      align: "center",
       type: "string",
-      editable: true,
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: "halalId",
+      headerName: "מספר אישי של החלל",
+      headerAlign: "center",
+      align: "center",
+      type: "string",
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: "privateNumber",
+      headerName: "מספר אישי",
+      headerAlign: "center",
+      type: "string",
+      editable: false,
       flex: 1,
       align: "center",
     },
-
     {
-      field: "command",
-      headerName: "פיקוד",
+      field: "rank",
+      headerName: "דרגה",
       headerAlign: "center",
-      tfontColor: "white",
-      type: "singleSelect",
+      type: "string",
+      editable: false,
+      flex: 1,
       align: "center",
-      editable: true,
-      flex: 1,
-      valueOptions: commands,
-      valueFormatter: ({ value }) => {
-        const option = commands.find(
-          ({ value: optionValue }) => optionValue === value
-        );
-        return option ? option.label : value; // Return the label if found, otherwise return the original value
-      },
-    },
-
-    {
-      field: "editPerm",
-      headerName: "הרשאות עריכה",
-      headerAlign: "center",
-      type: "boolean",
-      editable: true,
-      flex: 1,
-      renderCell: (params) =>
-        params.value ? (
-          <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
-        ) : (
-          <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
-        ),
     },
     {
-      field: "managePerm",
-      headerName: "הרשאות ניהול",
+      field: "phone",
+      headerName: "מספר טלפון",
       headerAlign: "center",
-      type: "boolean",
-      editable: true,
+      type: "string",
+      editable: false,
       flex: 1,
-      renderCell: (params) =>
-        params.value ? (
-          <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
-        ) : (
-          <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
-        ),
-    },
-
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "פעולות",
-      headerAlign: "center",
-      flex: 1,
-      cellClassName: "actions",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              color="primary"
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="error"
-            />,
-          ];
+      align: "center",
+      renderCell: (params) => {
+        const words = params.value.split(" ");
+        if (words.length > 0) {
+          const firstWord = words[0];
+          if (firstWord.length > 1) {
+            const lastChar = firstWord.charAt(0);
+            words[0] = firstWord.substring(1, firstWord.length) + lastChar;
+          }
         }
-
-        return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="primary"
-          />,
-          <GridActionsCellItem
-            icon={<LockIcon />}
-            label="ResetPassword"
-            onClick={handleResetPassword(id)}
-            color="gray"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="error"
-          />,
-        ];
+        const reversedWords = words.reverse().join(" ");
+        return <div>{reversedWords}</div>;
       },
     },
+    {
+      field: "unit",
+      headerName: "יחידה",
+      headerAlign: "center",
+      type: "string",
+      editable: false,
+      flex: 1,
+      align: "center",
+    },
+    {
+      field: "comments",
+      headerName: "הערות",
+      headerAlign: "center",
+      type: "string",
+      editable: false,
+      flex: 1,
+      align: "center",
+    },
+    // {
+    //   field: "actions",
+    //   type: "actions",
+    //   headerName: "פעולות",
+    //   headerAlign: "center",
+    //   flex: 1,
+    //   cellClassName: "actions",
+    //   getActions: ({ id }) => {
+    //     const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+    //     if (isInEditMode) {
+    //       return [
+    //         <GridActionsCellItem
+    //           icon={<SaveIcon />}
+    //           label="Save"
+    //           color="primary"
+    //           onClick={handleSaveClick(id)}
+    //         />,
+    //         <GridActionsCellItem
+    //           icon={<CancelIcon />}
+    //           label="Cancel"
+    //           className="textPrimary"
+    //           onClick={handleCancelClick(id)}
+    //           color="error"
+    //         />,
+    //       ];
+    //     }
+
+    //     return [
+    //       <GridActionsCellItem
+    //         icon={<EditIcon />}
+    //         label="Edit"
+    //         className="textPrimary"
+    //         onClick={handleEditClick(id)}
+    //         color="primary"
+    //       />,
+    //       <GridActionsCellItem
+    //         icon={<DeleteIcon />}
+    //         label="Delete"
+    //         onClick={handleDeleteClick(id)}
+    //         color="error"
+    //       />,
+    //     ];
+    //   },
+    // },
   ];
 
   return (
     <Box
       sx={{
-        width: "40vw",
-        height: "70vh",
+        width: "100vw",
+        height: "75vh",
         maxHeight: "70rem",
         maxWidth: "70rem",
         "@media screen and (max-width: 1200px)": {
-          width: "50vw",
-          height: "70vh",
+          width: "70vw",
+          height: "75vh",
           maxHeight: "40rem",
           maxWidth: "60rem",
         },
@@ -1007,10 +432,8 @@ export default function ManageSoldierAccompaniedPage() {
         loading={loading}
         columns={columns}
         editMode="row"
+        onRowClick={handleRowClick}
         rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
         localeText={heIL.components.MuiDataGrid.defaultProps.localeText}
         sx={{
           direction: "rtl",
@@ -1048,6 +471,7 @@ export default function ManageSoldierAccompaniedPage() {
         }}
         initialState={{
           pagination: { paginationModel: { pageSize: 10 } },
+          sortModel: [{ field: "halalId", sort: "asc" }], // Set default sorting by halalId in ascending order
         }}
         pageSizeOptions={[5, 10, 25]}
         slots={{
@@ -1055,87 +479,19 @@ export default function ManageSoldierAccompaniedPage() {
           noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { rows, setRows, setRowModesModel },
         }}
       />
-      <Dialog
-        sx={{ direction: "rtl", backgroundColor: "none" }}
-        open={open}
-        TransitionComponent={Transition}
-        PaperComponent={PaperComponent}
-        onClose={() => setOpen(false)}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <DialogTitle>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            איפוס סיסמא
-            <AiOutlineDrag
-              style={{ cursor: "move", fontSize: "24px" }}
-              id="draggable-dialog-title"
-            />
-          </div>
-          <Typography fontWeight="bold">
-            למשתמש: "{selectedFullName}"
-          </Typography>
-        </DialogTitle>
 
-        <DialogContent sx={{ direction: "rtl" }}>
-          {/* <Input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="סיסמא"
-            className="resetPasswordInputField"
-            onChange={handlePasswordInputChange}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={togglePasswordVisibility}>
-                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                </IconButton>
-              </InputAdornment>
-            }
-          /> */}
-          {/* <Input
-            type={showConfirmPassword ? "text" : "password"}
-            name="password"
-            placeholder="אימות סיסמא"
-            className="resetPasswordInputField"
-            onChange={handleConfirmPasswordInputChange}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={toggleConfirmPasswordVisibility}>
-                  {showConfirmPassword ? (
-                    <VisibilityOffIcon />
-                  ) : (
-                    <VisibilityIcon />
-                  )}
-                </IconButton>
-              </InputAdornment>
-            }
-          /> */}
-
-          <PasswordStrength
-            id="confirmPasswordReset"
-            placeholder="אימות סיסמא"
-            onChangePassword={handleChangePasswordRegister}
-            onChangeConfirmPassword={handleChangeConfirmRegister}
-          />
-        </DialogContent>
-        <Divider></Divider>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} color="secondary">
-            ביטול
-          </Button>
-          <Button onClick={handleUpdatePassword} color="primary">
-            עדכון סיסמא
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {selectedRow && (
+        <EditSoldierAccompaniedDialog
+          openDialog={openDialog}
+          setOpenDialog={setOpenDialog}
+          selectedRow={selectedRow}
+          setRows={setRows}
+          rows={rows}
+        />
+      )}
     </Box>
   );
 }
