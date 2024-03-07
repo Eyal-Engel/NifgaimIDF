@@ -80,16 +80,21 @@ export default function SimpleDialog({
 
         onCreateClicked(newColumnName, columnTypeFormatted, defaultValue);
       } else if (typeOfColumn === "DATE") {
-        console.log(defaultValue)
-        const dateObject = new Date(defaultValue);
+        console.log(defaultValue);
+        if (defaultValue) {
+          const dateObject = new Date(defaultValue);
 
-        const day = dateObject.getDate().toString().padStart(2, "0");
-        const month = (dateObject.getMonth() + 1).toString().padStart(2, "0");
-        const year = dateObject.getFullYear();
+          const day = dateObject.getDate().toString().padStart(2, "0");
+          const month = (dateObject.getMonth() + 1).toString().padStart(2, "0");
+          const year = dateObject.getFullYear();
 
-        const formatDate = `${day}/${month}/${year}`;
-        console.log(formatDate);
-        onCreateClicked(newColumnName, typeOfColumn, formatDate);
+          const formatDate = `${day}/${month}/${year}`;
+          console.log(formatDate);
+          onCreateClicked(newColumnName, typeOfColumn, formatDate);
+        }
+        else {
+          const emptyValue = "לא הוגדר ערך ברירת מחדל"
+          onCreateClicked(newColumnName, typeOfColumn, emptyValue)}
       } else {
         onCreateClicked(newColumnName, typeOfColumn, defaultValue);
       }
@@ -246,9 +251,7 @@ export default function SimpleDialog({
         </FormControl>
       )}
       {isColumn && typeOfColumn === "INTEGER" && (
-        <RtlPlugin
-          style={{ margin: "auto", width: "80%", marginTop: "15px" }}
-        >
+        <RtlPlugin style={{ margin: "auto", width: "80%", marginTop: "15px" }}>
           <TextField
             dir="rtl"
             id="outlined-number"
@@ -268,14 +271,12 @@ export default function SimpleDialog({
         </RtlPlugin>
       )}
       {isColumn && typeOfColumn === "DATE" && (
-        <RtlPlugin
-          style={{ margin: "auto", width: "80%", marginTop: "15px" }}
-        >
+        <RtlPlugin style={{ margin: "auto", width: "80%", marginTop: "15px" }}>
           <DatePicker
             format="DD/MM/YYYY"
             label="תאריך ברירת מחדל"
             onChange={handeldefaultValueChange}
-            sx={{width: "100%"}}
+            sx={{ width: "100%" }}
           />
         </RtlPlugin>
       )}

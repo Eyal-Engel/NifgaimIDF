@@ -9,6 +9,7 @@ import "./ManageColumnsPage.css";
 import {
   addHalalColumn,
   deleteHalalColumn,
+  getColumnEnums,
   getHalalColumnsAndTypes,
   getOriginalColumns,
   updateHalalColumn,
@@ -44,17 +45,6 @@ export default function ManageColumnsPage() {
 
   const handelOpenDialog = () => {
     setOpenDialog(true);
-  };
-
-  const formatDateToString = (dayjsObject) => {
-    if (!dayjsObject || !dayjsObject.isValid()) {
-      return "Invalid dayjs object";
-    }
-
-    // Format the date as DD/MM/YYYY
-    const formattedDate = dayjsObject.format("DD/MM/YYYY");
-
-    return formattedDate;
   };
 
   const handleDefaultValue = (defaultValue, columnType) => {
@@ -139,20 +129,31 @@ export default function ManageColumnsPage() {
         const originColumns = await getOriginalColumns();
 
         setOriginalColumns(originColumns);
-        const columns = columnsWithAllData.map((column) => {
+        const columns = columnsWithAllData.map(async (column) => {
           const columnType = handleDataTypeName(column.data_type);
+          let arrayEnum;
+          if (columnType === "ENUM") {
+            const columnEnums = await getColumnEnums(column.column_name);
+            arrayEnum = columnEnums.slice(1, -1).split(",");
+            console.log(columnEnums);
+            console.log(arrayEnum);
+          }
           const defaultValue = handleDefaultValue(
             column.column_default,
             columnType
           );
+
           return {
             columnName: column.column_name,
             columnType: columnType,
             columnDefault: defaultValue,
+            enumValue: columnType === "ENUM" ? arrayEnum : null,
           };
         });
 
-        setColumns(columns); // changed from setCommands
+        setColumns(await Promise.all(columns));
+
+        // setColumns(columns); // changed from setCommands
 
         setLoading(false); // Data fetching completed, set loading to false
       } catch (error) {
@@ -162,6 +163,10 @@ export default function ManageColumnsPage() {
 
     fetchColumnsData();
   }, []);
+
+  useEffect(() => {
+    console.log(columns);
+  }, [columns]);
 
   if (loading) {
     return <span className="loader"></span>; // Render loading indicator
@@ -405,13 +410,14 @@ export default function ManageColumnsPage() {
               isNewColumn={originalColumns.some(
                 (originColumn) => originColumn === column.columnName
               )}
-              itemName={column.columnName} // changed from commandName
+              itemName={column.columnName}
               itemId={column.columnName}
               defaultValue={column.columnDefault}
-              handleItemNameChange={handelColumnNameChange} // changed from handelCommandNameChange
-              handleDeleteItem={handleDeleteColumn} // changed from handleDeleteCommand
+              handleItemNameChange={handelColumnNameChange}
+              handleDeleteItem={handleDeleteColumn}
               isNewItem={column.isNewItem ? true : false}
-              columnType={column.columnType} // changed from commandName
+              columnType={column.columnType}
+              enumValue={column.enumValue}
             />
           </li>
         ))}
