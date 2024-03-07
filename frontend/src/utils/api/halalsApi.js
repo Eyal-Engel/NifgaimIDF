@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { get, post, patch, del } from "./api";
 
 export async function getHalalColumnsAndTypes() {

@@ -55,72 +55,13 @@ const EditableItem = ({
   defaultValue,
   isNewColumn,
   columnType,
+  enumValue,
 }) => {
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
   const [editedDefaultValue, setEditedDefaultValue] = useState(
     defaultValue || ""
   );
-
-  const [defaultValueFormmated, setDefaultValueFormmated] = useState(
-    defaultValue || ""
-  );
-
-  // const handleDefaultValue = useCallback(
-  //   (defaultValue) => {
-  //     let result = defaultValue;
-
-  //     if (
-  //       defaultValue === null ||
-  //       (typeof defaultValue === "string" &&
-  //         columnType !== "BOOLEAN" &&
-  //         defaultValue.includes("NULL"))
-  //     ) {
-  //       console.log(defaultValue);
-  //       return "לא הוגדר ערך ברירת מחדל";
-  //       // result = null;
-  //     } else if (columnType === "BOOLEAN") {
-  //       return defaultValue;
-  //     } else if (defaultValue.includes("enum_nifgaimHalals_")) {
-  //       const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
-  //       const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
-  //       return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
-  //     } else if (defaultValue.includes("timestamp with time zone")) {
-  //       const formatDate = defaultValue.split("'")[1].split(" ")[0];
-  //       return formatDate;
-  //     } else if (columnType === "BOOLEAN") {
-  //       return defaultValue;
-  //     } else if (defaultValue.includes("enum_nifgaimHalals_")) {
-  //       const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
-  //       const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
-  //       return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
-  //     } else {
-  //       if (defaultValue instanceof Date) {
-  //         console.log("here is a default value")
-  //         const day = String(defaultValue.getDate()).padStart(2, "0");
-  //         const month = String(defaultValue.getMonth() + 1).padStart(2, "0"); // Month is zero-based
-  //         const year = defaultValue.getFullYear();
-  //         result = `${day}/${month}/${year}`;
-  //       } else if (
-  //         defaultValue.includes("timestamp with time zone") ||
-  //         defaultValue.includes("character varying")
-  //       ) {
-  //         const temp = defaultValue.match(/'([^']+)'/)[1];
-  //         result = temp.substring(0, 10);
-  //         // result = `${day}/${month}/${year}`;
-  //       }
-  //     }
-  //     return result;
-  //   },
-  //   [columnType]
-  // );
-
-  // useEffect(() => {
-  //   if (isColumn) {
-  //     const temp = handleDefaultValue(editedDefaultValue);
-  //     setDefaultValueFormmated(temp);
-  //   }
-  // }, [editedDefaultValue, handleDefaultValue, isColumn]);
 
   const formatDateToString = (dayjsObject) => {
     console.log(dayjsObject);
@@ -177,10 +118,6 @@ const EditableItem = ({
 
   const isScreenSmall = useMediaQuery("(max-width:850px)");
 
-  if (columnType === "DATE") {
-    console.log(editedDefaultValue);
-    console.log(dayjs(editedDefaultValue, "D/M/YYYY"));
-  }
   return (
     <Card
       sx={{
@@ -421,7 +358,7 @@ const EditableItem = ({
                     id="defaultValue-select"
                     multiple
                     disabled
-                    value={["value1", "value2", "value3"]}
+                    value={enumValue}
                     renderValue={(selected) => (
                       <div style={{ display: "flex", flexWrap: "wrap" }}>
                         {selected.map((value) => (
@@ -441,9 +378,16 @@ const EditableItem = ({
                       fontSize: "15px",
                     }}
                   >
-                    <MenuItem value="option1">Option 1</MenuItem>
-                    <MenuItem value="option2">Option 2</MenuItem>
-                    <MenuItem value="option3">Option 3</MenuItem>
+                    {enumValue.map((index, enumOption) => {
+                      return (
+                        <MenuItem
+                          key={index}
+                          value={enumOption}
+                        >
+                          {enumOption}
+                        </MenuItem>
+                      );
+                    })}
                   </Select>
                 </FormControl>
               )}
