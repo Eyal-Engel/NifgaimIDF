@@ -80,6 +80,7 @@ export default function SimpleDialog({
 
         onCreateClicked(newColumnName, columnTypeFormatted, defaultValue);
       } else if (typeOfColumn === "DATE") {
+        console.log(defaultValue)
         const dateObject = new Date(defaultValue);
 
         const day = dateObject.getDate().toString().padStart(2, "0");
@@ -271,6 +272,7 @@ export default function SimpleDialog({
           style={{ margin: "auto", width: "80%", marginTop: "15px" }}
         >
           <DatePicker
+            format="DD/MM/YYYY"
             label="תאריך ברירת מחדל"
             onChange={handeldefaultValueChange}
             sx={{width: "100%"}}

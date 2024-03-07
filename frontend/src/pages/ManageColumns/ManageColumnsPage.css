@@ -31,14 +31,19 @@
   padding-right: 10px;
 }
 
-@media only screen and (max-width: 400px) {
+.cardContent {
+  display: flex;
+  align-items: center;
+  direction: rtl;
+  width: 80%;
+}
+
   .actionColumnItemButtons {
     /* changed from actionCommandItemButtons */
     display: flex;
     flex-direction: column;
     gap: 5px;
   }
-}
 
 .loader {
   position: relative;

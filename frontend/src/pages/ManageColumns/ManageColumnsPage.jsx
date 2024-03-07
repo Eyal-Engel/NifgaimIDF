@@ -46,6 +46,71 @@ export default function ManageColumnsPage() {
     setOpenDialog(true);
   };
 
+  const formatDateToString = (dayjsObject) => {
+    if (!dayjsObject || !dayjsObject.isValid()) {
+      return "Invalid dayjs object";
+    }
+
+    // Format the date as DD/MM/YYYY
+    const formattedDate = dayjsObject.format("DD/MM/YYYY");
+
+    return formattedDate;
+  };
+
+  const handleDefaultValue = (defaultValue, columnType) => {
+    let result = defaultValue;
+
+    if (
+      defaultValue === null ||
+      (typeof defaultValue === "string" &&
+        columnType !== "BOOLEAN" &&
+        defaultValue.includes("NULL"))
+    ) {
+      return "לא הוגדר ערך ברירת מחדל";
+      // result = null;
+    } else if (columnType === "BOOLEAN") {
+      return defaultValue;
+    } else if (defaultValue.includes("enum_nifgaimHalals_")) {
+      const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
+      const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
+      return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
+    } else if (defaultValue.includes("timestamp with time zone")) {
+      const timestampString = defaultValue.split("'")[1];
+
+      // Parse the timestamp string and format it
+      const timestamp = new Date(timestampString);
+
+      const day = timestamp.getDate();
+      const month = timestamp.getMonth() + 1; // Months are zero-based, so add 1
+      const year = timestamp.getFullYear();
+
+      const formattedDate = `${day}/${month}/${year}`;
+      return formattedDate;
+    } else if (columnType === "BOOLEAN") {
+      return defaultValue;
+    } else if (defaultValue.includes("enum_nifgaimHalals_")) {
+      const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
+      const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
+      return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
+    } else {
+      if (defaultValue instanceof Date) {
+        console.log("here is a default value");
+        // const day = String(defaultValue.getDate()).padStart(2, "0");
+        // const month = String(defaultValue.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+        // const year = defaultValue.getFullYear();
+        // result = `${day}/${month}/${year}`;
+      } else if (
+        defaultValue.includes("timestamp with time zone") ||
+        defaultValue.includes("character varying")
+      ) {
+        const temp = defaultValue.match(/'([^']+)'/)[1];
+        result = temp.substring(0, 10);
+        // result = `${day}/${month}/${year}`;
+      }
+    }
+    return result;
+  };
+
   const handleDataTypeName = (dataType) => {
     switch (dataType) {
       case "character varying":
@@ -76,10 +141,14 @@ export default function ManageColumnsPage() {
         setOriginalColumns(originColumns);
         const columns = columnsWithAllData.map((column) => {
           const columnType = handleDataTypeName(column.data_type);
+          const defaultValue = handleDefaultValue(
+            column.column_default,
+            columnType
+          );
           return {
             columnName: column.column_name,
             columnType: columnType,
-            columnDefault: column.column_default,
+            columnDefault: defaultValue,
           };
         });
 
@@ -95,7 +164,7 @@ export default function ManageColumnsPage() {
   }, []);
 
   if (loading) {
-    return <span class="loader"></span>; // Render loading indicator
+    return <span className="loader"></span>; // Render loading indicator
   }
 
   const handelColumnNameChange = async (
@@ -121,22 +190,25 @@ export default function ManageColumnsPage() {
           loggedUserId,
           columnName,
           newName,
-          newDefaultValue,
+          columnType === "DATE"
+            ? dayjs(newDefaultValue, "DD/MM/YYYY")
+            : newDefaultValue,
           columnType
         ); // changed from updateCommandById
       }
-
+      // if (columnType === "DATE") {
+      //   newDefaultValue = formatDateToString(newDefaultValue);
+      //   console.log(newDefaultValue)
+      // }
       setColumns((prevColumns) => {
-        // changed from setCommands
         return prevColumns.map((column) => {
-          // changed from command
           if (column.columnName === columnName) {
-            // Update the columnName for the matching columnId  // changed from commandName
+            console.log(newDefaultValue);
             return {
               ...column,
               columnName: newName,
               defaultValue: newDefaultValue,
-            }; // changed from commandName
+            };
           }
           return column; // changed from command
         });
@@ -214,11 +286,14 @@ export default function ManageColumnsPage() {
           loggedUserId,
           newColumnName,
           typeOfColumn,
-          typeOfColumn === "DATE" ? dayjs(defaultValue) : defaultValue
+          typeOfColumn === "DATE"
+            ? dayjs(defaultValue, "DD/MM/YYYY")
+            : defaultValue
         ); // changed from createCommand
         if (typeOfColumn.includes("select")) {
           typeOfColumn = "ENUM";
         }
+
         setColumns((prev) => [
           ...prev,
           {
@@ -300,6 +375,8 @@ export default function ManageColumnsPage() {
 
   // Combine the matching and non-matching columns
   const sortedFilteredColumns = [...nonMatchingColumns, ...matchingColumns];
+
+  console.log(sortedFilteredColumns);
   return (
     <div className="columnsContainer">
       <div className="columnsHeader">
@@ -321,27 +398,23 @@ export default function ManageColumnsPage() {
         </CacheProvider>
       </div>
       <ul className="columns-list">
-        {sortedFilteredColumns.map(
-          (
-            column // changed from command
-          ) => (
-            <li key={column.columnName}>
-              <EditableItem
-                isColumn={true}
-                isNewColumn={originalColumns.some(
-                  (originColumn) => originColumn === column.columnName
-                )}
-                itemName={column.columnName} // changed from commandName
-                itemId={column.columnName}
-                defaultValue={column.columnDefault}
-                handleItemNameChange={handelColumnNameChange} // changed from handelCommandNameChange
-                handleDeleteItem={handleDeleteColumn} // changed from handleDeleteCommand
-                isNewItem={column.isNewItem ? true : false}
-                columnType={column.columnType} // changed from commandName
-              />
-            </li>
-          )
-        )}
+        {sortedFilteredColumns.map((column) => (
+          <li key={column.columnName}>
+            <EditableItem
+              isColumn={true}
+              isNewColumn={originalColumns.some(
+                (originColumn) => originColumn === column.columnName
+              )}
+              itemName={column.columnName} // changed from commandName
+              itemId={column.columnName}
+              defaultValue={column.columnDefault}
+              handleItemNameChange={handelColumnNameChange} // changed from handelCommandNameChange
+              handleDeleteItem={handleDeleteColumn} // changed from handleDeleteCommand
+              isNewItem={column.isNewItem ? true : false}
+              columnType={column.columnType} // changed from commandName
+            />
+          </li>
+        ))}
       </ul>
       <div>
         <Button color="secondary" onClick={handelOpenDialog}>
