@@ -61,7 +61,7 @@ import { getHalalById } from "../../utils/api/halalsApi";
 import CreateLeftOverDialog from "./CreateLeftOverDialog";
 import EditLeftOverDialog from "./EditLeftOverDialog";
 
-function CustomToolbar({ setRows }) {
+function CustomToolbar({ rows, setRows }) {
   const [openCreateNewLeftOver, setOpenCreateNewLeftOver] =
     React.useState(false);
 
@@ -92,6 +92,8 @@ function CustomToolbar({ setRows }) {
       <CreateLeftOverDialog
         openDialog={openCreateNewLeftOver}
         setOpenDialog={setOpenCreateNewLeftOver}
+        rows={rows}
+        setRows={setRows}
       />
       <GridToolbarContainer
         style={{
@@ -224,13 +226,9 @@ export default function ManageLeftOversPage() {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(null);
 
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  const loggedUserId = userData ? userData.userId : "";
-
   const handleRowClick = (params) => {
-    // Store the selected row
+    console.log([params]);
     setSelectedRow(params.row);
-    // Open the dialog
     setOpenDialog(true);
   };
 
@@ -479,7 +477,7 @@ export default function ManageLeftOversPage() {
           noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { rows, setRows, setRowModesModel },
         }}
       />
 
@@ -488,6 +486,8 @@ export default function ManageLeftOversPage() {
           openDialog={openDialog}
           setOpenDialog={setOpenDialog}
           selectedRow={selectedRow}
+          setRows={setRows}
+          rows={rows}
         />
       )}
     </Box>

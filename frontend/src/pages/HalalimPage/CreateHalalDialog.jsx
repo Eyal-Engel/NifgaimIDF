@@ -48,6 +48,8 @@ export default function CreateHalalDialog({
   const [enums, setEnums] = useState({});
   const [inputValues, setInputValues] = useState({});
 
+  console.log("check infinte");
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -94,8 +96,6 @@ export default function CreateHalalDialog({
       // Handle error appropriately, e.g., show a message to the user
     }
   };
-
-
 
   return (
     <div>

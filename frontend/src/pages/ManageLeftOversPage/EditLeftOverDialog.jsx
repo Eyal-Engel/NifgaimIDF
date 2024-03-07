@@ -21,6 +21,8 @@ import {
 } from "@mui/material";
 import Draggable from "react-draggable";
 import { MuiTelInput } from "mui-tel-input";
+import Swal from "sweetalert2";
+import { deleteLeftOver } from "../../utils/api/leftOversApi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -37,10 +39,19 @@ function PaperComponent(props) {
   );
 }
 
-const EditLeftOverDialog = ({ openDialog, setOpenDialog, selectedRow }) => {
+const EditLeftOverDialog = ({
+  openDialog,
+  setOpenDialog,
+  selectedRow,
+  setRows,
+  rows,
+}) => {
   const [inputValues, setInputValues] = useState({});
-  console.log(selectedRow);
   const [phone, setPhone] = useState(selectedRow?.phone || "+972");
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
+
+  console.log("check infinte");
 
   const [selectedValue, setSelectedValue] = React.useState(
     selectedRow?.proximity || ""
@@ -84,6 +95,61 @@ const EditLeftOverDialog = ({ openDialog, setOpenDialog, selectedRow }) => {
     } catch (error) {
       console.error("Error:", error);
       // Handle error appropriately, e.g., show a message to the user
+    }
+  };
+
+  const handleDeleteClick = (id) => () => {
+    try {
+      const leftOverName = selectedRow.fullName;
+
+      Swal.fire({
+        title: `האם את/ה בטוח/ה שתרצה/י למחוק את השאר ${leftOverName}`,
+        text: "פעולה זאת איננה ניתנת לשחזור",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "מחק משתמש",
+        cancelButtonText: "בטל",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await deleteLeftOver(loggedUserId, selectedRow.id);
+            setRows((prevRows) =>
+              prevRows.filter((row) => row.id !== selectedRow.id)
+            );
+            Swal.fire({
+              title: `חלל "${leftOverName}" נמחק בהצלחה!`,
+              text: "",
+              icon: "success",
+              confirmButtonText: "אישור",
+              customClass: {
+                container: "swal-dialog-custom",
+              },
+            }).then((result) => {
+              setOpenDialog(false);
+            });
+          } catch (error) {
+            Swal.fire({
+              title: `לא ניתן למחוק את החלל`,
+              text: error,
+              icon: "error",
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "אישור",
+              reverseButtons: true,
+              customClass: {
+                container: "swal-dialog-custom",
+              },
+            }).then((result) => {});
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -224,7 +290,11 @@ const EditLeftOverDialog = ({ openDialog, setOpenDialog, selectedRow }) => {
               <Button variant="contained" style={{ marginLeft: "10px" }}>
                 שמור שינויים
               </Button>
-              <Button variant="contained" color="error">
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleDeleteClick(selectedRow.id)}
+              >
                 מחיקה
               </Button>
             </div>

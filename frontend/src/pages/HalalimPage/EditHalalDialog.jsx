@@ -63,6 +63,9 @@ export default function EditHalalDIalog({
     nifgaimGraveyardId: "קבר",
     nifgaimCommandId: "פיקוד",
   };
+
+  console.log("check infinte");
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -235,7 +238,9 @@ export default function EditHalalDIalog({
           >
             <Button onClick={handleCloseDialog}>ביטול</Button>
             <div>
-              <Button variant="contained" style={{marginLeft: "10px"}}>שמור שינויים</Button>
+              <Button variant="contained" style={{ marginLeft: "10px" }}>
+                שמור שינויים
+              </Button>
               <Button variant="contained" color="error">
                 מחיקה
               </Button>

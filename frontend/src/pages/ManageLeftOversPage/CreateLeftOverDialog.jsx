@@ -30,6 +30,7 @@ import {
 } from "../../utils/api/halalsApi";
 import { createLeftOver } from "../../utils/api/leftOversApi";
 import { MuiTelInput } from "mui-tel-input";
+import Swal from "sweetalert2";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -48,7 +49,12 @@ function PaperComponent(props) {
 
 const MemoizedSelect = React.memo(Select);
 
-export default function CreateLeftOverDialog({ openDialog, setOpenDialog }) {
+export default function CreateLeftOverDialog({
+  openDialog,
+  setOpenDialog,
+  rows,
+  setRows,
+}) {
   const [inputValues, setInputValues] = useState({});
   const [phone, setPhone] = useState("+972");
   const [halals, setHalals] = useState([]);
@@ -80,20 +86,47 @@ export default function CreateLeftOverDialog({ openDialog, setOpenDialog }) {
       ...prevValues,
       [column]: value,
     }));
-
-    console.log(inputValues, column + ":" + value);
   }, []);
 
   const handleSubmit = async () => {
     try {
-      // Here you can send inputValues to your backend using a POST request
-      console.log("Input values:", loggedUserId, inputValues);
-      console.log(inputValues);
-      await createLeftOver(loggedUserId, inputValues);
-      handleCloseDialog();
+      const newLeftOVer = await createLeftOver(loggedUserId, inputValues);
+      const formmatedLeftOver = {
+        id: newLeftOVer.id,
+        fullName: newLeftOVer.fullName,
+        halalId: newLeftOVer.nifgaimHalalId,
+        proximity: newLeftOVer.proximity,
+        city: newLeftOVer.city,
+        address: newLeftOVer.address,
+        phone: newLeftOVer.phone,
+        comments: newLeftOVer.comments,
+        isReligious: newLeftOVer.isReligious,
+      };
+      console.log(formmatedLeftOver);
+      setRows(rows, formmatedLeftOver);
+      Swal.fire({
+        title: `שאר "${inputValues.fullName}" נוסף בהצלחה!`,
+        text: "",
+        icon: "success",
+        confirmButtonText: "אישור",
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {
+        setOpenDialog(false);
+      });
     } catch (error) {
-      console.error("Error:", error);
-      // Handle error appropriately, e.g., show a message to the user
+      Swal.fire({
+        title: `לא ניתן להוסיף את השאר`,
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "אישור",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {});
     }
   };
 
