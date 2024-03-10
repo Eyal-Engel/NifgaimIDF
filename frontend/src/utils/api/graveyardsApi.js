@@ -1,7 +1,9 @@
 import { get, post, patch, del } from "./api"; // Assuming you have functions for POST, PATCH, DELETE requests in your API
 
+const port = process.env.REACT_APP_API_PORT || 5000;
+
 export async function getAllGraveyards() {
-  const apiUrl = "http://localhost:5000/api/graveyards/";
+  const apiUrl = `http://localhost:${port}/api/graveyards/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -23,7 +25,7 @@ export async function getAllGraveyards() {
 }
 
 export async function getGraveyardById(graveyardId) {
-  const apiUrl = `http://localhost:5000/api/graveyards/${graveyardId}`;
+  const apiUrl = `http://localhost:${port}/api/graveyards/${graveyardId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -48,7 +50,7 @@ export async function createGraveyard(userId, graveyardName) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = "http://localhost:5000/api/graveyards/";
+  const apiUrl = `http://localhost:${port}/api/graveyards/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -79,7 +81,7 @@ export async function updateGraveyardById(userId, graveyardId, graveyardName) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/graveyards/${graveyardId}`;
+  const apiUrl = `http://localhost:${port}/api/graveyards/${graveyardId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -110,7 +112,7 @@ export async function deleteGraveyardById(userId, graveyardId) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/graveyards/${graveyardId}`;
+  const apiUrl = `http://localhost:${port}/api/graveyards/${graveyardId}`;
 
   const headers = {
     "Content-Type": "application/json",

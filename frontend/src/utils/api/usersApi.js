@@ -1,8 +1,11 @@
 import { del, get, patch, post } from "./api";
 import { getCommandNameById } from "./commandsApi";
 
+const port = process.env.REACT_APP_API_PORT || 5000;
+
 export async function getUsers() {
-  const apiUrl = "http://localhost:5000/api/users/";
+
+  const apiUrl = `http://localhost:${port}/api/users/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -22,7 +25,7 @@ export async function getUsers() {
 }
 
 export async function getUserById(userId) {
-  const apiUrl = `http://localhost:5000/api/users/${userId}`;
+  const apiUrl = `http://localhost:${port}/api/users/${userId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -95,7 +98,7 @@ export async function getCommandIdByUserId(userId) {
 }
 
 export async function loginUser(credentials) {
-  const apiUrl = "http://localhost:5000/api/users/login/";
+  const apiUrl = `http://localhost:${port}/api/users/login/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -120,7 +123,7 @@ export async function createUser(userId, creditentials) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = "http://localhost:5000/api/users/signup/";
+  const apiUrl = `http://localhost:${port}/api/users/signup/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -151,7 +154,7 @@ export async function updateUser(userUpdatingUserId, userId, updatedUserData) {
   // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/users/${userId}`;
+  const apiUrl = `http://localhost:${port}/api/users/${userId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -182,7 +185,7 @@ export async function changePassword(userUpdatingUserId, userId, newPassword) {
   // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/users/password/${userId}`;
+  const apiUrl = `http://localhost:${port}/api/users/password/${userId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -213,7 +216,7 @@ export async function deleteUser(userUpdatingUserId, userId) {
   // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/users/${userId}`;
+  const apiUrl = `http://localhost:${port}/api/users/${userId}`;
 
   const headers = {
     "Content-Type": "application/json",

@@ -1,7 +1,9 @@
 import { get, post, patch, del } from "./api";
 
+const port = process.env.REACT_APP_API_PORT || 5000;
+
 export async function getSoldierAccompanieds() {
-  const apiUrl = "http://localhost:5000/api/soldierAccompanied/";
+  const apiUrl = `http://localhost:${port}/api/soldierAccompanied/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -23,7 +25,7 @@ export async function getSoldierAccompanieds() {
 }
 
 export async function getSoldierAccompaniedById(soldierAccompaniedId) {
-  const apiUrl = `http://localhost:5000/api/soldierAccompanied/${soldierAccompaniedId}`;
+  const apiUrl = `http://localhost:${port}/api/soldierAccompanied/${soldierAccompaniedId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -48,7 +50,7 @@ export async function getSoldierAccompaniedById(soldierAccompaniedId) {
 }
 
 export async function getSoldierAccompaniedsByHalalId(halalId) {
-  const apiUrl = `http://localhost:5000/api/soldierAccompanied/byHalal/${halalId}`;
+  const apiUrl = `http://localhost:${port}/api/soldierAccompanied/byHalal/${halalId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -86,7 +88,7 @@ export async function getSoldierAccompaniedsByHalalId(halalId) {
 //   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
 // }
 export async function createSoldierAccompanied(userId, soldierAccompaniedData) {
-  const apiUrl = "http://localhost:5000/api/soldierAccompanied/";
+  const apiUrl = `http://localhost:${port}/api/soldierAccompanied/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -127,7 +129,7 @@ export async function updateSoldierAccompanied(
   soldierAccompaniedId,
   updatedSoldierAccompaniedData
 ) {
-  const apiUrl = `http://localhost:5000/api/soldierAccompanied/${soldierAccompaniedId}`;
+  const apiUrl = `http://localhost:${port}/api/soldierAccompanied/${soldierAccompaniedId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -162,7 +164,7 @@ export async function updateSoldierAccompanied(
 //   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
 // }
 export async function deleteSoldierAccompanied(userId, soldierAccompaniedId) {
-  const apiUrl = `http://localhost:5000/api/soldierAccompanied/${soldierAccompaniedId}`;
+  const apiUrl = `http://localhost:${port}/api/soldierAccompanied/${soldierAccompaniedId}`;
 
   const headers = {
     "Content-Type": "application/json",

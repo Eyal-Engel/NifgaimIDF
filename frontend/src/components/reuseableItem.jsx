@@ -30,6 +30,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import RtlPlugin from "./rtlPlugin/RtlPlugin";
+import EditSelectDialog from "./EditSelectDialog";
 
 const theme = (outerTheme) =>
   createTheme({
@@ -57,11 +58,17 @@ const EditableItem = ({
   columnType,
   enumValues,
 }) => {
+  const [openDialog, setOpenDialog] = useState(false);
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
+
   const [editedItemName, setEditedItemName] = useState(itemName);
   const [editedDefaultValue, setEditedDefaultValue] = useState(
     defaultValue || ""
   );
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   console.log(enumValues);
   const formatDateToString = (dayjsObject) => {
@@ -77,7 +84,11 @@ const EditableItem = ({
   };
 
   const handleEditClick = () => {
-    setIsInEditMode(true);
+    if (columnType === "ENUM") {
+      setOpenDialog(true);
+    } else {
+      setIsInEditMode(true);
+    }
   };
 
   const handleSaveClick = () => {
@@ -481,6 +492,13 @@ const EditableItem = ({
             </Button>
           ))}
       </CardActions>
+      <EditSelectDialog
+        columnType={columnType}
+        open={openDialog}
+        onClose={handleCloseDialog}
+        onSaveClicked={handleSaveClick} // changed from handelAddCommand
+        isColumn={true}
+      />
     </Card>
   );
 };

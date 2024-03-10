@@ -1,7 +1,9 @@
 import { get, post, patch, del } from "./api";
 
+const port = process.env.REACT_APP_API_PORT || 5000;
+
 export async function getCommands() {
-  const apiUrl = "http://localhost:5000/api/commands/";
+  const apiUrl = `http://localhost:${port}/api/commands/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -36,7 +38,7 @@ export async function getAllCommandsNames() {
 }
 
 export async function getCommandById(commandId) {
-  const apiUrl = `http://localhost:5000/api/commands/${commandId}`;
+  const apiUrl = `http://localhost:${port}/api/commands/${commandId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -89,7 +91,7 @@ export async function createCommand(userId, commandName) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = "http://localhost:5000/api/commands/";
+  const apiUrl = `http://localhost:${port}/api/commands/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -119,7 +121,7 @@ export async function updateCommandById(userId, commandId, commandName) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/commands/${commandId}`;
+  const apiUrl = `http://localhost:${port}/api/commands/${commandId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -149,7 +151,7 @@ export async function updateCommandById(userId, commandId, commandName) {
 
 // frontend code
 export async function deleteCommandById(userId, commandId) {
-  const apiUrl = `http://localhost:5000/api/commands/${commandId}`;
+  const apiUrl = `http://localhost:${port}/api/commands/${commandId}`;
 
   const headers = {
     "Content-Type": "application/json",

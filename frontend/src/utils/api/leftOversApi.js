@@ -1,7 +1,9 @@
 import { get, post, patch, del } from "./api";
 
+const port = process.env.REACT_APP_API_PORT || 5000;
+
 export async function getLeftOvers() {
-  const apiUrl = "http://localhost:5000/api/leftovers/";
+  const apiUrl = `http://localhost:${port}/api/leftovers/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -23,7 +25,7 @@ export async function getLeftOvers() {
 }
 
 export async function getLeftOverById(leftOverId) {
-  const apiUrl = `http://localhost:5000/api/leftovers/${leftOverId}`;
+  const apiUrl = `http://localhost:${port}/api/leftovers/${leftOverId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -45,7 +47,7 @@ export async function getLeftOverById(leftOverId) {
 }
 
 export async function getLeftOversByHalalId(halalId) {
-  const apiUrl = `http://localhost:5000/api/leftovers/byHalal/${halalId}`;
+  const apiUrl = `http://localhost:${port}/api/leftovers/byHalal/${halalId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -67,7 +69,7 @@ export async function getLeftOversByHalalId(halalId) {
 }
 
 export async function createLeftOver(userId, leftOverData) {
-  const apiUrl = "http://localhost:5000/api/leftovers/";
+  const apiUrl = `http://localhost:${port}/api/leftovers/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -92,7 +94,7 @@ export async function createLeftOver(userId, leftOverData) {
 }
 
 export async function updateLeftOver(userId, leftOverId, updatedLeftOverData) {
-  const apiUrl = `http://localhost:5000/api/leftovers/${leftOverId}`;
+  const apiUrl = `http://localhost:${port}/api/leftovers/${leftOverId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -116,7 +118,7 @@ export async function updateLeftOver(userId, leftOverId, updatedLeftOverData) {
 }
 
 export async function deleteLeftOver(userId, leftOverId) {
-  const apiUrl = `http://localhost:5000/api/leftovers/${leftOverId}`;
+  const apiUrl = `http://localhost:${port}/api/leftovers/${leftOverId}`;
 
   const headers = {
     "Content-Type": "application/json",

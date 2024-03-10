@@ -1,7 +1,9 @@
 import { get, post, patch, del } from "./api";
 
+const port = process.env.REACT_APP_API_PORT || 5000;
+
 export async function getHalalColumnsAndTypes() {
-  const apiUrl = "http://localhost:5000/api/halals/columns/names/";
+  const apiUrl = `http://localhost:${port}/api/halals/columns/names/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -23,7 +25,7 @@ export async function getHalalColumnsAndTypes() {
 }
 
 export async function getHalals() {
-  const apiUrl = "http://localhost:5000/api/halals/";
+  const apiUrl = `http://localhost:${port}/api/halals/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -45,7 +47,7 @@ export async function getHalals() {
 }
 
 export async function getOriginalColumns() {
-  const apiUrl = "http://localhost:5000/api/halals/originalColumns";
+  const apiUrl = `http://localhost:${port}/api/halals/originalColumns`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -66,7 +68,7 @@ export async function getOriginalColumns() {
 }
 
 export async function getHalalById(halalId) {
-  const apiUrl = `http://localhost:5000/api/halals/${halalId}`;
+  const apiUrl = `http://localhost:${port}/api/halals/${halalId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -88,7 +90,7 @@ export async function getHalalById(halalId) {
 }
 
 export async function getHalalByPrivateNumber(privateNumber) {
-  const apiUrl = `http://localhost:5000/api/halals/byPrivateNumber/${privateNumber}`;
+  const apiUrl = `http://localhost:${port}/api/halals/byPrivateNumber/${privateNumber}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -113,7 +115,7 @@ export async function getHalalByPrivateNumber(privateNumber) {
 }
 
 export async function getHalalsByCommandId(commandId) {
-  const apiUrl = `http://localhost:5000/api/halals/command/${commandId}`;
+  const apiUrl = `http://localhost:${port}/api/halals/command/${commandId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -135,7 +137,7 @@ export async function getHalalsByCommandId(commandId) {
 }
 
 export async function getColumnEnums(columnName) {
-  const apiUrl = `http://localhost:5000/api/halals/columnEnums/${columnName}`;
+  const apiUrl = `http://localhost:${port}/api/halals/columnEnums/${columnName}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -160,7 +162,7 @@ export async function getColumnEnums(columnName) {
 }
 
 export async function createHalal(halalData) {
-  const apiUrl = "http://localhost:5000/api/halals/";
+  const apiUrl = `http://localhost:${port}/api/halals/`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -182,7 +184,7 @@ export async function createHalal(halalData) {
 }
 
 export async function updateHalal(halalId, updatedHalalData) {
-  const apiUrl = `http://localhost:5000/api/halals/${halalId}`;
+  const apiUrl = `http://localhost:${port}/api/halals/${halalId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -208,7 +210,7 @@ export async function updateHalal(halalId, updatedHalalData) {
 }
 
 export async function deleteHalal(halalId) {
-  const apiUrl = `http://localhost:5000/api/halals/${halalId}`;
+  const apiUrl = `http://localhost:${port}/api/halals/${halalId}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -238,7 +240,7 @@ export async function addHalalColumn(
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = "http://localhost:5000/api/halals/columns/add";
+  const apiUrl = `http://localhost:${port}/api/halals/columns/add`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -276,7 +278,7 @@ export async function updateHalalColumn(
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/halals/columns/update`;
+  const apiUrl = `http://localhost:${port}/api/halals/columns/update`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -319,7 +321,7 @@ export async function updateHalalSelectColumn(
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/halals/columns/update/select`;
+  const apiUrl = `http://localhost:${port}/api/halals/columns/update/select`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -356,7 +358,7 @@ export async function deleteHalalColumn(userId, columnName) {
   // const commandUserId = getCommandNameByUserId(userId);
 
   // if (commandUserId === "חיל הלוגיסטיקה") {
-  const apiUrl = `http://localhost:5000/api/halals/columns/delete`;
+  const apiUrl = `http://localhost:${port}/api/halals/columns/delete`;
 
   const headers = {
     "Content-Type": "application/json",
