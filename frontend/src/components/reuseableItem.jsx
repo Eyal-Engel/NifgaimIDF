@@ -55,7 +55,7 @@ const EditableItem = ({
   defaultValue,
   isNewColumn,
   columnType,
-  enumValue,
+  enumValues,
 }) => {
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [editedItemName, setEditedItemName] = useState(itemName);
@@ -63,6 +63,7 @@ const EditableItem = ({
     defaultValue || ""
   );
 
+  console.log(enumValues);
   const formatDateToString = (dayjsObject) => {
     console.log(dayjsObject);
     if (!dayjsObject || !dayjsObject.isValid()) {
@@ -116,7 +117,7 @@ const EditableItem = ({
     }
   };
 
-  const isScreenSmall = useMediaQuery("(max-width:850px)");
+  const isScreenSmall = useMediaQuery("(max-width:1000px)");
 
   return (
     <Card
@@ -357,8 +358,7 @@ const EditableItem = ({
                     labelId="defaultValue"
                     id="defaultValue-select"
                     multiple
-                    disabled
-                    value={enumValue}
+                    value={enumValues}
                     renderValue={(selected) => (
                       <div style={{ display: "flex", flexWrap: "wrap" }}>
                         {selected.map((value) => (
@@ -378,12 +378,9 @@ const EditableItem = ({
                       fontSize: "15px",
                     }}
                   >
-                    {enumValue.map((index, enumOption) => {
+                    {enumValues.map((index, enumOption) => {
                       return (
-                        <MenuItem
-                          key={index}
-                          value={enumOption}
-                        >
+                        <MenuItem key={index} value={enumOption}>
                           {enumOption}
                         </MenuItem>
                       );

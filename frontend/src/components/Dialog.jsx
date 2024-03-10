@@ -77,8 +77,7 @@ export default function SimpleDialog({
         // enumValues = ["value1", "value2", "value3"]
 
         const columnTypeFormatted = `select: [${enumValues.join(", ")}]`;
-
-        onCreateClicked(newColumnName, columnTypeFormatted, defaultValue);
+        onCreateClicked(newColumnName, columnTypeFormatted, defaultValue, enumValues );
       } else if (typeOfColumn === "DATE") {
         console.log(defaultValue);
         if (defaultValue) {
@@ -91,10 +90,10 @@ export default function SimpleDialog({
           const formatDate = `${day}/${month}/${year}`;
           console.log(formatDate);
           onCreateClicked(newColumnName, typeOfColumn, formatDate);
+        } else {
+          const emptyValue = "לא הוגדר ערך ברירת מחדל";
+          onCreateClicked(newColumnName, typeOfColumn, emptyValue);
         }
-        else {
-          const emptyValue = "לא הוגדר ערך ברירת מחדל"
-          onCreateClicked(newColumnName, typeOfColumn, emptyValue)}
       } else {
         onCreateClicked(newColumnName, typeOfColumn, defaultValue);
       }

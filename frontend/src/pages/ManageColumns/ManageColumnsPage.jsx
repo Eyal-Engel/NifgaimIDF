@@ -147,7 +147,7 @@ export default function ManageColumnsPage() {
             columnName: column.column_name,
             columnType: columnType,
             columnDefault: defaultValue,
-            enumValue: columnType === "ENUM" ? arrayEnum : null,
+            enumValues: columnType === "ENUM" ? arrayEnum : null,
           };
         });
 
@@ -284,7 +284,12 @@ export default function ManageColumnsPage() {
     });
   };
 
-  const handelAddColumn = async (newColumnName, typeOfColumn, defaultValue) => {
+  const handelAddColumn = async (
+    newColumnName,
+    typeOfColumn,
+    defaultValue,
+    enumValues
+  ) => {
     if (newColumnName !== "") {
       try {
         await addHalalColumn(
@@ -305,6 +310,7 @@ export default function ManageColumnsPage() {
             columnName: newColumnName,
             columnType: typeOfColumn,
             columnDefault: defaultValue,
+            enumValues: typeOfColumn === "ENUM" ? enumValues : null,
           },
         ]);
         setSearchInputValue("");
@@ -417,7 +423,7 @@ export default function ManageColumnsPage() {
               handleDeleteItem={handleDeleteColumn}
               isNewItem={column.isNewItem ? true : false}
               columnType={column.columnType}
-              enumValue={column.enumValue}
+              enumValues={column.enumValues}
             />
           </li>
         ))}
