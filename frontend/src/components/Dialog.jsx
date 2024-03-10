@@ -51,7 +51,8 @@ export default function SimpleDialog({
 
   // const [values, setValues] = useState([1, 2]);
   const [enumValues, setEnumValues] = useState(["", ""]);
-  const [defaultValue, setDefaultValue] = useState(enumValues[0]);
+  const [defaultValue, setDefaultValue] = useState(null);
+  const [enumDefaultValue, setEnumDefaultValue] = useState(enumValues[0]);
 
   const handleEnumValueChange = (index, event) => {
     const newEnumValues = [...enumValues];
@@ -75,9 +76,14 @@ export default function SimpleDialog({
       if (typeOfColumn === "ENUM") {
         // typeOfColumn === "ENUM"
         // enumValues = ["value1", "value2", "value3"]
-
         const columnTypeFormatted = `select: [${enumValues.join(", ")}]`;
-        onCreateClicked(newColumnName, columnTypeFormatted, defaultValue, enumValues );
+        
+        onCreateClicked(
+          newColumnName,
+          columnTypeFormatted,
+          enumDefaultValue,
+          enumValues
+        );
       } else if (typeOfColumn === "DATE") {
         console.log(defaultValue);
         if (defaultValue) {
@@ -95,6 +101,7 @@ export default function SimpleDialog({
           onCreateClicked(newColumnName, typeOfColumn, emptyValue);
         }
       } else {
+        console.log(defaultValue);
         onCreateClicked(newColumnName, typeOfColumn, defaultValue);
       }
       // }
@@ -106,6 +113,9 @@ export default function SimpleDialog({
   const handeldefaultValueChange = (event) => {
     if (typeOfColumn === "DATE") {
       setDefaultValue(event.$d);
+    }
+    if (typeOfColumn === "ENUM") {
+      setEnumDefaultValue(event.target.value);
     } else {
       setDefaultValue(event.target.value);
     }
@@ -113,11 +123,9 @@ export default function SimpleDialog({
 
   const handleTypeOfColumnChange = (event) => {
     setTypeOfColumn(event.target.value);
-    if (event.target.value === "ENUM") {
-      setDefaultValue(""); // Set defaultValue to an empty string
-    } else {
-      setDefaultValue(null);
-    }
+    setEnumValues(["", ""]);
+    setEnumDefaultValue("");
+    setDefaultValue(null);
   };
 
   const handleNewNameChange = (e) => {
@@ -323,8 +331,8 @@ export default function SimpleDialog({
                 marginTop: "15px",
                 direction: "rtl",
               }}
-              value={defaultValue}
-              onChange={(event) => setDefaultValue(event.target.value)}
+              value={enumDefaultValue}
+              onChange={(event) => setEnumDefaultValue(event.target.value)}
             >
               {enumValues.map((value, index) => (
                 <MenuItem key={index} value={value}>

@@ -35,15 +35,19 @@ const cacheRtl = createCache({
 
 export default function EditSelectDialog({
   columnType,
+  columnName,
+  enumValuesFromColumn,
+  defaultValueFromColumn,
   onClose,
   open,
   onSaveClicked,
 }) {
-  const [newColumnName, setNewColumnName] = useState("");
+  const [newColumnName, setNewColumnName] = useState(columnName);
+  console.log(enumValuesFromColumn);
 
   // const [values, setValues] = useState([1, 2]);
-  const [enumValues, setEnumValues] = useState(["", ""]);
-  const [defaultValue, setDefaultValue] = useState(enumValues[0]);
+  const [enumValues, setEnumValues] = useState(enumValuesFromColumn);
+  const [defaultValue, setDefaultValue] = useState(defaultValueFromColumn);
 
   const handleEnumValueChange = (index, event) => {
     const newEnumValues = [...enumValues];
@@ -83,6 +87,7 @@ export default function EditSelectDialog({
       <DialogTitle sx={{ textAlign: "center" }}>עריכת עמודת בחירה</DialogTitle>
       <TextField
         sx={{ width: "80%", margin: "auto", direction: "rtl" }}
+        value={newColumnName}
         onChange={handleNewNameChange}
         placeholder="שם העמודה החדשה"
       ></TextField>
@@ -105,6 +110,7 @@ export default function EditSelectDialog({
               id="columnType"
               value={columnType}
               label="סוג"
+              disabled
             >
               <MenuItem
                 dir="rtl"

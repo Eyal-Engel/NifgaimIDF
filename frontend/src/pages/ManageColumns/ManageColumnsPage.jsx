@@ -61,8 +61,10 @@ export default function ManageColumnsPage() {
     } else if (columnType === "BOOLEAN") {
       return defaultValue;
     } else if (defaultValue.includes("enum_nifgaimHalals_")) {
+      console.log(defaultValue);
       const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
       const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
+      console.log(defaultValue.substring(startIndex, endIndex));
       return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
     } else if (defaultValue.includes("timestamp with time zone")) {
       const timestampString = defaultValue.split("'")[1];
@@ -164,10 +166,6 @@ export default function ManageColumnsPage() {
     fetchColumnsData();
   }, []);
 
-  useEffect(() => {
-    console.log(columns);
-  }, [columns]);
-
   if (loading) {
     return <span className="loader"></span>; // Render loading indicator
   }
@@ -176,19 +174,22 @@ export default function ManageColumnsPage() {
     columnName,
     newName,
     columnType,
-    newDefaultValue
+    newDefaultValue,
+    newEnums
   ) => {
     try {
       if (columnType === "ENUM") {
         // updateHalalSelectColumn
-        const newEnum = ["value1", "value2", "value3"];
-        const columnDefault = "value1";
+        // newEnums = ["1", "value2", "value3", "value4"];
+        // newDefaultValue = "1";
+        console.log(columnName, newName, newEnums, newDefaultValue);
+
         await updateHalalSelectColumn(
           loggedUserId,
           columnName,
           newName,
-          newEnum,
-          columnDefault
+          newEnums,
+          newDefaultValue
         );
       } else {
         await updateHalalColumn(

@@ -31,6 +31,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import RtlPlugin from "./rtlPlugin/RtlPlugin";
 import EditSelectDialog from "./EditSelectDialog";
+import IntegerTypeItem from "./manageColumns/IntegerTypeItem";
+import StringTypeItem from "./manageColumns/StringTypeItem";
+import BooleanTypeItem from "./manageColumns/BooleanTypeItem";
+import DateTypeItem from "./manageColumns/DateTypeItem";
+import EnumTypeItem from "./manageColumns/EnumTypeItem";
 
 const theme = (outerTheme) =>
   createTheme({
@@ -70,7 +75,6 @@ const EditableItem = ({
     setOpenDialog(false);
   };
 
-  console.log(enumValues);
   const formatDateToString = (dayjsObject) => {
     console.log(dayjsObject);
     if (!dayjsObject || !dayjsObject.isValid()) {
@@ -104,6 +108,24 @@ const EditableItem = ({
     } else {
       handleItemNameChange(itemId, editedItemName);
     }
+  };
+
+  const handelSelectColumnSaved = (
+    newColumnName,
+    columnType,
+    defaultValue,
+    enumValues
+  ) => {
+    console.log(newColumnName, columnType, defaultValue, enumValues);
+
+    handleItemNameChange(
+      itemId,
+      newColumnName,
+      columnType,
+      defaultValue,
+      enumValues
+    );
+    setOpenDialog(false);
   };
 
   const handleDeleteClick = () => {
@@ -144,260 +166,67 @@ const EditableItem = ({
       }}
     >
       <div className="cardContent">
-        {!isInEditMode ? (
-          <Typography
-            sx={{
-              textAlign: "end",
-              padding: "10px",
-            }}
-            variant="h6"
-            component="div"
-          >
-            {itemName}
-          </Typography>
-        ) : (
-          <Input
-            type="text"
-            value={editedItemName}
-            onChange={handleInputChange}
-            autoFocus
-            sx={{
-              fontSize: "1.2rem",
-              padding: "0px 8px",
-              margin: "10px",
-              direction: "rtl",
-            }}
+        {columnType === "INTEGER" && (
+          <IntegerTypeItem
+            isInEditMode={isInEditMode}
+            itemName={itemName}
+            editedItemName={editedItemName}
+            handleInputChange={handleInputChange}
+            columnType={columnType}
+            editedDefaultValue={editedDefaultValue}
+            handleInputDefaultValueChange={handleInputDefaultValueChange}
           />
         )}
+        {columnType === "STRING" && (
+          <StringTypeItem
+            isInEditMode={isInEditMode}
+            itemName={itemName}
+            editedItemName={editedItemName}
+            handleInputChange={handleInputChange}
+            columnType={columnType}
+            editedDefaultValue={editedDefaultValue}
+            handleInputDefaultValueChange={handleInputDefaultValueChange}
+          />
+        )}
+        {columnType === "BOOLEAN" && (
+          <BooleanTypeItem
+            isInEditMode={isInEditMode}
+            itemName={itemName}
+            editedItemName={editedItemName}
+            handleInputChange={handleInputChange}
+            columnType={columnType}
+            editedDefaultValue={editedDefaultValue}
+            handleInputDefaultValueChange={handleInputDefaultValueChange}
+          />
+        )}
+        {columnType === "DATE" && (
+          <DateTypeItem
+            isInEditMode={isInEditMode}
+            itemName={itemName}
+            editedItemName={editedItemName}
+            handleInputChange={handleInputChange}
+            columnType={columnType}
+            editedDefaultValue={editedDefaultValue}
+            handleInputDefaultValueChange={handleInputDefaultValueChange}
+          />
+        )}
+
         {isColumn && (
           <CacheProvider value={cacheRtl}>
             <ThemeProvider theme={theme}>
-              <FormControl
-                className="selectTypeOfColumn"
-                sx={{
-                  m: 1,
-                  // width: "15%",
-                  zIndex: 0,
-                }}
-                size="small"
-              >
-                <InputLabel id="columnType">סוג</InputLabel>
-                <Select
-                  dir="rtl"
-                  labelId="columnType"
-                  id="columnType"
-                  value={columnType}
-                  label="סוג"
-                  disabled
-                >
-                  <MenuItem
-                    dir="rtl"
-                    value={columnType}
-                    selected={columnType.includes("select")}
-                  >
-                    בחירה
-                  </MenuItem>
-                  <MenuItem
-                    dir="rtl"
-                    value="uuid"
-                    selected={columnType === "UUID"}
-                  >
-                    מספר יחודי
-                  </MenuItem>
-                  <MenuItem
-                    dir="rtl"
-                    value="STRING"
-                    selected={columnType === "STRING"}
-                  >
-                    טקסט
-                  </MenuItem>
-
-                  <MenuItem
-                    dir="rtl"
-                    value="DATE"
-                    selected={columnType === "DATE"}
-                  >
-                    תאריך
-                  </MenuItem>
-
-                  <MenuItem
-                    dir="rtl"
-                    value="ENUM"
-                    selected={columnType === "ENUM"}
-                  >
-                    בחירה
-                  </MenuItem>
-
-                  <MenuItem
-                    dir="rtl"
-                    value="BOOLEAN"
-                    selected={columnType === "BOOLEAN"}
-                  >
-                    כן/לא
-                  </MenuItem>
-
-                  <MenuItem
-                    dir="rtl"
-                    value="INTEGER"
-                    selected={columnType === "INTEGER"}
-                  >
-                    מספר
-                  </MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl
-                className="selectDefaultValueOfColumn"
-                sx={{
-                  m: 1,
-                  // width: "20%",
-                  minWidth: "7rem",
-                  zIndex: 0,
-                }}
-                size="small"
-              >
-                <InputLabel
-                  id="defaultValue"
-                  sx={{
-                    background: "white",
-                    paddingRight: "5px",
-                    paddingLeft: "5px",
-                    marginTop: "0px",
-                    fontSize: "15px",
-                  }}
-                >
-                  ערך ברירת מחדל
-                </InputLabel>
-                {!isInEditMode ? (
-                  <Select
-                    dir="rtl"
-                    value={editedDefaultValue}
-                    disabled
-                    sx={{ textAlign: "left" }}
-                  >
-                    <MenuItem
-                      dir="rtl"
-                      value={editedDefaultValue}
-                      selected={editedDefaultValue !== null}
-                    >
-                      {editedDefaultValue}
-                    </MenuItem>
-                  </Select>
-                ) : (
-                  <>
-                    {columnType === "STRING" && (
-                      <Input
-                        type="text"
-                        value={editedDefaultValue}
-                        onChange={handleInputDefaultValueChange}
-                        style={{
-                          // width: "30%",
-                          fontSize: "1.2rem",
-                          padding: "8px",
-                          margin: "10px",
-                          direction: "rtl",
-                        }}
-                      />
-                    )}
-                    {columnType === "INTEGER" && (
-                      <Input
-                        type="number"
-                        value={editedDefaultValue}
-                        onChange={handleInputDefaultValueChange}
-                        style={{
-                          // width: "30%",
-                          fontSize: "1.2rem",
-                          padding: "8px",
-                          margin: "10px",
-                          direction: "rtl",
-                        }}
-                      />
-                    )}
-                    {columnType === "DATE" && (
-                      <RtlPlugin>
-                        <DatePicker
-                          format="D/M/YYYY"
-                          value={dayjs(editedDefaultValue, "D/M/YYYY")}
-                          onChange={handleInputDefaultValueChange}
-                        />
-                      </RtlPlugin>
-                    )}
-                    {columnType === "BOOLEAN" && (
-                      <FormControl
-                        sx={{
-                          // width: "90%",
-                          marginTop: "10px",
-                          display: "flex",
-                          alignItems: "flex-end",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <RadioGroup
-                          aria-labelledby="booleanSelect"
-                          name="controlled-radio-buttons-group"
-                          value={editedDefaultValue} // Convert boolean to string
-                          onChange={handleInputDefaultValueChange}
-                          row
-                        >
-                          <FormControlLabel
-                            value={true}
-                            control={<Radio />}
-                            label="כן"
-                          />
-                          <FormControlLabel
-                            value={false}
-                            control={<Radio />}
-                            label="לא"
-                          />
-                        </RadioGroup>
-                      </FormControl>
-                    )}
-                  </>
-                )}
-              </FormControl>
               {columnType === "ENUM" && (
-                <FormControl
-                  className="selectEnums"
-                  sx={{
-                    m: 1,
-                    width: "20%",
-                    zIndex: 0,
-                  }}
-                  size="small"
-                >
-                  <Select
-                    labelId="defaultValue"
-                    id="defaultValue-select"
-                    multiple
-                    value={enumValues}
-                    renderValue={(selected) => (
-                      <div style={{ display: "flex", flexWrap: "wrap" }}>
-                        {selected.map((value) => (
-                          <Chip
-                            key={value}
-                            label={value}
-                            style={{ margin: 2 }}
-                          />
-                        ))}
-                      </div>
-                    )}
-                    sx={{
-                      background: "white",
-                      paddingRight: "5px",
-                      paddingLeft: "5px",
-                      marginTop: "0px",
-                      fontSize: "15px",
-                    }}
-                  >
-                    {enumValues.map((index, enumOption) => {
-                      return (
-                        <MenuItem key={index} value={enumOption}>
-                          {enumOption}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
+                <EnumTypeItem
+                  isInEditMode={isInEditMode}
+                  itemName={itemName}
+                  editedItemName={editedItemName}
+                  handleInputChange={handleInputChange}
+                  columnType={columnType}
+                  editedDefaultValue={editedDefaultValue}
+                  enumValuesFromColumn={enumValues}
+                  open={openDialog}
+                  onClose={handleCloseDialog}
+                  onSaveClicked={handelSelectColumnSaved} // changed from handelAddCommand
+                />
               )}
             </ThemeProvider>
           </CacheProvider>
@@ -492,13 +321,17 @@ const EditableItem = ({
             </Button>
           ))}
       </CardActions>
-      <EditSelectDialog
-        columnType={columnType}
-        open={openDialog}
-        onClose={handleCloseDialog}
-        onSaveClicked={handleSaveClick} // changed from handelAddCommand
-        isColumn={true}
-      />
+      {columnType === "ENUM" && (
+        <EditSelectDialog
+          columnType={columnType}
+          columnName={editedItemName}
+          defaultValueFromColumn={defaultValue}
+          enumValuesFromColumn={enumValues}
+          open={openDialog}
+          onClose={handleCloseDialog}
+          onSaveClicked={handelSelectColumnSaved} // changed from handelAddCommand
+        />
+      )}
     </Card>
   );
 };
