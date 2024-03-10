@@ -14,10 +14,7 @@ import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 import "./HalalimPage.css";
 import AddIcon from "@mui/icons-material/Add";
-import {
-  getHalalColumnsAndTypes,
-  getHalals,
-} from "../../utils/api/halalsApi";
+import { getHalalColumnsAndTypes, getHalals } from "../../utils/api/halalsApi";
 import EditHalalDialog from "./EditHalalDialog";
 import CreateHalalDialog from "./CreateHalalDialog";
 function CustomToolbar({ setRows, allDataOfHalalsColumns }) {
@@ -38,11 +35,11 @@ function CustomToolbar({ setRows, allDataOfHalalsColumns }) {
         startIcon={<AddIcon />}
         onClick={handleCreateNewHalal}
         sx={{
-          paddingRight: "60px",
+          // paddingRight: "80px",
           borderRadius: "5000px 5000px 0 0",
 
           "& .MuiButton-startIcon": {
-            marginLeft: "-125px",
+            // marginLeft: "-115px",
           },
           "&:hover": {
             backgroundColor: "#EDF3F8",
@@ -295,13 +292,19 @@ export default function HalalimPage() {
   return (
     <Box
       sx={{
-        width: "60vw",
-        height: "80vh",
+        width: "100vw",
+        height: "75vh",
         maxHeight: "70rem",
         maxWidth: "70rem",
         "@media screen and (max-width: 1200px)": {
-          width: "50vw",
-          height: "70vh",
+          width: "100vw",
+          height: "75vh",
+          maxHeight: "40rem",
+          maxWidth: "60rem",
+        },
+        "@media screen and (max-width: 1050px)": {
+          width: "70vw",
+          height: "75vh",
           maxHeight: "40rem",
           maxWidth: "60rem",
         },

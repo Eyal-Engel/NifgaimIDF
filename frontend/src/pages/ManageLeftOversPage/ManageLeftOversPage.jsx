@@ -76,11 +76,11 @@ function CustomToolbar({ rows, setRows }) {
         startIcon={<AddIcon />}
         onClick={handleCreateNewLeftOver}
         sx={{
-          paddingRight: "60px",
+          paddingRight: "80px",
           borderRadius: "5000px 5000px 0 0",
 
           "& .MuiButton-startIcon": {
-            marginLeft: "-125px",
+            marginLeft: "-115px",
           },
           "&:hover": {
             backgroundColor: "#EDF3F8",
@@ -423,6 +423,12 @@ export default function ManageLeftOversPage() {
         maxHeight: "70rem",
         maxWidth: "70rem",
         "@media screen and (max-width: 1200px)": {
+          width: "100vw",
+          height: "75vh",
+          maxHeight: "40rem",
+          maxWidth: "60rem",
+        },
+        "@media screen and (max-width: 1050px)": {
           width: "70vw",
           height: "75vh",
           maxHeight: "40rem",

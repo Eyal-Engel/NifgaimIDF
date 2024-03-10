@@ -18,6 +18,7 @@ import {
   FormControl,
   Autocomplete,
   TextField,
+  ListSubheader,
 } from "@mui/material";
 import Draggable from "react-draggable";
 import { MuiTelInput } from "mui-tel-input";
@@ -29,7 +30,10 @@ import {
   getHalalByPrivateNumber,
   getHalals,
 } from "../../utils/api/halalsApi";
-import { deleteSoldierAccompanied } from "../../utils/api/soldierAccompaniedsApi";
+import {
+  deleteSoldierAccompanied,
+  updateSoldierAccompanied,
+} from "../../utils/api/soldierAccompaniedsApi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -55,9 +59,35 @@ const EditSoldierAccompaniedDialog = ({
   const [inputValues, setInputValues] = useState({});
   const [phone, setPhone] = useState(selectedRow?.phone || "+972");
   const [selectedHalal, setSelectedHalal] = useState(null);
-  const [selectedValue, setSelectedValue] = useState(selectedRow.proximity);
-  const [halals, setHalals] = useState([]);
+  // const [selectedValue, setSelectedValue] = useState(selectedRow.proximity);
+  const [rank, setRank] = useState("");
 
+  const [halals, setHalals] = useState([]);
+  const ranksOptions = [
+    // category: חובה
+    `טירון`,
+    `טוראי`,
+    `רב"ט`,
+    `סמל`,
+    `סמ"ר`,
+    // category: נגדים
+    `רס"ל`,
+    `רס"ר`,
+    `רס"מ`,
+    `רס"ב`,
+    `רנ"ג`,
+    `רנ"ג`,
+    // category: קצינים
+    `סג"ם`,
+    `סגן`,
+    `סרן`,
+    `רס"ן`,
+    `סא"ל`,
+    `אל"ם`,
+    `תא"ל`,
+    `אלוף`,
+    `רא"ל`,
+  ];
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
 
@@ -71,7 +101,7 @@ const EditSoldierAccompaniedDialog = ({
       try {
         const halal = await getHalalByPrivateNumber(selectedRow.halalId);
         setSelectedHalal(halal);
-        setSelectedValue(selectedRow.proximity);
+        setRank(selectedRow.rank)
         setPhone(selectedRow.phone);
 
         let halalim = await getHalals();
@@ -94,8 +124,8 @@ const EditSoldierAccompaniedDialog = ({
   const handleInputChange = useCallback((column, value) => {
     if (column === "phone") {
       setPhone(value);
-    } else if (column === "proximity") {
-      setSelectedValue(value);
+    } else if (column === "rank") {
+      setRank(value);
     }
     setInputValues((prevValues) => ({
       ...prevValues,
@@ -107,6 +137,8 @@ const EditSoldierAccompaniedDialog = ({
     try {
       // Here you can send inputValues to your backend using a PATCH request
 
+      console.log(selectedHalal.id);
+
       const updatedSoldierAccompaniedsData = {
         fullName: inputValues.fullName || selectedRow.fullName,
         privateNumber: inputValues.privateNumber || selectedRow.privateNumber,
@@ -115,9 +147,10 @@ const EditSoldierAccompaniedDialog = ({
         unit: inputValues.unit || selectedRow.unit,
         comments: inputValues.comments || selectedRow.comments,
         nifgaimHalalId: selectedHalal.id,
+        // nifgaimHalalId: "3ee1ea11-6e33-4845-b9ad-76ad1957551d",
       };
 
-      const updatedSoldierAccompanieds = await updateLeftOver(
+      const updatedSoldierAccompanieds = await updateSoldierAccompanied(
         loggedUserId,
         selectedRow.id,
         updatedSoldierAccompaniedsData
@@ -156,7 +189,7 @@ const EditSoldierAccompaniedDialog = ({
         showCancelButton: true,
         confirmButtonColor: "#d33",
         cancelButtonColor: "#3085d6",
-        confirmButtonText: "מחק שאר",
+        confirmButtonText: "מחק מלווה",
         cancelButtonText: "בטל",
         reverseButtons: true,
         customClass: {
@@ -276,10 +309,40 @@ const EditSoldierAccompaniedDialog = ({
             <InputLabel id={"rank"} style={{ marginTop: "20px" }}>
               דרגה
             </InputLabel>
-            <Input
-              defaultValue={selectedRow.rank || ""}
-              onChange={(e) => handleInputChange("rank", e.target.value)}
-            />
+            <RtlPlugin>
+              <Select
+                value={rank}
+                onChange={(e) => handleInputChange("rank", e.target.value)}
+                style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
+              >
+                <MenuItem disabled>
+                  <ListSubheader sx={{ textAlign: "right" }}>
+                    חובה
+                  </ListSubheader>
+                </MenuItem>
+                {ranksOptions.slice(0, 5).map((option) => (
+                  <MenuItem key={option} value={option}>
+                    <div style={{ textAlign: "right" }}>{option}</div>
+                  </MenuItem>
+                ))}
+                <MenuItem disabled>
+                  <ListSubheader>נגדים</ListSubheader>
+                </MenuItem>
+                {ranksOptions.slice(5, 11).map((option) => (
+                  <MenuItem key={option} value={option}>
+                    <div style={{ textAlign: "right" }}>{option}</div>
+                  </MenuItem>
+                ))}
+                <MenuItem disabled>
+                  <ListSubheader>קצינים</ListSubheader>
+                </MenuItem>
+                {ranksOptions.slice(11).map((option) => (
+                  <MenuItem key={option} value={option}>
+                    <div style={{ textAlign: "right" }}>{option}</div>
+                  </MenuItem>
+                ))}
+              </Select>
+            </RtlPlugin>
             <InputLabel id={"phone"} style={{ marginTop: "20px" }}>
               מספר טלפון
             </InputLabel>
