@@ -97,6 +97,7 @@ export default function CreateLeftOverDialog({
       const formmatedLeftOver = {
         ...newLeftOVer,
         halalId: selectedHalal.privateNumber,
+        halalFullName: selectedHalal.lastName + " " + selectedHalal.firstName,
       };
       setRows([...rows, formmatedLeftOver]);
       Swal.fire({

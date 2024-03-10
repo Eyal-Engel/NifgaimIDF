@@ -236,23 +236,38 @@ export default function ManageLeftOversPage() {
     const fetchDataUsers = async () => {
       setLoading(true);
       try {
+        // Fetch soldierAccompanieds data
         const soldierAccompaniedsData = await getSoldierAccompanieds();
-        const soldierAccompaniedsPromises = soldierAccompaniedsData.map(
-          async (soldierAccompanieds) => ({
-            id: soldierAccompanieds.id,
-            fullName: soldierAccompanieds.fullName,
-            halalId: (await getHalalById(soldierAccompanieds.nifgaimHalalId))
-              .privateNumber,
-            privateNumber: soldierAccompanieds.privateNumber,
-            rank: soldierAccompanieds.rank,
-            phone: soldierAccompanieds.phone,
-            unit: soldierAccompanieds.unit,
-            comments: soldierAccompanieds.comments,
-          })
-        );
+
+        // Create an array to store promises for fetching halal data
+        const soldierAccompaniedsPromises = [];
+
+        // Iterate over soldierAccompaniedsData to create promises for halal data
+        for (const soldierAccompanieds of soldierAccompaniedsData) {
+          // Pushing promises for halal data into the array
+          soldierAccompaniedsPromises.push(
+            getHalalById(soldierAccompanieds.nifgaimHalalId).then(
+              (halalData) => ({
+                id: soldierAccompanieds.id,
+                fullName: soldierAccompanieds.fullName,
+                halalId: halalData.privateNumber,
+                halalFullName: halalData.lastName + " " + halalData.firstName,
+                privateNumber: soldierAccompanieds.privateNumber,
+                rank: soldierAccompanieds.rank,
+                phone: soldierAccompanieds.phone,
+                unit: soldierAccompanieds.unit,
+                comments: soldierAccompanieds.comments,
+              })
+            )
+          );
+        }
+
+        // Wait for all promises to resolve
         const transformedSoldierAccompanieds = await Promise.all(
           soldierAccompaniedsPromises
         );
+
+        // Update state with transformed data
         setRows(transformedSoldierAccompanieds);
         setLoading(false);
       } catch (error) {
@@ -296,6 +311,15 @@ export default function ManageLeftOversPage() {
     {
       field: "halalId",
       headerName: "מספר אישי של החלל",
+      headerAlign: "center",
+      align: "center",
+      type: "string",
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: "halalFullName",
+      headerName: "שם מלא של החלל",
       headerAlign: "center",
       align: "center",
       type: "string",
