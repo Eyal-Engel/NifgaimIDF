@@ -118,7 +118,7 @@ export async function createSoldierAccompanied(userId, soldierAccompaniedData) {
 //     "phone": "987-654-3210",
 //     "unit": "Updated Unit XYZ",
 //     "comments": "Updated comments",
-//     "halalId": "DEF456"
+//     "halalId": "3ee1ea11-6e33-4845-b9ad-76ad1957551d"
 //   },
 //   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
 // }

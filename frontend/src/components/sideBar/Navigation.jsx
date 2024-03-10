@@ -11,6 +11,8 @@ import userIcon from "../../assets/images/icons/userIcon.png";
 import graveyardIcon from "../../assets/images/icons/graveyardIcon.png";
 import commandIcon from "../../assets/images/icons/commandIcon.png";
 import columnIcon from "../../assets/images/icons/columnIcon.png";
+import soldierAccompaniedsIcon from "../../assets/images/icons/soldierAccompaniedIcon.png";
+import leftOversIcon from "../../assets/images/icons/familyIcon.png";
 
 const variants = {
   open: {
@@ -112,7 +114,7 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
         styles: {
           background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
         },
-        imgSrc: columnIcon,
+        imgSrc: soldierAccompaniedsIcon,
         url: "/manageSoldierAccompanied",
       },
       {
@@ -120,7 +122,7 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
         styles: {
           background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
         },
-        imgSrc: columnIcon,
+        imgSrc: leftOversIcon,
         url: "/manageLeftOvers",
       },
     ];

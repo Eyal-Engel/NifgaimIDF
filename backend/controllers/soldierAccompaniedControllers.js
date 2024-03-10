@@ -110,8 +110,15 @@ const createSoldierAccompanied = async (req, res, next) => {
 
 const updateSoldierAccompanied = async (req, res, next) => {
   const soldierAccompaniedId = req.params.soldierAccompaniedId;
-  const { fullName, privateNumber, rank, phone, unit, comments, halalId } =
-    req.body.updatedSoldierAccompaniedData;
+  const {
+    fullName,
+    privateNumber,
+    rank,
+    phone,
+    unit,
+    comments,
+    nifgaimHalalId,
+  } = req.body.updatedSoldierAccompaniedData;
   const { userId } = req.body;
 
   try {
@@ -134,6 +141,7 @@ const updateSoldierAccompanied = async (req, res, next) => {
     const soldierAccompanied = await SoldierAccompanied.findByPk(
       soldierAccompaniedId
     );
+
     if (!soldierAccompanied) {
       const error = new Error(
         `Soldier accompanied with ID ${soldierAccompaniedId} not found.`,
@@ -147,7 +155,7 @@ const updateSoldierAccompanied = async (req, res, next) => {
     soldierAccompanied.phone = phone;
     soldierAccompanied.unit = unit;
     soldierAccompanied.comments = comments;
-    soldierAccompanied.halalId = halalId;
+    soldierAccompanied.nifgaimHalalId = nifgaimHalalId;
     await soldierAccompanied.save();
     res.json(soldierAccompanied);
   } catch (err) {
