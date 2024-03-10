@@ -101,7 +101,7 @@ const EditSoldierAccompaniedDialog = ({
       try {
         const halal = await getHalalByPrivateNumber(selectedRow.halalId);
         setSelectedHalal(halal);
-        setRank(selectedRow.rank)
+        setRank(selectedRow.rank);
         setPhone(selectedRow.phone);
 
         let halalim = await getHalals();
@@ -159,6 +159,7 @@ const EditSoldierAccompaniedDialog = ({
       const updatedSoldierAccompaniedsDataWithHalalId = {
         ...updatedSoldierAccompanieds,
         halalId: selectedHalal.privateNumber,
+        halalFullName: selectedHalal.lastName + " " + selectedHalal.firstName,
       };
 
       // Then, inside your setRows function, ensure that you include halalId (which now contains nifgaimHalalId)

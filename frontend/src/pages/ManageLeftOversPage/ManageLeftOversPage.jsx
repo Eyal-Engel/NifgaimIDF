@@ -236,17 +236,27 @@ export default function ManageLeftOversPage() {
       setLoading(true);
       try {
         const leftOversData = await getLeftOvers();
-        const leftOversPromises = leftOversData.map(async (leftOver) => ({
-          id: leftOver.id,
-          fullName: leftOver.fullName,
-          halalId: (await getHalalById(leftOver.nifgaimHalalId)).privateNumber,
-          proximity: leftOver.proximity,
-          city: leftOver.city,
-          address: leftOver.address,
-          phone: leftOver.phone,
-          comments: leftOver.comments,
-          isReligious: leftOver.isReligious,
-        }));
+
+        const leftOversPromises = [];
+
+        for (const leftOver of leftOversData) {
+          // Pushing promises for halal data into the array
+          leftOversPromises.push(
+            getHalalById(leftOver.nifgaimHalalId).then((halalData) => ({
+              id: leftOver.id,
+              fullName: leftOver.fullName,
+              halalId: halalData.privateNumber,
+              halalFullName: halalData.lastName + " " + halalData.firstName,
+              proximity: leftOver.proximity,
+              city: leftOver.city,
+              address: leftOver.address,
+              phone: leftOver.phone,
+              comments: leftOver.comments,
+              isReligious: leftOver.isReligious,
+            }))
+          );
+        }
+
         const transformedLeftOvers = await Promise.all(leftOversPromises);
         setRows(transformedLeftOvers);
         setLoading(false);
@@ -291,6 +301,15 @@ export default function ManageLeftOversPage() {
     {
       field: "halalId",
       headerName: "מספר אישי של החלל",
+      headerAlign: "center",
+      align: "center",
+      type: "string",
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: "halalFullName",
+      headerName: "שם מלא של החלל",
       headerAlign: "center",
       align: "center",
       type: "string",

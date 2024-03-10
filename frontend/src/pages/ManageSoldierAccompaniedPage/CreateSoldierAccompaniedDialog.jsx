@@ -109,6 +109,7 @@ export default function CreateSoldierAccompaniedDialog({
 
   const handleSubmit = async () => {
     try {
+      console.log(inputValues);
       const newLeftOVer = await createSoldierAccompanied(
         loggedUserId,
         inputValues
@@ -117,6 +118,7 @@ export default function CreateSoldierAccompaniedDialog({
       const formmatedLeftOver = {
         ...newLeftOVer,
         halalId: selectedHalal.privateNumber,
+        halalFullName: selectedHalal.lastName + " " + selectedHalal.firstName,
       };
       setRows([...rows, formmatedLeftOver]);
       Swal.fire({

@@ -136,8 +136,9 @@ const EditLeftOverDialog = ({
       );
 
       const updatedLeftOverDataWithHalalId = {
-        ...updatedLeftOverData,
+        ...updatedLeftOver,
         halalId: selectedHalal.privateNumber,
+        halalFullName: selectedHalal.lastName + " " + selectedHalal.firstName,
       };
 
       // Then, inside your setRows function, ensure that you include halalId (which now contains nifgaimHalalId)
