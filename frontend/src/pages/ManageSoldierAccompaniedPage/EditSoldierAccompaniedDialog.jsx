@@ -5,55 +5,31 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
   ThemeProvider,
   Input,
   InputLabel,
-  Paper,
-  Radio,
-  RadioGroup,
   Select,
   MenuItem,
   DialogActions,
-  Slide,
-  FormControl,
   createTheme,
   Autocomplete,
   TextField,
   ListSubheader,
 } from "@mui/material";
-import Draggable from "react-draggable";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
-import { deleteLeftOver, updateLeftOver } from "../../utils/api/leftOversApi";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import {
-  getHalalById,
-  getHalalByPrivateNumber,
-  getHalals,
-} from "../../utils/api/halalsApi";
+import { getHalalByPrivateNumber, getHalals } from "../../utils/api/halalsApi";
 import {
   deleteSoldierAccompanied,
   updateSoldierAccompanied,
 } from "../../utils/api/soldierAccompaniedsApi";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { column, prefixer } from "stylis";
+import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-function PaperComponent(props) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} sx={{ borderRadius: "10px" }} />
-    </Draggable>
-  );
-}
+import Transition from "../../components/TableUtils/Transition";
+import PaperComponent from "../../components/TableUtils/PaperComponent";
 
 const EditSoldierAccompaniedDialog = ({
   openDialog,
@@ -80,7 +56,6 @@ const EditSoldierAccompaniedDialog = ({
     `רס"ר`,
     `רס"מ`,
     `רס"ב`,
-    `רנ"ג`,
     `רנ"ג`,
     // category: קצינים
     `סג"ם`,
@@ -113,9 +88,6 @@ const EditSoldierAccompaniedDialog = ({
     stylisPlugins: [prefixer, rtlPlugin],
   });
 
-  console.log("check infinte");
-  console.log(selectedRow);
-
   useEffect(() => {
     const fetchHalalsData = async () => {
       //   setLoading(true);
@@ -137,7 +109,12 @@ const EditSoldierAccompaniedDialog = ({
     };
 
     fetchHalalsData();
-  }, [selectedRow.halalId, selectedRow.proximity, selectedRow.phone]);
+  }, [
+    selectedRow.halalId,
+    selectedRow.proximity,
+    selectedRow.phone,
+    selectedRow.rank,
+  ]);
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -158,8 +135,6 @@ const EditSoldierAccompaniedDialog = ({
   const handleSubmit = async () => {
     try {
       // Here you can send inputValues to your backend using a PATCH request
-
-      console.log(selectedHalal.id);
 
       const updatedSoldierAccompaniedsData = {
         fullName: inputValues.fullName || selectedRow.fullName,
@@ -318,6 +293,7 @@ const EditSoldierAccompaniedDialog = ({
                 getOptionLabel={(option) =>
                   `${option.privateNumber}: ${option.firstName} ${option.lastName}`
                 }
+                isOptionEqualToValue={(option, value) => option.id === value.id} // Customize the equality test
                 value={selectedHalal} // Set the value prop instead of defaultValue
                 onChange={(event, newValue) => {
                   setSelectedHalal(newValue); // Update the selectedHalal state
@@ -381,7 +357,6 @@ const EditSoldierAccompaniedDialog = ({
               מספר טלפון
             </InputLabel>
             <MuiTelInput
-              defaultValue={phone}
               value={phone}
               excludecountries={["pa"]}
               onChange={(value) => handleInputChange("phone", value)}

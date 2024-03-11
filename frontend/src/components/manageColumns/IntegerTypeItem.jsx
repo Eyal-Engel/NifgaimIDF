@@ -4,7 +4,6 @@ import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import { Input } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -27,9 +26,6 @@ const cacheRtl = createCache({
 
 const IntegerTypeItem = ({
   isInEditMode,
-  itemName,
-  editedItemName,
-  handleInputChange,
   columnType,
   editedDefaultValue,
   handleInputDefaultValueChange,
@@ -105,6 +101,7 @@ const IntegerTypeItem = ({
             ) : (
               <Input
                 type="number"
+                color="primary"
                 value={editedDefaultValue}
                 onChange={handleInputDefaultValueChange}
                 style={{

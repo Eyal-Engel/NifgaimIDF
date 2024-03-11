@@ -112,9 +112,11 @@ export default function SimpleDialog({
 
   const handeldefaultValueChange = (event) => {
     if (typeOfColumn === "DATE") {
+      console.log("herre")
+      console.log(typeOfColumn)
       setDefaultValue(event.$d);
     }
-    if (typeOfColumn === "ENUM") {
+    else if (typeOfColumn === "ENUM") {
       setEnumDefaultValue(event.target.value);
     } else {
       setDefaultValue(event.target.value);

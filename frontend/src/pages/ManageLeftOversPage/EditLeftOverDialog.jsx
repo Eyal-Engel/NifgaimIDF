@@ -8,48 +8,27 @@ import {
   FormControlLabel,
   Input,
   InputLabel,
-  Paper,
   Radio,
   RadioGroup,
   Select,
   MenuItem,
   DialogActions,
-  Slide,
-  FormControl,
   Autocomplete,
   TextField,
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-import Draggable from "react-draggable";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
 import { deleteLeftOver, updateLeftOver } from "../../utils/api/leftOversApi";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import {
-  getHalalById,
-  getHalalByPrivateNumber,
-  getHalals,
-} from "../../utils/api/halalsApi";
+import { getHalalByPrivateNumber, getHalals } from "../../utils/api/halalsApi";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { column, prefixer } from "stylis";
+import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-function PaperComponent(props) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} sx={{ borderRadius: "10px" }} />
-    </Draggable>
-  );
-}
+import Transition from "../../components/TableUtils/Transition";
+import PaperComponent from "../../components/TableUtils/PaperComponent";
 
 const EditLeftOverDialog = ({
   openDialog,
@@ -65,8 +44,6 @@ const EditLeftOverDialog = ({
 
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
-
-  console.log("check infinte");
 
   const theme = createTheme({
     direction: "rtl",
@@ -87,7 +64,7 @@ const EditLeftOverDialog = ({
 
   useEffect(() => {
     const fetchHalalsData = async () => {
-      //   setLoading(true);
+      // setLoading(true);
 
       try {
         const halal = await getHalalByPrivateNumber(selectedRow.halalId);
@@ -275,7 +252,6 @@ const EditLeftOverDialog = ({
         </CacheProvider>
         <Divider />
         <DialogContent>
-          {/* Render input fields based on columns */}
           <div
             key="מספר אישי"
             style={{
@@ -298,9 +274,10 @@ const EditLeftOverDialog = ({
                 getOptionLabel={(option) =>
                   `${option.privateNumber}: ${option.firstName} ${option.lastName}`
                 }
-                value={selectedHalal} // Set the value prop instead of defaultValue
+                value={selectedHalal}
+                isOptionEqualToValue={(option, value) => option.id === value.id} // Customize the equality test
                 onChange={(event, newValue) => {
-                  setSelectedHalal(newValue); // Update the selectedHalal state
+                  setSelectedHalal(newValue);
                   handleInputChange(
                     "nifgaimHalalId",
                     newValue ? newValue.id : ""
@@ -355,7 +332,6 @@ const EditLeftOverDialog = ({
               מספר טלפון
             </InputLabel>
             <MuiTelInput
-              defaultValue={phone}
               value={phone}
               excludecountries={["pa"]}
               onChange={(value) => handleInputChange("phone", value)}

@@ -1,5 +1,5 @@
 import { CacheProvider, ThemeProvider } from "@emotion/react";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import createCache from "@emotion/cache";
 import React from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";

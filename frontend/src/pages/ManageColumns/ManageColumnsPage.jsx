@@ -155,6 +155,7 @@ export default function ManageColumnsPage() {
           const columnType = handleDataTypeName(column.data_type);
           let arrayEnum;
           if (columnType === "ENUM") {
+            console.log(column)
             const columnEnums = await getColumnEnums(column.column_name);
             arrayEnum = columnEnums.slice(1, -1).split(",");
             console.log(columnEnums);

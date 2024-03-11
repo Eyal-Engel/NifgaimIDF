@@ -8,13 +8,11 @@ import {
   FormControlLabel,
   Input,
   InputLabel,
-  Paper,
   Radio,
   RadioGroup,
   Select,
   MenuItem,
   DialogActions,
-  Slide,
   FormControl,
   Autocomplete,
   TextField,
@@ -22,12 +20,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import { DatePicker } from "@mui/x-date-pickers";
-import Draggable from "react-draggable";
-import dayjs from "dayjs";
 import {
-  createHalal,
-  getColumnEnums,
   getHalalByPrivateNumber,
   getHalals,
 } from "../../utils/api/halalsApi";
@@ -36,25 +29,10 @@ import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { column, prefixer } from "stylis";
+import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-function PaperComponent(props) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} sx={{ borderRadius: "10px" }} />
-    </Draggable>
-  );
-}
-
-const MemoizedSelect = React.memo(Select);
+import PaperComponent from "../../components/TableUtils/PaperComponent";
+import Transition from "../../components/TableUtils/Transition";
 
 export default function CreateLeftOverDialog({
   openDialog,
@@ -172,6 +150,7 @@ export default function CreateLeftOverDialog({
     fetchHalalsData();
   }, [inputValues.halalId]);
 
+  console.log("fuck")
   return (
     <div>
       <Dialog
@@ -224,9 +203,6 @@ export default function CreateLeftOverDialog({
             <Input
               onChange={(e) => handleInputChange("fullName", e.target.value)}
             />
-            {/* <InputLabel id={"halal"} style={{ marginTop: "20px" }}>
-              שיוך חלל
-            </InputLabel> */}
             <RtlPlugin>
               <Autocomplete
                 disablePortal
@@ -249,45 +225,7 @@ export default function CreateLeftOverDialog({
                 )}
               />
             </RtlPlugin>
-            {/* <RtlPlugin>
-              <Select
-                fullWidth
-                labelId="halal-label"
-                id="halal-select"
-                value={inputValues.halal || ""}
-                onChange={(e) => handleInputChange("halfal", e.target.value)}
-              >
-                {halals.map((halal, index) => (
-                  <MenuItem
-                    key={index}
-                    value={halal.privateNumber}
-                    style={{
-                      display: "flex",
-                      direction: "rtl",
-                    }}
-                  >
-                    <div style={{ marginLeft: "10%" }}>
-                      <span style={{ fontSize: "small", color: "grey" }}>
-                        שם מלא:
-                      </span>
-                      {"   "}
-                      <span>
-                        {halal.firstName} {halal.lastName}
-                      </span>
-                    </div>
-                    {/* <div style={{ display: "flex", flexDirection: "column" }}> */}
-            {/* <span style={{ fontSize: "small", color: "grey" }}>
-                      מספר אישי:
-                    </span>
-                    {"   "}
-                    <span>{halal.privateNumber}</span>
-                    {/* </div> */}
-            {/* <div style={{ display: "flex", flexDirection: "column" }}> */}
-            {/* </div> */}
-            {/* </MenuItem>
-                ))}
-              </Select>
-            </RtlPlugin>   */}
+        
             <RtlPlugin>
               <FormControl fullWidth style={{ marginTop: "20px" }}>
                 <InputLabel id="demo-simple-select-label">

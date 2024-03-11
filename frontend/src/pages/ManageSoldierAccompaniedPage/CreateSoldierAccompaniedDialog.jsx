@@ -6,56 +6,30 @@ import {
   DialogTitle,
   Divider,
   ThemeProvider,
-  FormControlLabel,
   Input,
   InputLabel,
-  Paper,
-  Radio,
-  RadioGroup,
   Select,
   createTheme,
   MenuItem,
   DialogActions,
-  Slide,
-  FormControl,
   Autocomplete,
   TextField,
   ListSubheader,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import { DatePicker } from "@mui/x-date-pickers";
-import Draggable from "react-draggable";
-import dayjs from "dayjs";
 import {
-  createHalal,
-  getColumnEnums,
   getHalalByPrivateNumber,
   getHalals,
 } from "../../utils/api/halalsApi";
-import { createLeftOver } from "../../utils/api/leftOversApi";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
 import { createSoldierAccompanied } from "../../utils/api/soldierAccompaniedsApi";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { column, prefixer } from "stylis";
+import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-function PaperComponent(props) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} sx={{ borderRadius: "10px" }} />
-    </Draggable>
-  );
-}
-
-const MemoizedSelect = React.memo(Select);
+import Transition from "../../components/TableUtils/Transition";
+import PaperComponent from "../../components/TableUtils/PaperComponent";
 
 export default function CreateSoldierAccompaniedDialog({
   openDialog,
@@ -82,7 +56,6 @@ export default function CreateSoldierAccompaniedDialog({
     `רס"ר`,
     `רס"מ`,
     `רס"ב`,
-    `רנ"ג`,
     `רנ"ג`,
     // category: קצינים
     `סג"ם`,
@@ -131,7 +104,6 @@ export default function CreateSoldierAccompaniedDialog({
 
   const handleSubmit = async () => {
     try {
-      console.log(inputValues);
       const newLeftOVer = await createSoldierAccompanied(
         loggedUserId,
         inputValues
@@ -244,9 +216,6 @@ export default function CreateSoldierAccompaniedDialog({
             <Input
               onChange={(e) => handleInputChange("fullName", e.target.value)}
             />
-            {/* <InputLabel id={"halal"} style={{ marginTop: "20px" }}>
-              שיוך חלל
-            </InputLabel> */}
             <RtlPlugin>
               <Autocomplete
                 disablePortal
@@ -286,27 +255,21 @@ export default function CreateSoldierAccompaniedDialog({
                 onChange={(e) => handleInputChange("rank", e.target.value)}
                 style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
               >
-                <MenuItem disabled>
                   <ListSubheader sx={{ textAlign: "right" }}>
                     חובה
                   </ListSubheader>
-                </MenuItem>
                 {ranksOptions.slice(0, 5).map((option) => (
                   <MenuItem key={option} value={option}>
                     <div style={{ textAlign: "right" }}>{option}</div>
                   </MenuItem>
                 ))}
-                <MenuItem disabled>
                   <ListSubheader>נגדים</ListSubheader>
-                </MenuItem>
                 {ranksOptions.slice(5, 11).map((option) => (
                   <MenuItem key={option} value={option}>
                     <div style={{ textAlign: "right" }}>{option}</div>
                   </MenuItem>
                 ))}
-                <MenuItem disabled>
                   <ListSubheader>קצינים</ListSubheader>
-                </MenuItem>
                 {ranksOptions.slice(11).map((option) => (
                   <MenuItem key={option} value={option}>
                     <div style={{ textAlign: "right" }}>{option}</div>
