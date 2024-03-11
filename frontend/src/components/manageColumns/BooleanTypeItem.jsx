@@ -36,32 +36,6 @@ const BooleanTypeItem = ({
 }) => {
   return (
     <>
-      {!isInEditMode ? (
-        <Typography
-          sx={{
-            textAlign: "end",
-            padding: "10px",
-          }}
-          variant="h6"
-          component="div"
-        >
-          {itemName}
-        </Typography>
-      ) : (
-        <Input
-          type="text"
-          value={editedItemName}
-          onChange={handleInputChange}
-          autoFocus
-          sx={{
-            fontSize: "1.2rem",
-            padding: "0px 8px",
-            margin: "10px",
-            direction: "rtl",
-          }}
-        />
-      )}
-
       <CacheProvider value={cacheRtl}>
         <ThemeProvider theme={theme}>
           <FormControl
@@ -130,37 +104,34 @@ const BooleanTypeItem = ({
                 </MenuItem>
               </Select>
             ) : (
-              
-             
-                  <FormControl
-                    sx={{
-                      // width: "90%",
-                      marginTop: "10px",
-                      display: "flex",
-                      alignItems: "flex-end",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <RadioGroup
-                      aria-labelledby="booleanSelect"
-                      name="controlled-radio-buttons-group"
-                      value={editedDefaultValue} // Convert boolean to string
-                      onChange={handleInputDefaultValueChange}
-                      row
-                    >
-                      <FormControlLabel
-                        value={true}
-                        control={<Radio />}
-                        label="כן"
-                      />
-                      <FormControlLabel
-                        value={false}
-                        control={<Radio />}
-                        label="לא"
-                      />
-                    </RadioGroup>
-                  </FormControl>
-              
+              <FormControl
+                sx={{
+                  // width: "90%",
+                  marginTop: "10px",
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+                <RadioGroup
+                  aria-labelledby="booleanSelect"
+                  name="controlled-radio-buttons-group"
+                  value={editedDefaultValue} // Convert boolean to string
+                  onChange={handleInputDefaultValueChange}
+                  row
+                >
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio />}
+                    label="כן"
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio />}
+                    label="לא"
+                  />
+                </RadioGroup>
+              </FormControl>
             )}
           </FormControl>
         </ThemeProvider>

@@ -3,10 +3,7 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-import {
-
-  useMediaQuery,
-} from "@mui/material";
+import { Input, Typography, useMediaQuery } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
@@ -156,7 +153,32 @@ const EditableItem = ({
       }}
     >
       <div className="cardContent">
-      {columnType === "UUID" && (
+        {!isInEditMode ? (
+          <Typography
+            sx={{
+              textAlign: "end",
+              padding: "10px",
+            }}
+            variant="h6"
+            component="div"
+          >
+            {itemName}
+          </Typography>
+        ) : (
+          <Input
+            type="text"
+            value={editedItemName}
+            onChange={handleInputChange}
+            autoFocus
+            sx={{
+              fontSize: "1.2rem",
+              padding: "0px 8px",
+              margin: "10px",
+              direction: "rtl",
+            }}
+          />
+        )}
+        {columnType === "UUID" && (
           <UuidTypeItem
             isInEditMode={isInEditMode}
             itemName={itemName}
