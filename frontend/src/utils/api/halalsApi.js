@@ -161,7 +161,7 @@ export async function getColumnEnums(columnName) {
   }
 }
 
-export async function createHalal(halalData) {
+export async function createHalal(userId, halalData) {
   const apiUrl = `http://localhost:${port}/api/halals/`;
 
   const headers = {
@@ -174,8 +174,10 @@ export async function createHalal(halalData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ halalData, userId });
+
   try {
-    const response = await post(apiUrl, JSON.stringify(halalData), headers);
+    const response = await post(apiUrl, body, headers);
     return response.data;
   } catch (error) {
     console.error("Error creating halal:", error);
@@ -183,7 +185,7 @@ export async function createHalal(halalData) {
   }
 }
 
-export async function updateHalal(halalId, updatedHalalData) {
+export async function updateHalal(userId, halalId, updatedHalalData) {
   const apiUrl = `http://localhost:${port}/api/halals/${halalId}`;
 
   const headers = {
@@ -196,12 +198,10 @@ export async function updateHalal(halalId, updatedHalalData) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ updatedHalalData, userId });
+
   try {
-    const response = await patch(
-      apiUrl,
-      JSON.stringify(updatedHalalData),
-      headers
-    );
+    const response = await patch(apiUrl, body, headers);
     return response.data;
   } catch (error) {
     console.error(`Error updating halal with id ${halalId}:`, error);

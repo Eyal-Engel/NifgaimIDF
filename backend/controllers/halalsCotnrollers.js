@@ -839,6 +839,24 @@ const createHalal = async (req, res, next) => {
   const id = uuidv4();
 
   try {
+    const { userId } = req.body;
+
+    const user = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
+
+    if (!user || user === null || user === undefined) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (userCommandName !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const columns = await sequelize.query(
       `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
 
@@ -849,7 +867,7 @@ const createHalal = async (req, res, next) => {
     const columnNames = columns.map((column) => column.column_name);
 
     // Create new Halal entry with all columns
-    const newHalalData = { id, ...req.body };
+    const newHalalData = { id, ...req.body.halalData };
 
     // Construct SQL INSERT statement dynamically
     const insertColumns = [];
@@ -917,9 +935,26 @@ function filterObjectKeys(object, allowedKeys) {
 
 const updateHalal = async (req, res, next) => {
   const halalId = req.params.halalId;
-  const requestBody = req.body;
+  const { userId } = req.body;
+  const requestBody = req.body.updatedHalalData;
 
   try {
+    const user = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
+
+    if (!user || user === null || user === undefined) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (userCommandName !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const halal = await Halal.findByPk(halalId);
     if (!halal) {
       const error = new Error(`Halal with ID ${halalId} not found.`);
