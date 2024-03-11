@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.11.3",
+    "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.15.9",
+    "@mui/icons-material": "^5.15.12",
     "@mui/lab": "^5.0.0-alpha.166",
-    "@mui/material": "^5.15.7",
+    "@mui/material": "^5.15.12",
     "@mui/styled-engine": "^5.15.8",
     "@mui/x-data-grid": "^6.19.3",
     "@mui/x-date-pickers": "^6.19.4",
@@ -17,6 +17,7 @@
     "axios": "^1.6.7",
     "date-fns": "^3.3.1",
     "dayjs": "^1.11.10",
+    "file-saver": "^2.0.5",
     "framer-motion": "^11.0.3",
     "mui": "^0.0.1",
     "mui-tel-input": "^5.1.2",
@@ -32,7 +33,9 @@
     "stylis": "^4.3.1",
     "stylis-plugin-rtl": "^2.1.1",
     "sweetalert2": "^11.10.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5",
+    "xslx": "^1.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

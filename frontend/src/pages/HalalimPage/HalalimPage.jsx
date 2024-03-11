@@ -31,10 +31,13 @@ import {
 } from "../../utils/api/graveyardsApi";
 import { useEffect } from "react";
 import { useState } from "react";
-
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 function CustomToolbar({
   setRows,
   rows,
+  columns,
   allDataOfHalalsColumns,
   setRowModesModel,
   originalColumns,
@@ -50,6 +53,26 @@ function CustomToolbar({
   // const handleClose = () => {
   //   setOpenCreateNewHalal(false);
   // };
+
+  const handleExportToExcel = () => {
+    const data = rows.map((row) =>
+      columns.map((col) => {
+        return row[col.field];
+      })
+    );
+
+    const ws = XLSX.utils.aoa_to_sheet([
+      columns.map((col) => col.headerName),
+      ...data,
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    saveAs(
+      new Blob([wbout], { type: "application/octet-stream" }),
+      "nifgaim_halalim.xlsx"
+    );
+  };
 
   return (
     <>
@@ -119,14 +142,30 @@ function CustomToolbar({
               },
             }}
           />
-          <GridToolbarExport
+          {/* <GridToolbarExport
             color="secondary"
             sx={{
               "& .MuiButton-startIcon": {
                 marginLeft: "2px",
               },
             }}
-          />
+          ></GridToolbarExport> */}
+          <Button
+            color="secondary"
+            startIcon={<SaveAltIcon />}
+            onClick={handleExportToExcel}
+            sx={{
+              fontSize: "small",
+              "& .MuiButton-startIcon": {
+                marginLeft: "2px",
+              },
+              "&:hover": {
+                backgroundColor: "#EDF3F8",
+              },
+            }}
+          >
+            ייצוא לאקסל
+          </Button>
         </div>
         <div>
           <GridToolbarQuickFilter
@@ -499,6 +538,7 @@ export default function HalalimPage() {
           toolbar: {
             setRows,
             rows,
+            columns,
             allDataOfHalalsColumns,
             setRowModesModel,
             originalColumns,
