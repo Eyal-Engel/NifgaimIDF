@@ -38,6 +38,26 @@ export default function ManageColumnsPage() {
   const loggedUserId = userData ? userData.userId : "";
   const [originalColumns, setOriginalColumns] = useState([]);
   const [loading, setLoading] = useState(true); // State for loading indicator
+  const translationDict = {
+    id: "מספר זיהוי",
+    privateNumber: "מספר פרטי",
+    lastName: "שם משפחה",
+    firstName: "שם פרטי",
+    dateOfDeath: "תאריך פטירה",
+    serviceType: "סוג שירות",
+    circumstances: "נסיבות המוות",
+    unit: "יחידה",
+    division: "חטיבה",
+    specialCommunity: "קהילה מיוחדת",
+    area: "אזור",
+    plot: "חלקה",
+    line: "שורה",
+    graveNumber: "מספר קבר",
+    permanentRelationship: "קשר קבוע",
+    comments: "הערות",
+    nifgaimGraveyardId: "בית קברות",
+    nifgaimCommandId: "פיקוד",
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -417,7 +437,7 @@ export default function ManageColumnsPage() {
               isNewColumn={originalColumns.some(
                 (originColumn) => originColumn === column.columnName
               )}
-              itemName={column.columnName}
+              itemName={translationDict[column.columnName] || column.columnName} // Use translated value if available, otherwise use the original column name
               itemId={column.columnName}
               defaultValue={column.columnDefault}
               handleItemNameChange={handelColumnNameChange}
