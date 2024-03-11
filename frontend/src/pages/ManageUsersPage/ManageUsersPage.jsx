@@ -463,7 +463,8 @@ function CustomToolbar({ setRows }) {
                   style={{
                     display: "flex",
                     justifyContent: "center",
-                    marginTop: "20px",
+                    marginTop: "10px",
+                    marginBottom: "10px",
                   }}
                 >
                   הרשאות משתמש

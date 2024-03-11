@@ -18,6 +18,8 @@ import {
   FormControl,
   Autocomplete,
   TextField,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -32,6 +34,10 @@ import {
 import { createLeftOver } from "../../utils/api/leftOversApi";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { column, prefixer } from "stylis";
+import rtlPlugin from "stylis-plugin-rtl";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -73,6 +79,23 @@ export default function CreateLeftOverDialog({
     "בת",
     "בן",
   ];
+
+  const theme = createTheme({
+    direction: "rtl",
+    palette: {
+      primary: {
+        main: "#ffa726",
+      },
+      secondary: {
+        main: "#3069BE",
+      },
+    },
+  });
+
+  const cacheRtl = createCache({
+    key: "muirtl",
+    stylisPlugins: [prefixer, rtlPlugin],
+  });
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -164,17 +187,28 @@ export default function CreateLeftOverDialog({
           },
         }}
       >
-        <DialogTitle>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <p style={{ fontSize: "large" }}>הוסף שאר חדש</p>
-          </div>
-        </DialogTitle>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <DialogTitle>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "large",
+                    color: theme.palette.secondary.main,
+                  }}
+                >
+                  הוסף שאר חדש
+                </p>
+              </div>
+            </DialogTitle>
+          </ThemeProvider>
+        </CacheProvider>
         <Divider />
         <DialogContent>
           {/* Render input fields based on columns */}

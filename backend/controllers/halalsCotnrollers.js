@@ -969,7 +969,25 @@ const updateHalal = async (req, res, next) => {
 
 const deleteHalal = async (req, res, next) => {
   const halalId = req.params.halalId;
+  const userId = req.body.userId;
+
   try {
+    const user = await User.findByPk(userId);
+    const userCommand = await Command.findByPk(user.nifgaimCommandId);
+    const userCommandName = userCommand.commandName;
+
+    if (!user || user === null || user === undefined) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (userCommandName !== "חיל הלוגיסטיקה") {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
     const halal = await Halal.findByPk(halalId);
     if (!halal) {
       const error = new Error(`Halal with ID ${halalId} not found.`, 404);

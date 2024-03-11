@@ -14,10 +14,33 @@ import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 import "./HalalimPage.css";
 import AddIcon from "@mui/icons-material/Add";
-import { getHalalColumnsAndTypes, getHalals } from "../../utils/api/halalsApi";
+import {
+  getHalalColumnsAndTypes,
+  getHalals,
+  getOriginalColumns,
+} from "../../utils/api/halalsApi";
 import EditHalalDialog from "./EditHalalDialog";
 import CreateHalalDialog from "./CreateHalalDialog";
-function CustomToolbar({ setRows, allDataOfHalalsColumns }) {
+import {
+  getAllCommandsNames,
+  getCommandById,
+} from "../../utils/api/commandsApi";
+import {
+  getAllGraveyards,
+  getGraveyardById,
+} from "../../utils/api/graveyardsApi";
+import { useEffect } from "react";
+import { useState } from "react";
+
+function CustomToolbar({
+  setRows,
+  rows,
+  allDataOfHalalsColumns,
+  setRowModesModel,
+  originalColumns,
+  commands,
+  graveyards,
+}) {
   const [openCreateNewHalal, setOpenCreateNewHalal] = React.useState(false);
 
   const handleCreateNewHalal = () => {
@@ -48,12 +71,20 @@ function CustomToolbar({ setRows, allDataOfHalalsColumns }) {
       >
         הוסף חלל חדש
       </Button>
-      <CreateHalalDialog
-        openDialog={openCreateNewHalal}
-        setOpenDialog={setOpenCreateNewHalal}
-        allDataOfHalalsColumns={allDataOfHalalsColumns}
-        // Add any other necessary props
-      />
+
+      {openCreateNewHalal && (
+        <CreateHalalDialog
+          openDialog={openCreateNewHalal}
+          setOpenDialog={setOpenCreateNewHalal}
+          allDataOfHalalsColumns={allDataOfHalalsColumns}
+          originalColumns={originalColumns}
+          setRows={setRows}
+          rows={rows}
+          commands={commands}
+          graveyards={graveyards}
+          // Add any other necessary props
+        />
+      )}
 
       <GridToolbarContainer
         style={{
@@ -168,9 +199,33 @@ export default function HalalimPage() {
 
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(null);
+  const [originalColumns, setOriginalColumns] = React.useState([]);
   const [allDataOfHalalsColumns, setAllDataOfHalalsColumns] = React.useState(
     []
   );
+  const [commands, setCommands] = useState([]);
+  const [graveyards, setGraveyards] = useState([]);
+
+  const translationDict = {
+    id: "מספר זיהוי",
+    privateNumber: "מספר פרטי",
+    lastName: "שם משפחה",
+    firstName: "שם פרטי",
+    dateOfDeath: "תאריך פטירה",
+    serviceType: "סוג שירות",
+    circumstances: "נסיבות המוות",
+    unit: "יחידה",
+    division: "חטיבה",
+    specialCommunity: "קהילה מיוחדת",
+    area: "אזור",
+    plot: "חלקה",
+    line: "שורה",
+    graveNumber: "מספר קבר",
+    permanentRelationship: "קשר קבוע",
+    comments: "הערות",
+    nifgaimGraveyardId: "בית קברות",
+    nifgaimCommandId: "פיקוד",
+  };
 
   const handleRowClick = (params) => {
     // Store the selected row
@@ -179,6 +234,24 @@ export default function HalalimPage() {
     setOpenDialog(true);
   };
 
+  useEffect(() => {
+    const fetchCommandsData = async () => {
+      try {
+        const commandsNames = await getAllCommandsNames();
+        setCommands(commandsNames);
+
+        const graveyardsNames = await getAllGraveyards();
+
+        console.log(graveyardsNames);
+        setGraveyards(graveyardsNames);
+      } catch (error) {
+        console.error("Error during get commands:", error);
+      }
+    };
+
+    fetchCommandsData();
+  }, []);
+
   React.useEffect(() => {
     // Function to fetch columns data from the API or local storage
     const fetchColumnsData = async () => {
@@ -186,90 +259,142 @@ export default function HalalimPage() {
       try {
         // Replace this with your actual method to fetch column data
         const currentColumns = await getHalalColumnsAndTypes(); // This should fetch your columns data
+        const origin = await getOriginalColumns();
+        setOriginalColumns(origin);
         setAllDataOfHalalsColumns(currentColumns);
         // Sort the columns alphabetically by column name
         currentColumns.sort((a, b) =>
           a.column_name.localeCompare(b.column_name)
         );
 
-        const formattedColumns = currentColumns.map((column) => {
-          const calculatedWidth = column.column_name.length * 10;
-          const width = calculatedWidth > 120 ? calculatedWidth : 120;
+        // Create an array for the sorted columns with originalColumns first
 
-          let type = column.data_type;
-          // Check if the type is 'date' and format accordingly
+        const sortedColumns = origin
+          .map((columnName) => {
+            const column = currentColumns.find(
+              (col) => col.column_name === columnName
+            );
+            if (column) {
+              return column;
+            }
+          })
+          .filter(Boolean);
 
-          let renderCell1;
-          if (type === "boolean") {
-            renderCell1 = (params) => (
-              <div style={{ textAlign: "center" }}>
-                {params.value === true ? (
-                  <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
-                ) : (
-                  <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
-                )}
-              </div>
-            );
-          } else if (type === "USER-DEFINED") {
-            renderCell1 = (params) => (
-              <div
-                style={{
-                  textAlign: "center",
-                  borderRadius: "10px",
-                  width: "100%",
-                  background:
-                    params.value === "מילואים"
-                      ? "rgba(255, 0, 0, 0.8)" // Red with 80% opacity
-                      : params.value === "קבע"
-                      ? "rgba(0, 128, 0, 0.8)" // Green with 80% opacity
-                      : params.value === "סדיר"
-                      ? "rgba(0, 200, 255, 0.8)" // Green with 80% opacity
-                      : "rgba(40, 40, 40, 0.15)", // Cyan with 80% opacity
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {/* can adjust the font color by the value here */}
-                <p
-                  style={{
-                    color:
-                      params.value === "מילואים"
-                        ? "white"
-                        : params.value === "קבע"
-                        ? "white"
-                        : params.value === "סדיר"
-                        ? "black"
-                        : "black",
-                  }}
-                >
-                  {params.value}
-                </p>
-              </div>
-            );
+        // Append any additional columns that are not in originalColumns
+        currentColumns.forEach((column) => {
+          if (!origin.includes(column.column_name)) {
+            sortedColumns.push(column);
           }
+        });
+
+        const formattedColumns = sortedColumns
+          .reduce((acc, column) => {
+            // Exclude the column with the ID
+            if (column) {
+              const translatedHeader =
+                translationDict[column.column_name] || column.column_name; // Translate header if available
+
+              const calculatedWidth = column.column_name.length * 10;
+              const width = calculatedWidth > 120 ? calculatedWidth : 120;
+
+              let type = column.data_type;
+              // Check if the type is 'date' and format accordingly
+
+              let renderCell1;
+              if (type === "boolean") {
+                renderCell1 = (params) => (
+                  <div style={{ textAlign: "center" }}>
+                    {params.value === true ? (
+                      <span style={{ color: "green", fontSize: "1.2rem" }}>
+                        ✓
+                      </span>
+                    ) : (
+                      <span style={{ color: "red", fontSize: "1.2rem" }}>
+                        ✗
+                      </span>
+                    )}
+                  </div>
+                );
+              } else if (type === "USER-DEFINED") {
+                renderCell1 = (params) => (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      borderRadius: "10px",
+                      width: "100%",
+                      background:
+                        params.value === "מילואים"
+                          ? "rgba(255, 0, 0, 0.8)" // Red with 80% opacity
+                          : params.value === "קבע"
+                          ? "rgba(0, 128, 0, 0.8)" // Green with 80% opacity
+                          : params.value === "סדיר"
+                          ? "rgba(0, 200, 255, 0.8)" // Green with 80% opacity
+                          : "rgba(40, 40, 40, 0.15)", // Cyan with 80% opacity
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {/* can adjust the font color by the value here */}
+                    <p
+                      style={{
+                        color:
+                          params.value === "מילואים"
+                            ? "white"
+                            : params.value === "קבע"
+                            ? "white"
+                            : params.value === "סדיר"
+                            ? "black"
+                            : "black",
+                      }}
+                    >
+                      {params.value}
+                    </p>
+                  </div>
+                );
+              }
+
+              acc.push({
+                field: column.column_name,
+                headerName: translatedHeader, // Use translated header
+                type: type,
+                width: width,
+                editable: false,
+                headerAlign: "center",
+                align: "center",
+                // If it's a date, specify the date format
+                ...(type === "timestamp with time zone" && {
+                  valueFormatter: (params) => formatDate(params.value),
+                }),
+                ...((type === "boolean" || type === "USER-DEFINED") && {
+                  renderCell: renderCell1,
+                }),
+              });
+            }
+            return acc;
+          }, [])
+          .reverse();
+
+        const halalsData = await getHalals();
+
+        const halalsPromises = halalsData.map(async (halal) => {
+          // Using async/await within map to transform each halal item
+          console.log(halal);
+          const graveyard = await getGraveyardById(halal.nifgaimGraveyardId);
+          const command = await getCommandById(halal.nifgaimCommandId);
 
           return {
-            field: column.column_name,
-            headerName: column.column_name,
-            type: type,
-            width: width,
-            editable: false,
-            headerAlign: "center",
-            align: "center",
-            // If it's a date, specify the date format
-            ...(type === "timestamp with time zone" && {
-              valueFormatter: (params) => formatDate(params.value),
-            }),
-            ...((type === "boolean" || type === "USER-DEFINED") && {
-              renderCell: renderCell1,
-            }),
+            ...halal,
+            nifgaimGraveyardId: graveyard.graveyardName,
+            nifgaimCommandId: command.commandName,
           };
         });
 
-        const halalim = await getHalals();
+        const transformedHalals = await Promise.all(halalsPromises);
+
+        console.log(transformedHalals);
         setColumns(formattedColumns);
-        setRows(halalim);
+        setRows(transformedHalals);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching column data:", error);
@@ -288,7 +413,7 @@ export default function HalalimPage() {
     // Call the function to fetch columns data
     fetchColumnsData();
   }, []);
-
+  // }, [allDataOfHalalsColumns]);
   return (
     <Box
       sx={{
@@ -319,7 +444,9 @@ export default function HalalimPage() {
       <DataGrid
         rows={rows}
         loading={loading}
-        columns={columns}
+        columns={columns.filter(
+          (column) => column.field !== "מספר זיהוי" && column.field !== "id"
+        )} // Exclude the 'id' field
         editMode="row"
         onRowClick={handleRowClick}
         rowModesModel={rowModesModel}
@@ -369,15 +496,30 @@ export default function HalalimPage() {
           noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{
-          toolbar: { setRows, allDataOfHalalsColumns, setRowModesModel },
+          toolbar: {
+            setRows,
+            rows,
+            allDataOfHalalsColumns,
+            setRowModesModel,
+            originalColumns,
+            commands,
+            graveyards,
+          },
         }}
       />
-      <EditHalalDialog
-        openDialog={openDialog}
-        setOpenDialog={setOpenDialog}
-        selectedRow={selectedRow}
-        allDataOfHalalsColumns={allDataOfHalalsColumns}
-      />
+      {selectedRow && (
+        <EditHalalDialog
+          openDialog={openDialog}
+          setOpenDialog={setOpenDialog}
+          selectedRow={selectedRow}
+          allDataOfHalalsColumns={allDataOfHalalsColumns}
+          originalColumns={originalColumns}
+          setRows={setRows}
+          rows={rows}
+          commands={commands}
+          graveyards={graveyards}
+        />
+      )}
     </Box>
   );
 }

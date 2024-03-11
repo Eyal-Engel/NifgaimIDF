@@ -6,6 +6,7 @@ import {
   DialogTitle,
   Divider,
   FormControlLabel,
+  ThemeProvider,
   Input,
   InputLabel,
   Paper,
@@ -16,6 +17,7 @@ import {
   DialogActions,
   Slide,
   FormControl,
+  createTheme,
   Autocomplete,
   TextField,
   ListSubheader,
@@ -34,7 +36,10 @@ import {
   deleteSoldierAccompanied,
   updateSoldierAccompanied,
 } from "../../utils/api/soldierAccompaniedsApi";
-
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { column, prefixer } from "stylis";
+import rtlPlugin from "stylis-plugin-rtl";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -90,6 +95,23 @@ const EditSoldierAccompaniedDialog = ({
   ];
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+
+  const theme = createTheme({
+    direction: "rtl",
+    palette: {
+      primary: {
+        main: "#ffa726",
+      },
+      secondary: {
+        main: "#3069BE",
+      },
+    },
+  });
+
+  const cacheRtl = createCache({
+    key: "muirtl",
+    stylisPlugins: [prefixer, rtlPlugin],
+  });
 
   console.log("check infinte");
   console.log(selectedRow);
@@ -249,17 +271,28 @@ const EditSoldierAccompaniedDialog = ({
           },
         }}
       >
-        <DialogTitle>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <p style={{ fontSize: "large" }}>ערוך מלווה</p>
-          </div>
-        </DialogTitle>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <DialogTitle>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "large",
+                    color: theme.palette.secondary.main,
+                  }}
+                >
+                  ערוך מלווה
+                </p>
+              </div>
+            </DialogTitle>
+          </ThemeProvider>
+        </CacheProvider>
         <Divider />
         <DialogContent>
           {/* Render input fields based on columns */}

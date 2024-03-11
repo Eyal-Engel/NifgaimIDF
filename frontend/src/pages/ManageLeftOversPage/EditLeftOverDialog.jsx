@@ -18,6 +18,8 @@ import {
   FormControl,
   Autocomplete,
   TextField,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 import Draggable from "react-draggable";
 import { MuiTelInput } from "mui-tel-input";
@@ -29,6 +31,10 @@ import {
   getHalalByPrivateNumber,
   getHalals,
 } from "../../utils/api/halalsApi";
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { column, prefixer } from "stylis";
+import rtlPlugin from "stylis-plugin-rtl";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -61,6 +67,23 @@ const EditLeftOverDialog = ({
   const loggedUserId = userData ? userData.userId : "";
 
   console.log("check infinte");
+
+  const theme = createTheme({
+    direction: "rtl",
+    palette: {
+      primary: {
+        main: "#ffa726",
+      },
+      secondary: {
+        main: "#3069BE",
+      },
+    },
+  });
+
+  const cacheRtl = createCache({
+    key: "muirtl",
+    stylisPlugins: [prefixer, rtlPlugin],
+  });
 
   useEffect(() => {
     const fetchHalalsData = async () => {
@@ -228,17 +251,28 @@ const EditLeftOverDialog = ({
           },
         }}
       >
-        <DialogTitle>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <p style={{ fontSize: "large" }}>ערוך שאר</p>
-          </div>
-        </DialogTitle>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <DialogTitle>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "large",
+                    color: theme.palette.secondary.main,
+                  }}
+                >
+                  ערוך שאר
+                </p>
+              </div>
+            </DialogTitle>
+          </ThemeProvider>
+        </CacheProvider>
         <Divider />
         <DialogContent>
           {/* Render input fields based on columns */}

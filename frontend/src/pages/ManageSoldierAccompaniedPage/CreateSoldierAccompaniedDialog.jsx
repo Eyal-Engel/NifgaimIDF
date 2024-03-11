@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  ThemeProvider,
   FormControlLabel,
   Input,
   InputLabel,
@@ -12,6 +13,7 @@ import {
   Radio,
   RadioGroup,
   Select,
+  createTheme,
   MenuItem,
   DialogActions,
   Slide,
@@ -34,7 +36,10 @@ import { createLeftOver } from "../../utils/api/leftOversApi";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
 import { createSoldierAccompanied } from "../../utils/api/soldierAccompaniedsApi";
-
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { column, prefixer } from "stylis";
+import rtlPlugin from "stylis-plugin-rtl";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -90,6 +95,23 @@ export default function CreateSoldierAccompaniedDialog({
     `אלוף`,
     `רא"ל`,
   ];
+
+  const theme = createTheme({
+    direction: "rtl",
+    palette: {
+      primary: {
+        main: "#ffa726",
+      },
+      secondary: {
+        main: "#3069BE",
+      },
+    },
+  });
+
+  const cacheRtl = createCache({
+    key: "muirtl",
+    stylisPlugins: [prefixer, rtlPlugin],
+  });
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -185,17 +207,28 @@ export default function CreateSoldierAccompaniedDialog({
           },
         }}
       >
-        <DialogTitle>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <p style={{ fontSize: "large" }}>הוסף נציג חדש</p>
-          </div>
-        </DialogTitle>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <DialogTitle>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "large",
+                    color: theme.palette.secondary.main,
+                  }}
+                >
+                  הוסף נציג חדש
+                </p>
+              </div>
+            </DialogTitle>
+          </ThemeProvider>
+        </CacheProvider>
         <Divider />
         <DialogContent>
           {/* Render input fields based on columns */}

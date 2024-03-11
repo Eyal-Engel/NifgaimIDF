@@ -209,7 +209,7 @@ export async function updateHalal(halalId, updatedHalalData) {
   }
 }
 
-export async function deleteHalal(halalId) {
+export async function deleteHalal(userId, halalId) {
   const apiUrl = `http://localhost:${port}/api/halals/${halalId}`;
 
   const headers = {
@@ -222,8 +222,10 @@ export async function deleteHalal(halalId) {
       "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
   };
 
+  const body = JSON.stringify({ userId });
+
   try {
-    const response = await del(apiUrl, headers);
+    const response = await del(apiUrl, headers, body);
     return response.data;
   } catch (error) {
     console.error(`Error deleting halal with id ${halalId}:`, error);
