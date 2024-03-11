@@ -138,7 +138,7 @@ const addHalalColumn = async (req, res, next) => {
     let defaultValuePost = defaultValue;
 
     console.log(userId, columnName, dataType, defaultValue);
-    console.log(dataType);
+    console.log(defaultValue);
     if (
       !userRequested ||
       userRequested === null ||
@@ -469,9 +469,9 @@ const updateHalalSelectColumn = async (req, res, next) => {
     // Check if the table exists
     const tableExists = await queryInterface.showAllTables();
     if (!tableExists.includes("nifgaimHalals")) {
-      return res
-        .status(400)
-        .json({ message: "Table 'NifgaimHalals' does not exist." });
+      return res.status(400).json({
+        errors: [{ message: "Table 'NifgaimHalals' does not exist." }],
+      });
     }
 
     // Check if the column exists
@@ -479,9 +479,9 @@ const updateHalalSelectColumn = async (req, res, next) => {
       "nifgaimHalals"
     );
     if (!tableDescription[columnName]) {
-      return res
-        .status(400)
-        .json({ message: `Column '${columnName}' does not exist.` });
+      return res.status(400).json({
+        errors: [{ message: `Column '${columnName}' does not exist.` }],
+      });
     }
 
     // Verify if the column is of type ENUM or USER-DEFINED (custom type)
@@ -490,7 +490,11 @@ const updateHalalSelectColumn = async (req, res, next) => {
       !(columnDataType.startsWith("ENUM") || columnDataType === "USER-DEFINED")
     ) {
       return res.status(400).json({
-        message: `Column '${columnName}' is not of type ENUM or USER-DEFINED.`,
+        errors: [
+          {
+            message: `Column '${columnName}' is not of type ENUM or USER-DEFINED.`,
+          },
+        ],
       });
     }
 
