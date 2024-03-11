@@ -34,7 +34,6 @@ const StringTypeItem = ({
   columnType,
   editedDefaultValue,
   handleInputDefaultValueChange,
-  isColumn, // Assuming isColumn is a boolean variable
 }) => {
   return (
     <>
@@ -132,8 +131,6 @@ const StringTypeItem = ({
                 </MenuItem>
               </Select>
             ) : (
-              <>
-                {columnType === "STRING" && (
                   <Input
                     type="text"
                     value={editedDefaultValue}
@@ -146,8 +143,6 @@ const StringTypeItem = ({
                       direction: "rtl",
                     }}
                   />
-                )}
-              </>
             )}
           </FormControl>
         </ThemeProvider>

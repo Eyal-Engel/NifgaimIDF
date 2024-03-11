@@ -5,7 +5,6 @@ import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import { Input } from "@mui/material";
 import Typography from "@mui/material/Typography";
-
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -37,7 +36,6 @@ const DateTypeItem = ({
   columnType,
   editedDefaultValue,
   handleInputDefaultValueChange,
-  isColumn, // Assuming isColumn is a boolean variable
 }) => {
   return (
     <>
@@ -97,7 +95,6 @@ const DateTypeItem = ({
             className="selectDefaultValueOfColumn"
             sx={{
               m: 1,
-              // width: "20%",
               minWidth: "7rem",
               zIndex: 0,
             }}
@@ -131,17 +128,13 @@ const DateTypeItem = ({
                 </MenuItem>
               </Select>
             ) : (
-              <>
-                {columnType === "DATE" && (
-                  <RtlPlugin>
-                    <DatePicker
-                      format="D/M/YYYY"
-                      value={dayjs(editedDefaultValue, "D/M/YYYY")}
-                      onChange={handleInputDefaultValueChange}
-                    />
-                  </RtlPlugin>
-                )}
-              </>
+              <RtlPlugin>
+                <DatePicker
+                  format="D/M/YYYY"
+                  value={dayjs(editedDefaultValue, "D/M/YYYY")}
+                  onChange={handleInputDefaultValueChange}
+                />
+              </RtlPlugin>
             )}
           </FormControl>
         </ThemeProvider>

@@ -1,41 +1,31 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { column, prefixer } from "stylis";
+import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import {
-  Chip,
-  FormControlLabel,
-  Input,
-  Radio,
-  RadioGroup,
+
   useMediaQuery,
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import FormControl from "@mui/material/FormControl";
+
 import LockIcon from "@mui/icons-material/Lock";
 import { IconButton, ThemeProvider, createTheme } from "@mui/material";
 import "./reuseableItem.css";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
-import RtlPlugin from "./rtlPlugin/RtlPlugin";
+
 import EditSelectDialog from "./EditSelectDialog";
 import IntegerTypeItem from "./manageColumns/IntegerTypeItem";
 import StringTypeItem from "./manageColumns/StringTypeItem";
 import BooleanTypeItem from "./manageColumns/BooleanTypeItem";
 import DateTypeItem from "./manageColumns/DateTypeItem";
 import EnumTypeItem from "./manageColumns/EnumTypeItem";
+import UuidTypeItem from "./manageColumns/UuidTypeItem";
 
 const theme = (outerTheme) =>
   createTheme({
@@ -166,6 +156,15 @@ const EditableItem = ({
       }}
     >
       <div className="cardContent">
+      {columnType === "UUID" && (
+          <UuidTypeItem
+            isInEditMode={isInEditMode}
+            itemName={itemName}
+            editedItemName={editedItemName}
+            handleInputChange={handleInputChange}
+            columnType={columnType}
+          />
+        )}
         {columnType === "INTEGER" && (
           <IntegerTypeItem
             isInEditMode={isInEditMode}
@@ -261,7 +260,7 @@ const EditableItem = ({
           !isInEditMode &&
           (isScreenSmall ? (
             <IconButton>
-              <SaveIcon color="primary" />
+              <LockIcon color="secondary" />
             </IconButton>
           ) : (
             <Button

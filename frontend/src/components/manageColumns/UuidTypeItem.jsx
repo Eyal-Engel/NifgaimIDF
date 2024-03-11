@@ -25,14 +25,12 @@ const cacheRtl = createCache({
   stylisPlugins: [prefixer, rtlPlugin],
 });
 
-const IntegerTypeItem = ({
+const UuidTypeItem = ({
   isInEditMode,
   itemName,
   editedItemName,
   handleInputChange,
   columnType,
-  editedDefaultValue,
-  handleInputDefaultValueChange,
 }) => {
   return (
     <>
@@ -61,12 +59,14 @@ const IntegerTypeItem = ({
           }}
         />
       )}
+
       <CacheProvider value={cacheRtl}>
         <ThemeProvider theme={theme}>
           <FormControl
             className="selectTypeOfColumn"
             sx={{
               m: 1,
+              // width: "15%",
               zIndex: 0,
             }}
             size="small"
@@ -80,67 +80,10 @@ const IntegerTypeItem = ({
               label="סוג"
               disabled
             >
-              <MenuItem
-                dir="rtl"
-                value="INTEGER"
-                selected={columnType === "INTEGER"}
-              >
-                מספר
+              <MenuItem dir="rtl" value="UUID" selected={columnType === "UUID"}>
+                מספר יחודי
               </MenuItem>
             </Select>
-          </FormControl>
-
-          <FormControl
-            className="selectDefaultValueOfColumn"
-            sx={{
-              m: 1,
-              // width: "20%",
-              minWidth: "7rem",
-              zIndex: 0,
-            }}
-            size="small"
-          >
-            <InputLabel
-              id="defaultValue"
-              sx={{
-                background: "white",
-                paddingRight: "5px",
-                paddingLeft: "5px",
-                marginTop: "0px",
-                fontSize: "15px",
-              }}
-            >
-              ערך ברירת מחדל
-            </InputLabel>
-            {!isInEditMode ? (
-              <Select
-                dir="rtl"
-                value={editedDefaultValue}
-                disabled
-                sx={{ textAlign: "left" }}
-              >
-                <MenuItem
-                  dir="rtl"
-                  value={editedDefaultValue}
-                  selected={editedDefaultValue !== null}
-                >
-                  {editedDefaultValue}
-                </MenuItem>
-              </Select>
-            ) : (
-              <Input
-                type="number"
-                value={editedDefaultValue}
-                onChange={handleInputDefaultValueChange}
-                style={{
-                  // width: "30%",
-                  fontSize: "1.2rem",
-                  padding: "8px",
-                  margin: "10px",
-                  direction: "rtl",
-                }}
-              />
-            )}
           </FormControl>
         </ThemeProvider>
       </CacheProvider>
@@ -148,4 +91,4 @@ const IntegerTypeItem = ({
   );
 };
 
-export default IntegerTypeItem;
+export default UuidTypeItem;

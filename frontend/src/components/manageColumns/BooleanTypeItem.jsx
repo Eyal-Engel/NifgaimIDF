@@ -5,7 +5,6 @@ import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import { FormControlLabel, Input, Radio, RadioGroup } from "@mui/material";
 import Typography from "@mui/material/Typography";
-
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -131,8 +130,8 @@ const BooleanTypeItem = ({
                 </MenuItem>
               </Select>
             ) : (
-              <>
-                {columnType === "BOOLEAN" && (
+              
+             
                   <FormControl
                     sx={{
                       // width: "90%",
@@ -161,8 +160,7 @@ const BooleanTypeItem = ({
                       />
                     </RadioGroup>
                   </FormControl>
-                )}
-              </>
+              
             )}
           </FormControl>
         </ThemeProvider>
