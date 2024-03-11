@@ -2,6 +2,8 @@ const { validationResult } = require("express-validator");
 const Halal = require("../models/schemas/NifgaimHalal");
 const User = require("../models/schemas/NifgaimUser");
 const Command = require("../models/schemas/NifgaimCommand");
+const SoldierAccompanied = require("../models/schemas/NifgaimSoldierAccompanied");
+const LeftOver = require("../models/schemas/NifgaimLeftOver");
 
 const { v4: uuidv4 } = require("uuid");
 const { QueryTypes, Sequelize, Op } = require("sequelize");
@@ -50,6 +52,32 @@ const getHalalByPrivateNumber = async (req, res, next) => {
     res.json(halal);
   } catch (err) {
     // Handle errors
+    return next(err);
+  }
+};
+
+const getSoldierAccompaniedsByHalalId = async (req, res, next) => {
+  const nifgaimHalalId = req.params.halalId;
+  try {
+    // Find all SoldierAccompanied instances related to the Halal instance
+    const soldierAccompanieds = await SoldierAccompanied.findAll({
+      where: { nifgaimHalalId },
+    });
+    res.json(soldierAccompanieds);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const getLeftOversByHalalId = async (req, res, next) => {
+  const nifgaimHalalId = req.params.halalId;
+  try {
+    // Find all LeftOver instances related to the Halal instance
+    const leftOvers = await LeftOver.findAll({
+      where: { nifgaimHalalId },
+    });
+    res.json(leftOvers);
+  } catch (err) {
     return next(err);
   }
 };
@@ -614,90 +642,6 @@ const replaceColumnValue = async (req, res, next) => {
   }
 };
 
-// const deleteHalalSelectColumn = async (req, res, next) => {
-//   try {
-//     const { columnName } = req.params;
-//     const { userId } = req.body;
-
-//     const userRequested = await User.findByPk(userId);
-//     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
-//     const userCommandName = userCommand.commandName;
-
-//     if (!userRequested) {
-//       return res
-//         .status(404)
-//         .json({ body: { errors: [{ message: "User does not exist" }] } });
-//     }
-
-//     if (userCommandName !== "חיל הלוגיסטיקה") {
-//       return res
-//         .status(403)
-//         .json({ body: { errors: [{ message: "User is not authorized" }] } });
-//     }
-
-//     if (!columnName) {
-//       return res.status(400).json({ message: "Column name is required." });
-//     }
-
-//     // Get the queryInterface from your Sequelize instance
-//     const queryInterface = sequelize.getQueryInterface();
-
-//     // Check if the table exists
-//     const tableExists = await queryInterface.showAllTables();
-//     if (!tableExists.includes("nifgaimHalals")) {
-//       return res
-//         .status(400)
-//         .json({ message: "Table 'NifgaimHalals' does not exist." });
-//     }
-
-//     // Check if the column exists
-//     const tableDescription = await queryInterface.describeTable(
-//       "nifgaimHalals"
-//     );
-//     if (!tableDescription[columnName]) {
-//       return res
-//         .status(400)
-//         .json({ message: `Column '${columnName}' does not exist.` });
-//     }
-
-//     // Verify if the column is of type ENUM
-//     const columnDataType = tableDescription[columnName].type;
-//     if (!columnDataType.startsWith("ENUM")) {
-//       return res
-//         .status(400)
-//         .json({ message: `Column '${columnName}' is not of type ENUM.` });
-//     }
-
-//     // Check if any halal record has the specified column with enum values to be removed
-//     const halalRecordsToUpdate = await Halal.findAll({
-//       where: { [columnName]: { [sequelize.Sequelize.Op.not]: null } },
-//     });
-
-//     // Update the halal records with the column value to null if it has the enum values to be removed
-//     await Promise.all(
-//       halalRecordsToUpdate.map(async (record) => {
-//         if (record[columnName] && record[columnName] !== "") {
-//           await record.update({ [columnName]: null });
-//         }
-//       })
-//     );
-
-//     // Remove the column
-//     await queryInterface.removeColumn("nifgaimHalals", columnName);
-
-//     console.log("Column deleted successfully.");
-
-//     res.status(200).json({ message: "Column deleted successfully." });
-//   } catch (error) {
-//     console.error("Error deleting column:", error);
-//     return next(error);
-//   }
-// };
-
-// body example:
-// {
-//   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
-// }
 const deleteHalalColumn = async (req, res, next) => {
   try {
     const { userId, columnName } = req.body;
@@ -1046,6 +990,8 @@ module.exports = {
   getHalalByPrivateNumber,
   getHalalsByCommandId,
   getEnumsForColumn,
+  getSoldierAccompaniedsByHalalId,
+  getLeftOversByHalalId,
   createHalal,
   updateHalal,
   deleteHalal,

@@ -20,7 +20,7 @@ NifgaimHalal.init(
       unique: true,
       validate: {
         isNumeric: true,
-        len: [7, 7]
+        len: [7, 7],
       },
     },
 

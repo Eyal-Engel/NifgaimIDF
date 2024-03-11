@@ -28,6 +28,14 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { column, prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
+import {
+  getCommandIdByName,
+  getCommandNameById,
+} from "../../utils/api/commandsApi";
+import {
+  getGraveyardById,
+  getGraveyardIdByName,
+} from "../../utils/api/graveyardsApi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -58,6 +66,8 @@ export default function CreateHalalDialog({
 }) {
   const [enums, setEnums] = useState({});
   const [inputValues, setInputValues] = useState({});
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
 
   const theme = createTheme({
     direction: "rtl",
@@ -78,7 +88,7 @@ export default function CreateHalalDialog({
 
   const translationDict = {
     id: "מספר זיהוי",
-    privateNumber: "מספר פרטי",
+    privateNumber: "מספר אישי",
     lastName: "שם משפחה",
     firstName: "שם פרטי",
     dateOfDeath: "תאריך פטירה",
@@ -114,12 +124,44 @@ export default function CreateHalalDialog({
     setOpenDialog(false);
   };
 
-  const handleInputChange = useCallback((column, value) => {
-    setInputValues((prevValues) => ({
-      ...prevValues,
-      [column]: value,
-    }));
-  }, []);
+  // const handleInputChange = useCallback((column, value) => {
+  //   console.log(column, value);
+  //   setInputValues((prevValues) => ({
+  //     ...prevValues,
+  //     [column]: value,
+  //   }));
+
+  //   console.log(inputValues);
+  // }, []);
+
+  const handleInputChange = useCallback(
+    async (column, value) => {
+      console.log(column, value);
+      let v = value;
+
+      try {
+        if (column === "nifgaimCommandId") {
+          const commandId = await getCommandIdByName(value);
+          v = commandId;
+          console.log("Command ID:", commandId);
+        } else if (column === "nifgaimGraveyardId") {
+          const graveyardId = await getGraveyardIdByName(value);
+          v = graveyardId;
+          console.log("Graveyard ID:", graveyardId);
+        }
+        setInputValues((prevValues) => ({
+          ...prevValues,
+          [column]: v,
+        }));
+      } catch (error) {
+        console.error("Error:", error);
+        // Handle error appropriately, such as displaying an error message
+      }
+
+      console.log(inputValues);
+    },
+    [getCommandIdByName, getGraveyardIdByName, setInputValues]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,7 +191,23 @@ export default function CreateHalalDialog({
     try {
       // Here you can send inputValues to your backend using a POST request
       console.log("Input values:", inputValues);
-      await createHalal(inputValues);
+      const { id, halalData } = await createHalal(loggedUserId, inputValues);
+
+      const graveyard = await getGraveyardById(halalData.nifgaimGraveyardId);
+      const graveyardName = graveyard.graveyardName;
+      const commandName = await getCommandNameById(halalData.nifgaimCommandId);
+
+      // Create a new object with updated values
+      const newHalalData = {
+        id,
+        ...halalData,
+        nifgaimGraveyardId: graveyardName,
+        nifgaimCommandId: commandName,
+      };
+
+      console.log(newHalalData);
+
+      setRows([...rows, newHalalData]);
       handleCloseDialog();
     } catch (error) {
       console.error("Error:", error);
@@ -222,6 +280,9 @@ export default function CreateHalalDialog({
                     defaultValue=""
                     displayEmpty
                     className="resetPasswordInputField"
+                    onChange={(e) =>
+                      handleInputChange(column.column_name, e.target.value)
+                    }
                     renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
                   >
                     <MenuItem sx={{ direction: "rtl" }} value="" disabled>
@@ -253,6 +314,9 @@ export default function CreateHalalDialog({
                     defaultValue=""
                     displayEmpty
                     className="resetPasswordInputField"
+                    onChange={(event) =>
+                      handleInputChange(column.column_name, event.target.value)
+                    }
                     renderValue={(value) => (value ? value : "בחר בית קברות")} // Render placeholder
                   >
                     <MenuItem sx={{ direction: "rtl" }} value="" disabled>
@@ -268,6 +332,33 @@ export default function CreateHalalDialog({
                       </MenuItem>
                     ))}
                   </Select>
+
+                  {/* <Select
+                    sx={{ direction: "rtl" }}
+                    labelId="graveyard-label"
+                    id="graveyard"
+                    name="graveyard"
+                    defaultValue=""
+                    displayEmpty
+                    className="resetPasswordInputField"
+                    onChange={(graveyard) =>
+                      handleInputChange(column.column_name, graveyard)
+                    }
+                    renderValue={(value) => (value ? value : "בחר בית קברות")} // Render placeholder
+                  >
+                    <MenuItem sx={{ direction: "rtl" }} value="" disabled>
+                      בחר בית קברות
+                    </MenuItem>
+                    {graveyards.map((graveyard) => (
+                      <MenuItem
+                        sx={{ direction: "rtl" }}
+                        key={graveyard.id}
+                        value={graveyard.graveyardName}
+                      >
+                        {graveyard.graveyardName}
+                      </MenuItem>
+                    ))}
+                  </Select> */}
                 </div>
               ) : (
                 <>

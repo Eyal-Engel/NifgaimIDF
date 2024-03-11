@@ -22,7 +22,12 @@ import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
 import Draggable from "react-draggable";
 import dayjs from "dayjs";
-import { deleteHalal, getColumnEnums } from "../../utils/api/halalsApi";
+import {
+  deleteHalal,
+  getColumnEnums,
+  getLeftOversByHalalId,
+  getSoldierAccompaniedsByHalalId,
+} from "../../utils/api/halalsApi";
 import Swal from "sweetalert2";
 import { getAllCommandsNames } from "../../utils/api/commandsApi";
 import { getAllGraveyards } from "../../utils/api/graveyardsApi";
@@ -30,6 +35,7 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { column, prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
+import { useCallback } from "react";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -57,6 +63,15 @@ export default function EditHalalDIalog({
   graveyards,
 }) {
   const [enums, setEnums] = useState([]);
+  const [soldierAccompanieds, setSoldierAccompanieds] = useState([]);
+  const [leftOvers, setLeftOvers] = useState([]);
+  const [inputValues, setInputValues] = useState({});
+  // const [selectedCommand, setSelectedCommand] = useState(
+  //   selectedRow?.nifgaimCommandId
+  // );
+  // const [selectedGraveyard, setSelectedGraveyard] = useState(
+  //   selectedRow?.nifgaimGraveyardId
+  // );
 
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
@@ -108,8 +123,6 @@ export default function EditHalalDIalog({
     ),
   ].filter((column) => column.column_name !== "id"); // Filter out the "id" column
 
-  console.log("check infinte");
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -118,6 +131,19 @@ export default function EditHalalDIalog({
     return allDataOfHalalsColumns.find(
       (column) => column.column_name === columnName
     );
+  }
+
+  function formatPhoneNumber(phone) {
+    const words = phone.split(" ");
+    if (words.length > 0) {
+      const firstWord = words[0];
+      if (firstWord.length > 1) {
+        const lastChar = firstWord.charAt(0);
+        words[0] = firstWord.substring(1, firstWord.length) + lastChar;
+      }
+    }
+    const reversedWords = words.reverse().join(" ");
+    return <div>{reversedWords}</div>;
   }
 
   useEffect(() => {
@@ -142,14 +168,90 @@ export default function EditHalalDIalog({
           }
         }
       }
+
+      console.log(enumsObject);
       setEnums(enumsObject);
+
+      const halalId = selectedRow.id;
+      console.log(halalId);
+      const soldierAccompaniedsData = await getSoldierAccompaniedsByHalalId(
+        halalId
+      );
+      const LeftOversData = await getLeftOversByHalalId(halalId);
+
+      console.log(soldierAccompaniedsData);
+      console.log(LeftOversData);
+
+      setSoldierAccompanieds(soldierAccompaniedsData);
+      setLeftOvers(LeftOversData);
     };
     fetchData();
   }, [selectedRow]);
 
+  // const handleInputChange = useCallback((column, value) => {
+  //   if (column === "nifgaimCommandId") {
+  //     setSelectedCommand(value);
+  //   } else if (column === "nifgaimGraveyardId") {
+  //     setSelectedGraveyard(value);
+  //   }
+
+  //   // else if (column === "proximity") {
+  //   //   setSelectedValue(value);
+  //   // }
+  //   console.log(column, value);
+
+  //   console.log(inputValues);
+  //   setInputValues((prevValues) => ({
+  //     ...prevValues,
+  //     [column]: value,
+  //   }));
+  // }, []);
+
+  const handleInputChange = useCallback((column, value) => {
+    console.log(inputValues);
+    console.log(column, value);
+    setInputValues((prevValues) => ({
+      ...prevValues,
+      [column]: value, // Update state object with column name as key and value as value
+    }));
+  }, []);
+
+  const handleSubmit = async () => {
+    try {
+      // Here you can send inputValues to your backend using a PATCH request
+
+      // const updatedLeftOver = await updateLeftOver(
+      //   loggedUserId,
+      //   selectedRow.id,
+      //   updatedLeftOverData
+      // );
+
+      // const updatedLeftOverDataWithHalalId = {
+      //   ...updatedLeftOver,
+      //   halalId: selectedHalal.privateNumber,
+      //   halalFullName: selectedHalal.lastName + " " + selectedHalal.firstName,
+      // };
+
+      // // Then, inside your setRows function, ensure that you include halalId (which now contains nifgaimHalalId)
+      // setRows((prevRows) =>
+      //   prevRows.map((row) => {
+      //     if (row.id === selectedRow.id) {
+      //       return { ...row, ...updatedLeftOverDataWithHalalId };
+      //     }
+      //     return row;
+      //   })
+      // );
+
+      handleCloseDialog();
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle error appropriately, e.g., show a message to the user
+    }
+  };
+
   const handleDeleteClick = (id) => () => {
     try {
-      const halalName = selectedRow.firstNaame + " " + selectedRow.lastName;
+      const halalName = selectedRow.firstName + " " + selectedRow.lastName;
 
       Swal.fire({
         title: `האם את/ה בטוח/ה שתרצה/י למחוק החלל ${halalName}`,
@@ -249,14 +351,18 @@ export default function EditHalalDIalog({
           </ThemeProvider>
         </CacheProvider>
         <Divider></Divider>
+
+        {/* check here */}
         <DialogContent>
           {rearrangedColumns.map((column) => {
             const { column_name: key, data_type } = column;
-            const value = selectedRow[key];
-            const isTimestamp = data_type === "timestamp with time zone";
-            const isInteger = data_type === "integer";
-            const isBoolean = data_type === "boolean";
-            const isUserDefined = data_type === "USER-DEFINED";
+            const value =
+              inputValues[key] !== undefined
+                ? inputValues[key]
+                : selectedRow[key]; // Get value from inputValues if available, otherwise fallback to selectedRow
+
+            console.log(inputValues[key]);
+            console.log(value);
 
             return (
               <div
@@ -278,9 +384,10 @@ export default function EditHalalDIalog({
                       labelId="command-label"
                       id="command"
                       name="command"
-                      defaultValue=""
+                      value={value}
                       displayEmpty
                       className="resetPasswordInputField"
+                      onChange={(e) => handleInputChange(key, e.target.value)}
                       renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
                     >
                       <MenuItem sx={{ direction: "rtl" }} value="" disabled>
@@ -307,12 +414,11 @@ export default function EditHalalDIalog({
                       labelId="graveyard-label"
                       id="graveyard"
                       name="graveyard"
-                      defaultValue=""
+                      value={value}
                       displayEmpty
                       className="resetPasswordInputField"
-                      renderValue={
-                        (value) => (value ? value : "בחר בית קברות") // Render placeholder
-                      }
+                      onChange={(e) => handleInputChange(key, e.target.value)}
+                      renderValue={(value) => (value ? value : "בחר בית קברות")} // Render placeholder
                     >
                       <MenuItem sx={{ direction: "rtl" }} value="" disabled>
                         בחר בית קברות
@@ -333,7 +439,7 @@ export default function EditHalalDIalog({
                     <InputLabel id={key}>
                       {translationDict[key] ? translationDict[key] : key}
                     </InputLabel>
-                    {isTimestamp ? (
+                    {data_type === "timestamp with time zone" ? (
                       <RtlPlugin
                         style={{
                           margin: "auto",
@@ -342,17 +448,23 @@ export default function EditHalalDIalog({
                       >
                         <DatePicker
                           label="תאריך ברירת מחדל"
-                          defaultValue={dayjs(value)}
+                          value={dayjs(value)}
+                          onChange={(date) => handleInputChange(key, date)}
                           sx={{ width: "100%" }}
                         />
                       </RtlPlugin>
-                    ) : isInteger ? (
-                      <Input type="number" defaultValue={value} />
-                    ) : isBoolean ? (
+                    ) : data_type === "integer" ? (
+                      <Input
+                        type="number"
+                        value={value}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                      />
+                    ) : data_type === "boolean" ? (
                       <RadioGroup
                         aria-labelledby="booleanSelect"
                         name="controlled-radio-buttons-group"
-                        defaultValue={value}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                        value={value}
                         row
                       >
                         <FormControlLabel
@@ -367,8 +479,12 @@ export default function EditHalalDIalog({
                           label="לא"
                         />
                       </RadioGroup>
-                    ) : isUserDefined ? (
-                      <Select labelId={key} defaultValue={value}>
+                    ) : data_type === "USER-DEFINED" ? (
+                      <Select
+                        labelId={key}
+                        value={`"ערך 1"`}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                      >
                         {enums[key] &&
                           enums[key].map((option) => (
                             <MenuItem key={option} value={option}>
@@ -377,13 +493,17 @@ export default function EditHalalDIalog({
                           ))}
                       </Select>
                     ) : (
-                      <Input defaultValue={value} />
+                      <Input
+                        value={inputValues[key] || value}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                      />
                     )}
                   </>
                 )}
               </div>
             );
           })}
+          {/* Code for displaying soldierAccompanieds and leftOvers */}
         </DialogContent>
 
         <Divider></Divider>
@@ -398,7 +518,11 @@ export default function EditHalalDIalog({
           >
             <Button onClick={handleCloseDialog}>ביטול</Button>
             <div>
-              <Button variant="contained" style={{ marginLeft: "10px" }}>
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                style={{ marginLeft: "10px" }}
+              >
                 שמור שינויים
               </Button>
               <Button

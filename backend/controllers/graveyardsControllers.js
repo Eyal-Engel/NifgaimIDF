@@ -31,6 +31,23 @@ const getGraveyardById = async (req, res, next) => {
   }
 };
 
+// Get graveyard ID by name
+const getGraveyardIdByName = async (req, res, next) => {
+  const { graveyardName } = req.params;
+  try {
+    const graveyard = await Graveyard.findOne({
+      where: { graveyardName: graveyardName },
+      attributes: ["id"],
+    });
+    if (!graveyard) {
+      return res.status(404).json({ message: "Graveyard not found." });
+    }
+    res.json(graveyard.id);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 // Post new command
 const createGraveyard = async (req, res, next) => {
   const { graveyardName, userId, isNewSource } = req.body;
@@ -143,6 +160,7 @@ const deleteGraveyardById = async (req, res, next) => {
 module.exports = {
   getAllGraveyards,
   getGraveyardById,
+  getGraveyardIdByName,
   createGraveyard,
   updateGraveyardById,
   deleteGraveyardById,

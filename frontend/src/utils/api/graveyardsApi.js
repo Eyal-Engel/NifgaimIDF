@@ -46,6 +46,31 @@ export async function getGraveyardById(graveyardId) {
   }
 }
 
+export async function getGraveyardIdByName(graveyardName) {
+  const apiUrl = `http://localhost:${port}/api/graveyards/byGraveyardName/${graveyardName}`;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "GET",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  try {
+    const response = await get(apiUrl, headers);
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error fetching graveyard with name ${graveyardName}:`,
+      error
+    );
+    throw error;
+  }
+}
+
 export async function createGraveyard(userId, graveyardName) {
   // const commandUserId = getCommandNameByUserId(userId);
 

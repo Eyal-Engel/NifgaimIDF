@@ -252,7 +252,7 @@ export default function HalalimPage() {
 
   const translationDict = {
     id: "מספר זיהוי",
-    privateNumber: "מספר פרטי",
+    privateNumber: "מספר אישי",
     lastName: "שם משפחה",
     firstName: "שם פרטי",
     dateOfDeath: "תאריך פטירה",

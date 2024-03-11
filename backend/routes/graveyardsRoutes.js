@@ -8,6 +8,11 @@ const checkAuth = require("../middlewares/checkAuth");
 
 router.get("/", graveyardsControllers.getAllGraveyards);
 
+router.get(
+  "/byGraveyardName/:graveyardName",
+  graveyardsControllers.getGraveyardIdByName
+);
+
 router.get("/:graveyardId", graveyardsControllers.getGraveyardById);
 
 router.use(checkAuth);

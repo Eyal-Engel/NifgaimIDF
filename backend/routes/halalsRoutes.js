@@ -23,6 +23,13 @@ router.get(
 
 router.get("/byCommand/:commandId", halalsCotnrollers.getHalalsByCommandId);
 
+router.get(
+  "/soldierAccompanieds/:halalId",
+  halalsCotnrollers.getSoldierAccompaniedsByHalalId
+);
+
+router.get("/leftOvers/:halalId", halalsCotnrollers.getLeftOversByHalalId);
+
 router.post("/", halalsCotnrollers.createHalal);
 
 router.patch("/:halalId", halalsCotnrollers.updateHalal);
