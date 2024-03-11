@@ -37,32 +37,6 @@ const StringTypeItem = ({
 }) => {
   return (
     <>
-      {!isInEditMode ? (
-        <Typography
-          sx={{
-            textAlign: "end",
-            padding: "10px",
-          }}
-          variant="h6"
-          component="div"
-        >
-          {itemName}
-        </Typography>
-      ) : (
-        <Input
-          type="text"
-          value={editedItemName}
-          onChange={handleInputChange}
-          autoFocus
-          sx={{
-            fontSize: "1.2rem",
-            padding: "0px 8px",
-            margin: "10px",
-            direction: "rtl",
-          }}
-        />
-      )}
-
       <CacheProvider value={cacheRtl}>
         <ThemeProvider theme={theme}>
           <FormControl
@@ -131,18 +105,18 @@ const StringTypeItem = ({
                 </MenuItem>
               </Select>
             ) : (
-                  <Input
-                    type="text"
-                    value={editedDefaultValue}
-                    onChange={handleInputDefaultValueChange}
-                    style={{
-                      // width: "30%",
-                      fontSize: "1.2rem",
-                      padding: "8px",
-                      margin: "10px",
-                      direction: "rtl",
-                    }}
-                  />
+              <Input
+                type="text"
+                value={editedDefaultValue}
+                onChange={handleInputDefaultValueChange}
+                style={{
+                  // width: "30%",
+                  fontSize: "1.2rem",
+                  padding: "8px",
+                  margin: "10px",
+                  direction: "rtl",
+                }}
+              />
             )}
           </FormControl>
         </ThemeProvider>
