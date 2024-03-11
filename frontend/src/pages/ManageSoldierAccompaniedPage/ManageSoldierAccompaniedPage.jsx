@@ -61,13 +61,40 @@ import { getHalalById } from "../../utils/api/halalsApi";
 import CreateSoldierAccompaniedDialog from "./CreateSoldierAccompaniedDialog";
 import EditSoldierAccompaniedDialog from "./EditSoldierAccompaniedDialog";
 import { getSoldierAccompanieds } from "../../utils/api/soldierAccompaniedsApi";
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 
-function CustomToolbar({ rows, setRows }) {
+function CustomToolbar({ rows, setRows, columns }) {
   const [openCreateNewLeftOver, setOpenCreateNewLeftOver] =
     React.useState(false);
 
   const handleCreateNewLeftOver = () => {
     setOpenCreateNewLeftOver(true);
+  };
+
+  const handleExportToExcel = () => {
+    const data = rows.map((row) =>
+      columns.map((col) => {
+        const value = row[col.field];
+        if (typeof value === "boolean") {
+          return value ? "כן" : "לא";
+        }
+        return value;
+      })
+    );
+
+    const ws = XLSX.utils.aoa_to_sheet([
+      columns.map((col) => col.headerName),
+      ...data,
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    saveAs(
+      new Blob([wbout], { type: "application/octet-stream" }),
+      "נפגעים - מלווים.xlsx"
+    );
   };
 
   return (
@@ -129,14 +156,30 @@ function CustomToolbar({ rows, setRows }) {
               },
             }}
           />
-          <GridToolbarExport
+          {/* <GridToolbarExport
             color="secondary"
             sx={{
               "& .MuiButton-startIcon": {
                 marginLeft: "2px",
               },
             }}
-          />
+          /> */}
+          <Button
+            color="secondary"
+            startIcon={<SaveAltIcon />}
+            onClick={handleExportToExcel}
+            sx={{
+              fontSize: "small",
+              "& .MuiButton-startIcon": {
+                marginLeft: "2px",
+              },
+              "&:hover": {
+                backgroundColor: "#EDF3F8",
+              },
+            }}
+          >
+            ייצוא לאקסל
+          </Button>
         </div>
         <div>
           <GridToolbarQuickFilter
@@ -509,7 +552,7 @@ export default function ManageLeftOversPage() {
           noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{
-          toolbar: { rows, setRows, setRowModesModel },
+          toolbar: { rows, setRows, columns, setRowModesModel },
         }}
       />
 
