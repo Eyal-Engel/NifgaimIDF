@@ -34,6 +34,7 @@ import { useState } from "react";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
+
 function CustomToolbar({
   setRows,
   rows,
@@ -57,7 +58,11 @@ function CustomToolbar({
   const handleExportToExcel = () => {
     const data = rows.map((row) =>
       columns.map((col) => {
-        return row[col.field];
+        const value = row[col.field];
+        if (typeof value === "boolean") {
+          return value ? "כן" : "לא";
+        }
+        return value;
       })
     );
 
@@ -70,7 +75,7 @@ function CustomToolbar({
     const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     saveAs(
       new Blob([wbout], { type: "application/octet-stream" }),
-      "nifgaim_halalim.xlsx"
+      "נפגעים - חללים.xlsx"
     );
   };
 

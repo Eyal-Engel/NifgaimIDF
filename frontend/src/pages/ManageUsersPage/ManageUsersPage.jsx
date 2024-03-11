@@ -56,12 +56,51 @@ import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
 import AddIcon from "@mui/icons-material/Add";
 import { motion } from "framer-motion";
 import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 
-function CustomToolbar({ setRows }) {
+function CustomToolbar({ setRows, rows, columns }) {
   const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
   const [commandsSignUp, setCommandsSignUp] = React.useState([]);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+
+  const handleExportToExcel = () => {
+    // Filter out the "פעולות" column
+    const filteredColumns = columns.filter(
+      (col) => col.headerName !== "פעולות"
+    );
+
+    // Map data based on the filtered columns
+    const data = rows.map((row) =>
+      filteredColumns.map((col) => {
+        const value = row[col.field];
+        // Convert boolean values to Hebrew strings
+        if (typeof value === "boolean") {
+          return value ? "כן" : "לא";
+        }
+        return value;
+      })
+    );
+
+    // Create worksheet
+    const ws = XLSX.utils.aoa_to_sheet([
+      filteredColumns.map((col) => col.headerName),
+      ...data,
+    ]);
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    // Convert workbook to binary data and save it
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    saveAs(
+      new Blob([wbout], { type: "application/octet-stream" }),
+      "נפגעים - משתמשים.xlsx"
+    );
+  };
 
   React.useEffect(() => {
     const fetchCommandsData = async () => {
@@ -296,14 +335,30 @@ function CustomToolbar({ setRows }) {
               },
             }}
           />
-          <GridToolbarExport
+          {/* <GridToolbarExport
             color="secondary"
             sx={{
               "& .MuiButton-startIcon": {
                 marginLeft: "2px",
               },
             }}
-          />
+          /> */}
+          <Button
+            color="secondary"
+            startIcon={<SaveAltIcon />}
+            onClick={handleExportToExcel}
+            sx={{
+              fontSize: "small",
+              "& .MuiButton-startIcon": {
+                marginLeft: "2px",
+              },
+              "&:hover": {
+                backgroundColor: "#EDF3F8",
+              },
+            }}
+          >
+            ייצוא לאקסל
+          </Button>
         </div>
         <div>
           <GridToolbarQuickFilter
@@ -1056,7 +1111,7 @@ export default function ManageExistsUsers() {
           noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { setRows, rows, columns, setRowModesModel },
         }}
       />
       <Dialog
