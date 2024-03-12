@@ -13,7 +13,14 @@ import {
   getCommandIdByName,
   getCommandNameById,
 } from "../../utils/api/commandsApi";
-import { Dialog, Button, Input, Select, MenuItem } from "@mui/material";
+import {
+  Dialog,
+  Button,
+  Input,
+  Select,
+  MenuItem,
+  FormHelperText,
+} from "@mui/material";
 import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
 import AddIcon from "@mui/icons-material/Add";
 import { motion } from "framer-motion";
@@ -396,19 +403,25 @@ export default function CustomToolbar({ setRows, rows, columns }) {
                 style={{ marginTop: "-60px" }}
               >
                 <Input
-                  type={"text"}
+                  type="text"
                   name="privateNumber"
                   placeholder="מספר אישי"
                   className="resetPasswordInputField"
                   onChange={handleInputChange}
                 />
                 <Input
-                  type={"text"}
+                  type="text"
                   name="fullName"
                   placeholder="שם מלא"
                   className="resetPasswordInputField"
                   onChange={handleInputChange}
+                  style={{ marginBottom: 0 }}
                 />
+                <FormHelperText
+                  style={{ textAlign: "right", marginBottom: "5px" }}
+                >
+                  שם מלא יהיה בעברית בלבד
+                </FormHelperText>
                 <Select
                   sx={{ direction: "rtl" }}
                   labelId="fullName-label"
@@ -439,7 +452,6 @@ export default function CustomToolbar({ setRows, rows, columns }) {
                   onChangePassword={handleChangePassword}
                   onChangeConfirmPassword={handleChangeConfirmPassword}
                 />
-
                 <h2
                   style={{
                     display: "flex",
@@ -485,7 +497,7 @@ export default function CustomToolbar({ setRows, rows, columns }) {
                 type="submit"
                 className="submit-button"
                 onClick={handleSubmit}
-                style={{ marginTop: "20px" }}
+                style={{ marginTop: "10px" }}
               >
                 צור משתמש
               </button>
