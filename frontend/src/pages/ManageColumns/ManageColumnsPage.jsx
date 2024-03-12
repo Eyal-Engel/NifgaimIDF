@@ -142,6 +142,31 @@ export default function ManageColumnsPage() {
         break;
     }
   };
+
+  function removeQuotes(inputString) {
+    // Remove the overall quotes from the input string
+    inputString = inputString.replace(/^{|"|}$/g, '');
+
+    // Split the input string by commas and remove leading/trailing whitespaces
+    const items = inputString.split(',').map((item) => item.trim());
+
+    // Remove double quotes from the first and last character of each item if they are present
+    const itemsWithoutQuotes = items.map((item) => {
+        if (item.startsWith('"') && item.endsWith('"')) {
+            return item.slice(1, -1); // Remove quotes from the beginning and end
+        }
+        return item;
+    });
+
+    // Join the items back into a string and return
+    return `{${itemsWithoutQuotes.join(',')}}`;
+}
+
+// // Example usage:
+// const inputString = '{"ee. eg e.","Meg eg q", hello}';
+// const result = removeQuotes(inputString);
+// console.log(result);
+
   useEffect(() => {
     const fetchColumnsData = async () => {
       setLoading(true);
@@ -154,12 +179,18 @@ export default function ManageColumnsPage() {
         const columns = columnsWithAllData.map(async (column) => {
           const columnType = handleDataTypeName(column.data_type);
           let arrayEnum;
+
+          let result;
           if (columnType === "ENUM") {
-            console.log(column)
+            console.log(column);
             const columnEnums = await getColumnEnums(column.column_name);
-            arrayEnum = columnEnums.slice(1, -1).split(",");
+
+            
+            result = removeQuotes(columnEnums);
+            arrayEnum = result.slice(1, -1).split(",");
             console.log(columnEnums);
             console.log(arrayEnum);
+            console.log(result);
           }
           const defaultValue = handleDefaultValue(
             column.column_default,
