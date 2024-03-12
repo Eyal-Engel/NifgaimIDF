@@ -156,6 +156,125 @@ const getEnumsForColumn = async (req, res, next) => {
 //   "userId": "d1e47f3e-b767-4030-b6ab-21bec850ba48"
 // }
 
+// const addHalalColumn = async (req, res, next) => {
+//   try {
+//     const { columnName, dataType, defaultValue } = req.body;
+//     const { userId } = req.body;
+//     const userRequested = await User.findByPk(userId);
+//     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
+//     const userCommandName = userCommand.commandName;
+//     let defaultValuePost = defaultValue;
+
+//     console.log(userId, columnName, dataType, defaultValue);
+//     console.log(defaultValue);
+//     if (
+//       !userRequested ||
+//       userRequested === null ||
+//       userRequested === undefined
+//     ) {
+//       return res
+//         .status(404)
+//         .json({ body: { errors: [{ message: "User does not exist" }] } });
+//     }
+
+//     if (userCommandName !== "חיל הלוגיסטיקה") {
+//       return res
+//         .status(403)
+//         .json({ body: { errors: [{ message: "User is not authorized" }] } });
+//     }
+
+//     if (!columnName || !dataType) {
+//       return res.status(400).json({
+//         body: {
+//           errors: [{ message: "Column name and data type are required." }],
+//         },
+//       });
+//     }
+
+//     if (defaultValuePost === undefined) {
+//       defaultValuePost = null;
+//     }
+
+//     // Get the queryInterface from your Sequelize instance
+//     const queryInterface = sequelize.getQueryInterface();
+
+//     // Check if the table exists
+//     const tableExists =
+//       await queryInterface.sequelize.queryInterface.showAllTables();
+
+//     if (!tableExists.includes("nifgaimHalals")) {
+//       return res.status(400).json({
+//         body: {
+//           errors: [{ message: "Table 'NifgaimHalals' does not exist." }],
+//         },
+//       });
+//     }
+
+//     // Check if the column already exists
+//     const tableDescription = await queryInterface.describeTable(
+//       "nifgaimHalals"
+//     );
+//     if (columnName in tableDescription) {
+//       return res.status(400).json({
+//         body: {
+//           errors: [{ message: `Column '${columnName}' already exists.` }],
+//         },
+//       });
+//     }
+
+//     // Validate the default value for the specified data type
+//     if (dataType.startsWith("select: ")) {
+//       const enumValues = dataType
+//         .substring(8)
+//         .slice(1, -1)
+//         .split(", ")
+//         .map((value) => value.trim()); // Remove leading and trailing whitespace
+//       if (!enumValues.includes(defaultValuePost)) {
+//         return res.status(400).json({
+//           body: {
+//             errors: [
+//               {
+//                 message: `Default value '${defaultValuePost}' is not valid for data type '${dataType}'.`,
+//               },
+//             ],
+//           },
+//         });
+//       }
+//     } else if (!isValidDefaultValue(dataType, defaultValuePost)) {
+//       return res.status(400).json({
+//         body: {
+//           errors: [
+//             {
+//               message: `Default value '${defaultValuePost}' is not valid for data type '${dataType}'.`,
+//             },
+//           ],
+//         },
+//       });
+//     }
+//     // Define the migration code to add the new column
+//     await queryInterface.addColumn(
+//       "nifgaimHalals", // Your model's table name
+//       columnName, // Name of the new column
+//       {
+//         type: dataType.startsWith("select: ")
+//           ? sequelize.Sequelize.ENUM(
+//               ...dataType.substring(8).slice(1, -1).split(", ")
+//             )
+//           : sequelize.Sequelize.DataTypes[dataType], // Data type of the new column
+//         allowNull: true, // or false based on your requirement
+//         defaultValue: defaultValuePost || null,
+//       }
+//     );
+
+//     console.log("New column added successfully.");
+
+//     res.status(200).json({ message: "New column added successfully." });
+//   } catch (error) {
+//     console.error("Error adding column:", error);
+//     return next(error);
+//   }
+// };
+
 const addHalalColumn = async (req, res, next) => {
   try {
     const { columnName, dataType, defaultValue } = req.body;
@@ -165,7 +284,10 @@ const addHalalColumn = async (req, res, next) => {
     const userCommandName = userCommand.commandName;
     let defaultValuePost = defaultValue;
 
-    console.log(userId, columnName, dataType, defaultValue);
+    // Trim columnName to remove leading and trailing spaces
+    const trimmedColumnName = columnName.trim();
+
+    console.log(userId, trimmedColumnName, dataType, defaultValue);
     console.log(defaultValue);
     if (
       !userRequested ||
@@ -183,7 +305,7 @@ const addHalalColumn = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
 
-    if (!columnName || !dataType) {
+    if (!trimmedColumnName || !dataType) {
       return res.status(400).json({
         body: {
           errors: [{ message: "Column name and data type are required." }],
@@ -214,10 +336,12 @@ const addHalalColumn = async (req, res, next) => {
     const tableDescription = await queryInterface.describeTable(
       "nifgaimHalals"
     );
-    if (columnName in tableDescription) {
+    if (trimmedColumnName in tableDescription) {
       return res.status(400).json({
         body: {
-          errors: [{ message: `Column '${columnName}' already exists.` }],
+          errors: [
+            { message: `Column '${trimmedColumnName}' already exists.` },
+          ],
         },
       });
     }
@@ -254,7 +378,7 @@ const addHalalColumn = async (req, res, next) => {
     // Define the migration code to add the new column
     await queryInterface.addColumn(
       "nifgaimHalals", // Your model's table name
-      columnName, // Name of the new column
+      trimmedColumnName, // Name of the new column
       {
         type: dataType.startsWith("select: ")
           ? sequelize.Sequelize.ENUM(
