@@ -372,12 +372,16 @@ export default function HalalimPage() {
                           : params.value === "קבע"
                           ? "rgba(0, 128, 0, 0.8)" // Green with 80% opacity
                           : params.value === "סדיר"
-                          ? "rgba(0, 200, 255, 0.8)" // Green with 80% opacity
-                          : "rgba(40, 40, 40, 0.15)", // Cyan with 80% opacity
+                          ? "rgba(0, 200, 255, 0.8)" // Cyan with 80% opacity
+                          : "rgba(40, 40, 40, 0.15)",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
+                      overflow: "hidden", // Ensure content is clipped if it overflows
+                      paddingLeft: "10px", // Adjust padding as needed
+                      paddingRight: "10px", // Adjust padding as needed
                     }}
+                    title={params.value} // Tooltip to show full text on hover
                   >
                     {/* can adjust the font color by the value here */}
                     <p
@@ -390,6 +394,11 @@ export default function HalalimPage() {
                             : params.value === "סדיר"
                             ? "black"
                             : "black",
+                        margin: 0, // Remove default margin
+                        overflow: "hidden", // Ensure text is clipped if it overflows
+                        textOverflow: "ellipsis", // Show ellipsis if text overflows container
+                        whiteSpace: "nowrap", // Prevent text from wrapping
+                        maxWidth: "100%", // Ensure text doesn't overflow container
                       }}
                     >
                       {params.value}

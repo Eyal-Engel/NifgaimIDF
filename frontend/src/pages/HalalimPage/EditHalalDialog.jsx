@@ -27,10 +27,19 @@ import {
   getColumnEnums,
   getLeftOversByHalalId,
   getSoldierAccompaniedsByHalalId,
+  updateHalal,
 } from "../../utils/api/halalsApi";
 import Swal from "sweetalert2";
-import { getAllCommandsNames } from "../../utils/api/commandsApi";
-import { getAllGraveyards } from "../../utils/api/graveyardsApi";
+import {
+  getAllCommandsNames,
+  getCommandIdByName,
+  getCommandNameById,
+} from "../../utils/api/commandsApi";
+import {
+  getAllGraveyards,
+  getGraveyardById,
+  getGraveyardIdByName,
+} from "../../utils/api/graveyardsApi";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { column, prefixer } from "stylis";
@@ -146,19 +155,45 @@ export default function EditHalalDIalog({
     return <div>{reversedWords}</div>;
   }
 
+  function removeQuotes(inputString) {
+    // Remove the overall quotes from the input string
+    inputString = inputString.replace(/^{|"|}$/g, "");
+
+    // Split the input string by commas and remove leading/trailing whitespaces
+    const items = inputString.split(",").map((item) => item.trim());
+
+    // Remove double quotes from the first and last character of each item if they are present
+    const itemsWithoutQuotes = items.map((item) => {
+      if (item.startsWith('"') && item.endsWith('"')) {
+        return item.slice(1, -1); // Remove quotes from the beginning and end
+      }
+      return item;
+    });
+
+    // Join the items back into a string and return
+    return `{${itemsWithoutQuotes.join(",")}}`;
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       let enumsObject = {};
+      let result;
+      let arrayEnum;
 
       if (selectedRow) {
         for (const key of Object.keys(selectedRow)) {
           const column = getColumnByName(key);
+          console.log(column.data_type);
           if (column.data_type === "USER-DEFINED") {
+            console.log(column);
             const columnEnums = await getColumnEnums(key);
+            console.log(columnEnums);
             if (columnEnums) {
               if (columnEnums) {
-                const enumArray = columnEnums.replace(/[{}]/g, "").split(",");
-                enumsObject[key] = enumArray;
+                result = removeQuotes(columnEnums);
+                arrayEnum = result.slice(1, -1).split(",");
+                console.log(arrayEnum);
+                enumsObject[key] = arrayEnum;
               } else {
                 enumsObject[key] = [];
               }
@@ -218,29 +253,72 @@ export default function EditHalalDIalog({
 
   const handleSubmit = async () => {
     try {
-      // Here you can send inputValues to your backend using a PATCH request
+      const updatedHalalData = {};
 
-      // const updatedLeftOver = await updateLeftOver(
-      //   loggedUserId,
-      //   selectedRow.id,
-      //   updatedLeftOverData
-      // );
+      // Iterate over keys in selectedRow
+      for (const key in selectedRow) {
+        // Check if the key exists in inputValues and has a value
+        if (inputValues.hasOwnProperty(key) && inputValues[key]) {
+          updatedHalalData[key] = inputValues[key]; // Use the value from inputValues
+        } else {
+          updatedHalalData[key] = selectedRow[key]; // Use the value from selectedRow
+        }
+      }
 
-      // const updatedLeftOverDataWithHalalId = {
-      //   ...updatedLeftOver,
-      //   halalId: selectedHalal.privateNumber,
-      //   halalFullName: selectedHalal.lastName + " " + selectedHalal.firstName,
-      // };
+      console.log(updatedHalalData);
 
-      // // Then, inside your setRows function, ensure that you include halalId (which now contains nifgaimHalalId)
-      // setRows((prevRows) =>
-      //   prevRows.map((row) => {
-      //     if (row.id === selectedRow.id) {
-      //       return { ...row, ...updatedLeftOverDataWithHalalId };
-      //     }
-      //     return row;
-      //   })
-      // );
+      // Get the command ID by name
+      const commandId = await getCommandIdByName(
+        updatedHalalData.nifgaimCommandId
+      );
+      // Get the graveyard ID by name
+      const graveyardId = await getGraveyardIdByName(
+        updatedHalalData.nifgaimGraveyardId
+      );
+
+      // Update the relevant fields in updatedHalalData
+      updatedHalalData.nifgaimCommandId = commandId;
+      updatedHalalData.nifgaimGraveyardId = graveyardId;
+
+      console.log(updatedHalalData);
+
+      const updatedHalal = await updateHalal(
+        loggedUserId,
+        selectedRow.id,
+        updatedHalalData
+      );
+
+      console.log(updatedHalal);
+
+      const commandName = await getCommandNameById(
+        updatedHalal.nifgaimCommandId
+      );
+      const graveyard = await getGraveyardById(updatedHalal.nifgaimGraveyardId);
+
+      const graveyardName = graveyard.graveyardName;
+
+      // Replace nifgaimCommandId and nifgaimGraveyardId in updatedHalal with their names
+      updatedHalal.nifgaimCommandId = commandName;
+      updatedHalal.nifgaimGraveyardId = graveyardName;
+
+      // Update the row in the state
+      setRows((prevRows) =>
+        prevRows.map((row) => {
+          if (row.id === selectedRow.id) {
+            return { ...row, ...updatedHalal };
+          }
+          return row;
+        })
+      );
+
+      setRows((prevRows) =>
+        prevRows.map((row) => {
+          if (row.id === selectedRow.id) {
+            return { ...row, ...updatedHalal };
+          }
+          return row;
+        })
+      );
 
       handleCloseDialog();
     } catch (error) {
@@ -482,7 +560,7 @@ export default function EditHalalDIalog({
                     ) : data_type === "USER-DEFINED" ? (
                       <Select
                         labelId={key}
-                        value={`"ערך 1"`}
+                        value={value}
                         onChange={(e) => handleInputChange(key, e.target.value)}
                       >
                         {enums[key] &&

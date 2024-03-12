@@ -247,6 +247,8 @@ export async function updateHalal(userId, halalId, updatedHalalData) {
 
   const body = JSON.stringify({ updatedHalalData, userId });
 
+  console.log(body)
+
   try {
     const response = await patch(apiUrl, body, headers);
     return response.data;

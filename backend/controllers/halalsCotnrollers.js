@@ -937,6 +937,8 @@ const updateHalal = async (req, res, next) => {
       RETURNING *;
     `;
 
+    console.log(updateQuery);
+
     const updatedHalal = await sequelize.query(updateQuery, {
       type: QueryTypes.UPDATE,
     });
