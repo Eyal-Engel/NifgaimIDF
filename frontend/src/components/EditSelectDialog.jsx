@@ -43,7 +43,6 @@ export default function EditSelectDialog({
   onSaveClicked,
 }) {
   const [newColumnName, setNewColumnName] = useState(columnName);
-  console.log(enumValuesFromColumn);
 
   // const [values, setValues] = useState([1, 2]);
   const [enumValues, setEnumValues] = useState(enumValuesFromColumn);

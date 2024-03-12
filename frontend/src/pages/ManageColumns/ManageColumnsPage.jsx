@@ -81,10 +81,8 @@ export default function ManageColumnsPage() {
     } else if (columnType === "BOOLEAN") {
       return defaultValue;
     } else if (defaultValue.includes("enum_nifgaimHalals_")) {
-      console.log(defaultValue);
       const startIndex = defaultValue.indexOf("'") + 1; // Find the index of the first single quote
       const endIndex = defaultValue.lastIndexOf("'"); // Find the index of the last single quote
-      console.log(defaultValue.substring(startIndex, endIndex));
       return defaultValue.substring(startIndex, endIndex); // Extract the substring between the first and last single quotes
     } else if (defaultValue.includes("timestamp with time zone")) {
       const timestampString = defaultValue.split("'")[1];
@@ -182,15 +180,11 @@ export default function ManageColumnsPage() {
 
           let result;
           if (columnType === "ENUM") {
-            console.log(column);
             const columnEnums = await getColumnEnums(column.column_name);
 
             
             result = removeQuotes(columnEnums);
             arrayEnum = result.slice(1, -1).split(",");
-            console.log(columnEnums);
-            console.log(arrayEnum);
-            console.log(result);
           }
           const defaultValue = handleDefaultValue(
             column.column_default,
