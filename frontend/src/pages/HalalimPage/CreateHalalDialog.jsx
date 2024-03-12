@@ -22,11 +22,10 @@ import {
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
 import Draggable from "react-draggable";
-import dayjs from "dayjs";
 import { createHalal, getColumnEnums } from "../../utils/api/halalsApi";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { column, prefixer } from "stylis";
+import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import {
   getCommandIdByName,
@@ -116,10 +115,6 @@ export default function CreateHalalDialog({
     ),
   ].filter((column) => column.column_name !== "id"); // Filter out the "id" column
 
-  console.log(rearrangedColumns);
-
-  console.log("check infinte");
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -136,18 +131,15 @@ export default function CreateHalalDialog({
 
   const handleInputChange = useCallback(
     async (column, value) => {
-      console.log(column, value);
       let v = value;
 
       try {
         if (column === "nifgaimCommandId") {
           const commandId = await getCommandIdByName(value);
           v = commandId;
-          console.log("Command ID:", commandId);
         } else if (column === "nifgaimGraveyardId") {
           const graveyardId = await getGraveyardIdByName(value);
           v = graveyardId;
-          console.log("Graveyard ID:", graveyardId);
         }
         setInputValues((prevValues) => ({
           ...prevValues,
@@ -158,9 +150,8 @@ export default function CreateHalalDialog({
         // Handle error appropriately, such as displaying an error message
       }
 
-      console.log(inputValues);
     },
-    [getCommandIdByName, getGraveyardIdByName, setInputValues]
+    [setInputValues]
   );
 
   function removeQuotes(inputString) {
@@ -396,7 +387,7 @@ export default function CreateHalalDialog({
                       }}
                     >
                       <DatePicker
-                        label="תאריך ברירת מחדל"
+                        label="תאריך פטירה "
                         sx={{ width: "100%" }}
                         onChange={(date) =>
                           handleInputChange(column.column_name, date)
