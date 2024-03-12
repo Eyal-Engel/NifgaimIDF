@@ -76,11 +76,14 @@ export default function SimpleDialog({
       if (typeOfColumn === "ENUM") {
         // typeOfColumn === "ENUM"
         // enumValues = ["value1", "value2", "value3"]
-        const columnTypeFormatted = `select: [${enumValues.join(", ")}]`;
-        
+
+        console.log(enumValues);
+        const trimmedValues = enumValues.map(value => value.trim());
+        const resultString = "select: [" + trimmedValues.join(", ") + "]";
+        console.log(resultString);
         onCreateClicked(
           newColumnName,
-          columnTypeFormatted,
+          resultString,
           enumDefaultValue,
           enumValues
         );
@@ -112,11 +115,10 @@ export default function SimpleDialog({
 
   const handeldefaultValueChange = (event) => {
     if (typeOfColumn === "DATE") {
-      console.log("herre")
-      console.log(typeOfColumn)
+      console.log("herre");
+      console.log(typeOfColumn);
       setDefaultValue(event.$d);
-    }
-    else if (typeOfColumn === "ENUM") {
+    } else if (typeOfColumn === "ENUM") {
       setEnumDefaultValue(event.target.value);
     } else {
       setDefaultValue(event.target.value);

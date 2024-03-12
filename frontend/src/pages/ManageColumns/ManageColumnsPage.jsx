@@ -339,7 +339,7 @@ export default function ManageColumnsPage() {
 
         setOpenDialog(false);
       } catch (error) {
-        const errors = error.response.data.body.errors;
+        const errors = error.response.data.body?.errors;
         let errorsForSwal = ""; // Start unordered list
 
         errors.forEach((error) => {

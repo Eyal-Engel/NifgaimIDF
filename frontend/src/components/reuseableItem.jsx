@@ -265,7 +265,7 @@ const EditableItem = ({
         {!isNewColumn &&
           !isInEditMode &&
           (isScreenSmall ? (
-            <IconButton>
+            <IconButton onClick={handleDeleteClick}>
               <DeleteIcon color="error" />
             </IconButton>
           ) : (
