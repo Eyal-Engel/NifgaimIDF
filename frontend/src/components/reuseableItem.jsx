@@ -357,4 +357,4 @@ const EditableItem = ({
   );
 };
 
-export default EditableItem;
+export default React.memo(EditableItem);
