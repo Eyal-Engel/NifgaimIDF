@@ -35,21 +35,10 @@ import {
   getGraveyardById,
   getGraveyardIdByName,
 } from "../../utils/api/graveyardsApi";
+import Transition from "../../components/TableUtils/Transition";
+import PaperComponent from "../../components/TableUtils/PaperComponent";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
-function PaperComponent(props) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} sx={{ borderRadius: "10px" }} />
-    </Draggable>
-  );
-}
 
 const MemoizedSelect = React.memo(Select);
 
@@ -346,33 +335,6 @@ export default function CreateHalalDialog({
                       </MenuItem>
                     ))}
                   </Select>
-
-                  {/* <Select
-                    sx={{ direction: "rtl" }}
-                    labelId="graveyard-label"
-                    id="graveyard"
-                    name="graveyard"
-                    defaultValue=""
-                    displayEmpty
-                    className="resetPasswordInputField"
-                    onChange={(graveyard) =>
-                      handleInputChange(column.column_name, graveyard)
-                    }
-                    renderValue={(value) => (value ? value : "בחר בית קברות")} // Render placeholder
-                  >
-                    <MenuItem sx={{ direction: "rtl" }} value="" disabled>
-                      בחר בית קברות
-                    </MenuItem>
-                    {graveyards.map((graveyard) => (
-                      <MenuItem
-                        sx={{ direction: "rtl" }}
-                        key={graveyard.id}
-                        value={graveyard.graveyardName}
-                      >
-                        {graveyard.graveyardName}
-                      </MenuItem>
-                    ))}
-                  </Select> */}
                 </div>
               ) : (
                 <>

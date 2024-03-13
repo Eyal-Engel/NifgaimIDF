@@ -178,10 +178,18 @@ const addHalalColumn = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
 
-    if (!trimmedColumnName || !dataType) {
+    if (!trimmedColumnName) {
       return res.status(400).json({
         body: {
-          errors: [{ message: "Column name and data type are required." }],
+          errors: [{ message: "Column name is required." }],
+        },
+      });
+    }
+
+    if (!dataType) {
+      return res.status(400).json({
+        body: {
+          errors: [{ message: "Data type is required." }],
         },
       });
     }
@@ -330,13 +338,10 @@ const updateHalalColumn = async (req, res, next) => {
       "ENUM",
     ];
 
-    console.log(
-      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    );
     if (!validDataTypes.includes(dataType)) {
       return res
         .status(400)
-        .json({ message: `Invalid data type: ${dataType}` });
+        .json({ body: { errors: [{ message: `Invalid data type` }] } });
     }
 
     // Dynamically create the Sequelize data type based on the dataType from the request body
@@ -361,10 +366,16 @@ const updateHalalColumn = async (req, res, next) => {
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized." }] } });
     }
-
     if (!columnName && !columnDefault) {
       return res.status(400).json({
-        message: "at least 1 of new column name or columnDefault are required.",
+        body: {
+          errors: [
+            {
+              message:
+                "at least 1 of new column name or columnDefault are required.",
+            },
+          ],
+        },
       });
     }
 
@@ -374,9 +385,11 @@ const updateHalalColumn = async (req, res, next) => {
     // Check if the table exists
     const tableExists = await queryInterface.showAllTables();
     if (!tableExists.includes("nifgaimHalals")) {
-      return res
-        .status(400)
-        .json({ message: "Table 'nifgaimHalals' does not exist." });
+      return res.status(400).json({
+        body: {
+          errors: [{ message: "Table 'nifgaimHalals' does not exist." }],
+        },
+      });
     }
 
     // Check if the column exists
@@ -384,9 +397,11 @@ const updateHalalColumn = async (req, res, next) => {
       "nifgaimHalals"
     );
     if (!(columnName in tableDescription)) {
-      return res
-        .status(400)
-        .json({ message: `Column '${columnName}' does not exist.` });
+      return res.status(400).json({
+        body: {
+          errors: [{ message: `Column '${columnName}' does not exist.` }],
+        },
+      });
     }
 
     if (
@@ -673,7 +688,9 @@ const deleteHalalColumn = async (req, res, next) => {
     }
 
     if (!columnName) {
-      return res.status(400).json({ message: "Column name is required." });
+      return res
+        .status(400)
+        .json({ body: { errors: [{ message: "Column name is required." }] } });
     }
 
     // Get the queryInterface from your Sequelize instance
@@ -684,7 +701,13 @@ const deleteHalalColumn = async (req, res, next) => {
     if (!tableExists.includes("nifgaimHalals")) {
       return res
         .status(400)
-        .json({ message: "Table 'NifgaimHalals' does not exist." });
+        .json({
+          message: {
+            body: {
+              errors: [{ message: "Table 'NifgaimHalals' does not exist." }],
+            },
+          },
+        });
     }
 
     // Check if the column exists
@@ -694,7 +717,13 @@ const deleteHalalColumn = async (req, res, next) => {
     if (!(columnName in tableDescription)) {
       return res
         .status(400)
-        .json({ message: `Column '${columnName}' does not exist.` });
+        .json({
+          message: {
+            body: {
+              errors: [{ message: `Column '${columnName}' does not exist.` }],
+            },
+          },
+        });
     }
 
     // Define the migration code to remove the column

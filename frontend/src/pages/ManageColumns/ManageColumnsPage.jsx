@@ -19,7 +19,12 @@ import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
 import SimpleDialog from "../../components/Dialog";
 import dayjs from "dayjs";
-import { filterColumns, handleDataTypeName, handleDefaultValue, removeQuotes } from "../../utils/utilsForCulomnPage";
+import {
+  filterColumns,
+  handleDataTypeName,
+  handleDefaultValue,
+  removeQuotes,
+} from "../../utils/utilsForCulomnPage";
 
 const theme = createTheme({
   direction: "rtl",
@@ -30,7 +35,6 @@ const cacheRtl = createCache({
   key: "muirtl",
   stylisPlugins: [prefixer, rtlPlugin],
 });
-
 
 export default function ManageColumnsPage() {
   const [columns, setColumns] = useState([]); // changed from commands
@@ -173,11 +177,38 @@ export default function ManageColumnsPage() {
         });
       });
     } catch (error) {
-      const errors = error.response.data.message;
+      console.log(error);
+      const errors = error.response.data.body?.errors;
+      let errorsForSwal = ""; // Start unordered list
+
+      if (errors) {
+        errors.forEach((error) => {
+          if (error.message === "columnName must be unique") {
+            errorsForSwal += "<li>השם כבר קיים במערכת</li>";
+          }
+          if (
+            error.message ===
+            "at least 1 of new column name or columnDefault are required."
+          ) {
+            errorsForSwal += "<li>נדרש להכניס שם וערך ברירת מחדל</li>";
+          }
+          if (error.message === `Column '${columnName}' does not exist.`) {
+            errorsForSwal += "<li>השם לא קיים במערכת</li>";
+          }
+          if (
+            error.message ===
+            `New column name and new enum values are required.`
+          ) {
+            errorsForSwal += "<li>נדרש להכניס שם וערך ברירת מחדל</li>";
+          }
+        });
+      } else {
+        errorsForSwal += `<li>${error}</li>`;
+      }
 
       Swal.fire({
-        title: `לא ניתן לעדכן את העמודה`,
-        text: errors,
+        title: ` לא ניתן ליצור את העמודה ${newName}`, // changed from command
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
         icon: "error",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "אישור",
@@ -244,70 +275,70 @@ export default function ManageColumnsPage() {
     defaultValue,
     enumValues
   ) => {
-    if (newColumnName !== "") {
-      try {
-        await addHalalColumn(
-          loggedUserId,
-          newColumnName,
-          typeOfColumn,
-          typeOfColumn === "DATE"
-            ? dayjs(defaultValue, "DD/MM/YYYY")
-            : defaultValue
-        ); // changed from createCommand
-        if (typeOfColumn.includes("select")) {
-          typeOfColumn = "ENUM";
-        }
-
-        setColumns((prev) => [
-          ...prev,
-          {
-            columnName: newColumnName,
-            columnType: typeOfColumn,
-            columnDefault: defaultValue,
-            enumValues: typeOfColumn === "ENUM" ? enumValues : null,
-          },
-        ]);
-        setSearchInputValue("");
-
-        setOpenDialog(false);
-      } catch (error) {
-        console.log(error)
-        const errors = error.response.data.body?.errors;
-        let errorsForSwal = ""; // Start unordered list
-
-        if (errors) {
-          errors.forEach((error) => {
-            if (error.message === "columnName must be unique") {
-              // changed from commandName
-              errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
-            }
-          });
-        }
-        else{
-          errorsForSwal += `<li>${error}</li>`;
-
-        }
-
-
-        Swal.fire({
-          title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
-          html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
-          icon: "error",
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "אישור",
-          reverseButtons: true,
-          customClass: {
-            container: "swal-dialog-custom",
-          },
-        });
+    try {
+      await addHalalColumn(
+        loggedUserId,
+        newColumnName.trim(),
+        typeOfColumn,
+        typeOfColumn === "DATE"
+          ? dayjs(defaultValue, "DD/MM/YYYY")
+          : defaultValue
+      ); // changed from createCommand
+      if (typeOfColumn.includes("select")) {
+        typeOfColumn = "ENUM";
       }
-    } else {
+
+      setColumns((prev) => [
+        ...prev,
+        {
+          columnName: newColumnName,
+          columnType: typeOfColumn,
+          columnDefault: defaultValue,
+          enumValues: typeOfColumn === "ENUM" ? enumValues : null,
+        },
+      ]);
+      setSearchInputValue("");
+
+      setOpenDialog(false);
+    } catch (error) {
+      console.log(error);
+      const errors = error.response.data.body?.errors;
+      let errorsForSwal = ""; // Start unordered list
+      console.log(errors);
+      if (errors) {
+        errors.forEach((error) => {
+          if (error.message === `Column '${newColumnName.trim()}' already exists.`) {
+            errorsForSwal += "<li>העמודה כבר קיימת במערכת</li>";
+          }
+          if (
+            error.message ===
+            `Default value '${defaultValue}' is not valid for data type '${typeOfColumn}'.`
+          ) {
+            errorsForSwal += "<li>ערך ברירת מחדל לא תקין</li>";
+          }
+          if (
+            error.message ===
+            "Column name is required."
+          ) {
+            errorsForSwal += "<li>נדרש להכניס שם עמודה</li>";
+          }
+          if (
+            error.message ===
+            "Data type is required."
+          ) {
+            errorsForSwal += "<li>נדרש להכניס סוג עמודה</li>";
+          }
+        });
+      } else {
+        errorsForSwal += `<li>${error}</li>`;
+      }
+
       Swal.fire({
-        title: `לא הכנסת שם עמודה `,
-        text: "",
+        title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
         icon: "error",
         confirmButtonColor: "#3085d6",
-        confirmButtonText: "בטל",
+        confirmButtonText: "אישור",
         reverseButtons: true,
         customClass: {
           container: "swal-dialog-custom",
