@@ -364,15 +364,23 @@ export default function ManageColumnsPage() {
 
         setOpenDialog(false);
       } catch (error) {
+        console.log(error)
         const errors = error.response.data.body?.errors;
         let errorsForSwal = ""; // Start unordered list
 
-        errors.forEach((error) => {
-          if (error.message === "columnName must be unique") {
-            // changed from commandName
-            errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
-          }
-        });
+        if (errors) {
+          errors.forEach((error) => {
+            if (error.message === "columnName must be unique") {
+              // changed from commandName
+              errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
+            }
+          });
+        }
+        else{
+          errorsForSwal += `<li>${error}</li>`;
+
+        }
+
 
         Swal.fire({
           title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command

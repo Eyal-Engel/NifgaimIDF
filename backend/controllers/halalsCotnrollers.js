@@ -248,6 +248,15 @@ const addHalalColumn = async (req, res, next) => {
         },
       });
     }
+
+    if (dataType.startsWith("select: ")) {
+      const temp = sequelize.Sequelize.ENUM(
+        ...dataType.substring(8).slice(1, -1).split(", ")
+      );
+
+      console.log(defaultValuePost);
+      console.log(temp);
+    }
     // Define the migration code to add the new column
     await queryInterface.addColumn(
       "nifgaimHalals", // Your model's table name
