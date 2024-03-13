@@ -359,4 +359,4 @@ const SimpleDialog = React.memo(
     );
   }
 );
-export default SimpleDialog;
+export default React.memo(SimpleDialog);
