@@ -83,13 +83,6 @@ import tateAlufYabasha from "../../assets/images/ranks/תת אלוף יבשה.pn
 import tateAlufAvir from "../../assets/images/ranks/תת אלוף אוויר.png";
 import tateAlufYam from "../../assets/images/ranks/תת אלוף ים.png";
 
-// Import all images from the specified folder
-const images = require.context(
-  "../../assets/images/ranks", // Path to your images folder
-  false,
-  /\.(png|jpe?g|svg)$/
-);
-
 export default function CreateSoldierAccompaniedDialog({
   openDialog,
   setOpenDialog,
@@ -101,7 +94,6 @@ export default function CreateSoldierAccompaniedDialog({
   const [halals, setHalals] = useState([]);
   const [rank, setRank] = useState("");
   const [selectedHalal, setSelectedHalal] = useState(null);
-  const [imagesLoaded, setImagesLoaded] = useState([]);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
   const ranksOptions = [
@@ -185,7 +177,7 @@ export default function CreateSoldierAccompaniedDialog({
                   <img
                     key={`${i}-${index}`}
                     src={image}
-                    alt={`Image ${i}-${index}`}
+                    alt={""}
                     style={{
                       maxWidth: "100px",
                       maxHeight: "100px",
@@ -335,12 +327,6 @@ export default function CreateSoldierAccompaniedDialog({
         </CacheProvider>
         <Divider />
         <DialogContent>
-          {/* Render imported images */}
-          {imagesLoaded.map((image, index) => (
-            <img key={index} src={image} alt={`Rank ${index}`} />
-          ))}
-
-          {/* Render input fields based on columns */}
           <div
             key="מספר אישי"
             style={{
@@ -392,19 +378,43 @@ export default function CreateSoldierAccompaniedDialog({
                 onChange={(e) => handleInputChange("rank", e.target.value)}
                 style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
               >
-                <ListSubheader style={{ textAlign: "right", fontSize: "large", fontWeight: "bold" }}>
+                <ListSubheader
+                  style={{
+                    textAlign: "right",
+                    fontSize: "large",
+                    fontWeight: "bold",
+                  }}
+                >
                   חובה
                 </ListSubheader>
                 {renderImageOptions(0, 5)}
-                <ListSubheader style={{ textAlign: "right", fontSize: "large", fontWeight: "bold" }}>
+                <ListSubheader
+                  style={{
+                    textAlign: "right",
+                    fontSize: "large",
+                    fontWeight: "bold",
+                  }}
+                >
                   אקדמאיים
                 </ListSubheader>
                 {renderImageOptions(5, 8)}
-                <ListSubheader style={{ textAlign: "right", fontSize: "large", fontWeight: "bold" }}>
+                <ListSubheader
+                  style={{
+                    textAlign: "right",
+                    fontSize: "large",
+                    fontWeight: "bold",
+                  }}
+                >
                   נגדים
                 </ListSubheader>
                 {renderImageOptions(8, 13)}
-                <ListSubheader style={{ textAlign: "right", fontSize: "large", fontWeight: "bold" }}>
+                <ListSubheader
+                  style={{
+                    textAlign: "right",
+                    fontSize: "large",
+                    fontWeight: "bold",
+                  }}
+                >
                   קצינים
                 </ListSubheader>
                 {renderImageOptions(13, imageImports.length)}
