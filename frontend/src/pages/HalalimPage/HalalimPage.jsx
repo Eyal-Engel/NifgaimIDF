@@ -117,100 +117,97 @@ export default function HalalimPage() {
         }
       });
 
-      const formattedColumns = sortedColumns
-        .reduce((acc, column) => {
-          // Exclude the column with the ID
-          if (column) {
-            const translatedHeader =
-              translationDict[column.column_name] || column.column_name; // Translate header if available
+      const formattedColumns = sortedColumns.reduce((acc, column) => {
+        // Exclude the column with the ID
+        if (column) {
+          const translatedHeader =
+            translationDict[column.column_name] || column.column_name; // Translate header if available
 
-            const calculatedWidth = column.column_name.length * 10;
-            const width = calculatedWidth > 120 ? calculatedWidth : 120;
+          const calculatedWidth = column.column_name.length * 10;
+          const width = calculatedWidth > 120 ? calculatedWidth : 120;
 
-            let type = column.data_type;
-            // Check if the type is 'date' and format accordingly
+          let type = column.data_type;
+          // Check if the type is 'date' and format accordingly
 
-            let renderCell1;
-            if (type === "boolean") {
-              renderCell1 = (params) => (
-                <div style={{ textAlign: "center" }}>
-                  {params.value === true ? (
-                    <span style={{ color: "green", fontSize: "1.2rem" }}>
-                      ✓
-                    </span>
-                  ) : (
-                    <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
-                  )}
-                </div>
-              );
-            } else if (type === "USER-DEFINED") {
-              renderCell1 = (params) => (
-                <div
+          let renderCell1;
+          if (type === "boolean") {
+            renderCell1 = (params) => (
+              <div style={{ textAlign: "center" }}>
+                {params.value === true ? (
+                  <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
+                ) : (
+                  <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
+                )}
+              </div>
+            );
+          } else if (type === "USER-DEFINED") {
+            renderCell1 = (params) => (
+              <div
+                style={{
+                  textAlign: "center",
+                  borderRadius: "10px",
+                  width: "100%",
+                  background:
+                    params.value === "מילואים"
+                      ? "rgba(255, 0, 0, 0.8)" // Red with 80% opacity
+                      : params.value === "קבע"
+                      ? "rgba(0, 128, 0, 0.8)" // Green with 80% opacity
+                      : params.value === "סדיר"
+                      ? "rgba(0, 200, 255, 0.8)" // Cyan with 80% opacity
+                      : "rgba(40, 40, 40, 0.15)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden", // Ensure content is clipped if it overflows
+                  paddingLeft: "10px", // Adjust padding as needed
+                  paddingRight: "10px", // Adjust padding as needed
+                }}
+                title={params.value} // Tooltip to show full text on hover
+              >
+                {/* can adjust the font color by the value here */}
+                <p
                   style={{
-                    textAlign: "center",
-                    borderRadius: "10px",
-                    width: "100%",
-                    background:
+                    color:
                       params.value === "מילואים"
-                        ? "rgba(255, 0, 0, 0.8)" // Red with 80% opacity
+                        ? "white"
                         : params.value === "קבע"
-                        ? "rgba(0, 128, 0, 0.8)" // Green with 80% opacity
+                        ? "white"
                         : params.value === "סדיר"
-                        ? "rgba(0, 200, 255, 0.8)" // Cyan with 80% opacity
-                        : "rgba(40, 40, 40, 0.15)",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    overflow: "hidden", // Ensure content is clipped if it overflows
-                    paddingLeft: "10px", // Adjust padding as needed
-                    paddingRight: "10px", // Adjust padding as needed
+                        ? "black"
+                        : "black",
+                    margin: 0, // Remove default margin
+                    overflow: "hidden", // Ensure text is clipped if it overflows
+                    textOverflow: "ellipsis", // Show ellipsis if text overflows container
+                    whiteSpace: "nowrap", // Prevent text from wrapping
+                    maxWidth: "100%", // Ensure text doesn't overflow container
                   }}
-                  title={params.value} // Tooltip to show full text on hover
                 >
-                  {/* can adjust the font color by the value here */}
-                  <p
-                    style={{
-                      color:
-                        params.value === "מילואים"
-                          ? "white"
-                          : params.value === "קבע"
-                          ? "white"
-                          : params.value === "סדיר"
-                          ? "black"
-                          : "black",
-                      margin: 0, // Remove default margin
-                      overflow: "hidden", // Ensure text is clipped if it overflows
-                      textOverflow: "ellipsis", // Show ellipsis if text overflows container
-                      whiteSpace: "nowrap", // Prevent text from wrapping
-                      maxWidth: "100%", // Ensure text doesn't overflow container
-                    }}
-                  >
-                    {params.value}
-                  </p>
-                </div>
-              );
-            }
-
-            acc.push({
-              field: column.column_name,
-              headerName: translatedHeader, // Use translated header
-              type: type,
-              width: width,
-              editable: false,
-              headerAlign: "center",
-              align: "center",
-              // If it's a date, specify the date format
-              ...(type === "timestamp with time zone" && {
-                valueFormatter: (params) => formatDate(params.value),
-              }),
-              ...((type === "boolean" || type === "USER-DEFINED") && {
-                renderCell: renderCell1,
-              }),
-            });
+                  {params.value}
+                </p>
+              </div>
+            );
           }
-          return acc;
-        }, [])
-        .reverse();
+
+          acc.push({
+            field: column.column_name,
+            headerName: translatedHeader, // Use translated header
+            type: type,
+            width: width,
+            editable: false,
+            headerAlign: "center",
+            align: "center",
+            // If it's a date, specify the date format
+            ...(type === "timestamp with time zone" && {
+              valueFormatter: (params) => formatDate(params.value),
+            }),
+            ...((type === "boolean" || type === "USER-DEFINED") && {
+              renderCell: renderCell1,
+            }),
+          });
+        }
+        return acc;
+      }, []);
+      // .reverse();
 
       const halalsData = await getHalals();
 
@@ -245,7 +242,7 @@ export default function HalalimPage() {
   return (
     <Box
       sx={{
-        width: "100vw",
+        width: "80vw",
         height: "75vh",
         maxHeight: "70rem",
         maxWidth: "70rem",
@@ -263,10 +260,20 @@ export default function HalalimPage() {
         },
         direction: "ltr",
         background: "white",
-        // alignItems: "center",
-        // justifyContent: "center",
+        alignItems: "center",
+        justifyContent: "center",
         borderRadius: "2rem",
         boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",
+
+        "& .MuiDataGrid-virtualScrollerContent > .MuiDataGrid-virtualScrollerRenderZone":
+          {
+            position: "absolute !important",
+          },
+        "& .MuiDataGrid-virtualScroller": {
+          minWidth:
+            // ? "880px !important":
+            "fit-content !important",
+        },
       }}
     >
       <DataGrid
@@ -276,14 +283,15 @@ export default function HalalimPage() {
           (column) => column.field !== "מספר זיהוי" && column.field !== "id"
         )} // Exclude the 'id' field
         editMode="row"
+        pagination
+        columnBuffer={columns.length}
         onRowClick={handleRowClick}
         rowModesModel={rowModesModel}
         localeText={heIL.components.MuiDataGrid.defaultProps.localeText}
         sx={{
-          // direction: "rtl",
+          direction: "rtl",
           // overflow: "hidden",
           border: "none",
-      
           "& .MuiDataGrid-row:hover": {
             backgroundColor: "#EDF3F8",
           },
@@ -291,7 +299,6 @@ export default function HalalimPage() {
           "& .MuiDataGrid-columnHeadersInner": {
             bgcolor: "#fccd38",
           },
-
           "& .MuiDataGrid-columnHeaderTitle": {
             color: "white",
           },

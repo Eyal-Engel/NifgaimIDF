@@ -8,6 +8,7 @@ const LeftOver = require("../models/schemas/NifgaimLeftOver");
 const { v4: uuidv4 } = require("uuid");
 const { QueryTypes, Sequelize, Op } = require("sequelize");
 const sequelize = require("../dbConfig");
+const replaceEnum = require("sequelize-replace-enum-postgres").default;
 
 const getHalals = async (req, res, next) => {
   try {
@@ -483,137 +484,158 @@ const updateHalalColumn = async (req, res, next) => {
 //   "newEnumValues": ["value1", "value2", "value4"],
 //   "column_default": "value4"
 // }
-const updateHalalSelectColumn = async (req, res, next) => {
+const updateHalalSelectColumn = async (req, res) => {
   try {
-    const { userId, columnName, newColumnName, newEnumValues, column_default } =
-      req.body;
-
-    const userRequested = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
-
-    if (!userRequested) {
-      return res
-        .status(404)
-        .json({ errors: [{ message: "User does not exist" }] });
-    }
-
-    if (userCommandName !== "חיל הלוגיסטיקה") {
-      return res
-        .status(403)
-        .json({ errors: [{ message: "User is not authorized" }] });
-    }
-
-    if (!newColumnName || !newEnumValues) {
-      return res.status(400).json({
-        errors: [
-          { message: "New column name and new enum values are required." },
-        ],
-      });
-    }
-
-    // Get the queryInterface from your Sequelize instance
-    const queryInterface = sequelize.getQueryInterface();
-
-    // Check if the table exists
-    const tableExists = await queryInterface.showAllTables();
-    if (!tableExists.includes("nifgaimHalals")) {
-      return res.status(400).json({
-        errors: [{ message: "Table 'NifgaimHalals' does not exist." }],
-      });
-    }
-
-    // Check if the column exists
-    const tableDescription = await queryInterface.describeTable(
-      "nifgaimHalals"
-    );
-    if (!tableDescription[columnName]) {
-      return res.status(400).json({
-        errors: [{ message: `Column '${columnName}' does not exist.` }],
-      });
-    }
-
-    // Verify if the column is of type ENUM or USER-DEFINED (custom type)
-    const columnDataType = tableDescription[columnName].type;
-    if (
-      !(columnDataType.startsWith("ENUM") || columnDataType === "USER-DEFINED")
-    ) {
-      return res.status(400).json({
-        errors: [
-          {
-            message: `Column '${columnName}' is not of type ENUM or USER-DEFINED.`,
-          },
-        ],
-      });
-    }
-
-    // For USER-DEFINED type, extract the enum values from the default value
-    let enumValues;
-    let defaultValue = column_default; // Initialize with the provided default value
-    if (columnDataType === "USER-DEFINED") {
-      console.log(tableDescription[columnName]);
-      const defaultEnumValue = tableDescription[columnName].defaultValue;
-      if (defaultEnumValue !== undefined && defaultEnumValue !== null) {
-        // Extract enum values from the special property
-        enumValues = tableDescription[columnName].special;
-        // If column_default is provided, update the defaultValue
-        if (column_default) {
-          defaultValue = column_default;
-        }
-      } else {
-        // Handle the case where default value is null
-        enumValues = [];
-      }
-    } else {
-      // Fetch existing enum values
-      const existingEnumValues = await queryInterface.sequelize.query(
-        `SELECT enum_range(NULL::"${columnName}"::text)`
-      );
-
-      enumValues = existingEnumValues[0][0].enum_range
-        .replace(`["${columnName}_`, "")
-        .replace(/"/g, "") // Remove quotes around enum values
-        .replace("]", "")
-        .split(",");
-    }
-
-    // Check if any halal record has a value not in the new enum values
-    const recordsToUpdate = await Halal.findAll({
-      where: {
-        [columnName]: { [Op.notIn]: enumValues },
-      },
+    // Run the migration to update the enum values
+    await replaceEnum({
+      queryInterface: sequelize.getQueryInterface(),
+      tableName: "nifgaimHalals",
+      columnName: "test10",
+      defaultValue: "weekly",
+      newValues: ["weekly", "monthly", "yearly", "on-demand"],
+      enumName: "enum_nifgaimHalals_new",
     });
 
-    // Update the halal records
-    await Promise.all(
-      recordsToUpdate.map(async (record) => {
-        if (!newEnumValues.includes(record[columnName])) {
-          record[newColumnName] = null;
-        } else {
-          record[newColumnName] = record[columnName];
-        }
-        await record.save();
-      })
-    );
-
-    // Remove the old column
-    await queryInterface.removeColumn("nifgaimHalals", columnName);
-
-    // Add the new column with the updated enum values and default value
-    await queryInterface.addColumn("nifgaimHalals", newColumnName, {
-      type: sequelize.Sequelize.ENUM(...newEnumValues),
-      allowNull: true,
-      defaultValue, // Set the default value
-    });
-
-    console.log("Column updated successfully.");
-
-    res.status(200).json({ message: "Column updated successfully." });
+    return res
+      .status(200)
+      .json({ message: "Enum values updated successfully." });
   } catch (error) {
-    console.error("Error updating column:", error);
-    return next(error);
+    console.error("Error updating enum values:", error);
+    return res.status(500).json({ error: error });
   }
 };
+
+// const updateHalalSelectColumn = async (req, res, next) => {
+//   try {
+//     const { userId, columnName, newColumnName, newEnumValues, column_default } =
+//       req.body;
+
+//     const userRequested = await User.findByPk(userId);
+//     const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
+//     const userCommandName = userCommand.commandName;
+
+//     if (!userRequested) {
+//       return res
+//         .status(404)
+//         .json({ errors: [{ message: "User does not exist" }] });
+//     }
+
+//     if (userCommandName !== "חיל הלוגיסטיקה") {
+//       return res
+//         .status(403)
+//         .json({ errors: [{ message: "User is not authorized" }] });
+//     }
+
+//     if (!newColumnName || !newEnumValues) {
+//       return res.status(400).json({
+//         errors: [
+//           { message: "New column name and new enum values are required." },
+//         ],
+//       });
+//     }
+
+//     // Get the queryInterface from your Sequelize instance
+//     const queryInterface = sequelize.getQueryInterface();
+
+//     // Check if the table exists
+//     const tableExists = await queryInterface.showAllTables();
+//     if (!tableExists.includes("nifgaimHalals")) {
+//       return res.status(400).json({
+//         errors: [{ message: "Table 'NifgaimHalals' does not exist." }],
+//       });
+//     }
+
+//     // Check if the column exists
+//     const tableDescription = await queryInterface.describeTable(
+//       "nifgaimHalals"
+//     );
+//     if (!tableDescription[columnName]) {
+//       return res.status(400).json({
+//         errors: [{ message: `Column '${columnName}' does not exist.` }],
+//       });
+//     }
+
+//     // Verify if the column is of type ENUM or USER-DEFINED (custom type)
+//     const columnDataType = tableDescription[columnName].type;
+//     if (
+//       !(columnDataType.startsWith("ENUM") || columnDataType === "USER-DEFINED")
+//     ) {
+//       return res.status(400).json({
+//         errors: [
+//           {
+//             message: `Column '${columnName}' is not of type ENUM or USER-DEFINED.`,
+//           },
+//         ],
+//       });
+//     }
+
+//     // For USER-DEFINED type, extract the enum values from the default value
+//     let enumValues;
+//     let defaultValue = column_default; // Initialize with the provided default value
+//     if (columnDataType === "USER-DEFINED") {
+//       console.log(tableDescription[columnName]);
+//       const defaultEnumValue = tableDescription[columnName].defaultValue;
+//       if (defaultEnumValue !== undefined && defaultEnumValue !== null) {
+//         // Extract enum values from the special property
+//         enumValues = tableDescription[columnName].special;
+//         // If column_default is provided, update the defaultValue
+//         if (column_default) {
+//           defaultValue = column_default;
+//         }
+//       } else {
+//         // Handle the case where default value is null
+//         enumValues = [];
+//       }
+//     } else {
+//       // Fetch existing enum values
+//       const existingEnumValues = await queryInterface.sequelize.query(
+//         `SELECT enum_range(NULL::"${columnName}"::text)`
+//       );
+
+//       enumValues = existingEnumValues[0][0].enum_range
+//         .replace(`["${columnName}_`, "")
+//         .replace(/"/g, "") // Remove quotes around enum values
+//         .replace("]", "")
+//         .split(",");
+//     }
+
+//     // Check if any halal record has a value not in the new enum values
+//     const recordsToUpdate = await Halal.findAll({
+//       where: {
+//         [columnName]: { [Op.notIn]: enumValues },
+//       },
+//     });
+
+//     // Update the halal records
+//     await Promise.all(
+//       recordsToUpdate.map(async (record) => {
+//         if (!newEnumValues.includes(record[columnName])) {
+//           record[newColumnName] = null;
+//         } else {
+//           record[newColumnName] = record[columnName];
+//         }
+//         await record.save();
+//       })
+//     );
+
+//     // Remove the old column
+//     await queryInterface.removeColumn("nifgaimHalals", columnName);
+
+//     // Add the new column with the updated enum values and default value
+//     await queryInterface.addColumn("nifgaimHalals", newColumnName, {
+//       type: sequelize.Sequelize.ENUM(...newEnumValues),
+//       allowNull: true,
+//       defaultValue, // Set the default value
+//     });
+
+//     console.log("Column updated successfully.");
+
+//     res.status(200).json({ message: "Column updated successfully." });
+//   } catch (error) {
+//     console.error("Error updating column:", error);
+//     return next(error);
+//   }
+// };
 
 const replaceColumnValue = async (req, res, next) => {
   try {
