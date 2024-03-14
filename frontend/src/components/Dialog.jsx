@@ -24,6 +24,7 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AddIcon from "@mui/icons-material/Add";
 import RtlPlugin from "./rtlPlugin/RtlPlugin";
+import Swal from "sweetalert2";
 
 const theme = (outerTheme) =>
   createTheme({
@@ -69,19 +70,35 @@ const SimpleDialog = React.memo(
     const handleCreateClicked = () => {
       if (isColumn) {
         if (typeOfColumn === "ENUM") {
-          // typeOfColumn === "ENUM"
-          // enumValues = ["value1", "value2", "value3"]
-
           console.log(enumValues);
-          const trimmedEnumValues = enumValues.map((value) => value.trim());
+          let emptyFlag = false;
+          const trimmedEnumValues = enumValues.map((value) => {
+            if (value.trim() !== "") {
+              return value.trim();
+            } else {
+              emptyFlag = true;
+            }
+          });
           const resultString = "select: [" + trimmedEnumValues.join(", ") + "]";
           console.log(resultString);
-          onCreateClicked(
-            newColumnName,
-            resultString,
-            enumDefaultValue.trim(),
-            trimmedEnumValues
-          );
+          !emptyFlag
+            ? onCreateClicked(
+                newColumnName,
+                resultString,
+                enumDefaultValue.trim(),
+                trimmedEnumValues
+              )
+            : Swal.fire({
+                title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
+                html: `לא הכנסת ערכים לבחירה`, // Render errors as list items
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "אישור",
+                reverseButtons: true,
+                customClass: {
+                  container: "swal-dialog-custom",
+                },
+              });
         } else if (typeOfColumn === "DATE") {
           console.log(defaultValue);
           if (defaultValue) {
@@ -100,7 +117,24 @@ const SimpleDialog = React.memo(
             const emptyValue = "לא הוגדר ערך ברירת מחדל";
             onCreateClicked(newColumnName, typeOfColumn, emptyValue);
           }
-        } else {
+        } else if (typeOfColumn === "INTEGER") {
+          if(!isNaN(defaultValue)) {
+            onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+          } else {
+            Swal.fire({
+              title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
+              html: `נדרש להכניס מספר לערך ברירת מחדל`, // Render errors as list items
+              icon: "error",
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "אישור",
+              reverseButtons: true,
+              customClass: {
+                container: "swal-dialog-custom",
+              },
+            });
+          }
+        }
+        else {
           console.log(defaultValue);
           onCreateClicked(newColumnName, typeOfColumn, defaultValue);
         }
@@ -114,7 +148,7 @@ const SimpleDialog = React.memo(
       if (typeOfColumn === "DATE") {
         console.log("herre");
         console.log(typeOfColumn);
-        setDefaultValue(event.$d);
+        setDefaultValue(event?.$d);
       } else if (typeOfColumn === "ENUM") {
         setEnumDefaultValue(event.target.value);
       } else {
@@ -272,12 +306,7 @@ const SimpleDialog = React.memo(
                 shrink: true,
               }}
               fullWidth
-              // sx={{
-              //   // width: "80%",
-              //   margin: "auto",
-              //   marginTop: "10px",
-              // }}
-            />{" "}
+            />
           </RtlPlugin>
         )}
         {isColumn && typeOfColumn === "DATE" && (

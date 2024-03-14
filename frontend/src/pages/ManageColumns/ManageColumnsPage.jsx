@@ -328,6 +328,12 @@ export default function ManageColumnsPage() {
           ) {
             errorsForSwal += "<li>נדרש להכניס סוג עמודה</li>";
           }
+          if (
+            error.message ===
+            "enumlabel must be unique"
+          ) {
+            errorsForSwal += "<li>הכנסת ערכים דומים, שנה אחד מהם</li>";
+          }
         });
       } else {
         errorsForSwal += `<li>${error}</li>`;
