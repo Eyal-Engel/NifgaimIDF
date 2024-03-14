@@ -39,7 +39,6 @@ const translationDict = {
   phone: "מספר טלפון",
   isReligious: "דת",
   nifgaimHalalId: "שיוך חלל",
-  
 };
 
 export default function CreateLeftOverDialog({
@@ -297,6 +296,7 @@ export default function CreateLeftOverDialog({
               מספר טלפון
             </InputLabel>
             <MuiTelInput
+            
               defaultCountry={"il"}
               value={phone}
               excludecountries={["pa"]} // Use lowercase prop name

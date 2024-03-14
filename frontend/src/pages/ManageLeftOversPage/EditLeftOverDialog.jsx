@@ -126,9 +126,8 @@ const EditLeftOverDialog = ({
         isReligious:
           inputValues.isReligious === "true" ||
           inputValues.isReligious === true,
-        nifgaimHalalId: selectedHalal.id,
+        nifgaimHalalId: selectedHalal.id || selectedRow.nifgaimHalalId,
       };
-
       const updatedLeftOver = await updateLeftOver(
         loggedUserId,
         selectedRow.id,
