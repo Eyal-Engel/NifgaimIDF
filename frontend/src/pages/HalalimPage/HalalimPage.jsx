@@ -38,14 +38,12 @@ export default function HalalimPage() {
   const [graveyards, setGraveyards] = useState([]);
 
   const handleRowClick = (params) => {
-    // Store the selected row
     setSelectedRow(params.row);
-    // Open the dialog
     setOpenDialog(true);
   };
 
   useEffect(() => {
-    const fetchCommandsData = async () => {
+    const fetchCommandsAndGraveyardsData = async () => {
       try {
         const commandsNames = await getAllCommandsNames();
         setCommands(commandsNames);
@@ -58,7 +56,7 @@ export default function HalalimPage() {
       }
     };
 
-    fetchCommandsData();
+    fetchCommandsAndGraveyardsData();
   }, []);
 
   const formatDate = React.useCallback((date) => {
@@ -228,7 +226,6 @@ export default function HalalimPage() {
 
       const transformedHalals = await Promise.all(halalsPromises);
 
-      console.log(transformedHalals);
       setColumns(formattedColumns);
       setRows(transformedHalals);
       setLoading(false);
@@ -238,14 +235,10 @@ export default function HalalimPage() {
   }, [formatDate]);
 
   React.useEffect(() => {
-    // Function to fetch columns data from the API or local storage
-
-    // Function to format date as 'dd/mm/yyyy'
-
-    // Call the function to fetch columns data
     fetchColumnsData();
   }, [fetchColumnsData]);
   // }, [allDataOfHalalsColumns]);
+  console.log("the component rernder")
   return (
     <Box
       sx={{
