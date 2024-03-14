@@ -828,7 +828,6 @@ const getHalalsByCommandId = async (req, res, next) => {
 //   "comments": "Lorem ipsum dolor sit.",
 //   "nifgaimCommandId": "07ec94ec-d900-4633-8c40-b47f25ac6a9c",
 //   "nifgaimGraveyardId": "286ad23d-450c-47c4-b23d-377ac18b993b",
-//   "testing": "testy"
 // }
 const createHalal = async (req, res, next) => {
   const errors = validationResult(req);
