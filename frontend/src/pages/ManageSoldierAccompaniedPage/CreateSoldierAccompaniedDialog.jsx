@@ -83,6 +83,19 @@ import tateAlufYabasha from "../../assets/images/ranks/תת אלוף יבשה.pn
 import tateAlufAvir from "../../assets/images/ranks/תת אלוף אוויר.png";
 import tateAlufYam from "../../assets/images/ranks/תת אלוף ים.png";
 
+const translationDict = {
+  fullName: "שם מלא",
+  privateNumber: "מספר אישי",
+  rank: "דרגה",
+  unit: "יחידה",
+  phone: "מספר טלפון",
+  nifgaimHalalId: "שיוך חלל",
+};
+
+const errorDict = {
+  len: "אורך",
+  isNumeric: "חובה מספר"
+}
 export default function CreateSoldierAccompaniedDialog({
   openDialog,
   setOpenDialog,
@@ -251,9 +264,26 @@ export default function CreateSoldierAccompaniedDialog({
         setOpenDialog(false);
       });
     } catch (error) {
+      const errors = error.response.data.body?.errors;
+      let errorsForSwal = ""; // Start unordered list
+
+      if (errors) {
+        errors.forEach((error) => {
+          if (error.type === "notNull Violation") {
+            errorsForSwal += `<li>נדרש למלא את עמודה ${
+              translationDict[error.path]
+            }</li>`;
+          }
+          if (error.type === "Validation error") {
+            errorsForSwal += `<li>הערך בעמודה "${translationDict[error.path]}" לא תקין (${errorDict[error.validatorKey]})</li>`;
+          }
+        });
+      } else {
+        errorsForSwal += `<li>${error}</li>`;
+      }
       Swal.fire({
-        title: `לא ניתן להוסיף את השאר`,
-        text: error,
+        title: `לא ניתן להוסיף את המלווה`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`,
         icon: "error",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "אישור",

@@ -20,10 +20,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import {
-  getHalalByPrivateNumber,
-  getHalals,
-} from "../../utils/api/halalsApi";
+import { getHalalByPrivateNumber, getHalals } from "../../utils/api/halalsApi";
 import { createLeftOver } from "../../utils/api/leftOversApi";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
@@ -33,6 +30,16 @@ import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 import Transition from "../../components/TableUtils/Transition";
+
+const translationDict = {
+  fullName: "שם מלא",
+  proximity: "קרבה משפחתית",
+  city: "עיר",
+  address: "כתובת",
+  phone: "מספר טלפון",
+  isReligious: "דת",
+  nifgaimHalalId: "שיוך חלל",
+};
 
 export default function CreateLeftOverDialog({
   openDialog,
@@ -113,9 +120,23 @@ export default function CreateLeftOverDialog({
         setOpenDialog(false);
       });
     } catch (error) {
+      const errors = error.response.data.body?.errors;
+      let errorsForSwal = ""; // Start unordered list
+
+      if (errors) {
+        errors.forEach((error) => {
+          if (error.type === "notNull Violation") {
+            errorsForSwal += `<li>נדרש למלא את עמודה ${
+              translationDict[error.path]
+            }</li>`;
+          }
+        });
+      } else {
+        errorsForSwal += `<li>${error}</li>`;
+      }
       Swal.fire({
         title: `לא ניתן להוסיף את השאר`,
-        text: error,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`,
         icon: "error",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "אישור",
@@ -150,7 +171,7 @@ export default function CreateLeftOverDialog({
     fetchHalalsData();
   }, [inputValues.halalId]);
 
-  console.log("fuck")
+  console.log("fuck");
   return (
     <div>
       <Dialog
@@ -225,7 +246,7 @@ export default function CreateLeftOverDialog({
                 )}
               />
             </RtlPlugin>
-        
+
             <RtlPlugin>
               <FormControl fullWidth style={{ marginTop: "20px" }}>
                 <InputLabel id="demo-simple-select-label">
@@ -275,6 +296,7 @@ export default function CreateLeftOverDialog({
               מספר טלפון
             </InputLabel>
             <MuiTelInput
+            
               defaultCountry={"il"}
               value={phone}
               excludecountries={["pa"]} // Use lowercase prop name

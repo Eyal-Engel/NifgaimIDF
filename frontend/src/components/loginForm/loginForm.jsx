@@ -52,7 +52,7 @@ export function LoginForm() {
         console.log("User is not authorized. Invalid credentials.");
         Swal.fire({
           title: `לא ניתן להתחבר`,
-          text: "שם משתמש וסיסמא אינם תקינים",
+          text: "שם משתמש או סיסמא אינם תקינים",
           icon: "error",
           confirmButtonColor: "#3085d6",
           confirmButtonText: "אישור",
