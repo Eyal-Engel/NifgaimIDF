@@ -43,17 +43,19 @@ import CustomToolbar from "../../components/TableUtils/CustomToolBar";
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
+import { useState } from "react";
+import { useEffect } from "react";
 
 export default function ManageExistsUsers() {
-  const [rows, setRows] = React.useState([]);
-  const [rowModesModel, setRowModesModel] = React.useState({});
-  const [commands, setCommands] = React.useState([]);
+  const [rows, setRows] = useState([]);
+  const [rowModesModel, setRowModesModel] = useState({});
+  const [commands, setCommands] = useState([]);
 
-  const [loading, setLoading] = React.useState(true);
-  const [open, setOpen] = React.useState(false);
-  const [selectedUserId, setSelectedUserId] = React.useState(null);
-  const [selectedFullName, setSelectedFullName] = React.useState(null);
-  const [userLoginInfo, setPasswordInfo] = React.useState({
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedFullName, setSelectedFullName] = useState(null);
+  const [userLoginInfo, setPasswordInfo] = useState({
     password: "",
     confirmPassword: "",
   });
@@ -74,7 +76,7 @@ export default function ManageExistsUsers() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchDataUsers = async () => {
       setLoading(true);
       try {
@@ -98,14 +100,14 @@ export default function ManageExistsUsers() {
     fetchDataUsers();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const sortedRows = [...rows].sort(
       (a, b) => a.privateNumber - b.privateNumber
     );
     setRows(sortedRows);
   }, [rows]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchCommandsData = async () => {
       try {
         const commandsNames = await getAllCommandsNames();

@@ -13,6 +13,7 @@ import {
   GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
 import CreateHalalDialog from "../../pages/HalalimPage/CreateHalalDialog";
+import { useState } from "react";
 
 export default function HalalimCustomToolBar({
   setRows,
@@ -25,7 +26,7 @@ export default function HalalimCustomToolBar({
   editPerm,
   managePerm,
 }) {
-  const [openCreateNewHalal, setOpenCreateNewHalal] = React.useState(false);
+  const [openCreateNewHalal, setOpenCreateNewHalal] = useState(false);
 
   const handleCreateNewHalal = () => {
     setOpenCreateNewHalal(true);

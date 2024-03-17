@@ -24,15 +24,15 @@ import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay
 import { getUserById } from "../../utils/api/usersApi";
 
 export default function HalalimPage() {
-  const [rows, setRows] = React.useState([]);
-  const [columns, setColumns] = React.useState([]);
-  const [rowModesModel, setRowModesModel] = React.useState({});
-  // const [commands, setCommands] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [selectedRow, setSelectedRow] = React.useState(null);
-  const [originalColumns, setOriginalColumns] = React.useState([]);
-  const [allDataOfHalalsColumns, setAllDataOfHalalsColumns] = React.useState(
+  const [rows, setRows] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [rowModesModel, setRowModesModel] = useState({});
+  // const [commands, setCommands] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [originalColumns, setOriginalColumns] = useState([]);
+  const [allDataOfHalalsColumns, setAllDataOfHalalsColumns] = useState(
     []
   );
   const [commands, setCommands] = useState([]);
@@ -244,7 +244,7 @@ export default function HalalimPage() {
     }
   }, [formatDate]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchColumnsData();
   }, [fetchColumnsData]);
   // }, [allDataOfHalalsColumns]);

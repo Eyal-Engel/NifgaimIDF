@@ -55,7 +55,7 @@ export default function CreateLeftOverDialog({
   const [inputValues, setInputValues] = useState({});
   const [phone, setPhone] = useState("+972");
   const [halals, setHalals] = useState([]);
-  const [selectedValue, setSelectedValue] = React.useState("");
+  const [selectedValue, setSelectedValue] = useState("");
   const [selectedHalal, setSelectedHalal] = useState(null);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";

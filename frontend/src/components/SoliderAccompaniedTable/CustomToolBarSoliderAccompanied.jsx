@@ -12,6 +12,7 @@ import {
   GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
 import CreateSoldierAccompaniedDialog from "../../pages/ManageSoldierAccompaniedPage/CreateSoldierAccompaniedDialog";
+import { useState } from "react";
 
 export default function CustomToolBarSoliderAccompanied({
   rows,
@@ -21,7 +22,7 @@ export default function CustomToolBarSoliderAccompanied({
   managePerm,
 }) {
   const [openCreateNewLeftOver, setOpenCreateNewLeftOver] =
-    React.useState(false);
+    useState(false);
 
   const handleCreateNewLeftOver = () => {
     setOpenCreateNewLeftOver(true);
