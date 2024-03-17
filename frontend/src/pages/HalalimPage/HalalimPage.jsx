@@ -229,7 +229,7 @@ export default function HalalimPage() {
       }, []);
 
       // Limit concurrent requests here
-      const limit = pLimit(10); // Adjust the concurrency limit as per your requirements
+      const limit = pLimit(20); // Adjust the concurrency limit as per your requirements
       const halalsData = await getHalals();
       const halalsPromises = halalsData.map((halal) =>
         limit(() => fetchHalalData(halal))
@@ -413,7 +413,6 @@ export default function HalalimPage() {
   useEffect(() => {
     fetchColumnsData();
   }, [fetchColumnsData]);
-  // }, [allDataOfHalalsColumns]);
   console.log("the component rernder");
   return (
     <Box
