@@ -10,13 +10,14 @@ import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay
 import CustomToolBarSoliderAccompanied from "../../components/SoliderAccompaniedTable/CustomToolBarSoliderAccompanied";
 import { useState } from "react";
 import { getUserById } from "../../utils/api/usersApi";
+import { useEffect } from "react";
 
 export default function ManageLeftOversPage() {
-  const [rows, setRows] = React.useState([]);
-  const [rowModesModel, setRowModesModel] = React.useState({});
-  const [loading, setLoading] = React.useState(true);
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [selectedRow, setSelectedRow] = React.useState(null);
+  const [rows, setRows] = useState([]);
+  const [rowModesModel, setRowModesModel] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
   const [editPerm, setEditPerm] = useState("");
   const [managePerm, setManagePerm] = useState("");
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -29,7 +30,7 @@ export default function ManageLeftOversPage() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchDataSoldierAccompanieds = async () => {
       setLoading(true);
       try {

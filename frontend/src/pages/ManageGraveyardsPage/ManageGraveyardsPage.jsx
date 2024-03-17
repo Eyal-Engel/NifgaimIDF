@@ -15,6 +15,7 @@ import {
 import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
 import SimpleDialog from "../../components/Dialog";
+import { useEffect } from "react";
 
 const theme = createTheme({
   direction: "rtl",
@@ -41,7 +42,7 @@ export default function ManageCommandsPage() {
   const handelOpenDialog = () => {
     setOpenDialog(true);
   };
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchGraveyardsData = async () => {
       setLoading(true);
       // Change function name

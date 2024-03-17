@@ -31,9 +31,12 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import "../../pages/ManageUsersPage/ManageUsersPage.css";
 import Transition from "./Transition";
 import PaperComponent from "./PaperComponent";
+import { useEffect } from "react";
+import { useLayoutEffect } from "react";
+import { useState } from "react";
 export default function CustomToolbar({ setRows, rows, columns }) {
-  const [openCreateNewUser, setOpenCreateNewUser] = React.useState(false);
-  const [commandsSignUp, setCommandsSignUp] = React.useState([]);
+  const [openCreateNewUser, setOpenCreateNewUser] = useState(false);
+  const [commandsSignUp, setCommandsSignUp] = useState([]);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
 
@@ -73,7 +76,7 @@ export default function CustomToolbar({ setRows, rows, columns }) {
     );
   };
 
-  React.useEffect(() => {
+  useLayoutEffect(() => {
     const fetchCommandsData = async () => {
       try {
         const commandsNames = await getAllCommandsNames();
@@ -94,7 +97,7 @@ export default function CustomToolbar({ setRows, rows, columns }) {
     setOpenCreateNewUser(false); // Close the dialog
   };
 
-  const [userSignUpInfo, setUserSignUpInfo] = React.useState({
+  const [userSignUpInfo, setUserSignUpInfo] = useState({
     privateNumber: "",
     fullName: "",
     password: "",
