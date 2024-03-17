@@ -1,3 +1,34 @@
+// input: char
+export const isDigit = (char) => {
+  return /\d/.test(char);
+};
+
+// input: char
+export const isHebrewAlpha = (char) => {
+  return /[\u0590-\u05FF]/.test(char); // Unicode range for Hebrew letters
+};
+
+// input: char
+export const isEnglishAlpha = (char) => {
+  return /[A-Za-z]/.test(char);
+};
+
+// input: string, int requiredLen
+export const len = (str, requiredLen) => {
+  return str.length === requiredLen;
+};
+
+// input: string
+export const isNotEmpty = (str) => {
+  return str.trim() !== "";
+};
+
+// min len and max len
+export const isLenRange = (str, minLen, maxLen) => {
+  const length = str.length;
+  return length >= minLen && length <= maxLen;
+};
+
 export const VALIDATOR_PASSWORD = (value) => {
   return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value);
 };
