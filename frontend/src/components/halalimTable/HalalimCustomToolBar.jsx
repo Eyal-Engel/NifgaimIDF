@@ -64,11 +64,11 @@ export default function HalalimCustomToolBar({
           startIcon={<AddIcon />}
           onClick={handleCreateNewHalal}
           sx={{
-            // paddingRight: "80px",
+            paddingRight: "80px",
             borderRadius: "5000px 5000px 0 0",
 
             "& .MuiButton-startIcon": {
-              // marginLeft: "-115px",
+              marginLeft: "-115px",
             },
             "&:hover": {
               backgroundColor: "#EDF3F8",
