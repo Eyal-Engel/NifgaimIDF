@@ -22,6 +22,8 @@ export default function HalalimCustomToolBar({
   originalColumns,
   commands,
   graveyards,
+  editPerm,
+  managePerm,
 }) {
   const [openCreateNewHalal, setOpenCreateNewHalal] = React.useState(false);
 
@@ -55,25 +57,26 @@ export default function HalalimCustomToolBar({
 
   return (
     <>
-      <Button
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleCreateNewHalal}
-        sx={{
-          // paddingRight: "80px",
-          borderRadius: "5000px 5000px 0 0",
+      {(editPerm || managePerm) && (
+        <Button
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleCreateNewHalal}
+          sx={{
+            // paddingRight: "80px",
+            borderRadius: "5000px 5000px 0 0",
 
-          "& .MuiButton-startIcon": {
-            // marginLeft: "-115px",
-          },
-          "&:hover": {
-            backgroundColor: "#EDF3F8",
-          },
-        }}
-      >
-        הוסף חלל חדש
-      </Button>
-
+            "& .MuiButton-startIcon": {
+              // marginLeft: "-115px",
+            },
+            "&:hover": {
+              backgroundColor: "#EDF3F8",
+            },
+          }}
+        >
+          הוסף חלל חדש
+        </Button>
+      )}
       {openCreateNewHalal && (
         <CreateHalalDialog
           openDialog={openCreateNewHalal}
@@ -94,6 +97,7 @@ export default function HalalimCustomToolBar({
           marginTop: "0.5vh",
           marginRight: "0.5vw",
           justifyContent: "space-between",
+          marginBottom: editPerm || managePerm ? 0 : "1.2vh",
         }}
       >
         <div>

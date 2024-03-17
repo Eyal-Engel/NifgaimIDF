@@ -8,6 +8,8 @@ import EditLeftOverDialog from "./EditLeftOverDialog";
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
 import CustomToolBarLeftOver from "../../components/LeftOversTable/CustomToolBarLeftOver";
 import "./ManageLeftOversPage.css";
+import { useState } from "react";
+import { getUserById } from "../../utils/api/usersApi";
 
 export default function ManageLeftOversPage() {
   const [rows, setRows] = React.useState([]);
@@ -15,10 +17,16 @@ export default function ManageLeftOversPage() {
   const [loading, setLoading] = React.useState(true);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(null);
+  const [editPerm, setEditPerm] = useState("");
+  const [managePerm, setManagePerm] = useState("");
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
 
   const handleRowClick = (params) => {
-    setSelectedRow(params.row);
-    setOpenDialog(true);
+    if (editPerm || managePerm) {
+      setSelectedRow(params.row);
+      setOpenDialog(true);
+    }
   };
 
   React.useEffect(() => {
@@ -52,6 +60,12 @@ export default function ManageLeftOversPage() {
           (a, b) => a.privateNumber - b.privateNumber
         );
         setRows(sortedRows);
+
+        const user = await getUserById(loggedUserId);
+
+        setEditPerm(user.editPerm);
+        setManagePerm(user.managePerm);
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching or transforming users:", error);
@@ -239,7 +253,14 @@ export default function ManageLeftOversPage() {
           noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{
-          toolbar: { rows, setRows, columns, setRowModesModel },
+          toolbar: {
+            rows,
+            setRows,
+            columns,
+            setRowModesModel,
+            editPerm,
+            managePerm,
+          },
         }}
       />
 

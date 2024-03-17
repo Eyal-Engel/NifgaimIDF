@@ -21,6 +21,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import HalalimCustomToolBar from "../../components/halalimTable/HalalimCustomToolBar";
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
+import { getUserById } from "../../utils/api/usersApi";
 
 export default function HalalimPage() {
   const [rows, setRows] = React.useState([]);
@@ -36,10 +37,16 @@ export default function HalalimPage() {
   );
   const [commands, setCommands] = useState([]);
   const [graveyards, setGraveyards] = useState([]);
+  const [editPerm, setEditPerm] = useState("");
+  const [managePerm, setManagePerm] = useState("");
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
 
   const handleRowClick = (params) => {
-    setSelectedRow(params.row);
-    setOpenDialog(true);
+    if (editPerm || managePerm) {
+      setSelectedRow(params.row);
+      setOpenDialog(true);
+    }
   };
 
   useEffect(() => {
@@ -49,8 +56,12 @@ export default function HalalimPage() {
         setCommands(commandsNames);
 
         const graveyardsNames = await getAllGraveyards();
-
         setGraveyards(graveyardsNames);
+
+        const user = await getUserById(loggedUserId);
+
+        setEditPerm(user.editPerm);
+        setManagePerm(user.managePerm);
       } catch (error) {
         console.error("Error during get commands:", error);
       }
@@ -320,6 +331,8 @@ export default function HalalimPage() {
             originalColumns,
             commands,
             graveyards,
+            editPerm,
+            managePerm,
           },
         }}
       />

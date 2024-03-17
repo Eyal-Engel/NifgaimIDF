@@ -5,10 +5,22 @@ import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { Button } from "@mui/material";
-import { GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarFilterButton, GridToolbarQuickFilter } from "@mui/x-data-grid";
+import {
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarDensitySelector,
+  GridToolbarFilterButton,
+  GridToolbarQuickFilter,
+} from "@mui/x-data-grid";
 import CreateLeftOverDialog from "../../pages/ManageLeftOversPage/CreateLeftOverDialog";
 
-export default function CustomToolBarLeftOver({ rows, setRows, columns }) {
+export default function CustomToolBarLeftOver({
+  rows,
+  setRows,
+  columns,
+  editPerm,
+  managePerm,
+}) {
   const [openCreateNewLeftOver, setOpenCreateNewLeftOver] =
     React.useState(false);
 
@@ -42,24 +54,26 @@ export default function CustomToolBarLeftOver({ rows, setRows, columns }) {
 
   return (
     <>
-      <Button
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleCreateNewLeftOver}
-        sx={{
-          paddingRight: "80px",
-          borderRadius: "5000px 5000px 0 0",
+      {(editPerm || managePerm) && (
+        <Button
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleCreateNewLeftOver}
+          sx={{
+            paddingRight: "80px",
+            borderRadius: "5000px 5000px 0 0",
 
-          "& .MuiButton-startIcon": {
-            marginLeft: "-115px",
-          },
-          "&:hover": {
-            backgroundColor: "#EDF3F8",
-          },
-        }}
-      >
-        יצירת שאר חדש
-      </Button>
+            "& .MuiButton-startIcon": {
+              marginLeft: "-115px",
+            },
+            "&:hover": {
+              backgroundColor: "#EDF3F8",
+            },
+          }}
+        >
+          הוסף שאר חדש
+        </Button>
+      )}
 
       {openCreateNewLeftOver && (
         <CreateLeftOverDialog
@@ -75,6 +89,7 @@ export default function CustomToolBarLeftOver({ rows, setRows, columns }) {
           marginTop: "0.5vh",
           marginRight: "0.5vw",
           justifyContent: "space-between",
+          marginBottom: editPerm || managePerm ? 0 : "1.2vh",
         }}
       >
         <div>

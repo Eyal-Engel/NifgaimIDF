@@ -13,7 +13,13 @@ import {
 } from "@mui/x-data-grid";
 import CreateSoldierAccompaniedDialog from "../../pages/ManageSoldierAccompaniedPage/CreateSoldierAccompaniedDialog";
 
-export default function CustomToolBarSoliderAccompanied({ rows, setRows, columns }) {
+export default function CustomToolBarSoliderAccompanied({
+  rows,
+  setRows,
+  columns,
+  editPerm,
+  managePerm,
+}) {
   const [openCreateNewLeftOver, setOpenCreateNewLeftOver] =
     React.useState(false);
 
@@ -47,24 +53,27 @@ export default function CustomToolBarSoliderAccompanied({ rows, setRows, columns
 
   return (
     <>
-      <Button
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleCreateNewLeftOver}
-        sx={{
-          paddingRight: "80px",
-          borderRadius: "5000px 5000px 0 0",
+      {(editPerm || managePerm) && (
+        <Button
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleCreateNewLeftOver}
+          sx={{
+            paddingRight: "80px",
+            borderRadius: "5000px 5000px 0 0",
 
-          "& .MuiButton-startIcon": {
-            marginLeft: "-120px",
-          },
-          "&:hover": {
-            backgroundColor: "#EDF3F8",
-          },
-        }}
-      >
-        יצירת מלווה חדש
-      </Button>
+            "& .MuiButton-startIcon": {
+              marginLeft: "-120px",
+            },
+            "&:hover": {
+              backgroundColor: "#EDF3F8",
+            },
+          }}
+        >
+          הוסף מלווה חדש
+        </Button>
+      )}
+
       <CreateSoldierAccompaniedDialog
         openDialog={openCreateNewLeftOver}
         setOpenDialog={setOpenCreateNewLeftOver}
@@ -77,6 +86,7 @@ export default function CustomToolBarSoliderAccompanied({ rows, setRows, columns
           marginTop: "0.5vh",
           marginRight: "0.5vw",
           justifyContent: "space-between",
+          marginBottom: editPerm || managePerm ? 0 : "1.2vh",
         }}
       >
         <div>

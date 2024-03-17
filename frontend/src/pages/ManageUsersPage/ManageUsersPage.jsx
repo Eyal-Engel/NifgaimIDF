@@ -43,14 +43,11 @@ import CustomToolbar from "../../components/TableUtils/CustomToolBar";
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
-import { useState } from "react";
 
 export default function ManageExistsUsers() {
   const [rows, setRows] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [commands, setCommands] = React.useState([]);
-  const [editPerm, setEditPerm] = useState("");
-  const [managePerm, setManagePerm] = useState("");
 
   const [loading, setLoading] = React.useState(true);
   const [open, setOpen] = React.useState(false);
@@ -113,11 +110,6 @@ export default function ManageExistsUsers() {
       try {
         const commandsNames = await getAllCommandsNames();
         setCommands(commandsNames);
-
-        const user = await getUserById(loggedUserId);
-
-        setEditPerm(user.editPerm);
-        setManagePerm(user.managePerm);
       } catch (error) {
         console.error("Error during get commands:", error);
       }
