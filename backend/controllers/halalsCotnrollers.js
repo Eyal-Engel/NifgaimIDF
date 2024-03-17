@@ -869,7 +869,7 @@ const createHalal = async (req, res, next) => {
         body: {
           errors: [
             {
-              type: "validation error",
+              type: "Validation error",
               path: "privateNumber",
               validatorKey: "len",
             },
@@ -958,7 +958,7 @@ const updateHalal = async (req, res, next) => {
         body: {
           errors: [
             {
-              type: "validation error",
+              type: "Validation error",
               path: "privateNumber",
               validatorKey: "len",
             },
