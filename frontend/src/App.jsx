@@ -101,7 +101,7 @@ const theme = createTheme({
 function App() {
   const { token, login, logout, userId } = useAuth();
   // const [command, setCommand] = useState("");
-  const [editPerm, setEditPerm] = useState("");
+  // const [editPerm, setEditPerm] = useState("");
   const [managePerm, setManagePerm] = useState("");
 
   useEffect(() => {
@@ -110,7 +110,7 @@ function App() {
         // const commandUser = await getCommandNameByUserId(userId);
         // setCommand(commandUser);
         const user = await getUserById(userId);
-        setEditPerm(user.editPerm);
+        // setEditPerm(user.editPerm);
         setManagePerm(user.managePerm);
       }
     };
