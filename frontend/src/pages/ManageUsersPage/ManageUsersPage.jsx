@@ -19,7 +19,6 @@ import {
   getUsers,
   changePassword,
   getFullNameById,
-  getUserById,
 } from "../../utils/api/usersApi";
 import {
   getAllCommandsNames,
@@ -116,7 +115,7 @@ export default function ManageExistsUsers() {
     };
 
     fetchCommandsData();
-  }, []);
+  }, [loggedUserId]);
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {

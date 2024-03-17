@@ -5,7 +5,7 @@ import exitIcon from "../../assets/images/icons/exitIcon.png";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 import { AuthContext } from "../../utils/contexts/authContext";
-import { getCommandNameByUserId, getUserById } from "../../utils/api/usersApi";
+import { getUserById } from "../../utils/api/usersApi";
 import halalIcon from "../../assets/images/icons/halalIcon.png";
 import userIcon from "../../assets/images/icons/userIcon.png";
 import graveyardIcon from "../../assets/images/icons/graveyardIcon.png";

@@ -15,7 +15,7 @@ import HalalimPage from "./pages/HalalimPage/HalalimPage";
 import ManageUsersPage from "./pages/ManageUsersPage/ManageUsersPage";
 import ManageCommandsPage from "./pages/ManageCommandsPage/ManageCommandsPage";
 import ManageGraveyardsPage from "./pages/ManageGraveyardsPage/ManageGraveyardsPage";
-import { getCommandNameByUserId, getUserById } from "./utils/api/usersApi";
+import { getUserById } from "./utils/api/usersApi";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ManageColumnsPage from "./pages/ManageColumns/ManageColumnsPage";
 import ManageLeftOversPage from "./pages/ManageLeftOversPage/ManageLeftOversPage";

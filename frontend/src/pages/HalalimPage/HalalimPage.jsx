@@ -68,7 +68,7 @@ export default function HalalimPage() {
     };
 
     fetchCommandsAndGraveyardsData();
-  }, []);
+  }, [loggedUserId]);
 
   const formatDate = React.useCallback((date) => {
     const d = new Date(date);

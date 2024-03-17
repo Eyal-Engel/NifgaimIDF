@@ -831,6 +831,8 @@ const createHalal = async (req, res, next) => {
       new Error("Invalid inputs passed, please check your data.", 422)
     );
   }
+  console.log("gggggggggggggggggggg")
+  console.log(errors)
   const id = uuidv4();
 
   try {
