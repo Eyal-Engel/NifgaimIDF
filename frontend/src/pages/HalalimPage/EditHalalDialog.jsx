@@ -518,7 +518,7 @@ export default function EditHalalDIalog({
                               <MenuItem
                                 key={option}
                                 value={option}
-                                selected={option.trim() === value.trim()}
+                                selected={option.trim() === value?.trim()}
                               >
                                 {console.log(option)}
                                 {option}
