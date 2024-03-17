@@ -831,8 +831,6 @@ const createHalal = async (req, res, next) => {
       new Error("Invalid inputs passed, please check your data.", 422)
     );
   }
-  console.log("gggggggggggggggggggg")
-  console.log(errors)
   const id = uuidv4();
 
   try {
@@ -890,32 +888,20 @@ const createHalal = async (req, res, next) => {
     VALUES (${placeholders.join(", ")})
   `;
 
-    //   INSERT INTO "nifgaimHalals" (
-    //     id, "privateNumber", "lastName", "firstName", "dateOfDeath",
-    //     "serviceType", "circumstances", "unit", "division", "specialCommunity",
-    //     "area", "plot", "line", "graveNumber", "permanentRelationship", "comments",
-    //     "nifgaimCommandId", "nifgaimGraveyardId"
-    // )
-    // VALUES (
-    //     '69017620-49f2-40b0-8648-e2b981df90e7', '1020202', 'Doe', 'John', '2024-03-03',
-    //     'קבע', 'Combat', 'Alpha Company', '1st Division', 'Veterans',
-    //     'Section A', 'Plot 123', 'Line 1', '456', 'false', 'Lorem ipsum dolor sit.',
-    //     '07ec94ec-d900-4633-8c40-b47f25ac6a9c', '286ad23d-450c-47c4-b23d-377ac18b993b'
-    // );
+    // try {
+    // Execute the SQL INSERT statement
+    await sequelize.query(insertQuery, {
+      replacements: insertValues,
+      type: QueryTypes.INSERT,
+    });
 
-    try {
-      // Execute the SQL INSERT statement
-      await sequelize.query(insertQuery, {
-        replacements: insertValues,
-        type: QueryTypes.INSERT,
-      });
-
-      res.status(201).json({ id, ...req.body });
-    } catch (err) {
-      console.error("Error executing query createHalal:", err);
-      return next(err.message);
-    }
+    return res.status(201).json({ id, ...req.body });
+    // } catch (err) {
+    //   console.error("Error executing query createHalal:", err);
+    //   return next(err);
+    // }
   } catch (err) {
+    
     return next(err);
   }
 };
@@ -1003,7 +989,7 @@ const updateHalal = async (req, res, next) => {
 
     res.json(updatedHalal[0][0]); // Return the updated instance
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 

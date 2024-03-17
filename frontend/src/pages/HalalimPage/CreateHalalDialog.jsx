@@ -34,9 +34,36 @@ import {
 } from "../../utils/api/graveyardsApi";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
+import Swal from "sweetalert2";
 
 const MemoizedSelect = React.memo(Select);
 
+const errorDict = {
+  len: "אורך",
+  isNumeric: "חובה מספר",
+  not_unique: "חובה ערך יחודי"
+};
+
+const translationDict = {
+  id: "מספר זיהוי",
+  privateNumber: "מספר אישי",
+  lastName: "שם משפחה",
+  firstName: "שם פרטי",
+  dateOfDeath: "תאריך פטירה",
+  serviceType: "סוג שירות",
+  circumstances: "נסיבות המוות",
+  unit: "יחידה",
+  division: "חטיבה",
+  specialCommunity: "קהילה מיוחדת",
+  area: "אזור",
+  plot: "חלקה",
+  line: "שורה",
+  graveNumber: "מספר קבר",
+  permanentRelationship: "קשר קבוע",
+  comments: "הערות",
+  nifgaimGraveyardId: "בית קברות",
+  nifgaimCommandId: "פיקוד",
+};
 export default function CreateHalalDialog({
   openDialog,
   setOpenDialog,
@@ -69,26 +96,6 @@ export default function CreateHalalDialog({
     stylisPlugins: [prefixer, rtlPlugin],
   });
 
-  const translationDict = {
-    id: "מספר זיהוי",
-    privateNumber: "מספר אישי",
-    lastName: "שם משפחה",
-    firstName: "שם פרטי",
-    dateOfDeath: "תאריך פטירה",
-    serviceType: "סוג שירות",
-    circumstances: "נסיבות המוות",
-    unit: "יחידה",
-    division: "חטיבה",
-    specialCommunity: "קהילה מיוחדת",
-    area: "אזור",
-    plot: "חלקה",
-    line: "שורה",
-    graveNumber: "מספר קבר",
-    permanentRelationship: "קשר קבוע",
-    comments: "הערות",
-    nifgaimGraveyardId: "בית קברות",
-    nifgaimCommandId: "פיקוד",
-  };
   // Rearrange allDataOfHalalsColumns to start with objects matching originalColumns
   const rearrangedColumns = [
     ...originalColumns.map((col) =>
@@ -205,10 +212,54 @@ export default function CreateHalalDialog({
       console.log(newHalalData);
 
       setRows([...rows, newHalalData]);
-      handleCloseDialog();
+      Swal.fire({
+        title: `נוצר בהצלחה "${newHalalData.firstName}" החלל `,
+        text: "",
+        icon: "success",
+        confirmButtonText: "אישור",
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {
+        handleCloseDialog();
+      });
     } catch (error) {
-      console.error("Error:", error);
-      // Handle error appropriately, e.g., show a message to the user
+      const errors = error.response.data.body?.errors;
+      let errorsForSwal = ""; // Start unordered list
+
+      if (errors) {
+        errors.forEach((error) => {
+          if (error.type === "notNull Violation") {
+            errorsForSwal += `<li>נדרש למלא את עמודה ${
+              translationDict[error.path]
+            }</li>`;
+          }
+          if (error.type === "Validation error") {
+            errorsForSwal += `<li>הערך בעמודה "${
+              translationDict[error.path]
+            }" לא תקין (${errorDict[error.validatorKey]})</li>`;
+          }
+          if (error.type === "unique violation") {
+            errorsForSwal += `<li>הערך בעמודה "${
+              translationDict[error.path]
+            }" קיים (${errorDict[error.validatorKey]})</li>`;
+          }
+        });
+      } else {
+        const nameOfColumn = translationDict[error.response.data.body.parent.column]
+        errorsForSwal += `<li>התא "${nameOfColumn}" ריק</li>`;
+      }
+      Swal.fire({
+        title: `לא ניתן לעדכן את השאר`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "אישור",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {});
     }
   };
 

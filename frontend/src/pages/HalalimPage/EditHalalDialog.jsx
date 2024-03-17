@@ -44,6 +44,11 @@ import { useCallback } from "react";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 
+const errorDict = {
+  len: "אורך",
+  isNumeric: "חובה מספר",
+  not_unique: "חובה ערך יחודי",
+};
 export default function EditHalalDIalog({
   openDialog,
   setOpenDialog,
@@ -78,7 +83,6 @@ export default function EditHalalDIalog({
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
   });
-  console.log(selectedRow);
   const translationDict = {
     id: "מספר זיהוי",
     privateNumber: "מספר פרטי",
@@ -150,16 +154,12 @@ export default function EditHalalDIalog({
       if (selectedRow) {
         for (const key of Object.keys(selectedRow)) {
           const column = getColumnByName(key);
-          console.log(column.data_type);
           if (column.data_type === "USER-DEFINED") {
-            console.log(column);
             const columnEnums = await getColumnEnums(key);
-            console.log(columnEnums);
             if (columnEnums) {
               if (columnEnums) {
                 result = removeQuotes(columnEnums);
                 arrayEnum = result.slice(1, -1).split(",");
-                console.log(arrayEnum);
                 enumsObject[key] = arrayEnum;
               } else {
                 enumsObject[key] = [];
@@ -171,18 +171,13 @@ export default function EditHalalDIalog({
         }
       }
 
-      console.log(enumsObject);
       setEnums(enumsObject);
 
       const halalId = selectedRow.id;
-      console.log(halalId);
       const soldierAccompaniedsData = await getSoldierAccompaniedsByHalalId(
         halalId
       );
       const LeftOversData = await getLeftOversByHalalId(halalId);
-
-      console.log(soldierAccompaniedsData);
-      console.log(LeftOversData);
 
       setSoldierAccompanieds(soldierAccompaniedsData);
       setLeftOvers(LeftOversData);
@@ -211,8 +206,6 @@ export default function EditHalalDIalog({
         }
       }
 
-      console.log(updatedHalalData);
-
       // Get the command ID by name
       const commandId = await getCommandIdByName(
         updatedHalalData.nifgaimCommandId
@@ -226,15 +219,11 @@ export default function EditHalalDIalog({
       updatedHalalData.nifgaimCommandId = commandId;
       updatedHalalData.nifgaimGraveyardId = graveyardId;
 
-      console.log(updatedHalalData);
-
       const updatedHalal = await updateHalal(
         loggedUserId,
         selectedRow.id,
         updatedHalalData
       );
-
-      console.log(updatedHalal);
 
       const commandName = await getCommandNameById(
         updatedHalal.nifgaimCommandId
@@ -256,20 +245,61 @@ export default function EditHalalDIalog({
           return row;
         })
       );
-
-      setRows((prevRows) =>
-        prevRows.map((row) => {
-          if (row.id === selectedRow.id) {
-            return { ...row, ...updatedHalal };
-          }
-          return row;
-        })
-      );
-
-      handleCloseDialog();
+      Swal.fire({
+        title: `עודכן בהצלחה "${updatedHalal.firstName}" החלל `,
+        text: "",
+        icon: "success",
+        confirmButtonText: "אישור",
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {
+        handleCloseDialog();
+      });
     } catch (error) {
-      console.error("Error:", error);
-      // Handle error appropriately, e.g., show a message to the user
+      const errors = error.response.data.body?.errors;
+      let errorsForSwal = ""; // Start unordered list
+
+      if (errors) {
+        errors.forEach((error) => {
+          if (error.type === "notNull Violation") {
+            errorsForSwal += `<li>נדרש למלא את עמודה ${
+              translationDict[error.path]
+            }</li>`;
+          }
+          if (error.type === "Validation error") {
+            errorsForSwal += `<li>הערך בעמודה "${
+              translationDict[error.path]
+            }" לא תקין (${errorDict[error.validatorKey]})</li>`;
+          }
+          if (error.type === "unique violation") {
+            if (error.path === "privateNumber") {
+              errorsForSwal += `<li>קיים חלל עם ${
+                translationDict[error.path]
+              }: ${error.value} (${errorDict[error.validatorKey]})</li>`;
+            } else {
+              errorsForSwal += `<li>הערך בעמודה "${
+                translationDict[error.path]
+              }" קיים (${errorDict[error.validatorKey]})</li>`;
+            }
+          }
+        });
+      } else {
+        const nameOfColumn =
+          translationDict[error.response.data.body.parent.column];
+        errorsForSwal += `<li>התא "${nameOfColumn}" ריק</li>`;
+      }
+      Swal.fire({
+        title: `לא ניתן לעדכן את השאר`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "אישור",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {});
     }
   };
 
@@ -384,9 +414,6 @@ export default function EditHalalDIalog({
               inputValues[key] !== undefined
                 ? inputValues[key]
                 : selectedRow[key]; // Get value from inputValues if available, otherwise fallback to selectedRow
-
-            console.log(inputValues[key]);
-            console.log(value);
 
             return (
               <div
@@ -519,7 +546,6 @@ export default function EditHalalDIalog({
                                 value={option}
                                 selected={option.trim() === value?.trim()}
                               >
-                                {console.log(option)}
                                 {option}
                               </MenuItem>
                             ))
