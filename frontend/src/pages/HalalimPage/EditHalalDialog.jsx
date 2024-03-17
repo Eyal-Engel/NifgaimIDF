@@ -113,6 +113,19 @@ export default function EditHalalDIalog({
     setOpenDialog(false);
   };
 
+  function formatPhoneNumber(phone) {
+    const words = phone.split(" ");
+    if (words.length > 0) {
+      const firstWord = words[0];
+      if (firstWord.length > 1) {
+        const lastChar = firstWord.charAt(0);
+        words[0] = firstWord.substring(1, firstWord.length) + lastChar;
+      }
+    }
+    const reversedWords = words.reverse().join(" ");
+    return <div>{reversedWords}</div>;
+  }
+
   const getColumnByName = useCallback(
     (columnName) => {
       return allDataOfHalalsColumns.find(
@@ -540,6 +553,84 @@ export default function EditHalalDIalog({
             );
           })}
           {/* Code for displaying soldierAccompanieds and leftOvers */}
+          <div>
+            <h2 style={{ color: theme.palette.secondary.main }}>מלווים </h2>
+            {soldierAccompanieds.length === 0 ? (
+              <p>אין מלווים משוייכים</p>
+            ) : (
+              soldierAccompanieds.map((soldier, index) => (
+                <div key={index}>
+                  <p>
+                    {`שם: `}
+                    <strong>{soldier.fullName}</strong>
+                  </p>
+                  <p>
+                    {`מספר פרטי: `}
+                    <strong>{soldier.privateNumber}</strong>
+                  </p>
+                  <p>
+                    {`דרגה: `}
+                    <strong>{soldier.rank}</strong>
+                  </p>
+                  <p>
+                    {`טלפון: `}
+                    <strong>{formatPhoneNumber(soldier.phone)}</strong>
+                  </p>
+                  <p>
+                    {`יחידה: `}
+                    <strong>{soldier.unit}</strong>
+                  </p>
+                  <p>
+                    {`הערות: `}
+                    <strong>{soldier.comments}</strong>
+                  </p>
+                  <br />
+                </div>
+              ))
+            )}
+            <br />
+          </div>
+          <div>
+            <h2 style={{ color: theme.palette.secondary.main }}>שארים</h2>
+            {leftOvers.length === 0 ? (
+              <p>אין שארים משוייכים</p>
+            ) : (
+              leftOvers.map((leftOver, index) => (
+                <div key={index}>
+                  <p>
+                    {`שם: `}
+                    <strong>{leftOver.fullName}</strong>
+                  </p>
+                  <p>
+                    {`קרובות: `}
+                    <strong>{leftOver.proximity}</strong>
+                  </p>
+                  <p>
+                    {`עיר: `}
+                    <strong>{leftOver.city}</strong>
+                  </p>
+                  <p>
+                    {`כתובת: `}
+                    <strong>{leftOver.address}</strong>
+                  </p>
+                  <p>
+                    {`טלפון: `}
+                    <strong>{formatPhoneNumber(leftOver.phone)}</strong>
+                  </p>
+                  <p>
+                    {`הערות: `}
+                    <strong>{leftOver.comments}</strong>
+                  </p>
+                  <p>
+                    {`דתי: `}
+                    <strong>{leftOver.isReligious ? "כן" : "לא"}</strong>
+                  </p>
+                  <br />
+                </div>
+              ))
+            )}
+            <br />
+          </div>
         </DialogContent>
 
         <Divider></Divider>

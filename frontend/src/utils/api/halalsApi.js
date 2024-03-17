@@ -431,8 +431,4 @@ export async function deleteHalalColumn(userId, columnName) {
     console.error(`Error deleting halal column '${columnName}':`, error);
     throw error;
   }
-  // } else {
-  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
-  //   throw error;
-  // }
 }
