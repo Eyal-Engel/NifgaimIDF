@@ -14,8 +14,6 @@ router.get("/originalColumns", halalsCotnrollers.getOriginalColumns);
 
 router.get("/columnEnums/:columnName", halalsCotnrollers.getEnumsForColumn);
 
-router.get("/:halalId", halalsCotnrollers.getHalalById);
-
 router.get(
   "/byPrivateNumber/:privateNumber",
   halalsCotnrollers.getHalalByPrivateNumber
@@ -29,6 +27,8 @@ router.get(
 );
 
 router.get("/leftOvers/:halalId", halalsCotnrollers.getLeftOversByHalalId);
+
+router.get("/:halalId", halalsCotnrollers.getHalalById);
 
 router.post("/", halalsCotnrollers.createHalal);
 

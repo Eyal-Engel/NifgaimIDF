@@ -223,6 +223,7 @@ export async function createHalal(userId, halalData) {
 
   const body = JSON.stringify({ halalData, userId });
 
+  console.log(body);
   try {
     const response = await post(apiUrl, body, headers);
     return response.data;
@@ -247,7 +248,7 @@ export async function updateHalal(userId, halalId, updatedHalalData) {
 
   const body = JSON.stringify({ updatedHalalData, userId });
 
-  console.log(body)
+  console.log(body);
 
   try {
     const response = await patch(apiUrl, body, headers);

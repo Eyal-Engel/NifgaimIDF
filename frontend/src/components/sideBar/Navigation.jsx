@@ -5,7 +5,7 @@ import exitIcon from "../../assets/images/icons/exitIcon.png";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 import { AuthContext } from "../../utils/contexts/authContext";
-import { getCommandNameByUserId } from "../../utils/api/usersApi";
+import { getCommandNameByUserId, getUserById } from "../../utils/api/usersApi";
 import halalIcon from "../../assets/images/icons/halalIcon.png";
 import userIcon from "../../assets/images/icons/userIcon.png";
 import graveyardIcon from "../../assets/images/icons/graveyardIcon.png";
@@ -34,7 +34,8 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
   const auth = useContext(AuthContext);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
-  const [loggedUserCommand, setLoggedUserCommand] = useState("");
+  // const [loggedUserCommand, setLoggedUserCommand] = useState("");
+  const [loggedUserManagePerm, setLoggedUserManagePerm] = useState("");
 
   const handleLogout = () => {
     auth.logout();
@@ -46,8 +47,11 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
     if (loggedUserId !== "") {
       const fetchCommand = async () => {
         try {
-          const command = await getCommandNameByUserId(loggedUserId);
-          setLoggedUserCommand(command);
+          // const command = await getCommandNameByUserId(loggedUserId);
+          const user = await getUserById(loggedUserId);
+
+          // setLoggedUserCommand(user.loggedUserManagePerm);
+          setLoggedUserManagePerm(user.loggedUserManagePerm);
         } catch (error) {
           console.error("Error fetching command:", error);
         }
@@ -59,7 +63,7 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
 
   let itemListInfo = [];
 
-  if (auth.isLoggedIn && loggedUserCommand === "חיל הלוגיסטיקה") {
+  if (auth.isLoggedIn && loggedUserManagePerm) {
     itemListInfo = [
       // {
       //   name: "אודות המערכת",
@@ -143,6 +147,22 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
         },
         imgSrc: halalIcon,
         url: "/halalim",
+      },
+      {
+        name: "ניהול מלווים",
+        styles: {
+          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
+        },
+        imgSrc: soldierAccompaniedsIcon,
+        url: "/manageSoldierAccompanied",
+      },
+      {
+        name: "ניהול שארים",
+        styles: {
+          background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
+        },
+        imgSrc: leftOversIcon,
+        url: "/manageLeftOvers",
       },
     ];
   }

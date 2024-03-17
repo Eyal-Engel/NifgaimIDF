@@ -1,5 +1,4 @@
 const { validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const sha256 = require("js-sha256");
@@ -53,8 +52,7 @@ const signup = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const managePermUser = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -62,11 +60,13 @@ const signup = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePermUser) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
+
+    console.log(managePermUser);
 
     existingUser = await User.findOne({
       where: { privateNumber },
@@ -150,14 +150,13 @@ const login = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   const userId = req.params.userId;
   const { privateNumber, fullName, nifgaimCommandId, editPerm, managePerm } =
-    req.body;
+    req.body.updatedUserData;
 
   const userUpdatingUserId = req.body.userUpdatingUserId;
 
   try {
     const userRequested = await User.findByPk(userUpdatingUserId);
-    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const managePermUserRequested = userRequested.managePerm;
 
     if (
       !userRequested ||
@@ -169,7 +168,7 @@ const updateUser = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePermUserRequested) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -217,6 +216,7 @@ const updateUser = async (req, res, next) => {
     if (managePerm !== undefined) {
       user.managePerm = managePerm;
     }
+
     // Save the updated user
     await user.save();
 
@@ -237,8 +237,7 @@ const changePassword = async (req, res, next) => {
   console.log(newPassword, userUpdatingUserId);
   try {
     const userRequested = await User.findByPk(userUpdatingUserId);
-    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const managePerm = userRequested.managePerm;
 
     if (
       !userRequested ||
@@ -250,7 +249,7 @@ const changePassword = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePerm) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -300,22 +299,24 @@ const deleteUser = async (req, res, next) => {
 
     try {
       const userRequested = await User.findByPk(userUpdatingUserId);
-      const userCommand = await Command.findByPk(
-        userRequested.nifgaimCommandId
-      );
-      const userCommandName = userCommand.commandName;
+      const managePerm = userRequested.managePerm;
 
-      if (!userRequested) {
+      if (
+        !userRequested ||
+        userRequested === null ||
+        userRequested === undefined
+      ) {
         return res
           .status(404)
           .json({ body: { errors: [{ message: "User is not exist" }] } });
       }
 
-      if (userCommandName !== "חיל הלוגיסטיקה") {
+      if (!managePerm) {
         return res
           .status(403)
           .json({ body: { errors: [{ message: "User is not authorized" }] } });
       }
+
       userById = await User.findOne({
         where: { id: userId },
       });

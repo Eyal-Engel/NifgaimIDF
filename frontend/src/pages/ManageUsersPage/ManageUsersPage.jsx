@@ -1,7 +1,5 @@
 import * as React from "react";
-import {
-  DataGrid,
-} from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { heIL } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
@@ -300,6 +298,7 @@ export default function ManageExistsUsers() {
     const { id, privateNumber, fullName, command, editPerm, managePerm } =
       updatedRow;
 
+    console.log(updatedRow);
     try {
       const nifgaimCommandId = await getCommandIdByName(command);
       console.log(nifgaimCommandId);
@@ -310,6 +309,8 @@ export default function ManageExistsUsers() {
         editPerm,
         managePerm,
       };
+
+      console.log(filteredUser);
       await updateUser(loggedUserId, id, filteredUser);
 
       setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -469,7 +470,7 @@ export default function ManageExistsUsers() {
           maxHeight: "40rem",
           maxWidth: "60rem",
         },
-        direction: "ltr",
+        direction: "rtl",
         background: "white",
         borderRadius: "2rem",
         boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",

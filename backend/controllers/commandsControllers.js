@@ -1,8 +1,4 @@
-const { validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-
 const Command = require("../models/schemas/NifgaimCommand");
 const User = require("../models/schemas/NifgaimUser");
 
@@ -37,8 +33,7 @@ const createCommand = async (req, res, next) => {
   const id = uuidv4();
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -46,7 +41,7 @@ const createCommand = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePerm) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -68,15 +63,15 @@ const updateCommandById = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const managePerm = user.managePerm;
+
     if (!user || user === null || user === undefined) {
       return res
         .status(404)
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePerm) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -101,15 +96,12 @@ const updateCommandById = async (req, res, next) => {
 
 // Delete command by id
 const deleteCommandById = async (req, res, next) => {
-  console.log("hello");
-  console.log(req.params.commandId);
   const id = req.params.commandId;
   const { userId } = req.body;
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -117,7 +109,7 @@ const deleteCommandById = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePerm) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });

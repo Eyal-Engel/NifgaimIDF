@@ -15,13 +15,13 @@ import HalalimPage from "./pages/HalalimPage/HalalimPage";
 import ManageUsersPage from "./pages/ManageUsersPage/ManageUsersPage";
 import ManageCommandsPage from "./pages/ManageCommandsPage/ManageCommandsPage";
 import ManageGraveyardsPage from "./pages/ManageGraveyardsPage/ManageGraveyardsPage";
-import { getCommandNameByUserId } from "./utils/api/usersApi";
+import { getCommandNameByUserId, getUserById } from "./utils/api/usersApi";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ManageColumnsPage from "./pages/ManageColumns/ManageColumnsPage";
 import ManageLeftOversPage from "./pages/ManageLeftOversPage/ManageLeftOversPage";
 import ManageSoldierAccompaniedPage from "./pages/ManageSoldierAccompaniedPage/ManageSoldierAccompaniedPage";
 
-const handleRouter = (token, command) => {
+const handleRouter = (token, managePerm) => {
   let router;
   router = createBrowserRouter([
     {
@@ -35,7 +35,7 @@ const handleRouter = (token, command) => {
       ],
     },
   ]);
-  if (token && command === "חיל הלוגיסטיקה") {
+  if (token && managePerm) {
     router = createBrowserRouter([
       {
         path: "/",
@@ -74,6 +74,11 @@ const handleRouter = (token, command) => {
             path: "/halalim",
             element: <HalalimPage />,
           },
+          {
+            path: "/manageSoldierAccompanied",
+            element: <ManageSoldierAccompaniedPage />,
+          },
+          { path: "/manageLeftOvers", element: <ManageLeftOversPage /> },
           { path: "*", element: <ErrorNotFoundPage /> },
         ],
       },
@@ -95,13 +100,18 @@ const theme = createTheme({
 
 function App() {
   const { token, login, logout, userId } = useAuth();
-  const [command, setCommand] = useState("");
+  // const [command, setCommand] = useState("");
+  const [editPerm, setEditPerm] = useState("");
+  const [managePerm, setManagePerm] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {
-        const commandUser = await getCommandNameByUserId(userId);
-        setCommand(commandUser);
+        // const commandUser = await getCommandNameByUserId(userId);
+        // setCommand(commandUser);
+        const user = await getUserById(userId);
+        setEditPerm(user.editPerm);
+        setManagePerm(user.managePerm);
       }
     };
 
@@ -119,7 +129,7 @@ function App() {
       }}
     >
       <ThemeProvider theme={theme}>
-        <RouterProvider router={handleRouter(token, command)} />
+        <RouterProvider router={handleRouter(token, managePerm)} />
       </ThemeProvider>
     </AuthContext.Provider>
   );

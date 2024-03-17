@@ -1,7 +1,6 @@
 const { validationResult } = require("express-validator");
 const LeftOver = require("../models/schemas/NifgaimLeftOver");
 const User = require("../models/schemas/NifgaimUser");
-const Command = require("../models/schemas/NifgaimCommand");
 const { v4: uuidv4 } = require("uuid");
 
 const getLeftOvers = async (req, res, next) => {
@@ -78,10 +77,9 @@ const createLeftOver = async (req, res, next) => {
   const { userId } = req.body;
 
   try {
-    console.log(userId);
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -89,11 +87,12 @@ const createLeftOver = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
+
 
     const newLeftOver = await LeftOver.create({
       id,
@@ -128,8 +127,8 @@ const updateLeftOver = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -137,11 +136,12 @@ const updateLeftOver = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
+
 
     const leftOver = await LeftOver.findByPk(leftOverId);
     if (!leftOver) {
@@ -172,8 +172,8 @@ const deleteLeftOver = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -181,11 +181,12 @@ const deleteLeftOver = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
+
 
     const leftOver = await LeftOver.findByPk(leftOverId);
     if (!leftOver) {

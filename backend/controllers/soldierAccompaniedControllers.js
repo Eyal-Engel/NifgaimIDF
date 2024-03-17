@@ -1,7 +1,6 @@
 const { validationResult } = require("express-validator");
 const SoldierAccompanied = require("../models/schemas/NifgaimSoldierAccompanied");
 const User = require("../models/schemas/NifgaimUser");
-const Command = require("../models/schemas/NifgaimCommand");
 const { v4: uuidv4 } = require("uuid");
 
 const getSoldierAccompanieds = async (req, res, next) => {
@@ -61,8 +60,6 @@ const createSoldierAccompanied = async (req, res, next) => {
 
   const id = uuidv4();
 
-  console.log(req.body);
-
   const {
     fullName,
     privateNumber,
@@ -77,8 +74,8 @@ const createSoldierAccompanied = async (req, res, next) => {
   try {
     console.log(userId);
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -86,7 +83,7 @@ const createSoldierAccompanied = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -123,8 +120,8 @@ const updateSoldierAccompanied = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -132,7 +129,7 @@ const updateSoldierAccompanied = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -169,8 +166,8 @@ const deleteSoldierAccompanied = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -178,7 +175,7 @@ const deleteSoldierAccompanied = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });

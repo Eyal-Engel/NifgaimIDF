@@ -1,7 +1,6 @@
 const { validationResult } = require("express-validator");
 const Halal = require("../models/schemas/NifgaimHalal");
 const User = require("../models/schemas/NifgaimUser");
-const Command = require("../models/schemas/NifgaimCommand");
 const SoldierAccompanied = require("../models/schemas/NifgaimSoldierAccompanied");
 const LeftOver = require("../models/schemas/NifgaimLeftOver");
 
@@ -44,6 +43,7 @@ const getHalalByPrivateNumber = async (req, res, next) => {
     // Find the halal by private number
     const halal = await Halal.findOne({ where: { privateNumber } });
 
+    console.log(halal);
     // If halal is not found, return 404 status
     if (!halal) {
       return res.status(404).json({ message: "Halal not found." });
@@ -154,15 +154,13 @@ const addHalalColumn = async (req, res, next) => {
     const { columnName, dataType, defaultValue } = req.body;
     const { userId } = req.body;
     const userRequested = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const managePerm = userRequested.managePerm;
+
     let defaultValuePost = defaultValue;
 
     // Trim columnName to remove leading and trailing spaces
     const trimmedColumnName = columnName.trim();
 
-    console.log(userId, trimmedColumnName, dataType, defaultValue);
-    console.log(defaultValue);
     if (
       !userRequested ||
       userRequested === null ||
@@ -173,7 +171,7 @@ const addHalalColumn = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User does not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePerm) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -349,8 +347,8 @@ const updateHalalColumn = async (req, res, next) => {
     const sequelizeDataType = Sequelize[dataType];
 
     const userRequested = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+
+    const managePerm = userRequested.managePerm;
 
     if (
       !userRequested ||
@@ -362,11 +360,12 @@ const updateHalalColumn = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User does not exist." }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePerm) {
       return res
         .status(403)
-        .json({ body: { errors: [{ message: "User is not authorized." }] } });
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
+
     if (!columnName && !columnDefault) {
       return res.status(400).json({
         body: {
@@ -690,8 +689,8 @@ const deleteHalalColumn = async (req, res, next) => {
     const { userId, columnName } = req.body;
 
     const userRequested = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(userRequested.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+
+    const managePerm = userRequested.managePerm;
 
     if (
       !userRequested ||
@@ -703,7 +702,7 @@ const deleteHalalColumn = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (!managePerm) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -721,15 +720,13 @@ const deleteHalalColumn = async (req, res, next) => {
     // Check if the table exists
     const tableExists = await queryInterface.showAllTables();
     if (!tableExists.includes("nifgaimHalals")) {
-      return res
-        .status(400)
-        .json({
-          message: {
-            body: {
-              errors: [{ message: "Table 'NifgaimHalals' does not exist." }],
-            },
+      return res.status(400).json({
+        message: {
+          body: {
+            errors: [{ message: "Table 'NifgaimHalals' does not exist." }],
           },
-        });
+        },
+      });
     }
 
     // Check if the column exists
@@ -737,15 +734,13 @@ const deleteHalalColumn = async (req, res, next) => {
       "nifgaimHalals"
     );
     if (!(columnName in tableDescription)) {
-      return res
-        .status(400)
-        .json({
-          message: {
-            body: {
-              errors: [{ message: `Column '${columnName}' does not exist.` }],
-            },
+      return res.status(400).json({
+        message: {
+          body: {
+            errors: [{ message: `Column '${columnName}' does not exist.` }],
           },
-        });
+        },
+      });
     }
 
     // Define the migration code to remove the column
@@ -842,8 +837,8 @@ const createHalal = async (req, res, next) => {
     const { userId } = req.body;
 
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -851,7 +846,7 @@ const createHalal = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -869,6 +864,7 @@ const createHalal = async (req, res, next) => {
     // Create new Halal entry with all columns
     const newHalalData = { id, ...req.body.halalData };
 
+    console.log(newHalalData);
     // Construct SQL INSERT statement dynamically
     const insertColumns = [];
     const insertValues = [];
@@ -940,8 +936,9 @@ const updateHalal = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -949,7 +946,7 @@ const updateHalal = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -1014,8 +1011,8 @@ const deleteHalal = async (req, res, next) => {
 
   try {
     const user = await User.findByPk(userId);
-    const userCommand = await Command.findByPk(user.nifgaimCommandId);
-    const userCommandName = userCommand.commandName;
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
     if (!user || user === null || user === undefined) {
       return res
@@ -1023,7 +1020,7 @@ const deleteHalal = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not exist" }] } });
     }
 
-    if (userCommandName !== "חיל הלוגיסטיקה") {
+    if (editPerm === false && managePerm === false) {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
@@ -1058,6 +1055,5 @@ module.exports = {
   updateHalalColumn,
   updateHalalSelectColumn,
   replaceColumnValue,
-  // deleteHalalSelectColumn,
   deleteHalalColumn,
 };
