@@ -198,6 +198,7 @@ export default function ManageLeftOversPage() {
         },
         direction: "ltr",
         background: "white",
+        alignItems: "center",
         borderRadius: "2rem",
         boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",
       }}
@@ -213,25 +214,6 @@ export default function ManageLeftOversPage() {
         sx={{
           direction: "rtl",
           border: "none",
-          "& .MuiDataGrid-virtualScroller": {
-            mt: "0 !important",
-          },
-
-          "& .MuiDataGrid-columnHeaders": {
-            overflow: "unset",
-            position: "sticky !important",
-            left: 1,
-            top: 0,
-          },
-          "& .MuiDataGrid-columnHeadersInner > div": {
-            direction: "rtl !important",
-          },
-          "& .MuiDataGrid-main": {
-            overflow: "auto",
-          },
-          "& .MuiTablePagination-actions": {
-            direction: "ltr",
-          },
           "& .MuiDataGrid-row:hover": {
             backgroundColor: "#EDF3F8",
           },
@@ -239,7 +221,6 @@ export default function ManageLeftOversPage() {
           "& .MuiDataGrid-columnHeadersInner": {
             bgcolor: "#fccd38",
           },
-
           "& .MuiDataGrid-columnHeaderTitle": {
             color: "white",
           },

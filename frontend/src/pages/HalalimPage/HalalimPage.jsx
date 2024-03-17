@@ -32,9 +32,7 @@ export default function HalalimPage() {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [originalColumns, setOriginalColumns] = useState([]);
-  const [allDataOfHalalsColumns, setAllDataOfHalalsColumns] = useState(
-    []
-  );
+  const [allDataOfHalalsColumns, setAllDataOfHalalsColumns] = useState([]);
   const [commands, setCommands] = useState([]);
   const [graveyards, setGraveyards] = useState([]);
   const [editPerm, setEditPerm] = useState("");
@@ -300,7 +298,6 @@ export default function HalalimPage() {
         localeText={heIL.components.MuiDataGrid.defaultProps.localeText}
         sx={{
           direction: "rtl",
-          // overflow: "hidden",
           border: "none",
           "& .MuiDataGrid-row:hover": {
             backgroundColor: "#EDF3F8",
