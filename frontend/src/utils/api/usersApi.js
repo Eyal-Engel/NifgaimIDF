@@ -4,7 +4,6 @@ import { getCommandNameById } from "./commandsApi";
 const port = process.env.REACT_APP_API_PORT || 5000;
 
 export async function getUsers() {
-
   const apiUrl = `http://localhost:${port}/api/users/`;
 
   const headers = {
@@ -167,6 +166,8 @@ export async function updateUser(userUpdatingUserId, userId, updatedUserData) {
   };
 
   const body = JSON.stringify({ userUpdatingUserId, updatedUserData });
+
+  console.log(body);
 
   try {
     const response = await patch(apiUrl, body, headers);
