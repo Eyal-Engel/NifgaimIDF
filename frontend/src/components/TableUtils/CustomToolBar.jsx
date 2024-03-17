@@ -31,7 +31,6 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import "../../pages/ManageUsersPage/ManageUsersPage.css";
 import Transition from "./Transition";
 import PaperComponent from "./PaperComponent";
-import { useEffect } from "react";
 import { useLayoutEffect } from "react";
 import { useState } from "react";
 export default function CustomToolbar({ setRows, rows, columns }) {

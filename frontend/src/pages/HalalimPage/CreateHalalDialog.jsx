@@ -35,6 +35,7 @@ import {
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 import Swal from "sweetalert2";
+import { useForm } from 'react-hook-form';
 
 const MemoizedSelect = React.memo(Select);
 
@@ -78,6 +79,7 @@ export default function CreateHalalDialog({
   const [inputValues, setInputValues] = useState({});
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   const theme = createTheme({
     direction: "rtl",
@@ -191,7 +193,7 @@ export default function CreateHalalDialog({
     fetchData();
   }, [allDataOfHalalsColumns]);
 
-  const handleSubmit = async () => {
+  const handleSubmitForm = async () => {
     try {
       // Here you can send inputValues to your backend using a POST request
       console.log("Input values:", inputValues);
@@ -466,7 +468,7 @@ export default function CreateHalalDialog({
         <Divider />
         <DialogActions>
           <Button onClick={handleCloseDialog}>ביטול</Button>
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained" onClick={handleSubmitForm}>
             צור חלל
           </Button>
         </DialogActions>
