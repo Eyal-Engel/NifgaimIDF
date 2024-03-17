@@ -51,7 +51,7 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
           const user = await getUserById(loggedUserId);
 
           // setLoggedUserCommand(user.loggedUserManagePerm);
-          setLoggedUserManagePerm(user.loggedUserManagePerm);
+          setLoggedUserManagePerm(user.managePerm);
         } catch (error) {
           console.error("Error fetching command:", error);
         }
