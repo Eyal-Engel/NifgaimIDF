@@ -73,6 +73,15 @@ export default function ManageCommandsPage() {
           return command;
         });
       });
+      Swal.fire({
+        title: `פיקוד "${newName}" עודכן בהצלחה!`,
+        text: "",
+        icon: "success",
+        confirmButtonText: "אישור",
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {});
     } catch (error) {
       const errors = error.response.data.body.errors;
       let errorsForSwal = ""; // Start unordered list
@@ -148,19 +157,28 @@ export default function ManageCommandsPage() {
   };
 
   const handelAddCommand = async (value) => {
-    setSearchInputValue("");
+    // setSearchInputValue("");
     if (value !== "") {
       try {
         const command = await createCommand(loggedUserId, value);
-
         setCommands((prev) => [
           ...prev,
           {
             id: command.newCommand.id,
-            commandName: command.newCommand.commandName,
+            commandName: command.newCommand.commandName?.trim(),
           },
         ]);
-        setOpenDialog(false);
+        Swal.fire({
+          title: `פיקוד "${command.newCommand.commandName}" נוצר בהצלחה!`,
+          text: "",
+          icon: "success",
+          confirmButtonText: "אישור",
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        }).then(() => {
+          setOpenDialog(false);
+        });
       } catch (error) {
         const errors = error.response.data.body.errors;
         let errorsForSwal = ""; // Start unordered list

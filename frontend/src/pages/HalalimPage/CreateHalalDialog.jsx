@@ -8,20 +8,17 @@ import {
   FormControlLabel,
   Input,
   InputLabel,
-  Paper,
   Radio,
   RadioGroup,
   Select,
   MenuItem,
   DialogActions,
-  Slide,
   FormControl,
   createTheme,
   ThemeProvider,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
-import Draggable from "react-draggable";
 import { createHalal, getColumnEnums } from "../../utils/api/halalsApi";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
@@ -37,8 +34,6 @@ import {
 } from "../../utils/api/graveyardsApi";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
-
-
 
 const MemoizedSelect = React.memo(Select);
 
@@ -138,29 +133,28 @@ export default function CreateHalalDialog({
         console.error("Error:", error);
         // Handle error appropriately, such as displaying an error message
       }
-
     },
     [setInputValues]
   );
 
   function removeQuotes(inputString) {
     // Remove the overall quotes from the input string
-    inputString = inputString.replace(/^{|"|}$/g, '');
+    inputString = inputString.replace(/^{|"|}$/g, "");
 
     // Split the input string by commas and remove leading/trailing whitespaces
-    const items = inputString.split(',').map((item) => item.trim());
+    const items = inputString.split(",").map((item) => item.trim());
 
     // Remove double quotes from the first and last character of each item if they are present
     const itemsWithoutQuotes = items.map((item) => {
-        if (item.startsWith('"') && item.endsWith('"')) {
-            return item.slice(1, -1); // Remove quotes from the beginning and end
-        }
-        return item;
+      if (item.startsWith('"') && item.endsWith('"')) {
+        return item.slice(1, -1); // Remove quotes from the beginning and end
+      }
+      return item;
     });
 
     // Join the items back into a string and return
-    return `{${itemsWithoutQuotes.join(',')}}`;
-}
+    return `{${itemsWithoutQuotes.join(",")}}`;
+  }
 
   useEffect(() => {
     const fetchData = async () => {

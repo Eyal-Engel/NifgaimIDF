@@ -512,7 +512,6 @@ export default function EditHalalDIalog({
                             handleInputChange(key, e.target.value)
                           }
                         >
-                          {console.log("value: " + value)}
                           {enums[key] ? (
                             enums[key].map((option) => (
                               <MenuItem

@@ -5,7 +5,7 @@ export default function AboutPage() {
   // Assuming you have a function for creating Halals like the provided `createHalal` function
 
   async function generateHalals() {
-    const userId = "d1e47f3e-b767-4030-b6ab-21bec850ba48";
+    const userId = "86c85273-3d8b-4ecd-8f84-f769f0ce517a";
     const halalDataTemplate = {
       lastName: "Doe",
       firstName: "John",
@@ -21,17 +21,17 @@ export default function AboutPage() {
       graveNumber: "456",
       permanentRelationship: false,
       comments: "Lorem ipsum dolor sit.",
-      nifgaimCommandId: "07ec94ec-d900-4633-8c40-b47f25ac6a9c",
-      nifgaimGraveyardId: "286ad23d-450c-47c4-b23d-377ac18b993b",
-      nifgaimLeftOverId: "286ad23d-450c-47c4-b23d-377ac18b993b",
-      nifgaimSoldierAccompaniedId: "286ad23d-450c-47c4-b23d-377ac18b993b",
+      nifgaimCommandId: "a5deef7e-758e-4fc0-9b31-cd544107ebd2",
+      nifgaimGraveyardId: "b3a9ecdb-0750-457c-8a25-72389f8384b2",
+      nifgaimLeftOverId: "e4f98e98-fac9-4338-9912-7ab02252bd0f",
+      nifgaimSoldierAccompaniedId: "bc1e848b-729f-4c2b-b258-699146eb02bd",
     };
 
     const halals = [];
 
-    for (let i = 0; i < 1500; i++) {
+    for (let i = 0; i < 500; i++) {
       const privateNumber = generateRandomNumber(1000000, 9999999); // Generate 7-digit random number
-      console.log(halalDataTemplate)
+      console.log(halalDataTemplate);
       const halalData = { ...halalDataTemplate, privateNumber };
       const halal = await createHalal(userId, halalData);
       halals.push(halal);

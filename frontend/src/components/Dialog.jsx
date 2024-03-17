@@ -78,6 +78,7 @@ const SimpleDialog = React.memo(
             } else {
               emptyFlag = true;
             }
+            return "";
           });
           const resultString = "select: [" + trimmedEnumValues.join(", ") + "]";
           console.log(resultString);
@@ -118,7 +119,7 @@ const SimpleDialog = React.memo(
             onCreateClicked(newColumnName, typeOfColumn, emptyValue);
           }
         } else if (typeOfColumn === "INTEGER") {
-          if(!isNaN(defaultValue)) {
+          if (!isNaN(defaultValue)) {
             onCreateClicked(newColumnName, typeOfColumn, defaultValue);
           } else {
             Swal.fire({
@@ -133,8 +134,7 @@ const SimpleDialog = React.memo(
               },
             });
           }
-        }
-        else {
+        } else {
           console.log(defaultValue);
           onCreateClicked(newColumnName, typeOfColumn, defaultValue);
         }

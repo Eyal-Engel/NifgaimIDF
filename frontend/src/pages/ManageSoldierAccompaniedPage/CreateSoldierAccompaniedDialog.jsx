@@ -253,7 +253,7 @@ export default function CreateSoldierAccompaniedDialog({
       };
       setRows([...rows, formmatedLeftOver]);
       Swal.fire({
-        title: `שאר "${inputValues.fullName}" נוסף בהצלחה!`,
+        title: `מלווה "${inputValues.fullName}" נוסף בהצלחה!`,
         text: "",
         icon: "success",
         confirmButtonText: "אישור",

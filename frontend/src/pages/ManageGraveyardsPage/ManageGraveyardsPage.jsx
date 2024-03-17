@@ -76,6 +76,15 @@ export default function ManageCommandsPage() {
           return graveyard;
         });
       });
+      Swal.fire({
+        title: `בין העלמין "${newName}" עודכן בהצלחה!`,
+        text: "",
+        icon: "success",
+        confirmButtonText: "אישור",
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {});
     } catch (error) {
       const errors = error.response.data.body.errors;
       console.log(errors);
@@ -86,7 +95,6 @@ export default function ManageCommandsPage() {
           errorsForSwal += `<li>בית העלמין ${newName} כבר קיים במערכת</li>`;
         }
       });
-
 
       Swal.fire({
         title: ` לא ניתן לעדכן את שם בית העלמין`,
@@ -153,7 +161,7 @@ export default function ManageCommandsPage() {
   };
 
   const handelAddGraveyard = async (value) => {
-    setSearchInputValue("");
+    // setSearchInputValue("");
     if (value !== "") {
       try {
         const graveyard = await createGraveyard(loggedUserId, value);
@@ -162,10 +170,20 @@ export default function ManageCommandsPage() {
           ...prev,
           {
             id: graveyard.id,
-            graveyardName: graveyard.graveyardName,
+            graveyardName: graveyard.graveyardName?.trim(),
           },
         ]);
-        setOpenDialog(false);
+        Swal.fire({
+          title: `בית העלמין "${graveyard.graveyardName}" נוצר בהצלחה!`,
+          text: "",
+          icon: "success",
+          confirmButtonText: "אישור",
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        }).then(() => {
+          setOpenDialog(false);
+        });
       } catch (error) {
         const errors = error.response.data.body.errors;
         console.log(errors);

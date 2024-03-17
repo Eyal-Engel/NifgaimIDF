@@ -176,6 +176,15 @@ export default function ManageColumnsPage() {
           return column; // changed from command
         });
       });
+      Swal.fire({
+        title: `עמודה "${newName}" עודכנה בהצלחה!`,
+        text: "",
+        icon: "success",
+        confirmButtonText: "אישור",
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {});
     } catch (error) {
       console.log(error);
       const errors = error.response.data.body?.errors;
@@ -247,7 +256,7 @@ export default function ManageColumnsPage() {
             return updatedColumns;
           });
           Swal.fire({
-            title: `עמודה "${columnName}" נמחק בהצלחה!`, // changed from commandName
+            title: `עמודה "${columnName}" נמחקה בהצלחה!`, // changed from commandName
             text: "",
             icon: "success",
             confirmButtonText: "אישור",
@@ -297,9 +306,18 @@ export default function ManageColumnsPage() {
           enumValues: typeOfColumn === "ENUM" ? enumValues : null,
         },
       ]);
-      setSearchInputValue("");
-
-      setOpenDialog(false);
+      Swal.fire({
+        title: `עמודה "${newColumnName}" נוצרה בהצלחה!`,
+        text: "",
+        icon: "success",
+        confirmButtonText: "אישור",
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then(() => {
+        setSearchInputValue("");
+        setOpenDialog(false);
+      });
     } catch (error) {
       console.log(error);
       const errors = error.response.data.body?.errors;
@@ -307,7 +325,9 @@ export default function ManageColumnsPage() {
       console.log(errors);
       if (errors) {
         errors.forEach((error) => {
-          if (error.message === `Column '${newColumnName.trim()}' already exists.`) {
+          if (
+            error.message === `Column '${newColumnName.trim()}' already exists.`
+          ) {
             errorsForSwal += "<li>העמודה כבר קיימת במערכת</li>";
           }
           if (
@@ -316,22 +336,13 @@ export default function ManageColumnsPage() {
           ) {
             errorsForSwal += "<li>ערך ברירת מחדל לא תקין</li>";
           }
-          if (
-            error.message ===
-            "Column name is required."
-          ) {
+          if (error.message === "Column name is required.") {
             errorsForSwal += "<li>נדרש להכניס שם עמודה</li>";
           }
-          if (
-            error.message ===
-            "Data type is required."
-          ) {
+          if (error.message === "Data type is required.") {
             errorsForSwal += "<li>נדרש להכניס סוג עמודה</li>";
           }
-          if (
-            error.message ===
-            "enumlabel must be unique"
-          ) {
+          if (error.message === "enumlabel must be unique") {
             errorsForSwal += "<li>הכנסת ערכים דומים, שנה אחד מהם</li>";
           }
         });

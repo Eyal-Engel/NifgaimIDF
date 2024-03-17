@@ -213,7 +213,6 @@ export default function HalalimPage() {
 
       const halalsPromises = halalsData.map(async (halal) => {
         // Using async/await within map to transform each halal item
-        console.log(halal);
         const graveyard = await getGraveyardById(halal.nifgaimGraveyardId);
         const command = await getCommandById(halal.nifgaimCommandId);
 
@@ -238,7 +237,7 @@ export default function HalalimPage() {
     fetchColumnsData();
   }, [fetchColumnsData]);
   // }, [allDataOfHalalsColumns]);
-  console.log("the component rernder")
+  console.log("the component rernder");
   return (
     <Box
       sx={{

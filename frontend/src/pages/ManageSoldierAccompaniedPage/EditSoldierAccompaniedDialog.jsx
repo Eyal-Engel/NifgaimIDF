@@ -31,6 +31,20 @@ import rtlPlugin from "stylis-plugin-rtl";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 
+const translationDict = {
+  fullName: "שם מלא",
+  privateNumber: "מספר אישי",
+  rank: "דרגה",
+  unit: "יחידה",
+  phone: "מספר טלפון",
+  nifgaimHalalId: "שיוך חלל",
+};
+
+const errorDict = {
+  len: "אורך",
+  isNumeric: "חובה מספר",
+};
+
 const EditSoldierAccompaniedDialog = ({
   openDialog,
   setOpenDialog,
@@ -168,11 +182,48 @@ const EditSoldierAccompaniedDialog = ({
           return row;
         })
       );
-
-      handleCloseDialog();
+      Swal.fire({
+        title: `מלווה "${inputValues.fullName}" עודכן בהצלחה!`,
+        text: "",
+        icon: "success",
+        confirmButtonText: "אישור",
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {
+        handleCloseDialog();
+      });
     } catch (error) {
-      console.error("Error:", error);
-      // Handle error appropriately, e.g., show a message to the user
+      const errors = error.response.data.body?.errors;
+      let errorsForSwal = ""; // Start unordered list
+
+      if (errors) {
+        errors.forEach((error) => {
+          if (error.type === "notNull Violation") {
+            errorsForSwal += `<li>נדרש למלא את עמודה ${
+              translationDict[error.path]
+            }</li>`;
+          }
+          if (error.type === "Validation error") {
+            errorsForSwal += `<li>הערך בעמודה "${
+              translationDict[error.path]
+            }" לא תקין (${errorDict[error.validatorKey]})</li>`;
+          }
+        });
+      } else {
+        errorsForSwal += `<li>${error}</li>`;
+      }
+      Swal.fire({
+        title: `לא ניתן לעדכן את המלווה`,
+        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "אישור",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then((result) => {});
     }
   };
 

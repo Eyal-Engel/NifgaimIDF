@@ -41,6 +41,11 @@ const translationDict = {
   nifgaimHalalId: "שיוך חלל",
 };
 
+const errorDict = {
+  len: "אורך",
+  isNumeric: "חובה מספר",
+};
+
 export default function CreateLeftOverDialog({
   openDialog,
   setOpenDialog,
@@ -129,6 +134,11 @@ export default function CreateLeftOverDialog({
             errorsForSwal += `<li>נדרש למלא את עמודה ${
               translationDict[error.path]
             }</li>`;
+          }
+          if (error.type === "Validation error") {
+            errorsForSwal += `<li>הערך בעמודה "${
+              translationDict[error.path]
+            }" לא תקין (${errorDict[error.validatorKey]})</li>`;
           }
         });
       } else {
@@ -296,7 +306,6 @@ export default function CreateLeftOverDialog({
               מספר טלפון
             </InputLabel>
             <MuiTelInput
-            
               defaultCountry={"il"}
               value={phone}
               excludecountries={["pa"]} // Use lowercase prop name
