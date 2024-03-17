@@ -94,8 +94,8 @@ const translationDict = {
 
 const errorDict = {
   len: "אורך",
-  isNumeric: "חובה מספר"
-}
+  isNumeric: "חובה מספר",
+};
 export default function CreateSoldierAccompaniedDialog({
   openDialog,
   setOpenDialog,
@@ -239,7 +239,8 @@ export default function CreateSoldierAccompaniedDialog({
     }));
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     try {
       const newLeftOVer = await createSoldierAccompanied(
         loggedUserId,
@@ -275,7 +276,9 @@ export default function CreateSoldierAccompaniedDialog({
             }</li>`;
           }
           if (error.type === "Validation error") {
-            errorsForSwal += `<li>הערך בעמודה "${translationDict[error.path]}" לא תקין (${errorDict[error.validatorKey]})</li>`;
+            errorsForSwal += `<li>הערך בעמודה "${
+              translationDict[error.path]
+            }" לא תקין (${errorDict[error.validatorKey]})</li>`;
           }
         });
       } else {
@@ -349,7 +352,7 @@ export default function CreateSoldierAccompaniedDialog({
                     color: theme.palette.secondary.main,
                   }}
                 >
-                  הוסף נציג חדש
+                  הוסף מלווה חדש
                 </p>
               </div>
             </DialogTitle>
@@ -365,8 +368,9 @@ export default function CreateSoldierAccompaniedDialog({
               flexDirection: "column",
             }}
           >
-            <InputLabel id={"fullName"}>שם מלא</InputLabel>
+            <InputLabel id="fullName">שם מלא</InputLabel>
             <Input
+              label="fullName"
               onChange={(e) => handleInputChange("fullName", e.target.value)}
             />
             <RtlPlugin>

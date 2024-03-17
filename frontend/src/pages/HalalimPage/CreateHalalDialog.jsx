@@ -42,7 +42,7 @@ const MemoizedSelect = React.memo(Select);
 const errorDict = {
   len: "אורך",
   isNumeric: "חובה מספר",
-  not_unique: "חובה ערך יחודי"
+  not_unique: "חובה ערך יחודי",
 };
 
 const translationDict = {
@@ -248,7 +248,8 @@ export default function CreateHalalDialog({
           }
         });
       } else {
-        const nameOfColumn = translationDict[error.response.data.body.parent.column]
+        const nameOfColumn =
+          translationDict[error.response.data.body.parent?.column];
         errorsForSwal += `<li>התא "${nameOfColumn}" ריק</li>`;
       }
       Swal.fire({
