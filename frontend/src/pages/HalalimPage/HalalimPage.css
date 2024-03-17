@@ -50,3 +50,7 @@
   margin-left: 0px;
   margin-right: 20px;
 }
+
+.MuiTablePagination-actions {
+  rotate: 180deg;
+}
