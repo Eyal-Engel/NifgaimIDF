@@ -864,13 +864,15 @@ const createHalal = async (req, res, next) => {
     // Create new Halal entry with all columns
     const newHalalData = { id, ...req.body.halalData };
 
-    console.log(newHalalData.privateNumber);
-
     if (newHalalData.privateNumber.length !== 7) {
       return res.status(402).json({
         body: {
           errors: [
-            { message: "privater number must be with length of 7 digits" },
+            {
+              type: "validation error",
+              path: "privateNumber",
+              validatorKey: "len",
+            },
           ],
         },
       });
@@ -949,6 +951,20 @@ const updateHalal = async (req, res, next) => {
       return res
         .status(403)
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
+    if (requestBody.privateNumber.length !== 7) {
+      return res.status(402).json({
+        body: {
+          errors: [
+            {
+              type: "validation error",
+              path: "privateNumber",
+              validatorKey: "len",
+            },
+          ],
+        },
+      });
     }
 
     const halal = await Halal.findByPk(halalId);
