@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Button,
   Dialog,
@@ -16,13 +16,14 @@ import {
   FormControl,
   createTheme,
   ThemeProvider,
+  FormHelperText,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
 import { createHalal, getColumnEnums } from "../../utils/api/halalsApi";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { prefixer } from "stylis";
+import { column, prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import {
   getCommandIdByName,
@@ -36,6 +37,7 @@ import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
+import dayjs from "dayjs";
 
 const MemoizedSelect = React.memo(Select);
 
@@ -83,8 +85,12 @@ export default function CreateHalalDialog({
     register,
     handleSubmit,
     formState: { errors },
+    trigger,
   } = useForm();
 
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
   const theme = createTheme({
     direction: "rtl",
     palette: {
@@ -252,171 +258,322 @@ export default function CreateHalalDialog({
         </CacheProvider>
         <Divider />
         <DialogContent>
-          {/* Render input fields based on columns */}
-          {rearrangedColumns.map((column) => (
-            <div
-              key={column.column_name}
-              style={{
-                marginBottom: "10px",
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
-              {column.column_name === "nifgaimCommandId" ? (
-                <div>
-                  <InputLabel id={column.column_name}>
-                    {translationDict[column.column_name]
-                      ? translationDict[column.column_name]
-                      : column.column_name}
-                  </InputLabel>
-                  <Select
-                    sx={{ direction: "rtl" }}
-                    labelId="command-label"
-                    id="command"
-                    name="command"
-                    defaultValue=""
-                    displayEmpty
-                    className="resetPasswordInputField"
-                    onChange={(e) =>
-                      handleInputChange(column.column_name, e.target.value)
-                    }
-                    renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
-                  >
-                    <MenuItem sx={{ direction: "rtl" }} value="" disabled>
-                      פיקוד
-                    </MenuItem>
-                    {commands.map((command) => (
-                      <MenuItem
+          <form onSubmit={handleSubmit(handleSubmitForm)}>
+            {/* Render input fields based on columns */}
+            {rearrangedColumns.map((column) => (
+              <div
+                key={column.column_name}
+                style={{
+                  marginBottom: "10px",
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                {column.column_name === "nifgaimCommandId" ? (
+                  <>
+                    <InputLabel id={column.column_name}>פיקוד</InputLabel>
+                    <FormControl>
+                      <Select
+                        {...register(column.column_name, {
+                          required: {
+                            value: true,
+                            message: `${
+                              translationDict[column.column_name] ||
+                              column.column_name
+                            } שדה חובה `,
+                          },
+                        })}
+                        // label="בחר פיקוד מהרשימה"
                         sx={{ direction: "rtl" }}
-                        key={command}
-                        value={command}
-                      >
-                        {command}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </div>
-              ) : column.column_name === "nifgaimGraveyardId" ? (
-                <div>
-                  <InputLabel id={column.column_name}>
-                    {translationDict[column.column_name]
-                      ? translationDict[column.column_name]
-                      : column.column_name}
-                  </InputLabel>
-                  <Select
-                    sx={{ direction: "rtl" }}
-                    labelId="graveyard-label"
-                    id="graveyard"
-                    name="graveyard"
-                    defaultValue=""
-                    displayEmpty
-                    className="resetPasswordInputField"
-                    onChange={(event) =>
-                      handleInputChange(column.column_name, event.target.value)
-                    }
-                    renderValue={(value) => (value ? value : "בחר בית קברות")} // Render placeholder
-                  >
-                    <MenuItem sx={{ direction: "rtl" }} value="" disabled>
-                      בחר בית קברות
-                    </MenuItem>
-                    {graveyards.map((graveyard) => (
-                      <MenuItem
-                        sx={{ direction: "rtl" }}
-                        key={graveyard.id}
-                        value={graveyard.graveyardName}
-                      >
-                        {graveyard.graveyardName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </div>
-              ) : (
-                <>
-                  <InputLabel id={column.column_name}>
-                    {translationDict[column.column_name] || column.column_name}
-                  </InputLabel>
-                  {column.data_type === "timestamp with time zone" ? (
-                    <RtlPlugin
-                      style={{
-                        margin: "auto",
-                        marginTop: "15px",
-                      }}
-                    >
-                      <DatePicker
-                        label="תאריך פטירה "
-                        sx={{ width: "100%" }}
-                        onChange={(date) =>
-                          handleInputChange(column.column_name, date)
-                        }
-                      />
-                    </RtlPlugin>
-                  ) : column.data_type === "integer" ? (
-                    <Input
-                      type="number"
-                      onChange={(e) =>
-                        handleInputChange(column.column_name, e.target.value)
-                      }
-                    />
-                  ) : column.data_type === "boolean" ? (
-                    <RadioGroup
-                      aria-labelledby="booleanSelect"
-                      name="controlled-radio-buttons-group"
-                      row
-                      onChange={(e) =>
-                        handleInputChange(column.column_name, e.target.value)
-                      }
-                    >
-                      <FormControlLabel
-                        value={true}
-                        control={<Radio />}
-                        sx={{ marginRight: 0 }}
-                        label="כן"
-                      />
-                      <FormControlLabel
-                        value={false}
-                        control={<Radio />}
-                        label="לא"
-                      />
-                    </RadioGroup>
-                  ) : column.data_type === "USER-DEFINED" ? (
-                    <FormControl fullWidth>
-                      <InputLabel id={column.column_name}>
-                        בחר אחת מהאפשרויות
-                      </InputLabel>
-                      <MemoizedSelect
                         labelId={column.column_name}
-                        label="בחר אחת מהאפשרויות"
-                        value={inputValues[column.column_name] || ""}
-                        onChange={(e) =>
-                          handleInputChange(column.column_name, e.target.value)
+                        displayEmpty
+                        defaultValue={""}
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          handleInputChange(column.column_name, e.target.value);
+                        }}
+                        renderValue={(value) => (value ? value : "בחר פיקוד")} // Render placeholder
+                      >
+                        <MenuItem sx={{ direction: "rtl" }} value="" disabled>
+                          בחר פיקוד
+                        </MenuItem>
+                        {commands.map((command) => (
+                          <MenuItem
+                            sx={{ direction: "rtl" }}
+                            key={command}
+                            value={command}
+                          >
+                            {command}
+                          </MenuItem>
+                        ))}
+                      </Select>
+
+                      {errors[column.column_name] && (
+                        <p style={{ color: "red" }}>
+                          {errors[column.column_name].message}
+                        </p>
+                      )}
+                    </FormControl>
+                  </>
+                ) : column.column_name === "nifgaimGraveyardId" ? (
+                  <>
+                    <InputLabel id={column.column_name}>בית עלמין</InputLabel>
+                    <FormControl>
+                      <Select
+                        sx={{ direction: "rtl" }}
+                        {...register(column.column_name, {
+                          required: {
+                            value: true,
+                            message: `${
+                              translationDict[column.column_name] ||
+                              column.column_name
+                            } שדה חובה `,
+                          },
+                        })}
+                        labelId={column.column_name}
+                        defaultValue=""
+                        displayEmpty
+                        onChange={(event) =>
+                          handleInputChange(
+                            column.column_name,
+                            event.target.value
+                          )
+                        }
+                        renderValue={(value) =>
+                          value ? value : "בחר בית קברות"
                         }
                       >
-                        {enums[column.column_name] &&
-                          enums[column.column_name].map((option) => (
-                            <MenuItem key={option} value={option}>
-                              {option}
-                            </MenuItem>
-                          ))}
-                      </MemoizedSelect>
+                        <MenuItem sx={{ direction: "rtl" }} value="" disabled>
+                          בחר בית קברות
+                        </MenuItem>
+                        {graveyards.map((graveyard) => (
+                          <MenuItem
+                            sx={{ direction: "rtl" }}
+                            key={graveyard.id}
+                            value={graveyard.graveyardName}
+                          >
+                            {graveyard.graveyardName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {errors[column.column_name] && (
+                        <p style={{ color: "red" }}>
+                          {errors[column.column_name].message}
+                        </p>
+                      )}
                     </FormControl>
-                  ) : (
-                    <Input
-                      onChange={(e) =>
-                        handleInputChange(column.column_name, e.target.value)
-                      }
-                    />
-                  )}
-                </>
-              )}
-            </div>
-          ))}
+                  </>
+                ) : (
+                  <>
+                    <InputLabel id={column.column_name}>
+                      {translationDict[column.column_name] ||
+                        column.column_name}
+                    </InputLabel>
+                    {column.data_type === "timestamp with time zone" ? (
+                      <RtlPlugin
+                        style={{
+                          margin: "auto",
+                          marginTop: "15px",
+                        }}
+                      >
+                        <FormControl fullWidth>
+                          <DatePicker
+                            {...register(column.column_name, {
+                              validate: (value) => {
+                                if (!inputValues[column.column_name]) {
+                                  return `${
+                                    translationDict[column.column_name] ||
+                                    column.column_name
+                                  } שדה חובה `;
+                                } else {
+                                  return true;
+                                }
+                              },
+                            })}
+                            // label="תאריך פטירה "
+                            sx={{ width: "100%" }}
+                            onChange={(date) => {
+                              console.log(date);
+                              handleInputChange(column.column_name, date);
+                            }}
+                          />
+                          {errors[column.column_name] && (
+                            <p style={{ color: "red" }}>
+                              {errors[column.column_name].message}
+                            </p>
+                          )}
+                        </FormControl>
+                      </RtlPlugin>
+                    ) : column.data_type === "integer" ? (
+                      <>
+                        <Input
+                          {...register(column.column_name, {
+                            required: {
+                              value: true,
+                              message: `${
+                                translationDict[column.column_name] ||
+                                column.column_name
+                              } שדה חובה `,
+                            },
+                          })}
+                          type="number"
+                          onChange={(e) =>
+                            handleInputChange(
+                              column.column_name,
+                              e.target.value
+                            )
+                          }
+                        />
+                        {errors[column.column_name] && (
+                          <p style={{ color: "red" }}>
+                            {errors[column.column_name].message}
+                          </p>
+                        )}
+                      </>
+                    ) : column.data_type === "boolean" ? (
+                      <FormControl>
+                        <RadioGroup
+                          aria-labelledby="booleanSelect"
+                          name="controlled-radio-buttons-group"
+                          row
+                          {...register(column.column_name, {
+                            validate: () => {
+                              const temp =
+                                inputValues[column.column_name] || "";
+                              if (
+                                temp.toString() !== "true" &&
+                                temp.toString() !== "false"
+                              ) {
+                                return `${
+                                  translationDict[column.column_name] ||
+                                  column.column_name
+                                } שדה חובה `;
+                              } else {
+                                return true;
+                              }
+                            },
+                          })}
+                          onChange={(e) => {
+                            handleInputChange(
+                              column.column_name,
+                              e.target.value
+                            );
+                          }}
+                        >
+                          <FormControlLabel
+                            value={true} // Use string values here
+                            control={<Radio />}
+                            sx={{ marginRight: 0 }}
+                            label="כן"
+                          />
+                          <FormControlLabel
+                            value={false} // Use string values here
+                            control={<Radio />}
+                            label="לא"
+                          />
+                        </RadioGroup>
+                        {errors[column.column_name] && (
+                          <p style={{ color: "red" }}>
+                            {errors[column.column_name].message}
+                          </p>
+                        )}
+                      </FormControl>
+                    ) : column.data_type === "USER-DEFINED" ? (
+                      <FormControl fullWidth>
+                        <MemoizedSelect
+                          {...register(column.column_name, {
+                            required: {
+                              value: true,
+                              message: `${
+                                translationDict[column.column_name] ||
+                                column.column_name
+                              } שדה חובה `,
+                            },
+                          })}
+                          sx={{ direction: "rtl" }}
+                          labelId={column.column_name}
+                          value={inputValues[column.column_name] || ""}
+                          displayEmpty
+                          onChange={(e) =>
+                            handleInputChange(
+                              column.column_name,
+                              e.target.value
+                            )
+                          }
+                          renderValue={(value) =>
+                            value ? value : "בחר אחת מהאופציות"
+                          } // Render placeholder
+                        >
+                          <MenuItem sx={{ direction: "rtl" }} value="" disabled>
+                            אפשרויות בחירה
+                          </MenuItem>
+                          {enums[column.column_name] &&
+                            enums[column.column_name].map((option) => (
+                              <MenuItem
+                                key={option}
+                                value={option}
+                                sx={{ direction: "rtl" }}
+                              >
+                                {option}
+                              </MenuItem>
+                            ))}
+                        </MemoizedSelect>
+                        {errors[column.column_name] && (
+                          <p style={{ color: "red" }}>
+                            {errors[column.column_name].message}
+                          </p>
+                        )}
+                      </FormControl>
+                    ) : (
+                      <>
+                        <Input
+                          {...register(column.column_name, {
+                            required: {
+                              value: true,
+                              message: `${
+                                translationDict[column.column_name] ||
+                                column.column_name
+                              } שדה חובה `,
+                            },
+                            ...(column.column_name === "privateNumber"
+                              ? {
+                                  pattern: {
+                                    value: /^\d{7}$/,
+                                    message: ` הכנס מספר אישי בין 7 ספרות `,
+                                  },
+                                }
+                              : {}),
+                          })}
+                          onChange={(e) =>
+                            handleInputChange(
+                              column.column_name,
+                              e.target.value
+                            )
+                          }
+                        />
+                        {errors[column.column_name] && (
+                          <p style={{ color: "red" }}>
+                            {errors[column.column_name].message}
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+          </form>
         </DialogContent>
 
         <Divider />
         <DialogActions>
           <Button onClick={handleCloseDialog}>ביטול</Button>
-          <Button variant="contained" onClick={handleSubmitForm}>
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={handleSubmit(handleSubmitForm)}
+          >
             צור חלל
           </Button>
         </DialogActions>
