@@ -26,9 +26,6 @@ const cacheRtl = createCache({
 
 const BooleanTypeItem = ({
   isInEditMode,
-  itemName,
-  editedItemName,
-  handleInputChange,
   columnType,
   editedDefaultValue,
   handleInputDefaultValueChange,
@@ -99,7 +96,7 @@ const BooleanTypeItem = ({
                   value={editedDefaultValue}
                   selected={editedDefaultValue !== null}
                 >
-                  {editedDefaultValue}
+                  {editedDefaultValue.toString() === "true" ? "כן" : "לא"}
                 </MenuItem>
               </Select>
             ) : (

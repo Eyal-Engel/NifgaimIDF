@@ -288,7 +288,7 @@ const ReusableCreateItemDialog = React.memo(
               row
             >
               <FormControlLabel value={true} control={<Radio />} label="כן" />
-              <FormControlLabel value="false" control={<Radio />} label="לא" />
+              <FormControlLabel value={false} control={<Radio />} label="לא" />
             </RadioGroup>
           </FormControl>
         )}
