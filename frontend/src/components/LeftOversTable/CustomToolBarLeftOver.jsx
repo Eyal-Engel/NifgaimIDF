@@ -21,9 +21,9 @@ export default function CustomToolBarLeftOver({
   columns,
   editPerm,
   managePerm,
+  halals,
 }) {
-  const [openCreateNewLeftOver, setOpenCreateNewLeftOver] =
-    useState(false);
+  const [openCreateNewLeftOver, setOpenCreateNewLeftOver] = useState(false);
 
   const handleCreateNewLeftOver = () => {
     setOpenCreateNewLeftOver(true);
@@ -82,6 +82,7 @@ export default function CustomToolBarLeftOver({
           setOpenDialog={setOpenCreateNewLeftOver}
           rows={rows}
           setRows={setRows}
+          halals={halals}
         />
       )}
       <GridToolbarContainer

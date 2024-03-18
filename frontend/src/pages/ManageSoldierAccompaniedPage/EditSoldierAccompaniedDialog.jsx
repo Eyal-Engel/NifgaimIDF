@@ -50,6 +50,7 @@ const EditSoldierAccompaniedDialog = ({
   setOpenDialog,
   selectedRow,
   setRows,
+  halals,
 }) => {
   const [inputValues, setInputValues] = useState({});
   const [phone, setPhone] = useState(selectedRow?.phone || "+972");
@@ -57,7 +58,6 @@ const EditSoldierAccompaniedDialog = ({
   // const [selectedValue, setSelectedValue] = useState(selectedRow.proximity);
   const [rank, setRank] = useState("");
 
-  const [halals, setHalals] = useState([]);
   const ranksOptions = [
     // category: חובה
     `טירון`,
@@ -111,10 +111,6 @@ const EditSoldierAccompaniedDialog = ({
         setSelectedHalal(halal);
         setRank(selectedRow.rank);
         setPhone(selectedRow.phone);
-
-        let halalim = await getHalals();
-        halalim.sort((a, b) => a.privateNumber - b.privateNumber);
-        setHalals(halalim);
 
         // setLoading(false);
       } catch (error) {

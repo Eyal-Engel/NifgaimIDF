@@ -20,9 +20,9 @@ export default function CustomToolBarSoliderAccompanied({
   columns,
   editPerm,
   managePerm,
+  halals,
 }) {
-  const [openCreateNewLeftOver, setOpenCreateNewLeftOver] =
-    useState(false);
+  const [openCreateNewLeftOver, setOpenCreateNewLeftOver] = useState(false);
 
   const handleCreateNewLeftOver = () => {
     setOpenCreateNewLeftOver(true);
@@ -80,6 +80,7 @@ export default function CustomToolBarSoliderAccompanied({
         setOpenDialog={setOpenCreateNewLeftOver}
         rows={rows}
         setRows={setRows}
+        halals={halals}
       />
       <GridToolbarContainer
         style={{

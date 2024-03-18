@@ -14,7 +14,7 @@ import CancelIcon from "@mui/icons-material/Close";
 
 import LockIcon from "@mui/icons-material/Lock";
 import { IconButton, ThemeProvider, createTheme } from "@mui/material";
-import "./reuseableItem.css";
+import "./ReuseableItem.css";
 
 import EditSelectDialog from "./EditSelectDialog";
 import IntegerTypeItem from "./manageColumns/IntegerTypeItem";
@@ -37,7 +37,7 @@ const cacheRtl = createCache({
   stylisPlugins: [prefixer, rtlPlugin],
 });
 
-const EditableItem = ({
+const ReuseableItem = ({
   itemName,
   itemId,
   handleItemNameChange,
@@ -357,4 +357,4 @@ const EditableItem = ({
   );
 };
 
-export default React.memo(EditableItem);
+export default React.memo(ReuseableItem);

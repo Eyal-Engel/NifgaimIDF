@@ -4,7 +4,7 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-import EditableItem from "../../components/reuseableItem";
+import ReuseableItem from "../../components/ReuseableItem";
 import "./ManageColumnsPage.css";
 import {
   addHalalColumn,
@@ -17,7 +17,7 @@ import {
 } from "../../utils/api/halalsApi";
 import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
-import SimpleDialog from "../../components/Dialog";
+import ReusableCreateItemDialog from "../../components/ReusableCreateItemDialog";
 import dayjs from "dayjs";
 import {
   filterColumns,
@@ -393,7 +393,7 @@ export default function ManageColumnsPage() {
       <ul className="columns-list">
         {sortColumns.map((column) => (
           <li key={column.columnName}>
-            <EditableItem
+            <ReuseableItem
               isColumn={true}
               isNewColumn={originalColumns.some(
                 (originColumn) => originColumn === column.columnName
@@ -414,7 +414,7 @@ export default function ManageColumnsPage() {
         <Button color="secondary" onClick={handelOpenDialog}>
           <AddIcon fontSize="large"></AddIcon>
         </Button>
-        <SimpleDialog
+        <ReusableCreateItemDialog
           open={openDialog}
           onClose={handleCloseDialog}
           onCreateClicked={handelAddColumn} // changed from handelAddCommand

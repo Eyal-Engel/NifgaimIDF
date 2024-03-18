@@ -4,7 +4,7 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-import EditableItem from "../../components/reuseableItem";
+import ReuseableItem from "../../components/ReuseableItem";
 import "./ManageCommandsPage.css";
 import {
   createCommand,
@@ -14,7 +14,7 @@ import {
 } from "../../utils/api/commandsApi";
 import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
-import SimpleDialog from "../../components/Dialog";
+import ReusableCreateItemDialog from "../../components/ReusableCreateItemDialog";
 import { useEffect } from "react";
 
 const theme = createTheme({
@@ -256,7 +256,7 @@ export default function ManageCommandsPage() {
       <ul className="commands-list">
         {filteredCommands.map((command) => (
           <li key={command.id}>
-            <EditableItem
+            <ReuseableItem
               itemName={command.commandName}
               itemId={command.id}
               handleItemNameChange={handelCommandNameChange}
@@ -270,7 +270,7 @@ export default function ManageCommandsPage() {
         <Button color="secondary" onClick={handelOpenDialog}>
           <AddIcon fontSize="large"></AddIcon>
         </Button>
-        <SimpleDialog
+        <ReusableCreateItemDialog
           open={openDialog}
           onClose={handleCloseDialog}
           onCreateClicked={handelAddCommand}

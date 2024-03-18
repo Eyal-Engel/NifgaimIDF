@@ -25,6 +25,7 @@ export default function HalalimCustomToolBar({
   graveyards,
   editPerm,
   managePerm,
+  enums,
 }) {
   const [openCreateNewHalal, setOpenCreateNewHalal] = useState(false);
 
@@ -88,7 +89,7 @@ export default function HalalimCustomToolBar({
           rows={rows}
           commands={commands}
           graveyards={graveyards}
-          // Add any other necessary props
+          enums={enums}
         />
       )}
 

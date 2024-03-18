@@ -9,7 +9,6 @@ import {
 import Swal from "sweetalert2";
 import { getUsers, createUser } from "../../utils/api/usersApi";
 import {
-  getAllCommandsNames,
   getCommandIdByName,
   getCommandNameById,
 } from "../../utils/api/commandsApi";
@@ -31,11 +30,14 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import "../../pages/ManageUsersPage/ManageUsersPage.css";
 import Transition from "./Transition";
 import PaperComponent from "./PaperComponent";
-import { useLayoutEffect } from "react";
 import { useState } from "react";
-export default function CustomToolbar({ setRows, rows, columns }) {
+export default function CustomToolBarManageUsers({
+  setRows,
+  rows,
+  columns,
+  commands,
+}) {
   const [openCreateNewUser, setOpenCreateNewUser] = useState(false);
-  const [commandsSignUp, setCommandsSignUp] = useState([]);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
 
@@ -74,19 +76,6 @@ export default function CustomToolbar({ setRows, rows, columns }) {
       "נפגעים - משתמשים.xlsx"
     );
   };
-
-  useLayoutEffect(() => {
-    const fetchCommandsData = async () => {
-      try {
-        const commandsNames = await getAllCommandsNames();
-        setCommandsSignUp(commandsNames);
-      } catch (error) {
-        console.error("Error during get commands:", error);
-      }
-    };
-
-    fetchCommandsData();
-  }, []);
 
   const handleCreateNewUser = () => {
     setOpenCreateNewUser(true);
@@ -438,7 +427,7 @@ export default function CustomToolbar({ setRows, rows, columns }) {
                   <MenuItem sx={{ direction: "rtl" }} value="" disabled>
                     פיקוד
                   </MenuItem>
-                  {commandsSignUp.map((command) => (
+                  {commands.map((command) => (
                     <MenuItem
                       sx={{ direction: "rtl" }}
                       key={command}

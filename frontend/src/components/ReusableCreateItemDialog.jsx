@@ -40,7 +40,7 @@ const cacheRtl = createCache({
   stylisPlugins: [prefixer, rtlPlugin],
 });
 
-const SimpleDialog = React.memo(
+const ReusableCreateItemDialog = React.memo(
   ({ onClose, open, onCreateClicked, isGraveyard, isColumn }) => {
     const [newColumnName, setNewColumnName] = useState("");
     const [typeOfColumn, setTypeOfColumn] = useState("STRING");
@@ -388,4 +388,4 @@ const SimpleDialog = React.memo(
     );
   }
 );
-export default React.memo(SimpleDialog);
+export default React.memo(ReusableCreateItemDialog);

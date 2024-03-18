@@ -10,7 +10,7 @@ import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import { ThemeProvider, createTheme } from "@mui/material";
 import EditSelectDialog from "../EditSelectDialog";
-import "../reuseableItem.css";
+import "../ReuseableItem.css";
 
 const theme = (outerTheme) =>
   createTheme({
