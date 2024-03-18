@@ -51,10 +51,10 @@ export default function CreateLeftOverDialog({
   setOpenDialog,
   rows,
   setRows,
+  halals,
 }) {
   const [inputValues, setInputValues] = useState({});
   const [phone, setPhone] = useState("+972");
-  const [halals, setHalals] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedHalal, setSelectedHalal] = useState(null);
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -163,10 +163,6 @@ export default function CreateLeftOverDialog({
       //   setLoading(true);
 
       try {
-        let halalim = await getHalals();
-        halalim.sort((a, b) => a.privateNumber - b.privateNumber);
-        setHalals(halalim);
-
         if (inputValues.halalId) {
           const halal = await getHalalByPrivateNumber(inputValues.halalId);
           setSelectedHalal(halal);

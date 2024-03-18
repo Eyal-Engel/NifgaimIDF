@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { heIL } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import "./ManageSoldierAccompaniedPage.css";
-import { getHalalById } from "../../utils/api/halalsApi";
+import { getHalalById, getHalals } from "../../utils/api/halalsApi";
 import EditSoldierAccompaniedDialog from "./EditSoldierAccompaniedDialog";
 import { getSoldierAccompanieds } from "../../utils/api/soldierAccompaniedsApi";
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
@@ -20,6 +20,7 @@ export default function ManageLeftOversPage() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [editPerm, setEditPerm] = useState("");
   const [managePerm, setManagePerm] = useState("");
+  const [halals, setHalals] = useState([]);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
 
@@ -29,6 +30,22 @@ export default function ManageLeftOversPage() {
       setOpenDialog(true);
     }
   };
+
+  useEffect(() => {
+    const fetchHalalsData = async () => {
+      try {
+        let halalim = await getHalals();
+        halalim.sort((a, b) => a.privateNumber - b.privateNumber);
+        setHalals(halalim);
+
+        // setLoading(false);
+      } catch (error) {
+        console.error("Error fetching halals:", error);
+      }
+    };
+
+    fetchHalalsData();
+  }, []);
 
   useEffect(() => {
     const fetchDataSoldierAccompanieds = async () => {
@@ -245,6 +262,7 @@ export default function ManageLeftOversPage() {
             setRowModesModel,
             editPerm,
             managePerm,
+            halals,
           },
         }}
       />
@@ -256,6 +274,7 @@ export default function ManageLeftOversPage() {
           selectedRow={selectedRow}
           setRows={setRows}
           rows={rows}
+          halals={halals}
         />
       )}
     </Box>

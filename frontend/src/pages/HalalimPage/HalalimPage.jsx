@@ -4,6 +4,7 @@ import { heIL } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import "./HalalimPage.css";
 import {
+  getColumnEnums,
   getHalalColumnsAndTypes,
   getHalals,
   getOriginalColumns,
@@ -38,6 +39,8 @@ export default function HalalimPage() {
   const [graveyards, setGraveyards] = useState([]);
   const [editPerm, setEditPerm] = useState("");
   const [managePerm, setManagePerm] = useState("");
+  const [enums, setEnums] = useState({});
+
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
 
@@ -47,6 +50,25 @@ export default function HalalimPage() {
       setOpenDialog(true);
     }
   };
+
+  function removeQuotes(inputString) {
+    // Remove the overall quotes from the input string
+    inputString = inputString.replace(/^{|"|}$/g, "");
+
+    // Split the input string by commas and remove leading/trailing whitespaces
+    const items = inputString.split(",").map((item) => item.trim());
+
+    // Remove double quotes from the first and last character of each item if they are present
+    const itemsWithoutQuotes = items.map((item) => {
+      if (item.startsWith('"') && item.endsWith('"')) {
+        return item.slice(1, -1); // Remove quotes from the beginning and end
+      }
+      return item;
+    });
+
+    // Join the items back into a string and return
+    return `{${itemsWithoutQuotes.join(",")}}`;
+  }
 
   useEffect(() => {
     const fetchCommandsAndGraveyardsData = async () => {
@@ -68,6 +90,34 @@ export default function HalalimPage() {
 
     fetchCommandsAndGraveyardsData();
   }, [loggedUserId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let enumsObject = {};
+      let result;
+      let arrayEnum;
+
+      // Fetch column enums
+      for (const column of allDataOfHalalsColumns) {
+        if (column.data_type === "USER-DEFINED") {
+          const columnEnums = await getColumnEnums(column.column_name);
+          if (columnEnums) {
+            // const enumArray = columnEnums
+            //   .replace(/[{}]/g, "")
+            //   .split(",")
+            //   .map((item) => item.trim());
+            result = removeQuotes(columnEnums);
+            arrayEnum = result.slice(1, -1).split(",");
+            enumsObject[column.column_name] = arrayEnum;
+          } else {
+            enumsObject[column.column_name] = [];
+          }
+        }
+      }
+      setEnums(enumsObject);
+    };
+    fetchData();
+  }, [allDataOfHalalsColumns]);
 
   const formatDate = React.useCallback((date) => {
     const d = new Date(date);
@@ -229,7 +279,7 @@ export default function HalalimPage() {
       }, []);
 
       // Limit concurrent requests here
-      const limit = pLimit(50); // Adjust the concurrency limit as per your requirements
+      const limit = pLimit(200); // Adjust the concurrency limit as per your requirements
       const halalsData = await getHalals();
       const halalsPromises = halalsData.map((halal) =>
         limit(() => fetchHalalData(halal))
@@ -243,172 +293,6 @@ export default function HalalimPage() {
       console.error("Error fetching column data:", error);
     }
   }, [formatDate]);
-
-  // const fetchColumnsData = React.useCallback(async () => {
-  //   const translationDict = {
-  //     id: "מספר זיהוי",
-  //     privateNumber: "מספר אישי",
-  //     lastName: "שם משפחה",
-  //     firstName: "שם פרטי",
-  //     dateOfDeath: "תאריך פטירה",
-  //     serviceType: "סוג שירות",
-  //     circumstances: "נסיבות המוות",
-  //     unit: "יחידה",
-  //     division: "חטיבה",
-  //     specialCommunity: "קהילה מיוחדת",
-  //     area: "אזור",
-  //     plot: "חלקה",
-  //     line: "שורה",
-  //     graveNumber: "מספר קבר",
-  //     permanentRelationship: "קשר קבוע",
-  //     comments: "הערות",
-  //     nifgaimGraveyardId: "בית קברות",
-  //     nifgaimCommandId: "פיקוד",
-  //   };
-
-  //   setLoading(true);
-  //   try {
-  //     // Replace this with your actual method to fetch column data
-  //     const currentColumns = await getHalalColumnsAndTypes(); // This should fetch your columns data
-  //     const origin = await getOriginalColumns();
-  //     setOriginalColumns(origin);
-  //     setAllDataOfHalalsColumns(currentColumns);
-  //     // Sort the columns alphabetically by column name
-  //     currentColumns.sort((a, b) => a.column_name.localeCompare(b.column_name));
-
-  //     // Create an array for the sorted columns with originalColumns first
-
-  //     const sortedColumns = origin
-  //       .map((columnName) => {
-  //         const column = currentColumns.find(
-  //           (col) => col.column_name === columnName
-  //         );
-  //         return column || null; // Return null if no match is found
-  //       })
-  //       .filter(Boolean);
-
-  //     // Append any additional columns that are not in originalColumns
-  //     currentColumns.forEach((column) => {
-  //       if (!origin.includes(column.column_name)) {
-  //         sortedColumns.push(column);
-  //       }
-  //     });
-
-  //     const formattedColumns = sortedColumns.reduce((acc, column) => {
-  //       // Exclude the column with the ID
-  //       if (column) {
-  //         const translatedHeader =
-  //           translationDict[column.column_name] || column.column_name; // Translate header if available
-
-  //         const calculatedWidth = column.column_name.length * 10;
-  //         const width = calculatedWidth > 120 ? calculatedWidth : 120;
-
-  //         let type = column.data_type;
-  //         // Check if the type is 'date' and format accordingly
-
-  //         let renderCell1;
-  //         if (type === "boolean") {
-  //           renderCell1 = (params) => (
-  //             <div style={{ textAlign: "center" }}>
-  //               {params.value === true ? (
-  //                 <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
-  //               ) : (
-  //                 <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
-  //               )}
-  //             </div>
-  //           );
-  //         } else if (type === "USER-DEFINED") {
-  //           renderCell1 = (params) => (
-  //             <div
-  //               style={{
-  //                 textAlign: "center",
-  //                 borderRadius: "10px",
-  //                 width: "100%",
-  //                 background:
-  //                   params.value === "מילואים"
-  //                     ? "rgba(255, 0, 0, 0.8)" // Red with 80% opacity
-  //                     : params.value === "קבע"
-  //                     ? "rgba(0, 128, 0, 0.8)" // Green with 80% opacity
-  //                     : params.value === "סדיר"
-  //                     ? "rgba(0, 200, 255, 0.8)" // Cyan with 80% opacity
-  //                     : "rgba(40, 40, 40, 0.15)",
-  //                 display: "flex",
-  //                 justifyContent: "center",
-  //                 alignItems: "center",
-  //                 overflow: "hidden", // Ensure content is clipped if it overflows
-  //                 paddingLeft: "10px", // Adjust padding as needed
-  //                 paddingRight: "10px", // Adjust padding as needed
-  //               }}
-  //               title={params.value} // Tooltip to show full text on hover
-  //             >
-  //               {/* can adjust the font color by the value here */}
-  //               <p
-  //                 style={{
-  //                   color:
-  //                     params.value === "מילואים"
-  //                       ? "white"
-  //                       : params.value === "קבע"
-  //                       ? "white"
-  //                       : params.value === "סדיר"
-  //                       ? "black"
-  //                       : "black",
-  //                   margin: 0, // Remove default margin
-  //                   overflow: "hidden", // Ensure text is clipped if it overflows
-  //                   textOverflow: "ellipsis", // Show ellipsis if text overflows container
-  //                   whiteSpace: "nowrap", // Prevent text from wrapping
-  //                   maxWidth: "100%", // Ensure text doesn't overflow container
-  //                 }}
-  //               >
-  //                 {params.value}
-  //               </p>
-  //             </div>
-  //           );
-  //         }
-
-  //         acc.push({
-  //           field: column.column_name,
-  //           headerName: translatedHeader, // Use translated header
-  //           type: type,
-  //           width: width,
-  //           editable: false,
-  //           headerAlign: "center",
-  //           align: "center",
-  //           // If it's a date, specify the date format
-  //           ...(type === "timestamp with time zone" && {
-  //             valueFormatter: (params) => formatDate(params.value),
-  //           }),
-  //           ...((type === "boolean" || type === "USER-DEFINED") && {
-  //             renderCell: renderCell1,
-  //           }),
-  //         });
-  //       }
-  //       return acc;
-  //     }, []);
-  //     // .reverse();
-
-  //     const halalsData = await getHalals();
-
-  //     const halalsPromises = halalsData.map(async (halal) => {
-  //       // Using async/await within map to transform each halal item
-  //       const graveyard = await getGraveyardById(halal.nifgaimGraveyardId);
-  //       const command = await getCommandById(halal.nifgaimCommandId);
-
-  //       return {
-  //         ...halal,
-  //         nifgaimGraveyardId: graveyard.graveyardName,
-  //         nifgaimCommandId: command.commandName,
-  //       };
-  //     });
-
-  //     const transformedHalals = await Promise.all(halalsPromises);
-
-  //     setColumns(formattedColumns);
-  //     setRows(transformedHalals);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error("Error fetching column data:", error);
-  //   }
-  // }, [formatDate]);
 
   useEffect(() => {
     fetchColumnsData();
@@ -495,6 +379,7 @@ export default function HalalimPage() {
             graveyards,
             editPerm,
             managePerm,
+            enums,
           },
         }}
       />
@@ -509,6 +394,7 @@ export default function HalalimPage() {
           rows={rows}
           commands={commands}
           graveyards={graveyards}
+          enums={enums}
         />
       )}
     </Box>

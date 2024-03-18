@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Button,
   Dialog,
@@ -35,7 +35,7 @@ import {
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 import Swal from "sweetalert2";
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 
 const MemoizedSelect = React.memo(Select);
 
@@ -74,12 +74,16 @@ export default function CreateHalalDialog({
   rows,
   commands,
   graveyards,
+  enums,
 }) {
-  const [enums, setEnums] = useState({});
   const [inputValues, setInputValues] = useState({});
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const theme = createTheme({
     direction: "rtl",
@@ -112,16 +116,6 @@ export default function CreateHalalDialog({
     setOpenDialog(false);
   };
 
-  // const handleInputChange = useCallback((column, value) => {
-  //   console.log(column, value);
-  //   setInputValues((prevValues) => ({
-  //     ...prevValues,
-  //     [column]: value,
-  //   }));
-
-  //   console.log(inputValues);
-  // }, []);
-
   const handleInputChange = useCallback(
     async (column, value) => {
       let v = value;
@@ -145,53 +139,6 @@ export default function CreateHalalDialog({
     },
     [setInputValues]
   );
-
-  function removeQuotes(inputString) {
-    // Remove the overall quotes from the input string
-    inputString = inputString.replace(/^{|"|}$/g, "");
-
-    // Split the input string by commas and remove leading/trailing whitespaces
-    const items = inputString.split(",").map((item) => item.trim());
-
-    // Remove double quotes from the first and last character of each item if they are present
-    const itemsWithoutQuotes = items.map((item) => {
-      if (item.startsWith('"') && item.endsWith('"')) {
-        return item.slice(1, -1); // Remove quotes from the beginning and end
-      }
-      return item;
-    });
-
-    // Join the items back into a string and return
-    return `{${itemsWithoutQuotes.join(",")}}`;
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      let enumsObject = {};
-      let result;
-      let arrayEnum;
-
-      // Fetch column enums
-      for (const column of allDataOfHalalsColumns) {
-        if (column.data_type === "USER-DEFINED") {
-          const columnEnums = await getColumnEnums(column.column_name);
-          if (columnEnums) {
-            // const enumArray = columnEnums
-            //   .replace(/[{}]/g, "")
-            //   .split(",")
-            //   .map((item) => item.trim());
-            result = removeQuotes(columnEnums);
-            arrayEnum = result.slice(1, -1).split(",");
-            enumsObject[column.column_name] = arrayEnum;
-          } else {
-            enumsObject[column.column_name] = [];
-          }
-        }
-      }
-      setEnums(enumsObject);
-    };
-    fetchData();
-  }, [allDataOfHalalsColumns]);
 
   const handleSubmitForm = async () => {
     try {

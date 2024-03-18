@@ -38,7 +38,7 @@ import "./ManageUsersPage.css";
 import { validationPasswordsErrorType } from "../../utils/validators";
 import { AiOutlineDrag } from "react-icons/ai";
 import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
-import CustomToolbar from "../../components/TableUtils/CustomToolBar";
+import CustomToolBarManageUsers from "../../components/TableUtils/CustomToolBarManageUsers";
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
@@ -528,11 +528,17 @@ export default function ManageExistsUsers() {
         }}
         pageSizeOptions={[5, 10, 25]}
         slots={{
-          toolbar: CustomToolbar,
+          toolbar: CustomToolBarManageUsers,
           noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{
-          toolbar: { setRows, rows, columns, setRowModesModel },
+          toolbar: {
+            setRows,
+            rows,
+            columns,
+            setRowModesModel,
+            commands,
+          },
         }}
       />
       <Dialog

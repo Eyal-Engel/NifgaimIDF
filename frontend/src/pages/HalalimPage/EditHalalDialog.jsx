@@ -16,7 +16,7 @@ import {
   ThemeProvider,
   FormControl,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -58,8 +58,8 @@ export default function EditHalalDIalog({
   setRows,
   commands,
   graveyards,
+  enums,
 }) {
-  const [enums, setEnums] = useState([]);
   const [soldierAccompanieds, setSoldierAccompanieds] = useState([]);
   const [leftOvers, setLeftOvers] = useState([]);
   const [inputValues, setInputValues] = useState({});
@@ -138,65 +138,6 @@ export default function EditHalalDIalog({
     },
     [allDataOfHalalsColumns]
   );
-
-  function removeQuotes(inputString) {
-    // Remove the overall quotes from the input string
-    inputString = inputString.replace(/^{|"|}$/g, "");
-
-    // Split the input string by commas and remove leading/trailing whitespaces
-    const items = inputString.split(",").map((item) => item.trim());
-
-    // Remove double quotes from the first and last character of each item if they are present
-    const itemsWithoutQuotes = items.map((item) => {
-      if (item.startsWith('"') && item.endsWith('"')) {
-        return item.slice(1, -1); // Remove quotes from the beginning and end
-      }
-      return item;
-    });
-
-    // Join the items back into a string and return
-    return `{${itemsWithoutQuotes.join(",")}}`;
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      let enumsObject = {};
-      let result;
-      let arrayEnum;
-
-      if (selectedRow) {
-        for (const key of Object.keys(selectedRow)) {
-          const column = getColumnByName(key);
-          if (column.data_type === "USER-DEFINED") {
-            const columnEnums = await getColumnEnums(key);
-            if (columnEnums) {
-              if (columnEnums) {
-                result = removeQuotes(columnEnums);
-                arrayEnum = result.slice(1, -1).split(",");
-                enumsObject[key] = arrayEnum;
-              } else {
-                enumsObject[key] = [];
-              }
-            }
-          } else {
-            enumsObject[key] = [];
-          }
-        }
-      }
-
-      setEnums(enumsObject);
-
-      const halalId = selectedRow.id;
-      const soldierAccompaniedsData = await getSoldierAccompaniedsByHalalId(
-        halalId
-      );
-      const LeftOversData = await getLeftOversByHalalId(halalId);
-
-      setSoldierAccompanieds(soldierAccompaniedsData);
-      setLeftOvers(LeftOversData);
-    };
-    fetchData();
-  }, [selectedRow, getColumnByName]);
 
   const handleInputChange = useCallback((column, value) => {
     setInputValues((prevValues) => ({

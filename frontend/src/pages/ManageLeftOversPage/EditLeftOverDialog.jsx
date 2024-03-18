@@ -50,12 +50,13 @@ const EditLeftOverDialog = ({
   setOpenDialog,
   selectedRow,
   setRows,
+  halals,
 }) => {
   const [inputValues, setInputValues] = useState({});
   const [phone, setPhone] = useState(selectedRow?.phone || "+972");
   const [selectedHalal, setSelectedHalal] = useState(null);
   const [selectedValue, setSelectedValue] = useState(selectedRow.proximity);
-  const [halals, setHalals] = useState([]);
+  // const [halals, setHalals] = useState([]);
 
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
@@ -79,19 +80,11 @@ const EditLeftOverDialog = ({
 
   useEffect(() => {
     const fetchHalalsData = async () => {
-      // setLoading(true);
-
       try {
         const halal = await getHalalByPrivateNumber(selectedRow.halalId);
         setSelectedHalal(halal);
         setSelectedValue(selectedRow.proximity);
         setPhone(selectedRow.phone);
-
-        let halalim = await getHalals();
-        halalim.sort((a, b) => a.privateNumber - b.privateNumber);
-        setHalals(halalim);
-
-        // setLoading(false);
       } catch (error) {
         console.error("Error fetching halals:", error);
       }

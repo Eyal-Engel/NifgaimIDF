@@ -4,7 +4,7 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
-import EditableItem from "../../components/reuseableItem";
+import ReuseableItem from "../../components/ReuseableItem";
 import "./ManageGraveyardsPage.css";
 import {
   createGraveyard,
@@ -14,7 +14,7 @@ import {
 } from "../../utils/api/graveyardsApi";
 import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
-import SimpleDialog from "../../components/Dialog";
+import ReusableCreateItemDialog from "../../components/ReusableCreateItemDialog";
 import { useEffect } from "react";
 
 const theme = createTheme({
@@ -51,7 +51,6 @@ export default function ManageCommandsPage() {
 
         setGraveyards(graveyards); // Change state variable name
         setLoading(false); // Data fetching completed, set loading to false
-
       } catch (error) {
         console.error("Error during get graveyards:", error); // Change error message
       }
@@ -196,7 +195,6 @@ export default function ManageCommandsPage() {
           }
         });
 
-
         Swal.fire({
           title: ` לא ניתן ליצור את בית העלמין ${value}`,
           html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
@@ -263,7 +261,7 @@ export default function ManageCommandsPage() {
       <ul className="graveyard-list">
         {filteredGraveyards.map((graveyard) => (
           <li key={graveyard.id}>
-            <EditableItem
+            <ReuseableItem
               itemName={graveyard.graveyardName}
               itemId={graveyard.id}
               handleItemNameChange={handelGraveyardNameChange}
@@ -277,7 +275,7 @@ export default function ManageCommandsPage() {
         <Button color="secondary" onClick={handelOpenDialog}>
           <AddIcon fontSize="large"></AddIcon>
         </Button>
-        <SimpleDialog
+        <ReusableCreateItemDialog
           open={openDialog}
           onClose={handleCloseDialog}
           onCreateClicked={handelAddGraveyard}
