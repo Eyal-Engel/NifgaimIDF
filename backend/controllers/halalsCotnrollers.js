@@ -7,7 +7,6 @@ const LeftOver = require("../models/schemas/NifgaimLeftOver");
 const { v4: uuidv4 } = require("uuid");
 const { QueryTypes, Sequelize, Op } = require("sequelize");
 const sequelize = require("../dbConfig");
-const replaceEnum = require("sequelize-replace-enum-postgres").default;
 
 const getHalals = async (req, res, next) => {
   try {
@@ -95,12 +94,6 @@ const getOriginalColumns = async (req, res, next) => {
 
 const getColumnNamesAndTypes = async (req, res, next) => {
   try {
-    // Run the SQL query to fetch detailed information about columns
-    // const columns = await sequelize.query(
-    //   `SELECT column_name, data_type, ordinal_position, is_nullable, column_default,
-    //           character_maximum_length, numeric_precision, numeric_scale, datetime_precision
-    //    FROM information_schema.columns
-    //    WHERE table_name = 'nifgaimHalals';`,
     const columns = await sequelize.query(
       `SELECT column_name, data_type, is_nullable, column_default
        FROM information_schema.columns 
@@ -483,24 +476,175 @@ const updateHalalColumn = async (req, res, next) => {
 //   "newEnumValues": ["value1", "value2", "value4"],
 //   "column_default": "value4"
 // }
-const updateHalalSelectColumn = async (req, res) => {
-  try {
-    // Run the migration to update the enum values
-    await replaceEnum({
-      queryInterface: sequelize.getQueryInterface(),
-      tableName: "nifgaimHalals",
-      columnName: "test10",
-      defaultValue: "weekly",
-      newValues: ["weekly", "monthly", "yearly", "on-demand"],
-      enumName: "enum_nifgaimHalals_new",
-    });
 
-    return res
-      .status(200)
-      .json({ message: "Enum values updated successfully." });
+const updateHalalSelectColumn = async (req, res, next) => {
+  try {
+    const { userId, columnName, newColumnName, newEnumValues, column_default } =
+      req.body;
+
+    // Fetch user
+    const userRequested = await User.findByPk(userId);
+    if (!userRequested) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    // Check user permissions
+    const managePerm = userRequested.managePerm;
+    if (!managePerm) {
+      return res.status(403).json({ message: "User is not authorized" });
+    }
+
+    // Check if the column exists
+    const tableDescription = await sequelize
+      .getQueryInterface()
+      .describeTable("nifgaimHalals");
+    if (!tableDescription[columnName]) {
+      return res
+        .status(400)
+        .json({ message: `Column '${columnName}' does not exist.` });
+    }
+
+    // Check if the new column name already exists
+    let finalNewColumnName = newColumnName;
+    if (tableDescription[newColumnName]) {
+      // Generate unique column name using UUID
+      finalNewColumnName = uuidv4();
+    }
+
+    // Start transaction
+    const transaction = await sequelize.transaction();
+
+    try {
+      // Add new column with unique name and data type
+      await sequelize
+        .getQueryInterface()
+        .addColumn("nifgaimHalals", finalNewColumnName, {
+          type: sequelize.Sequelize.ENUM(...newEnumValues),
+          allowNull: true,
+          defaultValue: column_default || newEnumValues[0], // Set default enum value if column_default is not provided
+          transaction,
+        });
+
+      // Get all column names dynamically
+      const columns = await sequelize.query(
+        `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+        { type: QueryTypes.SELECT }
+      );
+
+      // Extract column names from the query result
+      const columnNames = columns.map((column) => column.column_name);
+
+      // Fetch all halals with all columns
+      const halals = await Halal.findAll({
+        attributes: columnNames, // Fetch all columns dynamically
+      });
+
+      console.log(halals);
+
+      const previousEnumValues = tableDescription[columnName].special;
+
+      // Iterate over each record and update the new column based on the old column value
+      for (const halal of halals) {
+        const prevValue = halal.dataValues[columnName];
+
+        // Find the index of prevValue in newEnumValues
+        const prevValueIndex = previousEnumValues.indexOf(prevValue);
+
+        console.log("prev value: " + prevValue);
+        console.log("prevValueIndex: " + prevValueIndex);
+
+        // Use column_default if prevValue is not found in newEnumValues
+        const newValue =
+          prevValueIndex !== -1
+            ? newEnumValues[prevValueIndex]
+            : column_default || newEnumValues[0];
+
+        // Set the value using setDataValue method
+        halal.setDataValue(newColumnName, newValue);
+
+        console.log("halal:");
+        console.log(halal);
+        console.log(" end of halal");
+
+        // update the halal here:
+        if (!halal) {
+          const error = new Error(`Halal with ID ${halalId} not found.`);
+          error.statusCode = 404;
+          throw error;
+        }
+
+        // Update all properties of the halal instance with the values from the request body
+        Object.keys(requestBody).forEach((key) => {
+          halal[key] = requestBody[key];
+        });
+
+        // Get all column names dynamically
+        const columns = await sequelize.query(
+          `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+          { type: QueryTypes.SELECT }
+        );
+
+        // Extract column names from the query result
+        const columnNames = columns.map((column) => column.column_name);
+
+        // Filter out keys not present in columnNames
+        const filteredRequestData = filterObjectKeys(requestBody, columnNames);
+
+        // Construct SQL query to update only the columns present in the filtered request data
+        const updates = Object.keys(filteredRequestData).map((key) => {
+          const value =
+            typeof filteredRequestData[key] === "string"
+              ? `'${filteredRequestData[key]}'`
+              : filteredRequestData[key];
+          return `"${key}" = ${value}`;
+        });
+
+        // Execute the SQL query to update the halal instance
+        const updateQuery = `
+          UPDATE "nifgaimHalals" 
+          SET ${updates.join(", ")} 
+          WHERE "id" = '${halalId}' 
+          RETURNING *;
+        `;
+
+        console.log(updateQuery);
+
+        const updatedHalal = await sequelize.query(updateQuery, {
+          type: QueryTypes.UPDATE,
+        });
+
+        // Save the updated record
+        await halal.save({ transaction });
+      }
+
+      // console.log(halals);
+
+      // Remove original column
+      await sequelize
+        .getQueryInterface()
+        .removeColumn("nifgaimHalals", columnName, { transaction });
+
+      // Rename new column to desired name
+      await sequelize
+        .getQueryInterface()
+        .renameColumn("nifgaimHalals", finalNewColumnName, newColumnName, {
+          transaction,
+        });
+
+      // Commit transaction
+      await transaction.commit();
+
+      // Respond with success
+      res.status(200).json({ message: "Column updated successfully." });
+    } catch (error) {
+      // Rollback transaction if any error occurs
+      await transaction.rollback();
+      console.error("Error updating column:", error);
+      return next(error);
+    }
   } catch (error) {
-    console.error("Error updating enum values:", error);
-    return res.status(500).json({ error: error });
+    console.error("Error updating column:", error);
+    return next(error);
   }
 };
 
@@ -863,6 +1007,10 @@ const createHalal = async (req, res, next) => {
 
     // Create new Halal entry with all columns
     const newHalalData = { id, ...req.body.halalData };
+
+    console.log(newHalalData.privateNumber);
+
+    console.log(newHalalData.privateNumber);
 
     if (newHalalData.privateNumber.length !== 7) {
       return res.status(402).json({

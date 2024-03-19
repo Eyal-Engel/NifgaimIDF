@@ -6,7 +6,8 @@ export default function AboutPage() {
 
   // Helper function to generate a random number within a range
   function generateRandomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    const temp = Math.floor(Math.random() * (max - min + 1)) + min;
+    return temp.toString();
   }
 
   async function generateHalals() {
@@ -34,7 +35,7 @@ export default function AboutPage() {
 
     const halals = [];
 
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 10; i++) {
       const privateNumber = generateRandomNumber(1000000, 9999999); // Generate 7-digit random number
       console.log(halalDataTemplate);
       const halalData = { ...halalDataTemplate, privateNumber };
