@@ -30,6 +30,7 @@ import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 import Transition from "../../components/TableUtils/Transition";
+import { useForm } from "react-hook-form";
 
 const translationDict = {
   fullName: "שם מלא",
@@ -57,6 +58,11 @@ export default function CreateLeftOverDialog({
   const [phone, setPhone] = useState("+972");
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedHalal, setSelectedHalal] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
   const proximityOptions = [
@@ -103,7 +109,7 @@ export default function CreateLeftOverDialog({
     }));
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmitForm = async () => {
     try {
       const newLeftOVer = await createLeftOver(loggedUserId, inputValues);
 
@@ -217,126 +223,163 @@ export default function CreateLeftOverDialog({
         </CacheProvider>
         <Divider />
         <DialogContent>
-          {/* Render input fields based on columns */}
-          <div
-            key="מספר אישי"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
-            <InputLabel id={"fullName"}>שם מלא</InputLabel>
-            <Input
-              onChange={(e) => handleInputChange("fullName", e.target.value)}
-            />
-            <RtlPlugin>
-              <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                style={{ marginTop: "20px" }}
-                options={halals} // Assuming halals is the array you mapped before
-                getOptionLabel={(option) =>
-                  `${option.privateNumber}: ${option.firstName} ${option.lastName}`
-                }
-                value={selectedHalal}
-                onChange={(event, newValue) => {
-                  setSelectedHalal(newValue); // Update the selectedHalal state
-                  handleInputChange(
-                    "nifgaimHalalId",
-                    newValue ? newValue.id : ""
-                  );
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} label="שייך חלל" />
-                )}
-              />
-            </RtlPlugin>
-
-            <RtlPlugin>
-              <FormControl fullWidth style={{ marginTop: "20px" }}>
-                <InputLabel id="demo-simple-select-label">
-                  קרבה משפחתית
-                </InputLabel>
-
-                <Select
-                  labelId="proximity-select-label"
-                  id="proximity-select"
-                  fullWidth
-                  value={selectedValue}
-                  style={{
-                    direction: "rtl",
-                  }}
-                  label="קרבה משפחתית"
-                  onChange={(e) =>
-                    handleInputChange("proximity", e.target.value)
-                  }
-                >
-                  {proximityOptions.map((option, index) => (
-                    <MenuItem
-                      key={index}
-                      value={option}
-                      style={{
-                        direction: "rtl",
-                      }}
-                    >
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </RtlPlugin>
-            <InputLabel id={"city"} style={{ marginTop: "20px" }}>
-              עיר
-            </InputLabel>
-            <Input
-              onChange={(e) => handleInputChange("city", e.target.value)}
-            />
-            <InputLabel id={"address"} style={{ marginTop: "20px" }}>
-              כתובת
-            </InputLabel>
-            <Input
-              onChange={(e) => handleInputChange("address", e.target.value)}
-            />
-            <InputLabel id={"phone"} style={{ marginTop: "20px" }}>
-              מספר טלפון
-            </InputLabel>
-            <MuiTelInput
-              defaultCountry={"il"}
-              value={phone}
-              excludecountries={["pa"]} // Use lowercase prop name
-              onChange={(value) => handleInputChange("phone", value)}
-            />
-
-            <InputLabel id={"isReligious"} style={{ marginTop: "20px" }}>
-              דת
-            </InputLabel>
-            <RadioGroup
-              aria-labelledby="booleanSelect"
-              name="controlled-radio-buttons-group"
-              row
-              onChange={(e) => handleInputChange("isReligious", e.target.value)}
+          <form>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
             >
-              <FormControlLabel
-                value={true}
-                control={<Radio />}
-                sx={{ marginRight: 0 }}
-                label="כן"
+              <>
+                <InputLabel id="fullName">שם מלא</InputLabel>
+                <Input
+                  {...register("fullName", {
+                    required: {
+                      value: true,
+                      message: "שם מלא שדה חובה",
+                    },
+                    pattern: {
+                      value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                      message: ` שם יכול לכלול רק אותיות `,
+                    },
+                  })}
+                  onChange={(e) =>
+                    handleInputChange("fullName", e.target.value)
+                  }
+                />
+                {errors["fullName"] && (
+                  <p style={{ color: "red" }}>{errors["fullName"].message}</p>
+                )}
+              </>
+              <RtlPlugin>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  style={{ marginTop: "20px" }}
+                  options={halals} // Assuming halals is the array you mapped before
+                  getOptionLabel={(option) =>
+                    `${option.privateNumber}: ${option.firstName} ${option.lastName}`
+                  }
+                  value={selectedHalal}
+                  {...register("nifgaimHalalId", {
+                    validate: () => {
+                      if (!selectedHalal) {
+                        return "חובה לשייך שאר לחלל מהרשימה";
+                      } else {
+                        return true;
+                      }
+                    },
+                  })}
+                  onChange={(event, newValue) => {
+                    setSelectedHalal(newValue); // Update the selectedHalal state
+                    handleInputChange(
+                      "nifgaimHalalId",
+                      newValue ? newValue.id : ""
+                    );
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="שייך חלל" />
+                  )}
+                />
+                {errors["nifgaimHalalId"] && (
+                  <p style={{ color: "red" }}>
+                    {errors["nifgaimHalalId"].message}
+                  </p>
+                )}
+              </RtlPlugin>
+
+              <RtlPlugin>
+                <FormControl fullWidth style={{ marginTop: "20px" }}>
+                  <InputLabel id="demo-simple-select-label">
+                    קרבה משפחתית
+                  </InputLabel>
+
+                  <Select
+                    labelId="proximity-select-label"
+                    id="proximity-select"
+                    fullWidth
+                    value={selectedValue}
+                    style={{
+                      direction: "rtl",
+                    }}
+                    label="קרבה משפחתית"
+                    onChange={(e) =>
+                      handleInputChange("proximity", e.target.value)
+                    }
+                  >
+                    {proximityOptions.map((option, index) => (
+                      <MenuItem
+                        key={index}
+                        value={option}
+                        style={{
+                          direction: "rtl",
+                        }}
+                      >
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </RtlPlugin>
+              <InputLabel id={"city"} style={{ marginTop: "20px" }}>
+                עיר
+              </InputLabel>
+              <Input
+                onChange={(e) => handleInputChange("city", e.target.value)}
               />
-              <FormControlLabel value={false} control={<Radio />} label="לא" />
-            </RadioGroup>
-            <InputLabel id={"comments"} style={{ marginTop: "20px" }}>
-              הערות
-            </InputLabel>
-            <Input
-              onChange={(e) => handleInputChange("comments", e.target.value)}
-            />
-          </div>
+              <InputLabel id={"address"} style={{ marginTop: "20px" }}>
+                כתובת
+              </InputLabel>
+              <Input
+                onChange={(e) => handleInputChange("address", e.target.value)}
+              />
+              <InputLabel id={"phone"} style={{ marginTop: "20px" }}>
+                מספר טלפון
+              </InputLabel>
+              <MuiTelInput
+                defaultCountry={"il"}
+                value={phone}
+                excludecountries={["pa"]} // Use lowercase prop name
+                onChange={(value) => handleInputChange("phone", value)}
+              />
+
+              <InputLabel id={"isReligious"} style={{ marginTop: "20px" }}>
+                דת
+              </InputLabel>
+              <RadioGroup
+                aria-labelledby="booleanSelect"
+                name="controlled-radio-buttons-group"
+                row
+                onChange={(e) =>
+                  handleInputChange("isReligious", e.target.value)
+                }
+              >
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  sx={{ marginRight: 0 }}
+                  label="כן"
+                />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="לא"
+                />
+              </RadioGroup>
+              <InputLabel id={"comments"} style={{ marginTop: "20px" }}>
+                הערות
+              </InputLabel>
+              <Input
+                onChange={(e) => handleInputChange("comments", e.target.value)}
+              />
+            </div>
+          </form>
         </DialogContent>
         <Divider />
         <DialogActions>
           <Button onClick={handleCloseDialog}>ביטול</Button>
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained" onClick={handleSubmit(handleSubmitForm)}>
             צור שאר
           </Button>
         </DialogActions>

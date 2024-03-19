@@ -16,14 +16,13 @@ import {
   FormControl,
   createTheme,
   ThemeProvider,
-  FormHelperText,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
-import { createHalal, getColumnEnums } from "../../utils/api/halalsApi";
+import { createHalal } from "../../utils/api/halalsApi";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { column, prefixer } from "stylis";
+import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import {
   getCommandIdByName,
@@ -37,7 +36,6 @@ import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
-import dayjs from "dayjs";
 
 const MemoizedSelect = React.memo(Select);
 
@@ -85,7 +83,6 @@ export default function CreateHalalDialog({
     register,
     handleSubmit,
     formState: { errors },
-    trigger,
   } = useForm();
 
   useEffect(() => {
@@ -380,7 +377,7 @@ export default function CreateHalalDialog({
                         <FormControl fullWidth>
                           <DatePicker
                             {...register(column.column_name, {
-                              validate: (value) => {
+                              validate: () => {
                                 if (!inputValues[column.column_name]) {
                                   return `${
                                     translationDict[column.column_name] ||
@@ -441,6 +438,7 @@ export default function CreateHalalDialog({
                             validate: () => {
                               const temp =
                                 inputValues[column.column_name] || "";
+                              console.log(inputValues[column.column_name]);
                               if (
                                 temp.toString() !== "true" &&
                                 temp.toString() !== "false"
@@ -541,6 +539,15 @@ export default function CreateHalalDialog({
                                   pattern: {
                                     value: /^\d{7}$/,
                                     message: ` הכנס מספר אישי בין 7 ספרות `,
+                                  },
+                                }
+                              : {}),
+                            ...(column.column_name === "lastName" ||
+                            column.column_name === "firstName"
+                              ? {
+                                  pattern: {
+                                    value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                                    message: ` שם יכול לכלול רק אותיות `,
                                   },
                                 }
                               : {}),

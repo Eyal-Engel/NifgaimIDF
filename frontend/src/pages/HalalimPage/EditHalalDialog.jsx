@@ -16,7 +16,7 @@ import {
   ThemeProvider,
   FormControl,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -43,11 +43,33 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { useCallback } from "react";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
+import { useForm } from "react-hook-form";
 
 const errorDict = {
   len: "אורך",
   isNumeric: "חובה מספר",
   not_unique: "חובה ערך יחודי",
+};
+
+const translationDict = {
+  id: "מספר זיהוי",
+  privateNumber: "מספר פרטי",
+  lastName: "שם משפחה",
+  firstName: "שם פרטי",
+  dateOfDeath: "תאריך פטירה",
+  serviceType: "סוג שירות",
+  circumstances: "נסיבות המוות",
+  unit: "יחידה",
+  division: "חטיבה",
+  specialCommunity: "קהילה מיוחדת",
+  area: "אזור",
+  plot: "חלקה",
+  line: "שורה",
+  graveNumber: "מספר קבר",
+  permanentRelationship: "קשר קבוע",
+  comments: "הערות",
+  nifgaimGraveyardId: "בית קברות",
+  nifgaimCommandId: "פיקוד",
 };
 export default function EditHalalDIalog({
   openDialog,
@@ -63,7 +85,15 @@ export default function EditHalalDIalog({
   const [soldierAccompanieds, setSoldierAccompanieds] = useState([]);
   const [leftOvers, setLeftOvers] = useState([]);
   const [inputValues, setInputValues] = useState({});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
 
@@ -83,26 +113,6 @@ export default function EditHalalDIalog({
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
   });
-  const translationDict = {
-    id: "מספר זיהוי",
-    privateNumber: "מספר פרטי",
-    lastName: "שם משפחה",
-    firstName: "שם פרטי",
-    dateOfDeath: "תאריך פטירה",
-    serviceType: "סוג שירות",
-    circumstances: "נסיבות המוות",
-    unit: "יחידה",
-    division: "חטיבה",
-    specialCommunity: "קהילה מיוחדת",
-    area: "אזור",
-    plot: "חלקה",
-    line: "שורה",
-    graveNumber: "מספר קבר",
-    permanentRelationship: "קשר קבוע",
-    comments: "הערות",
-    nifgaimGraveyardId: "בית קברות",
-    nifgaimCommandId: "פיקוד",
-  };
 
   const rearrangedColumns = [
     ...originalColumns.map((col) =>
@@ -130,14 +140,14 @@ export default function EditHalalDIalog({
     return <div>{reversedWords}</div>;
   }
 
-  const getColumnByName = useCallback(
-    (columnName) => {
-      return allDataOfHalalsColumns.find(
-        (column) => column.column_name === columnName
-      );
-    },
-    [allDataOfHalalsColumns]
-  );
+  // const getColumnByName = useCallback(
+  //   (columnName) => {
+  //     return allDataOfHalalsColumns.find(
+  //       (column) => column.column_name === columnName
+  //     );
+  //   },
+  //   [allDataOfHalalsColumns]
+  // );
 
   const handleInputChange = useCallback((column, value) => {
     setInputValues((prevValues) => ({
@@ -146,7 +156,7 @@ export default function EditHalalDIalog({
     }));
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmitForm = async () => {
     try {
       const updatedHalalData = {};
 
@@ -355,249 +365,378 @@ export default function EditHalalDIalog({
                     selectedRow.lastName + " " + selectedRow.firstName}
                 </p>
               </div>
-            </DialogTitle>{" "}
+            </DialogTitle>
           </ThemeProvider>
         </CacheProvider>
         <Divider></Divider>
 
         {/* check here */}
         <DialogContent>
-          {rearrangedColumns.map((column) => {
-            const { column_name: key, data_type } = column;
-            const value =
-              inputValues[key] !== undefined
-                ? inputValues[key]
-                : selectedRow[key]; // Get value from inputValues if available, otherwise fallback to selectedRow
+          <form onSubmit={handleSubmit(handleSubmitForm)}>
+            {rearrangedColumns.map((column) => {
+              const { column_name: key, data_type } = column;
+              const value =
+                inputValues[key] !== undefined
+                  ? inputValues[key]
+                  : selectedRow[key]; // Get value from inputValues if available, otherwise fallback to selectedRow
 
-            return (
-              <div
-                key={key}
-                style={{
-                  marginBottom: "10px",
-                  display: "flex",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                }}
-              >
-                {key === "nifgaimCommandId" ? (
-                  <div>
-                    <InputLabel id={key}>
-                      {translationDict[key] ? translationDict[key] : key}
-                    </InputLabel>
-                    <Select
-                      sx={{ direction: "rtl" }}
-                      labelId="command-label"
-                      id="command"
-                      name="command"
-                      value={value}
-                      displayEmpty
-                      className="resetPasswordInputField"
-                      onChange={(e) => handleInputChange(key, e.target.value)}
-                      renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
-                    >
-                      <MenuItem sx={{ direction: "rtl" }} value="" disabled>
-                        פיקוד
-                      </MenuItem>
-                      {commands.map((command) => (
-                        <MenuItem
-                          sx={{ direction: "rtl" }}
-                          key={command}
-                          value={command}
-                        >
-                          {command}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </div>
-                ) : key === "nifgaimGraveyardId" ? (
-                  <div>
-                    <InputLabel id={key}>
-                      {translationDict[key] ? translationDict[key] : key}
-                    </InputLabel>
-                    <Select
-                      sx={{ direction: "rtl" }}
-                      labelId="graveyard-label"
-                      id="graveyard"
-                      name="graveyard"
-                      value={value}
-                      displayEmpty
-                      className="resetPasswordInputField"
-                      onChange={(e) => handleInputChange(key, e.target.value)}
-                      renderValue={(value) => (value ? value : "בחר בית קברות")} // Render placeholder
-                    >
-                      <MenuItem sx={{ direction: "rtl" }} value="" disabled>
-                        בחר בית קברות
-                      </MenuItem>
-                      {graveyards.map((graveyard) => (
-                        <MenuItem
-                          sx={{ direction: "rtl" }}
-                          key={graveyard.id}
-                          value={graveyard.graveyardName}
-                        >
-                          {graveyard.graveyardName}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </div>
-                ) : (
-                  <>
-                    <InputLabel id={key}>
-                      {translationDict[key] ? translationDict[key] : key}
-                    </InputLabel>
-                    {data_type === "timestamp with time zone" ? (
-                      <RtlPlugin
-                        style={{
-                          margin: "auto",
-                          marginTop: "15px",
-                        }}
-                      >
-                        <DatePicker
-                          label="תאריך ברירת מחדל"
-                          value={dayjs(value)}
-                          onChange={(date) => handleInputChange(key, date)}
-                          sx={{ width: "100%" }}
-                        />
-                      </RtlPlugin>
-                    ) : data_type === "integer" ? (
-                      <Input
-                        type="number"
-                        value={value}
-                        onChange={(e) => handleInputChange(key, e.target.value)}
-                      />
-                    ) : data_type === "boolean" ? (
-                      <RadioGroup
-                        aria-labelledby="booleanSelect"
-                        name="controlled-radio-buttons-group"
-                        onChange={(e) => handleInputChange(key, e.target.value)}
-                        value={value}
-                        row
-                      >
-                        <FormControlLabel
-                          value={true}
-                          control={<Radio />}
-                          sx={{ marginRight: 0 }}
-                          label="כן"
-                        />
-                        <FormControlLabel
-                          value="false"
-                          control={<Radio />}
-                          label="לא"
-                        />
-                      </RadioGroup>
-                    ) : data_type === "USER-DEFINED" ? (
+              return (
+                <div
+                  key={key}
+                  style={{
+                    marginBottom: "10px",
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  {key === "nifgaimCommandId" ? (
+                    <>
+                      <InputLabel id={key}>
+                        {translationDict[key] ? translationDict[key] : key}
+                      </InputLabel>
                       <FormControl>
                         <Select
+                          {...register(key, {
+                            required: {
+                              value: true,
+                              message: `${
+                                translationDict[key] || key
+                              } שדה חובה `,
+                            },
+                          })}
+                          sx={{ direction: "rtl" }}
                           labelId={key}
-                          value={value || ""}
+                          value={value}
+                          displayEmpty
                           onChange={(e) =>
                             handleInputChange(key, e.target.value)
                           }
+                          renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
                         >
-                          {enums[key] ? (
-                            enums[key].map((option) => (
-                              <MenuItem
-                                key={option}
-                                value={option}
-                                selected={option.trim() === value?.trim()}
-                              >
-                                {option}
-                              </MenuItem>
-                            ))
-                          ) : (
-                            <MenuItem value={value}>{value}</MenuItem>
-                          )}
+                          <MenuItem sx={{ direction: "rtl" }} value="" disabled>
+                            פיקוד
+                          </MenuItem>
+                          {commands.map((command) => (
+                            <MenuItem
+                              sx={{ direction: "rtl" }}
+                              key={command}
+                              value={command}
+                            >
+                              {command}
+                            </MenuItem>
+                          ))}
                         </Select>
+                        {errors[key] && (
+                          <p style={{ color: "red" }}>{errors[key].message}</p>
+                        )}
                       </FormControl>
-                    ) : (
-                      <Input
-                        value={inputValues[key] || value}
-                        onChange={(e) => handleInputChange(key, e.target.value)}
-                      />
-                    )}
-                  </>
-                )}
-              </div>
-            );
-          })}
-          {/* Code for displaying soldierAccompanieds and leftOvers */}
-          <div>
-            <h2 style={{ color: theme.palette.secondary.main }}>מלווים </h2>
-            {soldierAccompanieds.length === 0 ? (
-              <p>אין מלווים משוייכים</p>
-            ) : (
-              soldierAccompanieds.map((soldier, index) => (
-                <div key={index}>
-                  <p>
-                    {`שם: `}
-                    <strong>{soldier.fullName}</strong>
-                  </p>
-                  <p>
-                    {`מספר פרטי: `}
-                    <strong>{soldier.privateNumber}</strong>
-                  </p>
-                  <p>
-                    {`דרגה: `}
-                    <strong>{soldier.rank}</strong>
-                  </p>
-                  <p>
-                    {`טלפון: `}
-                    <strong>{formatPhoneNumber(soldier.phone)}</strong>
-                  </p>
-                  <p>
-                    {`יחידה: `}
-                    <strong>{soldier.unit}</strong>
-                  </p>
-                  <p>
-                    {`הערות: `}
-                    <strong>{soldier.comments}</strong>
-                  </p>
-                  <br />
+                    </>
+                  ) : key === "nifgaimGraveyardId" ? (
+                    <>
+                      <InputLabel id={key}>
+                        {translationDict[key] ? translationDict[key] : key}
+                      </InputLabel>
+                      <FormControl>
+                        <Select
+                          {...register(key, {
+                            required: {
+                              value: true,
+                              message: `${
+                                translationDict[key] || key
+                              } שדה חובה `,
+                            },
+                          })}
+                          sx={{ direction: "rtl" }}
+                          labelId={key}
+                          value={value}
+                          displayEmpty
+                          onChange={(e) =>
+                            handleInputChange(key, e.target.value)
+                          }
+                          renderValue={(value) =>
+                            value ? value : "בחר בית קברות"
+                          } // Render placeholder
+                        >
+                          <MenuItem sx={{ direction: "rtl" }} value="" disabled>
+                            בחר בית קברות
+                          </MenuItem>
+                          {graveyards.map((graveyard) => (
+                            <MenuItem
+                              sx={{ direction: "rtl" }}
+                              key={graveyard.id}
+                              value={graveyard.graveyardName}
+                            >
+                              {graveyard.graveyardName}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        {errors[key] && (
+                          <p style={{ color: "red" }}>{errors[key].message}</p>
+                        )}
+                      </FormControl>
+                    </>
+                  ) : (
+                    <>
+                      <InputLabel id={key}>
+                        {translationDict[key] ? translationDict[key] : key}
+                      </InputLabel>
+                      {data_type === "timestamp with time zone" ? (
+                        <RtlPlugin
+                          style={{
+                            margin: "auto",
+                            marginTop: "15px",
+                          }}
+                        >
+                          <FormControl fullWidth>
+                            <DatePicker
+                              {...register(key, {
+                                required: {
+                                  value: true,
+                                  message: `${
+                                    translationDict[key] || key
+                                  } שדה חובה `,
+                                },
+                              })}
+                              label="תאריך ברירת מחדל"
+                              value={dayjs(value)}
+                              onChange={(date) => handleInputChange(key, date)}
+                              sx={{ width: "100%" }}
+                            />
+                            {errors[key] && (
+                              <p style={{ color: "red" }}>
+                                {errors[key].message}
+                              </p>
+                            )}
+                          </FormControl>
+                        </RtlPlugin>
+                      ) : data_type === "integer" ? (
+                        <>
+                          <Input
+                            {...register(key, {
+                              required: {
+                                value: true,
+                                message: `${
+                                  translationDict[key] || key
+                                } שדה חובה `,
+                              },
+                            })}
+                            type="number"
+                            value={value}
+                            onChange={(e) =>
+                              handleInputChange(key, e.target.value)
+                            }
+                          />
+                          {errors[key] && (
+                            <p style={{ color: "red" }}>
+                              {errors[key].message}
+                            </p>
+                          )}
+                        </>
+                      ) : data_type === "boolean" ? (
+                        <FormControl>
+                          <RadioGroup
+                            value={value}
+                            aria-labelledby="booleanSelect"
+                            name="controlled-radio-buttons-group"
+                            {...register(key, {
+                              validate: () => {
+                                if (value === null) {
+                                  console.log(value);
+                                  return `${
+                                    translationDict[key] || key
+                                  } שדה חובה `;
+                                } else {
+                                  return true;
+                                }
+                              },
+                            })}
+                            onChange={(e) => {
+                              handleInputChange(key, e.target.value);
+                              console.log(e.target.value);
+                            }}
+                            row
+                          >
+                            <FormControlLabel
+                              value={true}
+                              control={<Radio />}
+                              sx={{ marginRight: 0 }}
+                              label="כן"
+                            />
+                            <FormControlLabel
+                              value={false}
+                              control={<Radio />}
+                              label="לא"
+                            />
+                          </RadioGroup>
+                          {errors[key] && (
+                            <p style={{ color: "red" }}>
+                              {errors[key].message}
+                            </p>
+                          )}
+                        </FormControl>
+                      ) : data_type === "USER-DEFINED" ? (
+                        <FormControl fullWidth>
+                          <Select
+                            {...register(key, {
+                              required: {
+                                value: true,
+                                message: `${
+                                  translationDict[key] || key
+                                } שדה חובה `,
+                              },
+                            })}
+                            sx={{ direction: "rtl" }}
+                            labelId={key}
+                            value={value || ""}
+                            onChange={(e) =>
+                              handleInputChange(key, e.target.value)
+                            }
+                          >
+                            {enums[key] ? (
+                              enums[key].map((option) => (
+                                <MenuItem
+                                  key={option}
+                                  value={option}
+                                  selected={option.trim() === value?.trim()}
+                                >
+                                  {option}
+                                </MenuItem>
+                              ))
+                            ) : (
+                              <MenuItem value={value}>{value}</MenuItem>
+                            )}
+                          </Select>
+                          {errors[key] && (
+                            <p style={{ color: "red" }}>
+                              {errors[key].message}
+                            </p>
+                          )}
+                        </FormControl>
+                      ) : (
+                        <>
+                          <Input
+                            value={inputValues[key] || value}
+                            {...register(key, {
+                              required: {
+                                value: true,
+                                message: `${
+                                  translationDict[key] || key
+                                } שדה חובה `,
+                              },
+                              ...(key === "privateNumber"
+                                ? {
+                                    pattern: {
+                                      value: /^\d{7}$/,
+                                      message: ` הכנס מספר אישי בין 7 ספרות `,
+                                    },
+                                  }
+                                : {}),
+                              ...(key === "lastName" || key === "firstName"
+                                ? {
+                                    pattern: {
+                                      value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                                      message: ` שם יכול לכלול רק אותיות `,
+                                    },
+                                  }
+                                : {}),
+                            })}
+                            onChange={(e) =>
+                              handleInputChange(key, e.target.value)
+                            }
+                          />
+                          {errors[key] && (
+                            <p style={{ color: "red" }}>
+                              {errors[key].message}
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
                 </div>
-              ))
-            )}
-            <br />
-          </div>
-          <div>
-            <h2 style={{ color: theme.palette.secondary.main }}>שארים</h2>
-            {leftOvers.length === 0 ? (
-              <p>אין שארים משוייכים</p>
-            ) : (
-              leftOvers.map((leftOver, index) => (
-                <div key={index}>
-                  <p>
-                    {`שם: `}
-                    <strong>{leftOver.fullName}</strong>
-                  </p>
-                  <p>
-                    {`קרובות: `}
-                    <strong>{leftOver.proximity}</strong>
-                  </p>
-                  <p>
-                    {`עיר: `}
-                    <strong>{leftOver.city}</strong>
-                  </p>
-                  <p>
-                    {`כתובת: `}
-                    <strong>{leftOver.address}</strong>
-                  </p>
-                  <p>
-                    {`טלפון: `}
-                    <strong>{formatPhoneNumber(leftOver.phone)}</strong>
-                  </p>
-                  <p>
-                    {`הערות: `}
-                    <strong>{leftOver.comments}</strong>
-                  </p>
-                  <p>
-                    {`דתי: `}
-                    <strong>{leftOver.isReligious ? "כן" : "לא"}</strong>
-                  </p>
-                  <br />
-                </div>
-              ))
-            )}
-            <br />
-          </div>
+              );
+            })}
+            {/* Code for displaying soldierAccompanieds and leftOvers */}
+            <div>
+              <h2 style={{ color: theme.palette.secondary.main }}>מלווים </h2>
+              {soldierAccompanieds.length === 0 ? (
+                <p>אין מלווים משוייכים</p>
+              ) : (
+                soldierAccompanieds.map((soldier, index) => (
+                  <div key={index}>
+                    <p>
+                      {`שם: `}
+                      <strong>{soldier.fullName}</strong>
+                    </p>
+                    <p>
+                      {`מספר פרטי: `}
+                      <strong>{soldier.privateNumber}</strong>
+                    </p>
+                    <p>
+                      {`דרגה: `}
+                      <strong>{soldier.rank}</strong>
+                    </p>
+                    <p>
+                      {`טלפון: `}
+                      <strong>{formatPhoneNumber(soldier.phone)}</strong>
+                    </p>
+                    <p>
+                      {`יחידה: `}
+                      <strong>{soldier.unit}</strong>
+                    </p>
+                    <p>
+                      {`הערות: `}
+                      <strong>{soldier.comments}</strong>
+                    </p>
+                    <br />
+                  </div>
+                ))
+              )}
+              <br />
+            </div>
+            <div>
+              <h2 style={{ color: theme.palette.secondary.main }}>שארים</h2>
+              {leftOvers.length === 0 ? (
+                <p>אין שארים משוייכים</p>
+              ) : (
+                leftOvers.map((leftOver, index) => (
+                  <div key={index}>
+                    <p>
+                      {`שם: `}
+                      <strong>{leftOver.fullName}</strong>
+                    </p>
+                    <p>
+                      {`קרובות: `}
+                      <strong>{leftOver.proximity}</strong>
+                    </p>
+                    <p>
+                      {`עיר: `}
+                      <strong>{leftOver.city}</strong>
+                    </p>
+                    <p>
+                      {`כתובת: `}
+                      <strong>{leftOver.address}</strong>
+                    </p>
+                    <p>
+                      {`טלפון: `}
+                      <strong>{formatPhoneNumber(leftOver.phone)}</strong>
+                    </p>
+                    <p>
+                      {`הערות: `}
+                      <strong>{leftOver.comments}</strong>
+                    </p>
+                    <p>
+                      {`דתי: `}
+                      <strong>{leftOver.isReligious ? "כן" : "לא"}</strong>
+                    </p>
+                    <br />
+                  </div>
+                ))
+              )}
+              <br />
+            </div>
+          </form>
         </DialogContent>
 
         <Divider></Divider>
@@ -614,7 +753,7 @@ export default function EditHalalDIalog({
             <div>
               <Button
                 variant="contained"
-                onClick={handleSubmit}
+                onClick={handleSubmit(handleSubmitForm)}
                 style={{ marginLeft: "10px" }}
               >
                 שמור שינויים
