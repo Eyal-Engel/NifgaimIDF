@@ -20,7 +20,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import { getHalalByPrivateNumber, getHalals } from "../../utils/api/halalsApi";
+import { getHalalByPrivateNumber } from "../../utils/api/halalsApi";
 import { createLeftOver } from "../../utils/api/leftOversApi";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
@@ -376,14 +376,14 @@ export default function CreateLeftOverDialog({
                 excludecountries={["pa"]} // Use lowercase prop name
                 {...register("phone", {
                   validate: (value) => {
-                    console.log(value);
-                    const pattern = /^\+972 \d{2} \d{3} \d{4}$/;
-                    if (value === "+972") {
+                    // const pattern = /^\+972 \d{2} \d{3} \d{4}$/;
+                    if (value.length <= 4) {
                       return "מספר טלפון שדה חובה";
                     }
-                    if (!pattern.test(value)) {
-                      return "מספר טלפון לא תקין";
-                    } else {
+                    // if (!pattern.test(value)) {
+                    //   return "מספר טלפון לא תקין";
+                    // }
+                    else {
                       return true;
                     }
                   },

@@ -628,7 +628,7 @@ export default function EditHalalDIalog({
                                 ? {
                                     pattern: {
                                       value: /^\d{7}$/,
-                                      message: ` הכנס מספר אישי בין 7 ספרות `,
+                                      message: ` הכנס מספר אישי בעל 7 ספרות `,
                                     },
                                   }
                                 : {}),

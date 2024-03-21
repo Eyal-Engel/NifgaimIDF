@@ -19,7 +19,7 @@ import {
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import { getHalalByPrivateNumber, getHalals } from "../../utils/api/halalsApi";
+import { getHalalByPrivateNumber } from "../../utils/api/halalsApi";
 import {
   deleteSoldierAccompanied,
   updateSoldierAccompanied,
@@ -30,6 +30,62 @@ import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
+import alufAvir from "../../assets/images/ranks/אלוף אוויר.png";
+import alufYabasha from "../../assets/images/ranks/אלוף יבשה.png";
+import alufYam from "../../assets/images/ranks/אלוף ים.png";
+import alufMishnehAvir from "../../assets/images/ranks/אלוף משנה אוויר.png";
+import alufMishnehYabasha from "../../assets/images/ranks/אלוף משנה יבשה.png";
+import alufMishnehYam from "../../assets/images/ranks/אלוף משנה ים.png";
+import toraiYabasha from "../../assets/images/ranks/טוראי יבשה.png";
+import segamAvir from "../../assets/images/ranks/סגם אוויר.png";
+import segamYabasha from "../../assets/images/ranks/סגם יבשה.png";
+import segamYam from "../../assets/images/ranks/סגם ים.png";
+import seganAvir from "../../assets/images/ranks/סגן אוויר.png";
+import seganAlufAvir from "../../assets/images/ranks/סגן אלוף אוויר.png";
+import seganAlufYabasha from "../../assets/images/ranks/סגן אלוף יבשה.png";
+import seganAlufYam from "../../assets/images/ranks/סגן אלוף ים.png";
+import seganYabasha from "../../assets/images/ranks/סגן יבשה.png";
+import seganYam from "../../assets/images/ranks/סגן ים.png";
+import semelYabasha from "../../assets/images/ranks/סמל יבשה.png";
+import semarYabasha from "../../assets/images/ranks/סמר יבשה.png";
+import serenAvir from "../../assets/images/ranks/סרן אוויר.png";
+import serenYabasha from "../../assets/images/ranks/סרן יבשה.png";
+import serenYam from "../../assets/images/ranks/סרן ים.png";
+import kavAvir from "../../assets/images/ranks/קאב אוויר.png";
+import kavYabasha from "../../assets/images/ranks/קאב יבשה.png";
+import kavYam from "../../assets/images/ranks/קאב ים.png";
+import kamAvir from "../../assets/images/ranks/קאם אוויר.png";
+import kamYabasha from "../../assets/images/ranks/קאם יבשה.png";
+import kamYam from "../../assets/images/ranks/קאם ים.png";
+import kamaAvir from "../../assets/images/ranks/קמא אוויר.png";
+import kamaYabasha from "../../assets/images/ranks/קמא יבשה.png";
+import kamaYam from "../../assets/images/ranks/קמא ים.png";
+import ravAlufAvir from "../../assets/images/ranks/רב אלוף אוויר.png";
+import ravAlufYabasha from "../../assets/images/ranks/רב אלוף יבשה.png";
+import ravAlufYam from "../../assets/images/ranks/רב אלוף ים.png";
+import ravSerenAvir from "../../assets/images/ranks/רב סרן אוויר.png";
+import ravSerenYabasha from "../../assets/images/ranks/רב סרן יבשה.png";
+import ravSerenYam from "../../assets/images/ranks/רב סרן ים.png";
+import ravatYabasha from "../../assets/images/ranks/רבט יבשה.png";
+import rengAvir from "../../assets/images/ranks/רנג אוויר.png";
+import rengYabasha from "../../assets/images/ranks/רנג יבשה.png";
+import rengYam from "../../assets/images/ranks/רנג ים.png";
+import rsevAvir from "../../assets/images/ranks/רסב אוויר.png";
+import rsevYabasha from "../../assets/images/ranks/רסב יבשה.png";
+import rsevYam from "../../assets/images/ranks/רסב ים.png";
+import rselAvir from "../../assets/images/ranks/רסל אוויר.png";
+import rselYabasha from "../../assets/images/ranks/רסל יבשה.png";
+import rselYam from "../../assets/images/ranks/רסל ים.png";
+import rsemAvir from "../../assets/images/ranks/רסם אוויר.png";
+import rsemYabasha from "../../assets/images/ranks/רסם יבשה.png";
+import rsemYam from "../../assets/images/ranks/רסם ים.png";
+import rserAvir from "../../assets/images/ranks/רסר אוויר.png";
+import rserYabasha from "../../assets/images/ranks/רסר יבשה.png";
+import rserYam from "../../assets/images/ranks/רסר ים.png";
+import tateAlufYabasha from "../../assets/images/ranks/תת אלוף יבשה.png";
+import tateAlufAvir from "../../assets/images/ranks/תת אלוף אוויר.png";
+import tateAlufYam from "../../assets/images/ranks/תת אלוף ים.png";
+import { useForm } from "react-hook-form";
 
 const translationDict = {
   fullName: "שם מלא",
@@ -55,9 +111,15 @@ const EditSoldierAccompaniedDialog = ({
   const [inputValues, setInputValues] = useState({});
   const [phone, setPhone] = useState(selectedRow?.phone || "+972");
   const [selectedHalal, setSelectedHalal] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   // const [selectedValue, setSelectedValue] = useState(selectedRow.proximity);
   const [rank, setRank] = useState("");
-
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const loggedUserId = userData ? userData.userId : "";
   const ranksOptions = [
     // category: חובה
     `טירון`,
@@ -65,6 +127,10 @@ const EditSoldierAccompaniedDialog = ({
     `רב"ט`,
     `סמל`,
     `סמ"ר`,
+    // category: אקמדאיים
+    `קמ"א`,
+    `קא"ב`,
+    `קא"ם`,
     // category: נגדים
     `רס"ל`,
     `רס"ר`,
@@ -82,8 +148,74 @@ const EditSoldierAccompaniedDialog = ({
     `אלוף`,
     `רא"ל`,
   ];
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  const loggedUserId = userData ? userData.userId : "";
+
+  const imageImports = [
+    [],
+    [toraiYabasha],
+    [ravatYabasha],
+    [semelYabasha],
+    [semarYabasha],
+    [kamaYabasha, kamaAvir, kamaYam],
+    [kavYabasha, kavAvir, kavYam],
+    [kamYabasha, kamAvir, kamYam],
+    [rselYabasha, rselAvir, rselYam],
+    [rserYabasha, rserAvir, rserYam],
+    [rsemYabasha, rsemAvir, rsemYam],
+    [rsevYabasha, rsevAvir, rsevYam],
+    [rengYabasha, rengAvir, rengYam],
+    [segamYabasha, segamAvir, segamYam],
+    [seganYabasha, seganAvir, seganYam],
+    [serenYabasha, serenAvir, serenYam],
+    [ravSerenYabasha, ravSerenAvir, ravSerenYam],
+    [seganAlufYabasha, seganAlufAvir, seganAlufYam],
+    [alufMishnehYabasha, alufMishnehAvir, alufMishnehYam],
+    [tateAlufYabasha, tateAlufAvir, tateAlufYam],
+    [alufYabasha, alufAvir, alufYam],
+    [ravAlufYabasha, ravAlufAvir, ravAlufYam],
+  ];
+
+  const renderImageOptions = (start, end) => {
+    let images = [];
+    for (let i = start; i < end; i++) {
+      let imageArray = imageImports[i];
+      if (i === 0 || i === 1 || i === 2 || i === 3) {
+        // For ranks with only one image
+        imageArray = [imageArray[0]]; // Take only the first image
+      }
+
+      images.push(
+        <MenuItem
+          key={`${i}`}
+          value={ranksOptions[i]}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            direction: "rtl",
+          }}
+        >
+          <p style={{ fontSize: "large" }}>{ranksOptions[i]}</p>
+          <div>
+            {imageArray.map(
+              (image, index) =>
+                image !== undefined && (
+                  <img
+                    key={`${i}-${index}`}
+                    src={image}
+                    alt={""}
+                    style={{
+                      maxWidth: "100px",
+                      maxHeight: "100px",
+                      marginRight: "5px",
+                    }}
+                  />
+                )
+            )}
+          </div>
+        </MenuItem>
+      );
+    }
+    return images;
+  };
 
   const theme = createTheme({
     direction: "rtl",
@@ -142,7 +274,7 @@ const EditSoldierAccompaniedDialog = ({
     }));
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmitForm = async () => {
     try {
       // Here you can send inputValues to your backend using a PATCH request
 
@@ -317,112 +449,210 @@ const EditSoldierAccompaniedDialog = ({
         </CacheProvider>
         <Divider />
         <DialogContent>
-          {/* Render input fields based on columns */}
-          <div
-            key="מספר אישי"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
-            <InputLabel id={"fullName"}>שם מלא</InputLabel>
-            <Input
-              defaultValue={selectedRow.fullName || ""}
-              onChange={(e) => handleInputChange("fullName", e.target.value)}
-            />
-            <RtlPlugin>
-              <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                style={{ marginTop: "20px" }}
-                options={halals}
-                getOptionLabel={(option) =>
-                  `${option.privateNumber}: ${option.firstName} ${option.lastName}`
-                }
-                isOptionEqualToValue={(option, value) => option.id === value.id} // Customize the equality test
-                value={selectedHalal} // Set the value prop instead of defaultValue
-                onChange={(event, newValue) => {
-                  setSelectedHalal(newValue); // Update the selectedHalal state
-                  handleInputChange(
-                    "nifgaimHalalId",
-                    newValue ? newValue.id : ""
-                  );
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} label="שייך חלל" />
-                )}
+          <form>
+            <div
+              key="מספר אישי"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              <InputLabel id="fullName">שם מלא</InputLabel>
+              <Input
+                defaultValue={selectedRow.fullName || ""}
+                {...register("fullName", {
+                  required: {
+                    value: true,
+                    message: "שם מלא שדה חובה",
+                  },
+                  pattern: {
+                    value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                    message: ` שם יכול לכלול רק אותיות `,
+                  },
+                })}
+                onChange={(e) => handleInputChange("fullName", e.target.value)}
               />
-            </RtlPlugin>
-            <InputLabel id={"privateNumber"} style={{ marginTop: "20px" }}>
-              מספר אישי
-            </InputLabel>
-            <Input
-              defaultValue={selectedRow.privateNumber || ""}
-              onChange={(e) =>
-                handleInputChange("privateNumber", e.target.value)
-              }
-            />
-            <InputLabel id={"rank"} style={{ marginTop: "20px" }}>
-              דרגה
-            </InputLabel>
-            <RtlPlugin>
-              <Select
-                value={rank}
-                onChange={(e) => handleInputChange("rank", e.target.value)}
-                style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
-              >
-                <MenuItem disabled>
-                  <ListSubheader sx={{ textAlign: "right" }}>
+              {errors["fullName"] && (
+                <p style={{ color: "red" }}>{errors["fullName"].message}</p>
+              )}
+              <RtlPlugin>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  style={{ marginTop: "20px" }}
+                  options={halals}
+                  getOptionLabel={(option) =>
+                    `${option.privateNumber}: ${option.firstName} ${option.lastName}`
+                  }
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  } // Customize the equality test
+                  value={selectedHalal} // Set the value prop instead of defaultValue
+                  {...register("nifgaimHalalId", {
+                    validate: () => {
+                      if (!selectedHalal) {
+                        return "חובה לשייך שאר לחלל מהרשימה";
+                      } else {
+                        return true;
+                      }
+                    },
+                  })}
+                  onChange={(event, newValue) => {
+                    setSelectedHalal(newValue); // Update the selectedHalal state
+                    handleInputChange(
+                      "nifgaimHalalId",
+                      newValue ? newValue.id : ""
+                    );
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="שייך חלל" />
+                  )}
+                />
+                {errors["nifgaimHalalId"] && (
+                  <p style={{ color: "red" }}>
+                    {errors["nifgaimHalalId"].message}
+                  </p>
+                )}
+              </RtlPlugin>
+              <InputLabel id="privateNumber" style={{ marginTop: "20px" }}>
+                מספר אישי
+              </InputLabel>
+              <Input
+                defaultValue={selectedRow.privateNumber || ""}
+                {...register("privateNumber", {
+                  required: {
+                    value: true,
+                    message: "מספר אישי שדה חובה",
+                  },
+                  pattern: {
+                    value: /^\d{7}$/,
+                    message: ` הכנס מספר אישי בעל 7 ספרות `,
+                  },
+                })}
+                onChange={(e) =>
+                  handleInputChange("privateNumber", e.target.value)
+                }
+              />
+              {errors["privateNumber"] && (
+                <p style={{ color: "red" }}>
+                  {errors["privateNumber"].message}
+                </p>
+              )}
+              <InputLabel id={"rank"} style={{ marginTop: "20px" }}>
+                דרגה
+              </InputLabel>
+              <RtlPlugin>
+                <Select
+                  value={rank}
+                  {...register("rank", {
+                    validate: (value) => {
+                      console.log(value);
+                      if (!value && !rank) {
+                        return "חובה לבחור דרגה";
+                      } else {
+                        return true;
+                      }
+                    },
+                  })}
+                  onChange={(e) => handleInputChange("rank", e.target.value)}
+                  style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
+                >
+                  <ListSubheader
+                    style={{
+                      textAlign: "right",
+                      fontSize: "large",
+                      fontWeight: "bold",
+                    }}
+                  >
                     חובה
                   </ListSubheader>
-                </MenuItem>
-                {ranksOptions.slice(0, 5).map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <div style={{ textAlign: "right" }}>{option}</div>
-                  </MenuItem>
-                ))}
-                <MenuItem disabled>
-                  <ListSubheader>נגדים</ListSubheader>
-                </MenuItem>
-                {ranksOptions.slice(5, 11).map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <div style={{ textAlign: "right" }}>{option}</div>
-                  </MenuItem>
-                ))}
-                <MenuItem disabled>
-                  <ListSubheader>קצינים</ListSubheader>
-                </MenuItem>
-                {ranksOptions.slice(11).map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <div style={{ textAlign: "right" }}>{option}</div>
-                  </MenuItem>
-                ))}
-              </Select>
-            </RtlPlugin>
-            <InputLabel id={"phone"} style={{ marginTop: "20px" }}>
-              מספר טלפון
-            </InputLabel>
-            <MuiTelInput
-              value={phone}
-              excludecountries={["pa"]}
-              onChange={(value) => handleInputChange("phone", value)}
-            />
-            <InputLabel id={"unit"} style={{ marginTop: "20px" }}>
-              יחידה
-            </InputLabel>
-            <Input
-              defaultValue={selectedRow.unit || ""}
-              onChange={(e) => handleInputChange("unit", e.target.value)}
-            />
-            <InputLabel id={"comments"} style={{ marginTop: "20px" }}>
-              הערות
-            </InputLabel>
-            <Input
-              defaultValue={selectedRow.comments || ""}
-              onChange={(e) => handleInputChange("comments", e.target.value)}
-            />
-          </div>
+                  {renderImageOptions(0, 5)}
+                  <ListSubheader
+                    style={{
+                      textAlign: "right",
+                      fontSize: "large",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    אקדמאיים
+                  </ListSubheader>
+                  {renderImageOptions(5, 8)}
+                  <ListSubheader
+                    style={{
+                      textAlign: "right",
+                      fontSize: "large",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    נגדים
+                  </ListSubheader>
+                  {renderImageOptions(8, 13)}
+                  <ListSubheader
+                    style={{
+                      textAlign: "right",
+                      fontSize: "large",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    קצינים
+                  </ListSubheader>
+                  {renderImageOptions(13, imageImports.length)}
+                </Select>
+                {errors["rank"] && (
+                  <p style={{ color: "red" }}>{errors["rank"].message}</p>
+                )}
+              </RtlPlugin>
+              <InputLabel id="phone" style={{ marginTop: "20px" }}>
+                מספר טלפון
+              </InputLabel>
+              <MuiTelInput
+                value={phone}
+                {...register("phone", {
+                  validate: (value) => {
+                    // const pattern = /^\+972 \d{2} \d{3} \d{4}$/;
+                    if (value.length <= 4) {
+                      return "מספר טלפון שדה חובה";
+                    }
+                    // if (!pattern.test(value)) {
+                    //   return "מספר טלפון לא תקין";
+                    // }
+                    else {
+                      return true;
+                    }
+                  },
+                })}
+                excludecountries={["pa"]} // Use lowercase prop name
+                onChange={(value) => handleInputChange("phone", value)}
+              />
+              {errors["phone"] && (
+                <p style={{ color: "red" }}>{errors["phone"].message}</p>
+              )}
+              <InputLabel id="unit" style={{ marginTop: "20px" }}>
+                יחידה
+              </InputLabel>
+              <Input
+                defaultValue={selectedRow.unit || ""}
+                {...register("unit", {
+                  required: {
+                    value: true,
+                    message: "יחידה שדה חובה",
+                  },
+                })}
+                onChange={(e) => handleInputChange("unit", e.target.value)}
+              />
+              {errors["unit"] && (
+                <p style={{ color: "red" }}>{errors["unit"].message}</p>
+              )}
+              <InputLabel id={"comments"} style={{ marginTop: "20px" }}>
+                הערות
+              </InputLabel>
+              <Input
+                defaultValue={selectedRow.comments || ""}
+                onChange={(e) => handleInputChange("comments", e.target.value)}
+              />
+            </div>
+          </form>
         </DialogContent>
         <Divider />
         <DialogActions>
@@ -439,7 +669,7 @@ const EditSoldierAccompaniedDialog = ({
               <Button
                 variant="contained"
                 style={{ marginLeft: "10px" }}
-                onClick={handleSubmit}
+                onClick={handleSubmit(handleSubmitForm)}
               >
                 שמור שינויים
               </Button>

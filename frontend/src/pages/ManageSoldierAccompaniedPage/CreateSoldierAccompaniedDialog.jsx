@@ -17,7 +17,7 @@ import {
   ListSubheader,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
-import { getHalalByPrivateNumber, getHalals } from "../../utils/api/halalsApi";
+import { getHalalByPrivateNumber } from "../../utils/api/halalsApi";
 import { MuiTelInput } from "mui-tel-input";
 import Swal from "sweetalert2";
 import { createSoldierAccompanied } from "../../utils/api/soldierAccompaniedsApi";
@@ -82,6 +82,7 @@ import rserYam from "../../assets/images/ranks/רסר ים.png";
 import tateAlufYabasha from "../../assets/images/ranks/תת אלוף יבשה.png";
 import tateAlufAvir from "../../assets/images/ranks/תת אלוף אוויר.png";
 import tateAlufYam from "../../assets/images/ranks/תת אלוף ים.png";
+import { useForm } from "react-hook-form";
 
 const translationDict = {
   fullName: "שם מלא",
@@ -107,6 +108,11 @@ export default function CreateSoldierAccompaniedDialog({
   const [phone, setPhone] = useState("+972");
   const [rank, setRank] = useState("");
   const [selectedHalal, setSelectedHalal] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
   const ranksOptions = [
@@ -239,7 +245,7 @@ export default function CreateSoldierAccompaniedDialog({
     }));
   }, []);
 
-  const handleSubmit = async (event) => {
+  const handleSubmitForm = async (event) => {
     event.preventDefault();
     try {
       const newLeftOVer = await createSoldierAccompanied(
@@ -356,161 +362,208 @@ export default function CreateSoldierAccompaniedDialog({
         </CacheProvider>
         <Divider />
         <DialogContent>
-          <div
-            key="מספר אישי"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
-            <InputLabel id="fullName">שם מלא</InputLabel>
-            <Input
-              label="fullName"
-              onChange={(e) => handleInputChange("fullName", e.target.value)}
-            />
-            <RtlPlugin>
-              <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                style={{ marginTop: "20px" }}
-                options={halals} // Assuming halals is the array you mapped before
-                getOptionLabel={(option) =>
-                  `${option.privateNumber}: ${option.firstName} ${option.lastName}`
-                }
-                value={selectedHalal}
-                onChange={(event, newValue) => {
-                  setSelectedHalal(newValue); // Update the selectedHalal state
-                  handleInputChange(
-                    "nifgaimHalalId",
-                    newValue ? newValue.id : ""
-                  );
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} label="שייך חלל" />
-                )}
+          <form>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              <InputLabel id="fullName">שם מלא</InputLabel>
+              <Input
+                label="fullName"
+                {...register("fullName", {
+                  required: {
+                    value: true,
+                    message: "שם מלא שדה חובה",
+                  },
+                  pattern: {
+                    value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                    message: ` שם יכול לכלול רק אותיות `,
+                  },
+                })}
+                onChange={(e) => handleInputChange("fullName", e.target.value)}
               />
-            </RtlPlugin>
-            <InputLabel id={"privateNumber"} style={{ marginTop: "20px" }}>
-              מספר אישי
-            </InputLabel>
-            <Input
-              onChange={(e) =>
-                handleInputChange("privateNumber", e.target.value)
-              }
-            />
-            <InputLabel id={"rank"} style={{ marginTop: "20px" }}>
-              דרגה
-            </InputLabel>
-            <RtlPlugin>
-              <Select
-                value={rank}
-                onChange={(e) => handleInputChange("rank", e.target.value)}
-                style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
-              >
-                <ListSubheader
-                  style={{
-                    textAlign: "right",
-                    fontSize: "large",
-                    fontWeight: "bold",
+              {errors["fullName"] && (
+                <p style={{ color: "red" }}>{errors["fullName"].message}</p>
+              )}
+              <RtlPlugin>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  style={{ marginTop: "20px" }}
+                  options={halals} // Assuming halals is the array you mapped before
+                  getOptionLabel={(option) =>
+                    `${option.privateNumber}: ${option.firstName} ${option.lastName}`
+                  }
+                  value={selectedHalal}
+                  {...register("nifgaimHalalId", {
+                    validate: () => {
+                      if (!selectedHalal) {
+                        return "חובה לשייך שאר לחלל מהרשימה";
+                      } else {
+                        return true;
+                      }
+                    },
+                  })}
+                  onChange={(event, newValue) => {
+                    setSelectedHalal(newValue); // Update the selectedHalal state
+                    handleInputChange(
+                      "nifgaimHalalId",
+                      newValue ? newValue.id : ""
+                    );
                   }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="שייך חלל" />
+                  )}
+                />
+                {errors["nifgaimHalalId"] && (
+                  <p style={{ color: "red" }}>
+                    {errors["nifgaimHalalId"].message}
+                  </p>
+                )}
+              </RtlPlugin>
+              <InputLabel id="privateNumber" style={{ marginTop: "20px" }}>
+                מספר אישי
+              </InputLabel>
+              <Input
+                {...register("privateNumber", {
+                  required: {
+                    value: true,
+                    message: "מספר אישי שדה חובה",
+                  },
+                  pattern: {
+                    value: /^\d{7}$/,
+                    message: ` הכנס מספר אישי בעל 7 ספרות `,
+                  },
+                })}
+                onChange={(e) =>
+                  handleInputChange("privateNumber", e.target.value)
+                }
+              />
+              {errors["privateNumber"] && (
+                <p style={{ color: "red" }}>
+                  {errors["privateNumber"].message}
+                </p>
+              )}
+              <InputLabel id="rank" style={{ marginTop: "20px" }}>
+                דרגה
+              </InputLabel>
+              <RtlPlugin>
+                <Select
+                  value={rank}
+                  {...register("rank", {
+                    validate: (value) => {
+                      if (!value) {
+                        return "חובה לבחור דרגה";
+                      } else {
+                        return true;
+                      }
+                    },
+                  })}
+                  onChange={(e) => handleInputChange("rank", e.target.value)}
+                  style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
                 >
-                  חובה
-                </ListSubheader>
-                {renderImageOptions(0, 5)}
-                <ListSubheader
-                  style={{
-                    textAlign: "right",
-                    fontSize: "large",
-                    fontWeight: "bold",
-                  }}
-                >
-                  אקדמאיים
-                </ListSubheader>
-                {renderImageOptions(5, 8)}
-                <ListSubheader
-                  style={{
-                    textAlign: "right",
-                    fontSize: "large",
-                    fontWeight: "bold",
-                  }}
-                >
-                  נגדים
-                </ListSubheader>
-                {renderImageOptions(8, 13)}
-                <ListSubheader
-                  style={{
-                    textAlign: "right",
-                    fontSize: "large",
-                    fontWeight: "bold",
-                  }}
-                >
-                  קצינים
-                </ListSubheader>
-                {renderImageOptions(13, imageImports.length)}
-              </Select>
-              {/* <Select
-                value={rank}
-                onChange={(e) => handleInputChange("rank", e.target.value)}
-                style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
-              >
-                <ListSubheader sx={{ textAlign: "right" }}>חובה</ListSubheader>
-                {ranksOptions.slice(0, 5).map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <div style={{ textAlign: "right" }}>{option}</div>
-                  </MenuItem>
-                ))}
-                <ListSubheader>אקדמאיים</ListSubheader>
-                {ranksOptions.slice(5, 8).map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <div style={{ textAlign: "right" }}>{option}</div>
-                  </MenuItem>
-                ))}
-                <ListSubheader>נגדים</ListSubheader>
-                {ranksOptions.slice(8, 13).map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <div style={{ textAlign: "right" }}>{option}</div>
-                  </MenuItem>
-                ))}
-                <ListSubheader>קצינים</ListSubheader>
-                {ranksOptions.slice(13).map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <div style={{ textAlign: "right" }}>{option}</div>
-                  </MenuItem>
-                ))}
-              </Select> */}
-            </RtlPlugin>
-            {/* <Input
-              onChange={(e) => handleInputChange("rank", e.target.value)}
-            /> */}
-            <InputLabel id={"phone"} style={{ marginTop: "20px" }}>
-              מספר טלפון
-            </InputLabel>
-            <MuiTelInput
-              defaultCountry={"il"}
-              value={phone}
-              excludecountries={["pa"]} // Use lowercase prop name
-              onChange={(value) => handleInputChange("phone", value)}
-            />
-
-            <InputLabel id={"unit"} style={{ marginTop: "20px" }}>
-              יחידה
-            </InputLabel>
-            <Input
-              onChange={(e) => handleInputChange("unit", e.target.value)}
-            />
-            <InputLabel id={"comments"} style={{ marginTop: "20px" }}>
-              הערות
-            </InputLabel>
-            <Input
-              onChange={(e) => handleInputChange("comments", e.target.value)}
-            />
-          </div>
+                  <ListSubheader
+                    style={{
+                      textAlign: "right",
+                      fontSize: "large",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    חובה
+                  </ListSubheader>
+                  {renderImageOptions(0, 5)}
+                  <ListSubheader
+                    style={{
+                      textAlign: "right",
+                      fontSize: "large",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    אקדמאיים
+                  </ListSubheader>
+                  {renderImageOptions(5, 8)}
+                  <ListSubheader
+                    style={{
+                      textAlign: "right",
+                      fontSize: "large",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    נגדים
+                  </ListSubheader>
+                  {renderImageOptions(8, 13)}
+                  <ListSubheader
+                    style={{
+                      textAlign: "right",
+                      fontSize: "large",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    קצינים
+                  </ListSubheader>
+                  {renderImageOptions(13, imageImports.length)}
+                </Select>
+                {errors["rank"] && (
+                  <p style={{ color: "red" }}>{errors["rank"].message}</p>
+                )}
+              </RtlPlugin>
+              <InputLabel id="phone" style={{ marginTop: "20px" }}>
+                מספר טלפון
+              </InputLabel>
+              <MuiTelInput
+                defaultCountry={"il"}
+                value={phone}
+                {...register("phone", {
+                  validate: (value) => {
+                    // const pattern = /^\+972 \d{2} \d{3} \d{4}$/;
+                    if (value.length <= 4) {
+                      return "מספר טלפון שדה חובה";
+                    }
+                    // if (!pattern.test(value)) {
+                    //   return "מספר טלפון לא תקין";
+                    // }
+                    else {
+                      return true;
+                    }
+                  },
+                })}
+                excludecountries={["pa"]} // Use lowercase prop name
+                onChange={(value) => handleInputChange("phone", value)}
+              />
+              {errors["phone"] && (
+                <p style={{ color: "red" }}>{errors["phone"].message}</p>
+              )}
+              <InputLabel id="unit" style={{ marginTop: "20px" }}>
+                יחידה
+              </InputLabel>
+              <Input
+                {...register("unit", {
+                  required: {
+                    value: true,
+                    message: "יחידה שדה חובה",
+                  },
+                })}
+                onChange={(e) => handleInputChange("unit", e.target.value)}
+              />
+              {errors["unit"] && (
+                <p style={{ color: "red" }}>{errors["unit"].message}</p>
+              )}
+              <InputLabel id="comments" style={{ marginTop: "20px" }}>
+                הערות
+              </InputLabel>
+              <Input
+                onChange={(e) => handleInputChange("comments", e.target.value)}
+              />
+            </div>
+          </form>
         </DialogContent>
         <Divider />
         <DialogActions>
           <Button onClick={handleCloseDialog}>ביטול</Button>
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained" onClick={handleSubmit(handleSubmitForm)}>
             צור מלווה
           </Button>
         </DialogActions>
