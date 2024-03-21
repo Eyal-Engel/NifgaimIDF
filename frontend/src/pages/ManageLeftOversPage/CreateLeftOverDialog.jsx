@@ -56,7 +56,7 @@ export default function CreateLeftOverDialog({
 }) {
   const [inputValues, setInputValues] = useState({});
   const [phone, setPhone] = useState("+972");
-  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedProximityValue, setSelectedProximityValue] = useState("");
   const [selectedHalal, setSelectedHalal] = useState(null);
   const {
     register,
@@ -101,7 +101,7 @@ export default function CreateLeftOverDialog({
     if (column === "phone") {
       setPhone(value);
     } else if (column === "proximity") {
-      setSelectedValue(value);
+      setSelectedProximityValue(value);
     }
     setInputValues((prevValues) => ({
       ...prevValues,
@@ -183,7 +183,6 @@ export default function CreateLeftOverDialog({
     fetchHalalsData();
   }, [inputValues.halalId]);
 
-  console.log("fuck");
   return (
     <div>
       <Dialog
@@ -299,11 +298,20 @@ export default function CreateLeftOverDialog({
                     labelId="proximity-select-label"
                     id="proximity-select"
                     fullWidth
-                    value={selectedValue}
+                    value={selectedProximityValue}
                     style={{
                       direction: "rtl",
                     }}
                     label="קרבה משפחתית"
+                    {...register("proximity", {
+                      validate: () => {
+                        if (!selectedProximityValue) {
+                          return "חובה לבחור קרבה משפחתית";
+                        } else {
+                          return true;
+                        }
+                      },
+                    })}
                     onChange={(e) =>
                       handleInputChange("proximity", e.target.value)
                     }
@@ -320,20 +328,45 @@ export default function CreateLeftOverDialog({
                       </MenuItem>
                     ))}
                   </Select>
+                  {errors["proximity"] && (
+                    <p style={{ color: "red" }}>
+                      {errors["proximity"].message}
+                    </p>
+                  )}
                 </FormControl>
               </RtlPlugin>
-              <InputLabel id={"city"} style={{ marginTop: "20px" }}>
+              <InputLabel id="city" style={{ marginTop: "20px" }}>
                 עיר
               </InputLabel>
               <Input
+                id="city"
+                {...register("city", {
+                  required: {
+                    value: true,
+                    message: "עיר שדה חובה",
+                  },
+                })}
                 onChange={(e) => handleInputChange("city", e.target.value)}
               />
+              {errors["city"] && (
+                <p style={{ color: "red" }}>{errors["city"].message}</p>
+              )}
               <InputLabel id={"address"} style={{ marginTop: "20px" }}>
                 כתובת
               </InputLabel>
               <Input
+                id="address"
+                {...register("address", {
+                  required: {
+                    value: true,
+                    message: "כתובת שדה חובה",
+                  },
+                })}
                 onChange={(e) => handleInputChange("address", e.target.value)}
               />
+              {errors["address"] && (
+                <p style={{ color: "red" }}>{errors["address"].message}</p>
+              )}
               <InputLabel id={"phone"} style={{ marginTop: "20px" }}>
                 מספר טלפון
               </InputLabel>
@@ -341,16 +374,41 @@ export default function CreateLeftOverDialog({
                 defaultCountry={"il"}
                 value={phone}
                 excludecountries={["pa"]} // Use lowercase prop name
+                {...register("phone", {
+                  validate: (value) => {
+                    console.log(value);
+                    const pattern = /^\+972 \d{2} \d{3} \d{4}$/;
+                    if (value === "+972") {
+                      return "מספר טלפון שדה חובה";
+                    }
+                    if (!pattern.test(value)) {
+                      return "מספר טלפון לא תקין";
+                    } else {
+                      return true;
+                    }
+                  },
+                })}
                 onChange={(value) => handleInputChange("phone", value)}
               />
-
-              <InputLabel id={"isReligious"} style={{ marginTop: "20px" }}>
-                דת
+              {errors["phone"] && (
+                <p style={{ color: "red" }}>{errors["phone"].message}</p>
+              )}
+              <InputLabel id="isReligious" style={{ marginTop: "20px" }}>
+                דתי
               </InputLabel>
               <RadioGroup
                 aria-labelledby="booleanSelect"
                 name="controlled-radio-buttons-group"
                 row
+                {...register("isReligious", {
+                  validate: () => {
+                    if (!inputValues.isReligious) {
+                      return "חובה לבחור";
+                    } else {
+                      return true;
+                    }
+                  },
+                })}
                 onChange={(e) =>
                   handleInputChange("isReligious", e.target.value)
                 }
@@ -367,6 +425,9 @@ export default function CreateLeftOverDialog({
                   label="לא"
                 />
               </RadioGroup>
+              {errors["isReligious"] && (
+                <p style={{ color: "red" }}>{errors["isReligious"].message}</p>
+              )}
               <InputLabel id={"comments"} style={{ marginTop: "20px" }}>
                 הערות
               </InputLabel>
