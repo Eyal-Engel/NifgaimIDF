@@ -389,8 +389,8 @@ export async function updateHalalSelectColumn(
     userId,
     columnName,
     newColumnName,
-    newEnumValues,
-    column_default,
+    // newEnumValues,
+    // column_default,
   });
 
   try {

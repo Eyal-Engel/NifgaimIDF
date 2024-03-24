@@ -635,7 +635,7 @@ export default function EditHalalDIalog({
                               ...(key === "lastName" || key === "firstName"
                                 ? {
                                     pattern: {
-                                      value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                                      value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
                                       message: ` שם יכול לכלול רק אותיות `,
                                     },
                                   }

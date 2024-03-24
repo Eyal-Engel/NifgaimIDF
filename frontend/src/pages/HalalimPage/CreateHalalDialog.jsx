@@ -528,7 +528,7 @@ export default function CreateHalalDialog({
                         <Input
                           {...register(column.column_name, {
                             required: {
-                              value: true,
+                              // value: true,
                               message: `${
                                 translationDict[column.column_name] ||
                                 column.column_name
@@ -546,7 +546,7 @@ export default function CreateHalalDialog({
                             column.column_name === "firstName"
                               ? {
                                   pattern: {
-                                    value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                                    value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
                                     message: ` שם יכול לכלול רק אותיות `,
                                   },
                                 }
