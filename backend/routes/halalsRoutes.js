@@ -49,9 +49,12 @@ router.patch(
 // columnName will be in body
 router.patch("/columns/update", halalsCotnrollers.updateHalalColumn);
 
-// columnName will be in body
-router.patch("/columns/replaceValue", halalsCotnrollers.replaceColumnValue);
-
 router.delete("/columns/delete", halalsCotnrollers.deleteHalalColumn);
+
+// columnName will be in body
+router.patch("/columns/replaceColumnValue", halalsCotnrollers.replaceColumnValue);
+
+// New route to reset all values in a specified column to their default values
+router.patch("/columns/resetValue", halalsCotnrollers.resetColumnToDefault);
 
 module.exports = router;

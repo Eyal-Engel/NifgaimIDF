@@ -515,54 +515,6 @@ const updateHalalSelectColumn = async (req, res, next) => {
   }
 };
 
-const replaceColumnValue = async (req, res, next) => {
-  try {
-    const { prevValue, newValue, columnName } = req.body;
-
-    // Check if the column name, previous value, and new value are provided
-    if (!columnName || !prevValue || !newValue) {
-      return res.status(400).json({
-        errors: [
-          {
-            message: "Column name, previous value, and new value are required.",
-          },
-        ],
-      });
-    }
-
-    // Get the queryInterface from your Sequelize instance
-    const queryInterface = sequelize.getQueryInterface();
-
-    // Check if the table exists
-    const tableExists = await queryInterface.showAllTables();
-    if (!tableExists.includes("yourTableName")) {
-      return res.status(400).json({ message: "Table does not exist." });
-    }
-
-    // Fetch all rows where the specified column has the previous value
-    const rowsToUpdate = await YourModel.findAll({
-      where: {
-        [columnName]: prevValue,
-      },
-    });
-
-    // Update the rows with the new value
-    await Promise.all(
-      rowsToUpdate.map(async (row) => {
-        row[columnName] = newValue;
-        await row.save();
-      })
-    );
-
-    console.log("Rows updated successfully.");
-
-    res.status(200).json({ message: "Rows updated successfully." });
-  } catch (error) {
-    console.error("Error updating rows:", error);
-    return next(error);
-  }
-};
-
 const deleteHalalColumn = async (req, res, next) => {
   try {
     const { userId, columnName } = req.body;
@@ -936,6 +888,123 @@ const deleteHalal = async (req, res, next) => {
   }
 };
 
+// body example:
+// {
+//   "userId": ...
+//   "columnName": "בדיקת טקסט",
+// }
+const resetColumnToDefault = async (req, res, next) => {
+  try {
+    const { userId, columnName } = req.body;
+
+    const user = await User.findByPk(userId);
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
+
+    if (!user || user === null || user === undefined) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (editPerm === false && managePerm === false) {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
+    // Check if the column name is provided
+    if (!columnName) {
+      return res.status(400).json({ message: "Column name is required." });
+    }
+
+    // Fetch the default value for the specified column
+    const columnInfo = await sequelize.query(
+      `SELECT column_default 
+       FROM information_schema.columns 
+       WHERE table_name = 'nifgaimHalals' 
+       AND column_name = :columnName;`,
+      {
+        replacements: { columnName },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    // Check if the column exists and has a default value
+    if (columnInfo.length === 0 || !columnInfo[0].column_default) {
+      return res.status(400).json({
+        message: `Column '${columnName}' does not exist or does not have a default value.`,
+      });
+    }
+
+    const defaultValue = columnInfo[0].column_default;
+
+    // Update all rows in the table to set the specified column to its default value
+    await sequelize.query(
+      `UPDATE "nifgaimHalals" 
+       SET "${columnName}" = ${defaultValue};`
+    );
+
+    res.status(200).json({
+      message: `All values in column '${columnName}' reset to default value '${defaultValue}'.`,
+    });
+  } catch (err) {
+    console.log(err);
+    return next(err);
+  }
+};
+
+// body example:
+// {
+//   "userId": ...
+//   "columnName": "בדיקת טקסט",
+//   "newValue": "אצטתית"
+// }
+const replaceColumnValue = async (req, res, next) => {
+  try {
+    const { userId, columnName, newValue } = req.body;
+
+    const user = await User.findByPk(userId);
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
+
+    if (!user || user === null || user === undefined) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
+
+    if (editPerm === false && managePerm === false) {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
+
+    // Check if the column name and new value are provided
+    if (!columnName || newValue === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Column name and new value are required." });
+    }
+
+    // Update all rows in the table to set the specified column to the new value
+    await sequelize.query(
+      `UPDATE "nifgaimHalals" 
+       SET "${columnName}" = :newValue;`,
+      {
+        replacements: { newValue },
+      }
+    );
+
+    res.status(200).json({
+      message: `All values in column '${columnName}' replaced with new value '${newValue}'.`,
+    });
+  } catch (error) {
+    console.error("Error replacing column value:", error);
+    return next(error);
+  }
+};
+
 module.exports = {
   getHalals,
   getOriginalColumns,
@@ -952,6 +1021,7 @@ module.exports = {
   addHalalColumn,
   updateHalalColumn,
   updateHalalSelectColumn,
-  replaceColumnValue,
   deleteHalalColumn,
+  resetColumnToDefault,
+  replaceColumnValue,
 };

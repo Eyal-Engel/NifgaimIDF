@@ -432,3 +432,61 @@ export async function deleteHalalColumn(userId, columnName) {
     throw error;
   }
 }
+
+export async function resetColumnToDefault(userId, columnName) {
+  const apiUrl = `http://localhost:${port}/api/halals/columns/resetColumnToDefault`;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "PATCH",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  const body = JSON.stringify({ userId, columnName });
+
+  console.log(body);
+
+  try {
+    const response = await patch(apiUrl, body, headers);
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error resetColumnToDefault columnName with column default:`,
+      error
+    );
+    throw error;
+  }
+}
+
+export async function replaceColumnValue(userId, columnName, newValue) {
+  const apiUrl = `http://localhost:${port}/api/halals/columns/replaceColumnValue`;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "PATCH",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  const body = JSON.stringify({ userId, columnName, newValue });
+
+  console.log(body);
+
+  try {
+    const response = await patch(apiUrl, body, headers);
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error replaceColumnValue ${columnName} with value ${newValue}:`,
+      error
+    );
+    throw error;
+  }
+}
