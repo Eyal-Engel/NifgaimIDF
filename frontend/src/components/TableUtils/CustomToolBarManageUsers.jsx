@@ -463,7 +463,7 @@ export default function CustomToolBarManageUsers({
                   }}
                 >
                   <div>
-                    <label style={{ fontSize: "1.5em" }}>עריכת הרשאות</label>{" "}
+                    <label style={{ fontSize: "1.5em" }}>הרשאות עריכה</label>{" "}
                     {/* Increase font size */}
                     <input
                       type="checkbox"
@@ -473,7 +473,7 @@ export default function CustomToolBarManageUsers({
                     />
                   </div>
                   <div>
-                    <label style={{ fontSize: "1.5em" }}>מנהל הרשאות</label>{" "}
+                    <label style={{ fontSize: "1.5em" }}>הרשאות מנהל</label>{" "}
                     {/* Increase font size */}
                     <input
                       type="checkbox"
