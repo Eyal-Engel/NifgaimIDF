@@ -49,6 +49,10 @@ const ReusableCreateItemDialog = React.memo(
     const [enumValues, setEnumValues] = useState(["", ""]);
     const [defaultValue, setDefaultValue] = useState(null);
     const [enumDefaultValue, setEnumDefaultValue] = useState(enumValues[0]);
+    const [errorMessage, setErrorMessage] = useState({
+      show: false,
+      message: "חובה להכניס שם",
+    });
 
     const handleEnumValueChange = (index, event) => {
       const newEnumValues = [...enumValues];
@@ -135,12 +139,21 @@ const ReusableCreateItemDialog = React.memo(
             });
           }
         } else {
-          console.log(defaultValue);
-          onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+          if (newColumnName === "") {
+            setErrorMessage({ ...errorMessage, show: true });
+          } else {
+            onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+            setErrorMessage({ ...errorMessage, show: false });
+          }
         }
         // }
       } else {
-        onCreateClicked(newColumnName);
+        if (newColumnName === "") {
+          setErrorMessage({ ...errorMessage, show: true });
+        } else {
+          onCreateClicked(newColumnName);
+          setErrorMessage({ ...errorMessage, show: false });
+        }
       }
     };
 
@@ -377,7 +390,9 @@ const ReusableCreateItemDialog = React.memo(
             </div>
           </>
         )}
-
+        {errorMessage.show && (
+          <p style={{ color: "red", margin: "auto", marginTop: "10px" }}>{errorMessage.message}</p>
+        )}
         <Button
           sx={{ margin: "10px", fontSize: "1.2rem" }}
           onClick={handleCreateClicked}
