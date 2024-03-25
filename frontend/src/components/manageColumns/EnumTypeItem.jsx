@@ -141,7 +141,7 @@ const EnumTypeItem = ({
             ></Select>
           </FormControl>
 
-          <EditSelectDialog
+          {/* <EditSelectDialog
             columnType={columnType}
             columnName={editedItemName}
             defaultValueFromColumn={editedDefaultValue}
@@ -149,7 +149,7 @@ const EnumTypeItem = ({
             open={open}
             onClose={onClose}
             onSaveClicked={onSaveClicked}
-          />
+          /> */}
         </ThemeProvider>
       </CacheProvider>
     </>

@@ -75,11 +75,11 @@ const ReuseableItem = ({
   };
 
   const handleEditClick = () => {
-    if (columnType === "ENUM") {
-      setOpenDialog(true);
-    } else {
-      setIsInEditMode(true);
-    }
+    // if (columnType === "ENUM") {
+    //   setOpenDialog(true);
+    // } else {
+    setIsInEditMode(true);
+    // }
   };
 
   const handleSaveClick = () => {
@@ -342,7 +342,7 @@ const ReuseableItem = ({
             </Button>
           ))}
       </CardActions>
-      {columnType === "ENUM" && (
+      {/* {columnType === "ENUM" && (
         <EditSelectDialog
           columnType={columnType}
           columnName={editedItemName}
@@ -352,7 +352,7 @@ const ReuseableItem = ({
           onClose={handleCloseDialog}
           onSaveClicked={handelSelectColumnSaved} // changed from handelAddCommand
         />
-      )}
+      )} */}
     </Card>
   );
 };

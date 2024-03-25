@@ -344,23 +344,32 @@ const ReusableCreateItemDialog = React.memo(
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
+                  position: "relative",
                 }}
               >
-                {index > 1 && (
-                  <IconButton onClick={() => deleteEnumValueField(index)}>
-                    <DeleteIcon color="error" />
-                  </IconButton>
-                )}
                 <TextField
                   sx={{
                     width: "80%",
-                    marginTop: "15px",
+                    margin: "auto",
                     direction: "rtl",
+                    marginTop: "15px",
                   }}
                   onChange={(event) => handleEnumValueChange(index, event)}
                   value={value}
                   placeholder={`ערך ${index + 1}`}
                 />
+                {index > 1 && (
+                  <IconButton
+                    onClick={() => deleteEnumValueField(index)}
+                    style={{
+                      position: "absolute",
+                      left: "18px",
+                      bottom: "10px",
+                    }}
+                  >
+                    <DeleteIcon color="error" />
+                  </IconButton>
+                )}
               </div>
             ))}
             <div style={{ display: "flex", flexDirection: "column" }}>

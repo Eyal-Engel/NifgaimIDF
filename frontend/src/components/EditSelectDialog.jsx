@@ -90,7 +90,7 @@ export default function EditSelectDialog({
         onChange={handleNewNameChange}
         placeholder="שם העמודה החדשה"
       ></TextField>
-      <CacheProvider value={cacheRtl}>
+      {/* <CacheProvider value={cacheRtl}>
         <ThemeProvider theme={theme}>
           <FormControl
             className="selectTypeOfColumn"
@@ -174,7 +174,7 @@ export default function EditSelectDialog({
             </MenuItem>
           ))}
         </Select>
-      </div>
+      </div> */}
 
       <Button
         sx={{ margin: "10px", fontSize: "1.2rem" }}

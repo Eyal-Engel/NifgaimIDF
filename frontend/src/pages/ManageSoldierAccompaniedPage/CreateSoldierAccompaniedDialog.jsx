@@ -245,8 +245,7 @@ export default function CreateSoldierAccompaniedDialog({
     }));
   }, []);
 
-  const handleSubmitForm = async (event) => {
-    event.preventDefault();
+  const handleSubmitForm = async () => {
     try {
       const newLeftOVer = await createSoldierAccompanied(
         loggedUserId,
@@ -379,7 +378,7 @@ export default function CreateSoldierAccompaniedDialog({
                     message: "שם מלא שדה חובה",
                   },
                   pattern: {
-                    value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                    value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
                     message: ` שם יכול לכלול רק אותיות `,
                   },
                 })}

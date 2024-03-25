@@ -94,6 +94,32 @@ export default function EditHalalDIalog({
   useEffect(() => {
     console.log(errors);
   }, [errors]);
+
+  useEffect(() => {
+    const fetchHalalsData = async () => {
+      try {
+        setInputValues(selectedRow);
+
+        const halalId = selectedRow.id;
+        console.log(halalId);
+        const soldierAccompaniedsData = await getSoldierAccompaniedsByHalalId(
+          halalId
+        );
+        const LeftOversData = await getLeftOversByHalalId(halalId);
+
+        console.log(soldierAccompaniedsData);
+        console.log(LeftOversData);
+
+        setSoldierAccompanieds(soldierAccompaniedsData);
+        setLeftOvers(LeftOversData);
+      } catch (error) {
+        console.error("Error fetching halals:", error);
+      }
+    };
+
+    fetchHalalsData();
+  }, [selectedRow.id]);
+
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
 
@@ -635,7 +661,7 @@ export default function EditHalalDIalog({
                               ...(key === "lastName" || key === "firstName"
                                 ? {
                                     pattern: {
-                                      value: /^[a-zA-Z\u05D0-\u05EA]+$/,
+                                      value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
                                       message: ` שם יכול לכלול רק אותיות `,
                                     },
                                   }
