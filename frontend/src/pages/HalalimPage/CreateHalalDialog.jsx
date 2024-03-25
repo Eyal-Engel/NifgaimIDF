@@ -36,6 +36,7 @@ import Transition from "../../components/TableUtils/Transition";
 import PaperComponent from "../../components/TableUtils/PaperComponent";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
+import dayjs from "dayjs";
 
 const MemoizedSelect = React.memo(Select);
 
@@ -79,11 +80,33 @@ export default function CreateHalalDialog({
   const [inputValues, setInputValues] = useState({});
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  console.log(allDataOfHalalsColumns);
+
+  useEffect(() => {
+    const defaultValues = {};
+    allDataOfHalalsColumns.forEach((column) => {
+      if (column.column_default !== null) {
+        // Remove the default value quotes
+        let defaultValue = column.column_default.replace(/^'(.*)'::.*$/, "$1");
+        // Parse the default value based on data type
+        if (column.data_type === "boolean") {
+          defaultValue = defaultValue === "true";
+        } else if (column.data_type === "timestamp with time zone") {
+          defaultValue = new Date(defaultValue);
+        }
+        defaultValues[column.column_name] = defaultValue;
+      }
+    });
+    console.log(defaultValues);
+    setInputValues(defaultValues);
+  }, []);
 
   useEffect(() => {
     console.log(errors);
@@ -390,6 +413,10 @@ export default function CreateHalalDialog({
                             })}
                             // label="תאריך פטירה "
                             sx={{ width: "100%" }}
+                            format="DD/MM/YYYY"
+                            defaultValue={
+                              dayjs(inputValues[column.column_name]) || ""
+                            }
                             onChange={(date) => {
                               console.log(date);
                               handleInputChange(column.column_name, date);
@@ -415,6 +442,7 @@ export default function CreateHalalDialog({
                             },
                           })}
                           type="number"
+                          value={inputValues[column.column_name] || ""}
                           onChange={(e) =>
                             handleInputChange(
                               column.column_name,
@@ -452,6 +480,11 @@ export default function CreateHalalDialog({
                               }
                             },
                           })}
+                          value={
+                            inputValues[column.column_name] !== undefined
+                              ? inputValues[column.column_name].toString()
+                              : ""
+                          }
                           onChange={(e) => {
                             handleInputChange(
                               column.column_name,
@@ -552,6 +585,7 @@ export default function CreateHalalDialog({
                                 }
                               : {}),
                           })}
+                          value={inputValues[column.column_name] || ""}
                           onChange={(e) =>
                             handleInputChange(
                               column.column_name,
