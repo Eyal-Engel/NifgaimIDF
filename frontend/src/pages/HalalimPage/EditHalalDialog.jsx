@@ -22,7 +22,6 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import {
   deleteHalal,
-  getColumnEnums,
   getLeftOversByHalalId,
   getSoldierAccompaniedsByHalalId,
   updateHalal,
@@ -118,7 +117,7 @@ export default function EditHalalDIalog({
     };
 
     fetchHalalsData();
-  }, [selectedRow.id]);
+  }, [selectedRow]);
 
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";

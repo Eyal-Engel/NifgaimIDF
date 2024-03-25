@@ -9,6 +9,9 @@ const strengthLabels = ["חלשה", "בינונית", "בינונית", "חזק�
 export const PasswordStrength = ({
   id,
   placeholder,
+  register,
+  errors,
+  userSignUpInfo,
   onChangePassword,
   onChangeConfirmPassword,
 }) => {
@@ -57,6 +60,16 @@ export const PasswordStrength = ({
         name="password"
         placeholder="סיסמא"
         className="resetPasswordInputField"
+        {...register("password", {
+          required: {
+            value: true,
+            message: "סיסמא שדה חובה",
+          },
+          pattern: {
+            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
+            message: ` סיסמא חייבת להיות באורך של 6 תווים ולכלול אותיות `,
+          },
+        })}
         onChange={(event) => handleChange(event, "password")}
         endAdornment={
           <InputAdornment position="end">
@@ -66,11 +79,31 @@ export const PasswordStrength = ({
           </InputAdornment>
         }
       />
+      {errors["password"] && (
+        <p style={{ color: "red" }}>{errors["password"].message}</p>
+      )}
       <Input
         id={id + "2"}
         type={showConfirmPassword ? "text" : "password"}
         name="confirmPassword"
         placeholder={placeholder}
+        {...register("confirmPassword", {
+          validate: (value) => {
+            console.log(value);
+            if (value === "") {
+              return "אימות סיסמא שדה חובה";
+            }
+            if (value !== userSignUpInfo.password) {
+              return "סיסמאות אינן זהות";
+            } else {
+              return true;
+            }
+          },
+        })}
+        //   pattern: {
+        //     value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
+        //     message: ` סיסמא חייבת להיות באורך של 6 תווים ולכלול אותיות `,
+        //   },
         className="resetPasswordInputField"
         onChange={(event) => handleChange(event, "confirmPassword")}
         endAdornment={
@@ -81,6 +114,9 @@ export const PasswordStrength = ({
           </InputAdornment>
         }
       />
+      {errors["confirmPassword"] && (
+        <p style={{ color: "red" }}>{errors["confirmPassword"].message}</p>
+      )}
       <div className={`bars ${strength}`}>
         <div></div>
       </div>

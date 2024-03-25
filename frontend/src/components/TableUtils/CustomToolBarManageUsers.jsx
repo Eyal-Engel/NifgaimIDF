@@ -31,6 +31,7 @@ import "../../pages/ManageUsersPage/ManageUsersPage.css";
 import Transition from "./Transition";
 import PaperComponent from "./PaperComponent";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 export default function CustomToolBarManageUsers({
   setRows,
   rows,
@@ -40,6 +41,11 @@ export default function CustomToolBarManageUsers({
   const [openCreateNewUser, setOpenCreateNewUser] = useState(false);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const handleExportToExcel = () => {
     // Filter out the "פעולות" column
@@ -132,7 +138,7 @@ export default function CustomToolBarManageUsers({
   };
 
   // Handle form submission
-  const handleSubmit = async () => {
+  const handleSubmitForm = async () => {
     // Perform your submission logic here, for example, sending the data to an API
     let errorsForSwalFrontendTesting = ""; // Start unordered list
 
@@ -398,27 +404,59 @@ export default function CustomToolBarManageUsers({
                   name="privateNumber"
                   placeholder="מספר אישי"
                   className="resetPasswordInputField"
+                  {...register("privateNumber", {
+                    required: {
+                      value: true,
+                      message: "מספר אישי שדה חובה",
+                    },
+                    pattern: {
+                      value: /^\d{7}$/,
+                      message: ` הכנס מספר אישי בעל 7 ספרות `,
+                    },
+                  })}
                   onChange={handleInputChange}
                 />
+                {errors["privateNumber"] && (
+                  <p style={{ color: "red" }}>
+                    {errors["privateNumber"].message}
+                  </p>
+                )}
                 <Input
                   type="text"
                   name="fullName"
                   placeholder="שם מלא"
                   className="resetPasswordInputField"
+                  {...register("fullName", {
+                    required: {
+                      value: true,
+                      message: "שם מלא שדה חובה",
+                    },
+                    pattern: {
+                      value: /^(?![\d\s]+$)(\w+\s){1,2}\w+$/,
+                      message: ` שם מלא חייב לכלול שם פרטי שם משפחה (ללא מספרים) `,
+                    },
+                  })}
                   onChange={handleInputChange}
                   style={{ marginBottom: 0 }}
                 />
-                <FormHelperText
-                  style={{ textAlign: "right", marginBottom: "5px" }}
-                >
-                  שם מלא יהיה בעברית בלבד
-                </FormHelperText>
+                {errors["fullName"] && (
+                  <p style={{ color: "red" }}>{errors["fullName"].message}</p>
+                )}
+
                 <Select
                   sx={{ direction: "rtl" }}
-                  labelId="fullName-label"
-                  id="fullName"
                   name="command"
                   defaultValue=""
+                  {...register("command", {
+                    validate: (value) => {
+                      console.log(value !== "");
+                      if (value === "") {
+                        return "חובה לבחור פיקוד";
+                      } else {
+                        return true;
+                      }
+                    },
+                  })}
                   onChange={handleInputChange}
                   displayEmpty
                   className="resetPasswordInputField"
@@ -437,9 +475,15 @@ export default function CustomToolBarManageUsers({
                     </MenuItem>
                   ))}
                 </Select>
+                {errors["command"] && (
+                  <p style={{ color: "red" }}>{errors["command"].message}</p>
+                )}
                 <PasswordStrength
                   id="confirmPasswordRegister"
                   placeholder="אימות סיסמא"
+                  register={register}
+                  errors={errors}
+                  userSignUpInfo={userSignUpInfo}
                   onChangePassword={handleChangePassword}
                   onChangeConfirmPassword={handleChangeConfirmPassword}
                 />
@@ -487,7 +531,7 @@ export default function CustomToolBarManageUsers({
               <button
                 type="submit"
                 className="submit-button"
-                onClick={handleSubmit}
+                onClick={handleSubmit(handleSubmitForm)}
                 style={{ marginTop: "10px" }}
               >
                 צור משתמש

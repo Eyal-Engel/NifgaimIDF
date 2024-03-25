@@ -11,12 +11,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-
 import LockIcon from "@mui/icons-material/Lock";
 import { IconButton, ThemeProvider, createTheme } from "@mui/material";
 import "./ReuseableItem.css";
-
-import EditSelectDialog from "./EditSelectDialog";
 import IntegerTypeItem from "./manageColumns/IntegerTypeItem";
 import StringTypeItem from "./manageColumns/StringTypeItem";
 import BooleanTypeItem from "./manageColumns/BooleanTypeItem";
@@ -342,17 +339,6 @@ const ReuseableItem = ({
             </Button>
           ))}
       </CardActions>
-      {/* {columnType === "ENUM" && (
-        <EditSelectDialog
-          columnType={columnType}
-          columnName={editedItemName}
-          defaultValueFromColumn={defaultValue}
-          enumValuesFromColumn={enumValues}
-          open={openDialog}
-          onClose={handleCloseDialog}
-          onSaveClicked={handelSelectColumnSaved} // changed from handelAddCommand
-        />
-      )} */}
     </Card>
   );
 };

@@ -9,7 +9,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import { ThemeProvider, createTheme } from "@mui/material";
-import EditSelectDialog from "../EditSelectDialog";
 import "../ReuseableItem.css";
 
 const theme = (outerTheme) =>
@@ -140,16 +139,6 @@ const EnumTypeItem = ({
               }}
             ></Select>
           </FormControl>
-
-          {/* <EditSelectDialog
-            columnType={columnType}
-            columnName={editedItemName}
-            defaultValueFromColumn={editedDefaultValue}
-            enumValuesFromColumn={enumValuesFromColumn}
-            open={open}
-            onClose={onClose}
-            onSaveClicked={onSaveClicked}
-          /> */}
         </ThemeProvider>
       </CacheProvider>
     </>
