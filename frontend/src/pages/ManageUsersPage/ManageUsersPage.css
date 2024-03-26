@@ -142,3 +142,61 @@
     width: 100%;
   }
 }
+
+.MuiDataGrid-columnHeaderTitle {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: bold !important;
+}
+
+.MuiDataGrid-toolbarContainer {
+  justify-content: space-around;
+}
+
+.MuiDataGrid-toolbarContainer .MuiSvgIcon-root {
+  padding-left: 3px;
+}
+/* 
+.MuiDataGrid-toolbarContainer .MuiButton-root {
+  width: 24%;
+} */
+
+.css-1rr4qq7 {
+  flex: 0 !important;
+}
+
+.MuiDataGrid-virtualScrollerRenderZone {
+  position: relative !important;
+}
+
+.MuiDataGrid-virtualScrollerRenderZone {
+  position: relative !important;
+}
+
+.MuiDataGrid-columnHeaders {
+  overflow: unset !important;
+}
+
+.MuiDataGrid-main {
+  overflow-x: auto !important;
+}
+
+.MuiDataGrid-cell {
+  justify-content: center !important;
+}
+
+.MuiDataGrid-panel {
+  transform: translate(800px, 250px) !important;
+}
+
+.MuiTablePagination-actions {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-left: 0px;
+  margin-right: 20px;
+}
+
+.MuiTablePagination-actions {
+  rotate: 180deg;
+}
+

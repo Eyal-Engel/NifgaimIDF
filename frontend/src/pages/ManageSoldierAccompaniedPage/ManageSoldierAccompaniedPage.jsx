@@ -190,7 +190,7 @@ export default function ManageLeftOversPage() {
   return (
     <Box
       sx={{
-        width: "100vw",
+        width: "80vw",
         height: "75vh",
         maxHeight: "70rem",
         maxWidth: "70rem",
@@ -208,8 +208,9 @@ export default function ManageLeftOversPage() {
         },
         direction: "ltr",
         background: "white",
-        borderRadius: "2rem",
         alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "2rem",
         boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",
 
         "& .MuiDataGrid-virtualScrollerContent > .MuiDataGrid-virtualScrollerRenderZone":
@@ -217,9 +218,7 @@ export default function ManageLeftOversPage() {
             position: "absolute !important",
           },
         "& .MuiDataGrid-virtualScroller": {
-          minWidth:
-            // ? "880px !important":
-            "fit-content !important",
+          minWidth: "fit-content !important",
         },
       }}
     >

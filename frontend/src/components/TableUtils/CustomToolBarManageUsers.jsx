@@ -18,7 +18,6 @@ import {
   Input,
   Select,
   MenuItem,
-  FormHelperText,
 } from "@mui/material";
 import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
 import AddIcon from "@mui/icons-material/Add";

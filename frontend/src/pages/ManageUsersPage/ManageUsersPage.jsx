@@ -461,22 +461,56 @@ export default function ManageExistsUsers() {
   ];
 
   return (
+    // <Box
+    //   sx={{
+    //     width: "40vw",
+    //     height: "70vh",
+    //     maxHeight: "70rem",
+    //     maxWidth: "70rem",
+    //     "@media screen and (max-width: 1200px)": {
+    //       width: "50vw",
+    //       height: "70vh",
+    //       maxHeight: "40rem",
+    //       maxWidth: "60rem",
+    //     },
+    //     direction: "rtl",
+    //     background: "white",
+    //     borderRadius: "2rem",
+    //     boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",
+    //   }}
+    // >
     <Box
       sx={{
-        width: "40vw",
-        height: "70vh",
+        width: "80vw",
+        height: "75vh",
         maxHeight: "70rem",
         maxWidth: "70rem",
         "@media screen and (max-width: 1200px)": {
-          width: "50vw",
-          height: "70vh",
+          width: "100vw",
+          height: "75vh",
           maxHeight: "40rem",
           maxWidth: "60rem",
         },
-        direction: "rtl",
+        "@media screen and (max-width: 1050px)": {
+          width: "70vw",
+          height: "75vh",
+          maxHeight: "40rem",
+          maxWidth: "60rem",
+        },
+        direction: "ltr",
         background: "white",
+        alignItems: "center",
+        justifyContent: "center",
         borderRadius: "2rem",
         boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",
+
+        "& .MuiDataGrid-virtualScrollerContent > .MuiDataGrid-virtualScrollerRenderZone":
+          {
+            position: "absolute !important",
+          },
+        "& .MuiDataGrid-virtualScroller": {
+          minWidth: "fit-content !important",
+        },
       }}
     >
       <DataGrid
@@ -492,25 +526,6 @@ export default function ManageExistsUsers() {
         sx={{
           direction: "rtl",
           border: "none",
-          "& .MuiDataGrid-virtualScroller": {
-            mt: "0 !important",
-          },
-
-          "& .MuiDataGrid-columnHeaders": {
-            overflow: "unset",
-            position: "sticky !important",
-            left: 1,
-            top: 0,
-          },
-          "& .MuiDataGrid-columnHeadersInner > div": {
-            direction: "rtl !important",
-          },
-          "& .MuiDataGrid-main": {
-            overflow: "auto",
-          },
-          "& .MuiTablePagination-actions": {
-            direction: "ltr",
-          },
           "& .MuiDataGrid-row:hover": {
             backgroundColor: "#EDF3F8",
           },
@@ -518,11 +533,44 @@ export default function ManageExistsUsers() {
           "& .MuiDataGrid-columnHeadersInner": {
             bgcolor: "#fccd38",
           },
-
           "& .MuiDataGrid-columnHeaderTitle": {
             color: "white",
           },
         }}
+        // sx={{
+        //   direction: "rtl",
+        //   border: "none",
+        //   "& .MuiDataGrid-virtualScroller": {
+        //     mt: "0 !important",
+        //   },
+
+        //   "& .MuiDataGrid-columnHeaders": {
+        //     overflow: "unset",
+        //     position: "sticky !important",
+        //     left: 1,
+        //     top: 0,
+        //   },
+        //   "& .MuiDataGrid-columnHeadersInner > div": {
+        //     direction: "rtl !important",
+        //   },
+        //   "& .MuiDataGrid-main": {
+        //     overflow: "auto",
+        //   },
+        //   "& .MuiTablePagination-actions": {
+        //     direction: "ltr",
+        //   },
+        //   "& .MuiDataGrid-row:hover": {
+        //     backgroundColor: "#EDF3F8",
+        //   },
+        //   "& .MuiButton-textSizeSmall": {},
+        //   "& .MuiDataGrid-columnHeadersInner": {
+        //     bgcolor: "#fccd38",
+        //   },
+
+        //   "& .MuiDataGrid-columnHeaderTitle": {
+        //     color: "white",
+        //   },
+        // }}
         initialState={{
           pagination: { paginationModel: { pageSize: 10 } },
         }}
