@@ -271,7 +271,7 @@ export default function CreateLeftOverDialog({
                       }
                     },
                   })}
-                  onChange={(newValue) => {
+                  onChange={(event, newValue) => {
                     setSelectedHalal(newValue); // Update the selectedHalal state
                     handleInputChange(
                       "nifgaimHalalId",
