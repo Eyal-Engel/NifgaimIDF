@@ -8,6 +8,8 @@ import {
   getHalalColumnsAndTypes,
   getHalals,
   getOriginalColumns,
+  replaceColumnValue,
+  resetColumnToDefault,
 } from "../../utils/api/halalsApi";
 import EditHalalDialog from "./EditHalalDialog";
 import {
@@ -24,7 +26,9 @@ import HalalimCustomToolBar from "../../components/halalimTable/HalalimCustomToo
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
 import { getUserById } from "../../utils/api/usersApi";
 import pLimit from "p-limit";
-
+import { IconButton } from "@mui/material";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
+import MagicButtonDialog from "./MagicButtonDialog";
 export default function HalalimPage() {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -114,6 +118,7 @@ export default function HalalimPage() {
           }
         }
       }
+
       setEnums(enumsObject);
     };
     fetchData();
@@ -194,7 +199,7 @@ export default function HalalimPage() {
             translationDict[column.column_name] || column.column_name; // Translate header if available
 
           const calculatedWidth = column.column_name.length * 10;
-          const width = calculatedWidth > 120 ? calculatedWidth : 120;
+          const width = calculatedWidth > 120 ? calculatedWidth + 30 : 120 + 30;
 
           let type = column.data_type;
           // Check if the type is 'date' and format accordingly
@@ -260,6 +265,7 @@ export default function HalalimPage() {
 
           acc.push({
             field: column.column_name,
+            // headerName: translatedHeader, // Use translated header
             headerName: translatedHeader, // Use translated header
             type: type,
             width: width,
@@ -290,6 +296,7 @@ export default function HalalimPage() {
       setRows(transformedHalals);
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching column data:", error);
     }
   }, [formatDate]);

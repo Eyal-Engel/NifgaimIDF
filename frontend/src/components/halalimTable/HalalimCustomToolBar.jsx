@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import "../../pages/HalalimPage/HalalimPage.css";
 import AddIcon from "@mui/icons-material/Add";
 import { saveAs } from "file-saver";
@@ -14,6 +14,8 @@ import {
 } from "@mui/x-data-grid";
 import CreateHalalDialog from "../../pages/HalalimPage/CreateHalalDialog";
 import { useState } from "react";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
+import MagicButtonDialog from "../../pages/HalalimPage/MagicButtonDialog";
 
 export default function HalalimCustomToolBar({
   setRows,
@@ -28,9 +30,14 @@ export default function HalalimCustomToolBar({
   enums,
 }) {
   const [openCreateNewHalal, setOpenCreateNewHalal] = useState(false);
+  const [openMagicDialog, setOpenMagicDialog] = useState(false);
 
   const handleCreateNewHalal = () => {
     setOpenCreateNewHalal(true);
+  };
+
+  const handleMagicClick = () => {
+    setOpenMagicDialog(true);
   };
 
   const handleExportToExcel = () => {
@@ -93,6 +100,16 @@ export default function HalalimCustomToolBar({
         />
       )}
 
+      {openMagicDialog && (
+        <MagicButtonDialog
+          open={openMagicDialog} // Open dialog only if both conditions are true
+          setOpenDialog={setOpenMagicDialog}
+          allDataOfHalalsColumns={allDataOfHalalsColumns}
+          originalColumns={originalColumns}
+          setRows={setRows}
+        />
+      )}
+
       <GridToolbarContainer
         style={{
           direction: "rtl",
@@ -103,6 +120,9 @@ export default function HalalimCustomToolBar({
         }}
       >
         <div>
+          <IconButton onClick={() => handleMagicClick()}>
+            <AutoFixHighIcon />
+          </IconButton>
           <GridToolbarColumnsButton
             color="secondary"
             sx={{

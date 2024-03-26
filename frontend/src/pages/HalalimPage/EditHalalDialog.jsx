@@ -395,7 +395,6 @@ export default function EditHalalDIalog({
         </CacheProvider>
         <Divider></Divider>
 
-        {/* check here */}
         <DialogContent>
           <form onSubmit={handleSubmit(handleSubmitForm)}>
             {rearrangedColumns.map((column) => {

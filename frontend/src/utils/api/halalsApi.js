@@ -433,8 +433,13 @@ export async function deleteHalalColumn(userId, columnName) {
   }
 }
 
+// const response = await resetColumnToDefault(
+//   loggedUserId,
+//   "מספר ברירת מחדל"
+// );
+// console.log(response);
 export async function resetColumnToDefault(userId, columnName) {
-  const apiUrl = `http://localhost:${port}/api/halals/columns/resetColumnToDefault`;
+  const apiUrl = `http://localhost:${port}/api/halals/columns/resetValue`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -462,6 +467,12 @@ export async function resetColumnToDefault(userId, columnName) {
   }
 }
 
+// const response = await replaceColumnValue(
+//   loggedUserId,
+//   "מספר ברירת מחדל",
+//   555
+// );
+// console.log(response);
 export async function replaceColumnValue(userId, columnName, newValue) {
   const apiUrl = `http://localhost:${port}/api/halals/columns/replaceColumnValue`;
 
