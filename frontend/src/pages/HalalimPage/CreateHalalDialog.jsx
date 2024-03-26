@@ -442,7 +442,7 @@ export default function CreateHalalDialog({
                             },
                           })}
                           type="number"
-                          inputProps={{ maxlength: "500" }}
+                          inputProps={{ maxLength: "500" }}
                           value={inputValues[column.column_name] || ""}
                           onChange={(e) =>
                             handleInputChange(
@@ -587,7 +587,7 @@ export default function CreateHalalDialog({
                               : {}),
                           })}
                           value={inputValues[column.column_name] || ""}
-                          inputProps={{ maxlength: "500" }}
+                          inputProps={{ maxLength: "500" }}
                           onChange={(e) =>
                             handleInputChange(
                               column.column_name,
