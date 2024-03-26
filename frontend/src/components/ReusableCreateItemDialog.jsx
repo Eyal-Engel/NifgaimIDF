@@ -367,7 +367,7 @@ const ReusableCreateItemDialog = React.memo(
                     onClick={() => deleteEnumValueField(index)}
                     style={{
                       position: "absolute",
-                      left: "18px",
+                      left: "0.5vw",
                       bottom: "10px",
                     }}
                   >
