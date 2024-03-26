@@ -25,25 +25,13 @@ import {
   getCommandIdByName,
   getCommandNameById,
 } from "../../utils/api/commandsApi";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Divider,
-} from "@mui/material";
 import "./ManageUsersPage.css";
 import { validationPasswordsErrorType } from "../../utils/validators";
-import { AiOutlineDrag } from "react-icons/ai";
-import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
 import CustomToolBarManageUsers from "../../components/TableUtils/CustomToolBarManageUsers";
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
-import Transition from "../../components/TableUtils/Transition";
-import PaperComponent from "../../components/TableUtils/PaperComponent";
 import { useState } from "react";
 import { useEffect } from "react";
+import ResetPasswordDialog from "../../components/manageUsers/resetPasswordDialog";
 
 export default function ManageExistsUsers() {
   const [rows, setRows] = useState([]);
@@ -461,24 +449,6 @@ export default function ManageExistsUsers() {
   ];
 
   return (
-    // <Box
-    //   sx={{
-    //     width: "40vw",
-    //     height: "70vh",
-    //     maxHeight: "70rem",
-    //     maxWidth: "70rem",
-    //     "@media screen and (max-width: 1200px)": {
-    //       width: "50vw",
-    //       height: "70vh",
-    //       maxHeight: "40rem",
-    //       maxWidth: "60rem",
-    //     },
-    //     direction: "rtl",
-    //     background: "white",
-    //     borderRadius: "2rem",
-    //     boxShadow: "5px 5px 31px 5px rgba(0, 0, 0, 0.75)",
-    //   }}
-    // >
     <Box
       sx={{
         width: "80vw",
@@ -537,40 +507,6 @@ export default function ManageExistsUsers() {
             color: "white",
           },
         }}
-        // sx={{
-        //   direction: "rtl",
-        //   border: "none",
-        //   "& .MuiDataGrid-virtualScroller": {
-        //     mt: "0 !important",
-        //   },
-
-        //   "& .MuiDataGrid-columnHeaders": {
-        //     overflow: "unset",
-        //     position: "sticky !important",
-        //     left: 1,
-        //     top: 0,
-        //   },
-        //   "& .MuiDataGrid-columnHeadersInner > div": {
-        //     direction: "rtl !important",
-        //   },
-        //   "& .MuiDataGrid-main": {
-        //     overflow: "auto",
-        //   },
-        //   "& .MuiTablePagination-actions": {
-        //     direction: "ltr",
-        //   },
-        //   "& .MuiDataGrid-row:hover": {
-        //     backgroundColor: "#EDF3F8",
-        //   },
-        //   "& .MuiButton-textSizeSmall": {},
-        //   "& .MuiDataGrid-columnHeadersInner": {
-        //     bgcolor: "#fccd38",
-        //   },
-
-        //   "& .MuiDataGrid-columnHeaderTitle": {
-        //     color: "white",
-        //   },
-        // }}
         initialState={{
           pagination: { paginationModel: { pageSize: 10 } },
         }}
@@ -589,51 +525,17 @@ export default function ManageExistsUsers() {
           },
         }}
       />
-      <Dialog
-        sx={{ direction: "rtl", backgroundColor: "none" }}
-        open={open}
-        TransitionComponent={Transition}
-        PaperComponent={PaperComponent}
-        onClose={() => setOpen(false)}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <DialogTitle>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            איפוס סיסמא
-            <AiOutlineDrag
-              style={{ cursor: "move", fontSize: "24px" }}
-              id="draggable-dialog-title"
-            />
-          </div>
-          <Typography fontWeight="bold">
-            למשתמש: "{selectedFullName}"
-          </Typography>
-        </DialogTitle>
-
-        <DialogContent sx={{ direction: "rtl" }}>
-          <PasswordStrength
-            id="confirmPasswordReset"
-            placeholder="אימות סיסמא"
-            onChangePassword={handleChangePasswordRegister}
-            onChangeConfirmPassword={handleChangeConfirmRegister}
-          />
-        </DialogContent>
-        <Divider></Divider>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} color="secondary">
-            ביטול
-          </Button>
-          <Button onClick={handleUpdatePassword} color="primary">
-            עדכון סיסמא
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {open && (
+        <ResetPasswordDialog
+          open={open}
+          setOpen={setOpen}
+          selectedFullName={selectedFullName}
+          userLoginInfo={userLoginInfo}
+          handleChangePasswordRegister={handleChangePasswordRegister}
+          handleChangeConfirmRegister={handleChangeConfirmRegister}
+          handleUpdatePassword={handleUpdatePassword}
+        />
+      )}
     </Box>
   );
 }

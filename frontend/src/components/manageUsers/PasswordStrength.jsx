@@ -12,6 +12,7 @@ export const PasswordStrength = ({
   register,
   errors,
   userSignUpInfo,
+  userLoginInfo,
   onChangePassword,
   onChangeConfirmPassword,
 }) => {
@@ -93,12 +94,18 @@ export const PasswordStrength = ({
           placeholder={placeholder}
           {...register("confirmPassword", {
             validate: (value) => {
-              console.log(value);
               if (value === "") {
                 return "אימות סיסמא שדה חובה";
               }
-              if (value !== userSignUpInfo.password) {
-                return "סיסמאות אינן זהות";
+              if (userSignUpInfo) {
+                if (value !== userSignUpInfo.password) {
+                  return "סיסמאות אינן זהות";
+                }
+              }
+              if (userLoginInfo) {
+                if (value !== userLoginInfo.password) {
+                  return "סיסמאות אינן זהות";
+                }
               } else {
                 return true;
               }
