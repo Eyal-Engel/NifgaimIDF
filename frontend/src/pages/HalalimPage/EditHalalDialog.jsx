@@ -524,7 +524,7 @@ export default function EditHalalDIalog({
                                 },
                               })}
                               label="תאריך ברירת מחדל"
-                              value={dayjs(value)}
+                              value={value ? dayjs(value) : null}
                               onChange={(date) => handleInputChange(key, date)}
                               sx={{ width: "100%" }}
                             />
@@ -547,7 +547,7 @@ export default function EditHalalDIalog({
                               },
                             })}
                             type="number"
-                            value={value}
+                            value={value || ""}
                             inputProps={{ maxLength: "500" }}
                             onChange={(e) =>
                               handleInputChange(key, e.target.value)
@@ -642,7 +642,7 @@ export default function EditHalalDIalog({
                       ) : (
                         <>
                           <Input
-                            value={inputValues[key] || value}
+                            value={value || ""}
                             {...register(key, {
                               required: {
                                 value: true,

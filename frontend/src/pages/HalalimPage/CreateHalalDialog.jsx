@@ -87,8 +87,6 @@ export default function CreateHalalDialog({
     formState: { errors },
   } = useForm();
 
-  console.log(allDataOfHalalsColumns);
-
   useEffect(() => {
     const defaultValues = {};
     allDataOfHalalsColumns.forEach((column) => {
@@ -106,13 +104,13 @@ export default function CreateHalalDialog({
         defaultValues[column.column_name] = defaultValue;
       }
     });
-    console.log(defaultValues);
     setInputValues(defaultValues);
   }, [allDataOfHalalsColumns]);
 
   useEffect(() => {
     console.log(errors);
   }, [errors]);
+
   const theme = createTheme({
     direction: "rtl",
     palette: {
@@ -241,6 +239,7 @@ export default function CreateHalalDialog({
     }
   };
 
+  console.log(inputValues);
   return (
     <div>
       <Dialog
@@ -413,13 +412,12 @@ export default function CreateHalalDialog({
                                 }
                               },
                             })}
-                            // label="תאריך פטירה "
                             sx={{ width: "100%" }}
                             format="DD/MM/YYYY"
                             value={
                               inputValues[column.column_name] !== undefined
                                 ? dayjs(inputValues[column.column_name])
-                                : ""
+                                : null
                             }
                             onChange={(date) => {
                               console.log(date);
@@ -437,12 +435,18 @@ export default function CreateHalalDialog({
                       <>
                         <Input
                           {...register(column.column_name, {
-                            required: {
-                              value: true,
-                              message: `${
-                                translationDict[column.column_name] ||
-                                column.column_name
-                              } שדה חובה `,
+                            validate: () => {
+                              if (
+                                inputValues[column.column_name] === "" ||
+                                inputValues[column.column_name] === undefined
+                              ) {
+                                return `${
+                                  translationDict[column.column_name] ||
+                                  column.column_name
+                                } שדה חובה `;
+                              } else {
+                                return true;
+                              }
                             },
                           })}
                           type="number"
@@ -469,12 +473,11 @@ export default function CreateHalalDialog({
                           row
                           {...register(column.column_name, {
                             validate: () => {
-                              const temp =
-                                inputValues[column.column_name] || "";
-                              console.log(inputValues[column.column_name]);
                               if (
-                                temp.toString() !== "true" &&
-                                temp.toString() !== "false"
+                                inputValues[column.column_name]?.toString() !==
+                                  "true" &&
+                                inputValues[column.column_name]?.toString() !==
+                                  "false"
                               ) {
                                 return `${
                                   translationDict[column.column_name] ||
@@ -487,7 +490,7 @@ export default function CreateHalalDialog({
                           })}
                           value={
                             inputValues[column.column_name] !== undefined
-                              ? inputValues[column.column_name].toString()
+                              ? inputValues[column.column_name]
                               : ""
                           }
                           onChange={(e) => {
@@ -518,19 +521,22 @@ export default function CreateHalalDialog({
                     ) : column.data_type === "USER-DEFINED" ? (
                       <FormControl fullWidth>
                         <MemoizedSelect
+                          value={inputValues[column.column_name] || ""}
                           {...register(column.column_name, {
-                            required: {
-                              value: true,
-                              message: `${
-                                translationDict[column.column_name] ||
-                                column.column_name
-                              } שדה חובה `,
+                            validate: () => {
+                              if (!inputValues[column.column_name]) {
+                                return `${
+                                  translationDict[column.column_name] ||
+                                  column.column_name
+                                } שדה חובה `;
+                              } else {
+                                return true;
+                              }
                             },
                           })}
                           sx={{ direction: "rtl" }}
                           labelId={column.column_name}
-                          value={inputValues[column.column_name] || ""}
-                          displayEmpty
+                          // displayEmpty
                           onChange={(e) =>
                             handleInputChange(
                               column.column_name,
@@ -564,13 +570,20 @@ export default function CreateHalalDialog({
                     ) : (
                       <>
                         <Input
+                          value={inputValues[column.column_name] || ""}
                           {...register(column.column_name, {
-                            required: {
-                              // value: true,
-                              message: `${
-                                translationDict[column.column_name] ||
-                                column.column_name
-                              } שדה חובה `,
+                            validate: () => {
+                              if (
+                                inputValues[column.column_name] === "" ||
+                                inputValues[column.column_name] === undefined
+                              ) {
+                                return `${
+                                  translationDict[column.column_name] ||
+                                  column.column_name
+                                } שדה חובה `;
+                              } else {
+                                return true;
+                              }
                             },
                             ...(column.column_name === "privateNumber"
                               ? {
@@ -590,7 +603,6 @@ export default function CreateHalalDialog({
                                 }
                               : {}),
                           })}
-                          value={inputValues[column.column_name] || ""}
                           inputProps={{ maxLength: "500" }}
                           onChange={(e) =>
                             handleInputChange(
