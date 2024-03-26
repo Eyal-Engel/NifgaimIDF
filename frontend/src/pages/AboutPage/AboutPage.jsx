@@ -35,7 +35,7 @@ export default function AboutPage() {
 
     const halals = [];
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 9000; i++) {
       const privateNumber = generateRandomNumber(1000000, 9999999); // Generate 7-digit random number
       console.log(halalDataTemplate);
       const halalData = { ...halalDataTemplate, privateNumber };
