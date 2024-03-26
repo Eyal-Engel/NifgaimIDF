@@ -1,4 +1,4 @@
-.resetPasswordInputField {
+/* .resetPasswordInputField {
   width: 97%;
   height: 42px;
   outline: none;
@@ -17,10 +17,9 @@
 .resetPasswordInputField:focus {
   outline: none;
   border-bottom: 1px solid rgba(241, 196, 15, 1);
-}
+} */
 
-/* SubmitButton */
-.submit-button {
+/* .submit-button {
   width: 100%;
   max-width: 150px;
   padding: 10px;
@@ -37,11 +36,11 @@
     rgba(243, 172, 18, 1) 20%,
     rgba(241, 196, 15, 1) 100%
   );
-}
-
+} */
+/* 
 .swal-dialog-custom {
-  z-index: 9999 !important; /* Adjust the z-index value as needed */
-}
+  z-index: 9999 !important;
+} */
 
 /* loginForm.css */
 
@@ -55,6 +54,7 @@
   align-items: center;
   margin: 10px;
 }
+*/
 
 /* FormContainer */
 .formRegisterContainer {
@@ -141,4 +141,21 @@
   .boxAccountContainer {
     width: 100%;
   }
+}
+
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation24.MuiDialog-paper.MuiDialog-paperScrollPaper.MuiDialog-paperWidthSm.react-draggable.css-1nop51j-MuiPaper-root-MuiDialog-paper {
+  transform: translate(0px, 0px);
+  padding: 15px;
+}
+
+.signUpWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.signUpForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

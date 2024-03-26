@@ -51,7 +51,9 @@ export default function ManageColumnsPage() {
     if (firstRender.current) {
       firstRender.current = false;
     } else {
+      setLoading(true);
       setSortColumns(filterColumns(columns, searchInputValue, originalColumns));
+      setLoading(false);
     }
   }, [columns, searchInputValue, originalColumns, setSortColumns]);
 
@@ -385,6 +387,7 @@ export default function ManageColumnsPage() {
                 value={searchInputValue}
                 onChange={handelSearchInput}
                 sx={{ zIndex: 0 }}
+                inputProps={{ maxLength: "7" }}
               />
             </div>
           </ThemeProvider>

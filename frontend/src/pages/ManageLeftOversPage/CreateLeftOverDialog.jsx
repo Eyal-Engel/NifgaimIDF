@@ -243,6 +243,7 @@ export default function CreateLeftOverDialog({
                       message: ` שם יכול לכלול רק אותיות `,
                     },
                   })}
+                  inputProps={{ maxLength: "500" }}
                   onChange={(e) =>
                     handleInputChange("fullName", e.target.value)
                   }
@@ -270,7 +271,7 @@ export default function CreateLeftOverDialog({
                       }
                     },
                   })}
-                  onChange={(event, newValue) => {
+                  onChange={(newValue) => {
                     setSelectedHalal(newValue); // Update the selectedHalal state
                     handleInputChange(
                       "nifgaimHalalId",
@@ -346,6 +347,7 @@ export default function CreateLeftOverDialog({
                     message: "עיר שדה חובה",
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("city", e.target.value)}
               />
               {errors["city"] && (
@@ -362,6 +364,7 @@ export default function CreateLeftOverDialog({
                     message: "כתובת שדה חובה",
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("address", e.target.value)}
               />
               {errors["address"] && (
@@ -388,6 +391,7 @@ export default function CreateLeftOverDialog({
                     }
                   },
                 })}
+                inputProps={{ maxLength: "16" }}
                 onChange={(value) => handleInputChange("phone", value)}
               />
               {errors["phone"] && (
@@ -433,6 +437,7 @@ export default function CreateLeftOverDialog({
               </InputLabel>
               <Input
                 onChange={(e) => handleInputChange("comments", e.target.value)}
+                inputProps={{ maxLength: "500" }}
               />
             </div>
           </form>

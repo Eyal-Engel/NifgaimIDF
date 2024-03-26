@@ -173,6 +173,7 @@ const ReuseableItem = ({
               margin: "10px",
               direction: "rtl",
             }}
+            inputProps={{maxLength: "500"}}
           />
         )}
         {columnType === "UUID" && (

@@ -26,9 +26,6 @@ const cacheRtl = createCache({
 
 const StringTypeItem = ({
   isInEditMode,
-  itemName,
-  editedItemName,
-  handleInputChange,
   columnType,
   editedDefaultValue,
   handleInputDefaultValueChange,
@@ -114,6 +111,7 @@ const StringTypeItem = ({
                   margin: "10px",
                   direction: "rtl",
                 }}
+                inputProps={{ maxlength: "500" }}
               />
             )}
           </FormControl>

@@ -106,7 +106,7 @@ export default function CreateHalalDialog({
     });
     console.log(defaultValues);
     setInputValues(defaultValues);
-  }, []);
+  }, [allDataOfHalalsColumns]);
 
   useEffect(() => {
     console.log(errors);
@@ -442,6 +442,7 @@ export default function CreateHalalDialog({
                             },
                           })}
                           type="number"
+                          inputProps={{ maxlength: "500" }}
                           value={inputValues[column.column_name] || ""}
                           onChange={(e) =>
                             handleInputChange(
@@ -586,6 +587,7 @@ export default function CreateHalalDialog({
                               : {}),
                           })}
                           value={inputValues[column.column_name] || ""}
+                          inputProps={{ maxlength: "500" }}
                           onChange={(e) =>
                             handleInputChange(
                               column.column_name,

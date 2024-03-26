@@ -82,7 +82,7 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
         url: "/halalim",
       },
       {
-        name: "ניהול הרשאות",
+        name: "ניהול משתמשים",
         styles: {
           background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
         },

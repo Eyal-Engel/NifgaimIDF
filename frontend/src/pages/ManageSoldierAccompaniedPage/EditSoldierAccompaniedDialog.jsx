@@ -451,7 +451,6 @@ const EditSoldierAccompaniedDialog = ({
         <DialogContent>
           <form>
             <div
-              key="מספר אישי"
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -471,6 +470,7 @@ const EditSoldierAccompaniedDialog = ({
                     message: ` שם יכול לכלול רק אותיות `,
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
               />
               {errors["fullName"] && (
@@ -530,6 +530,7 @@ const EditSoldierAccompaniedDialog = ({
                     message: ` הכנס מספר אישי בעל 7 ספרות `,
                   },
                 })}
+                inputProps={{ maxLength: "7" }}
                 onChange={(e) =>
                   handleInputChange("privateNumber", e.target.value)
                 }
@@ -555,6 +556,7 @@ const EditSoldierAccompaniedDialog = ({
                       }
                     },
                   })}
+                  inputProps={{ maxLength: "500" }}
                   onChange={(e) => handleInputChange("rank", e.target.value)}
                   style={{ direction: "rtl", width: "100%", marginTop: "8px" }}
                 >
@@ -622,6 +624,7 @@ const EditSoldierAccompaniedDialog = ({
                     }
                   },
                 })}
+                inputProps={{ maxLength: "16" }}
                 excludecountries={["pa"]} // Use lowercase prop name
                 onChange={(value) => handleInputChange("phone", value)}
               />
@@ -639,6 +642,7 @@ const EditSoldierAccompaniedDialog = ({
                     message: "יחידה שדה חובה",
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("unit", e.target.value)}
               />
               {errors["unit"] && (
@@ -650,6 +654,7 @@ const EditSoldierAccompaniedDialog = ({
               <Input
                 defaultValue={selectedRow.comments || ""}
                 onChange={(e) => handleInputChange("comments", e.target.value)}
+                inputProps={{ maxLength: "500" }}
               />
             </div>
           </form>

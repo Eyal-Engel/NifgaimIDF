@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./styles.css";
-import { IconButton, Input, InputAdornment } from "@mui/material";
+import { FormControl, IconButton, Input, InputAdornment } from "@mui/material";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
@@ -54,77 +54,86 @@ export const PasswordStrength = ({
 
   return (
     <>
-      <Input
-        id={id}
-        type={showPassword ? "text" : "password"}
-        name="password"
-        placeholder="סיסמא"
-        className="resetPasswordInputField"
-        {...register("password", {
-          required: {
-            value: true,
-            message: "סיסמא שדה חובה",
-          },
-          pattern: {
-            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
-            message: ` סיסמא חייבת להיות באורך של 6 תווים ולכלול אותיות `,
-          },
-        })}
-        onChange={(event) => handleChange(event, "password")}
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton onClick={togglePasswordVisibility}>
-              {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-            </IconButton>
-          </InputAdornment>
-        }
-      />
-      {errors["password"] && (
-        <p style={{ color: "red" }}>{errors["password"].message}</p>
-      )}
-      <Input
-        id={id + "2"}
-        type={showConfirmPassword ? "text" : "password"}
-        name="confirmPassword"
-        placeholder={placeholder}
-        {...register("confirmPassword", {
-          validate: (value) => {
-            console.log(value);
-            if (value === "") {
-              return "אימות סיסמא שדה חובה";
-            }
-            if (value !== userSignUpInfo.password) {
-              return "סיסמאות אינן זהות";
-            } else {
-              return true;
-            }
-          },
-        })}
-        //   pattern: {
-        //     value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
-        //     message: ` סיסמא חייבת להיות באורך של 6 תווים ולכלול אותיות `,
-        //   },
-        className="resetPasswordInputField"
-        onChange={(event) => handleChange(event, "confirmPassword")}
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton onClick={toggleConfirmPasswordVisibility}>
-              {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-            </IconButton>
-          </InputAdornment>
-        }
-      />
-      {errors["confirmPassword"] && (
-        <p style={{ color: "red" }}>{errors["confirmPassword"].message}</p>
-      )}
-      <div className={`bars ${strength}`}>
-        <div></div>
+      <FormControl>
+        <Input
+          id={id}
+          type={showPassword ? "text" : "password"}
+          name="password"
+          placeholder="סיסמא"
+          {...register("password", {
+            required: {
+              value: true,
+              message: "סיסמא שדה חובה",
+            },
+            pattern: {
+              value:
+                /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+{}[\]:;"'<>,.?/\\|-]{6,}$/,
+              message: ` סיסמא חייבת להיות באורך של 6 תווים לפחות ולכלול אות וספרה `,
+            },
+          })}
+          inputProps={{ maxLength: "500" }}
+          onChange={(event) => handleChange(event, "password")}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton onClick={togglePasswordVisibility}>
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+        {errors["password"] && (
+          <p style={{ color: "red" }}>{errors["password"].message}</p>
+        )}
+      </FormControl>
+      <FormControl>
+        <Input
+          id={id + "2"}
+          type={showConfirmPassword ? "text" : "password"}
+          name="confirmPassword"
+          placeholder={placeholder}
+          {...register("confirmPassword", {
+            validate: (value) => {
+              console.log(value);
+              if (value === "") {
+                return "אימות סיסמא שדה חובה";
+              }
+              if (value !== userSignUpInfo.password) {
+                return "סיסמאות אינן זהות";
+              } else {
+                return true;
+              }
+            },
+          })}
+          inputProps={{ maxLength: "500" }}
+          onChange={(event) => handleChange(event, "confirmPassword")}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton onClick={toggleConfirmPasswordVisibility}>
+                {showConfirmPassword ? (
+                  <VisibilityOffIcon />
+                ) : (
+                  <VisibilityIcon />
+                )}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+        {errors["confirmPassword"] && (
+          <p style={{ color: "red" }}>{errors["confirmPassword"].message}</p>
+        )}
+      </FormControl>
+      <div>
+        <div className={`bars ${strength}`}>
+          <div></div>
+        </div>
+        {strength !== "" && (
+          <div className="strength">{strength && `סיסמא ${strength}`}</div>
+        )}
+        <p>
+          סיסמא חזקה צריכה להיות באורך של לפחות 10 תווים ולהכיל אות גדולה, אות
+          קטנה ומספר.
+        </p>
       </div>
-      <div className="strength">{strength && `סיסמא ${strength}`}</div>
-      <p>
-        סיסמא חזקה צריכה להיות באורך של לפחות 10 תווים ולהכיל אות גדולה, אות
-        קטנה ומספר.
-      </p>
     </>
   );
 };

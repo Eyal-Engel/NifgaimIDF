@@ -324,6 +324,7 @@ const EditLeftOverDialog = ({
                     message: ` שם יכול לכלול רק אותיות `,
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
               />
               {errors["fullName"] && (
@@ -421,6 +422,7 @@ const EditLeftOverDialog = ({
                     message: "עיר שדה חובה",
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("city", e.target.value)}
               />
               {errors["city"] && (
@@ -437,6 +439,7 @@ const EditLeftOverDialog = ({
                     message: "כתובת שדה חובה",
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("address", e.target.value)}
               />
               {errors["address"] && (
@@ -462,6 +465,7 @@ const EditLeftOverDialog = ({
                     }
                   },
                 })}
+                inputProps={{ maxLength: "16" }}
                 onChange={(value) => handleInputChange("phone", value)}
               />
               {errors["phone"] && (
@@ -512,6 +516,7 @@ const EditLeftOverDialog = ({
               <Input
                 defaultValue={selectedRow.comments || ""}
                 onChange={(e) => handleInputChange("comments", e.target.value)}
+                inputProps={{ maxLength: "500" }}
               />
             </div>
           </form>

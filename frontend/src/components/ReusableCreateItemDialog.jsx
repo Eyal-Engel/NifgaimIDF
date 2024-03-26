@@ -207,6 +207,7 @@ const ReusableCreateItemDialog = React.memo(
               ? "שם בית העלמין"
               : "שם העמודה חדשה"
           }
+          inputProps={{ maxLength: "500" }}
         ></TextField>
         {isColumn && (
           <CacheProvider value={cacheRtl}>
@@ -280,6 +281,7 @@ const ReusableCreateItemDialog = React.memo(
             }}
             onChange={handeldefaultValueChange}
             placeholder={"ערך ברירת מחדל"}
+            inputProps={{ maxLength: "500" }}
           />
         )}
         {isColumn && typeOfColumn === "BOOLEAN" && (
@@ -319,6 +321,7 @@ const ReusableCreateItemDialog = React.memo(
                 shrink: true,
               }}
               fullWidth
+              inputProps={{ maxLength: "500" }}
             />
           </RtlPlugin>
         )}
@@ -357,6 +360,7 @@ const ReusableCreateItemDialog = React.memo(
                   onChange={(event) => handleEnumValueChange(index, event)}
                   value={value}
                   placeholder={`ערך ${index + 1}`}
+                  inputProps={{ maxLength: "500" }}
                 />
                 {index > 1 && (
                   <IconButton
@@ -400,7 +404,9 @@ const ReusableCreateItemDialog = React.memo(
           </>
         )}
         {errorMessage.show && (
-          <p style={{ color: "red", margin: "auto", marginTop: "10px" }}>{errorMessage.message}</p>
+          <p style={{ color: "red", margin: "auto", marginTop: "10px" }}>
+            {errorMessage.message}
+          </p>
         )}
         <Button
           sx={{ margin: "10px", fontSize: "1.2rem" }}

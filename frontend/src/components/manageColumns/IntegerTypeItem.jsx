@@ -111,6 +111,7 @@ const IntegerTypeItem = ({
                   margin: "10px",
                   direction: "rtl",
                 }}
+                inputProps={{ maxlength: "500" }}
               />
             )}
           </FormControl>

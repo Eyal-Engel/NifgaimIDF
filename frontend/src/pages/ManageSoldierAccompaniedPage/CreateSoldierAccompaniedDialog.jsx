@@ -382,6 +382,7 @@ export default function CreateSoldierAccompaniedDialog({
                     message: ` שם יכול לכלול רק אותיות `,
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
               />
               {errors["fullName"] && (
@@ -437,6 +438,7 @@ export default function CreateSoldierAccompaniedDialog({
                     message: ` הכנס מספר אישי בעל 7 ספרות `,
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) =>
                   handleInputChange("privateNumber", e.target.value)
                 }
@@ -529,6 +531,7 @@ export default function CreateSoldierAccompaniedDialog({
                     }
                   },
                 })}
+                inputProps={{ maxLength: "16" }}
                 excludecountries={["pa"]} // Use lowercase prop name
                 onChange={(value) => handleInputChange("phone", value)}
               />
@@ -545,6 +548,7 @@ export default function CreateSoldierAccompaniedDialog({
                     message: "יחידה שדה חובה",
                   },
                 })}
+                inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("unit", e.target.value)}
               />
               {errors["unit"] && (
@@ -555,6 +559,7 @@ export default function CreateSoldierAccompaniedDialog({
               </InputLabel>
               <Input
                 onChange={(e) => handleInputChange("comments", e.target.value)}
+                inputProps={{ maxLength: "500" }}
               />
             </div>
           </form>

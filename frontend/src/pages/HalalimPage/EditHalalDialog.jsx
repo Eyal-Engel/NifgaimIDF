@@ -548,6 +548,7 @@ export default function EditHalalDIalog({
                             })}
                             type="number"
                             value={value}
+                            inputProps={{ maxLength: "500" }}
                             onChange={(e) =>
                               handleInputChange(key, e.target.value)
                             }
@@ -666,6 +667,7 @@ export default function EditHalalDIalog({
                                   }
                                 : {}),
                             })}
+                            inputProps={{ maxLength: "500" }}
                             onChange={(e) =>
                               handleInputChange(key, e.target.value)
                             }
@@ -682,7 +684,6 @@ export default function EditHalalDIalog({
                 </div>
               );
             })}
-            {/* Code for displaying soldierAccompanieds and leftOvers */}
             <div>
               <h2 style={{ color: theme.palette.secondary.main }}>מלווים </h2>
               {soldierAccompanieds.length === 0 ? (

@@ -18,11 +18,15 @@ import {
   Input,
   Select,
   MenuItem,
-  FormHelperText,
+  FormLabel,
+  FormControl,
+  FormControlLabel,
+  Checkbox,
+  FormGroup,
+  Divider,
 } from "@mui/material";
 import { AiOutlineCloseCircle, AiOutlineDrag } from "react-icons/ai";
 import AddIcon from "@mui/icons-material/Add";
-import { motion } from "framer-motion";
 import { PasswordStrength } from "../../components/manageUsers/PasswordStrength";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
@@ -303,14 +307,6 @@ export default function CustomToolBarManageUsers({
               },
             }}
           />
-          {/* <GridToolbarExport
-              color="secondary"
-              sx={{
-                "& .MuiButton-startIcon": {
-                  marginLeft: "2px",
-                },
-              }}
-            /> */}
           <Button
             color="secondary"
             startIcon={<SaveAltIcon />}
@@ -357,18 +353,11 @@ export default function CustomToolBarManageUsers({
         onClose={() => handleClose()}
         aria-labelledby="draggable-dialog-title"
       >
-        <div
-          className="boxAccountContainer"
-          style={{
-            height: "800px", // Set your desired height here
-            borderRadius: "inherit",
-          }}
-        >
+        <div className="signUpWrapper">
           <div
             style={{
               zIndex: "9999",
               display: "flex",
-              padding: "10px",
               justifyContent: "space-between",
               alignItems: "center",
             }}
@@ -389,155 +378,170 @@ export default function CustomToolBarManageUsers({
             />
           </div>
 
-          <div className="topAccountContainer">
-            <motion.div className="backdrop" style={{ marginTop: "-60px" }} />
-            <div className="header-text">יצירת משתמש חדש</div>
-          </div>
-          <div className="innerAccountContainer">
-            <div className="boxLoginContainer" style={{ marginTop: "-50px" }}>
-              <form
-                className="formLoginContainer"
-                style={{ marginTop: "-60px" }}
-              >
-                <Input
-                  type="text"
-                  name="privateNumber"
-                  placeholder="מספר אישי"
-                  className="resetPasswordInputField"
-                  {...register("privateNumber", {
-                    required: {
-                      value: true,
-                      message: "מספר אישי שדה חובה",
-                    },
-                    pattern: {
-                      value: /^\d{7}$/,
-                      message: ` הכנס מספר אישי בעל 7 ספרות `,
-                    },
-                  })}
-                  onChange={handleInputChange}
-                />
-                {errors["privateNumber"] && (
-                  <p style={{ color: "red" }}>
-                    {errors["privateNumber"].message}
-                  </p>
-                )}
-                <Input
-                  type="text"
-                  name="fullName"
-                  placeholder="שם מלא"
-                  className="resetPasswordInputField"
-                  {...register("fullName", {
-                    required: {
-                      value: true,
-                      message: "שם מלא שדה חובה",
-                    },
-                    pattern: {
-                      value: /^(?![\d\s]+$)(\w+\s){1,2}\w+$/,
-                      message: ` שם מלא חייב לכלול שם פרטי שם משפחה (ללא מספרים) `,
-                    },
-                  })}
-                  onChange={handleInputChange}
-                  style={{ marginBottom: 0 }}
-                />
-                {errors["fullName"] && (
-                  <p style={{ color: "red" }}>{errors["fullName"].message}</p>
-                )}
+          <FormLabel
+            sx={{
+              color: "#ffa726",
+              alignSelf: "center",
+              fontSize: "1.8rem",
+              marginBottom: "10px",
+            }}
+          >
+            יצירת משתמש חדש
+          </FormLabel>
+          <Divider></Divider>
+          <form
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+              padding: "20px",
+            }}
+          >
+            <FormControl>
+              <Input
+                type="text"
+                name="privateNumber"
+                placeholder="מספר אישי"
+                {...register("privateNumber", {
+                  required: {
+                    value: true,
+                    message: "מספר אישי שדה חובה",
+                  },
+                  pattern: {
+                    value: /^\d{7}$/,
+                    message: ` הכנס מספר אישי בעל 7 ספרות `,
+                  },
+                })}
+                onChange={handleInputChange}
+                inputProps={{ maxLength: "7" }}
+              />
+              {errors["privateNumber"] && (
+                <p style={{ color: "red" }}>
+                  {errors["privateNumber"].message}
+                </p>
+              )}
+            </FormControl>
+            <FormControl>
+              <Input
+                type="text"
+                name="fullName"
+                placeholder="שם מלא"
+                {...register("fullName", {
+                  required: {
+                    value: true,
+                    message: "שם מלא שדה חובה",
+                  },
+                  pattern: {
+                    value: /^(?![\d\s]+$)(\w+\s){1,2}\w+$/,
+                    message: ` שם מלא חייב לכלול שם פרטי שם משפחה (ללא מספרים) `,
+                  },
+                })}
+                onChange={handleInputChange}
+                inputProps={{ maxLength: "500" }}
 
-                <Select
-                  sx={{ direction: "rtl" }}
-                  name="command"
-                  defaultValue=""
-                  {...register("command", {
-                    validate: (value) => {
-                      console.log(value !== "");
-                      if (value === "") {
-                        return "חובה לבחור פיקוד";
-                      } else {
-                        return true;
-                      }
-                    },
-                  })}
-                  onChange={handleInputChange}
-                  displayEmpty
-                  className="resetPasswordInputField"
-                  renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
-                >
-                  <MenuItem sx={{ direction: "rtl" }} value="" disabled>
-                    פיקוד
-                  </MenuItem>
-                  {commands.map((command) => (
-                    <MenuItem
-                      sx={{ direction: "rtl" }}
-                      key={command}
-                      value={command}
-                    >
-                      {command}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {errors["command"] && (
-                  <p style={{ color: "red" }}>{errors["command"].message}</p>
-                )}
-                <PasswordStrength
-                  id="confirmPasswordRegister"
-                  placeholder="אימות סיסמא"
-                  register={register}
-                  errors={errors}
-                  userSignUpInfo={userSignUpInfo}
-                  onChangePassword={handleChangePassword}
-                  onChangeConfirmPassword={handleChangeConfirmPassword}
-                />
-                <h2
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  הרשאות משתמש
-                </h2>
-                <div
-                  className="perms"
-                  style={{
-                    display: "flex",
-                    flexDirection: "row", // Change flexDirection to column
-                    justifyContent: "space-around", // Center vertically
-                    alignItems: "center", // Center horizontally
-                  }}
-                >
-                  <div>
-                    <label style={{ fontSize: "1.5em" }}>הרשאות עריכה</label>{" "}
-                    {/* Increase font size */}
-                    <input
-                      type="checkbox"
-                      name="editPerm"
-                      onChange={handleCheckBoxInputChange}
-                      style={{ transform: "scale(1.5)" }} // Increase checkbox size
-                    />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: "1.5em" }}>הרשאות מנהל</label>{" "}
-                    {/* Increase font size */}
-                    <input
-                      type="checkbox"
-                      name="managePerm"
-                      onChange={handleCheckBoxInputChange}
-                      style={{ transform: "scale(1.5)" }} // Increase checkbox size
-                    />
-                  </div>
-                </div>
-              </form>
-              <button
-                type="submit"
-                className="submit-button"
-                onClick={handleSubmit(handleSubmitForm)}
-                style={{ marginTop: "10px" }}
+              />
+              {errors["fullName"] && (
+                <p style={{ color: "red" }}>{errors["fullName"].message}</p>
+              )}
+            </FormControl>
+
+            <FormControl>
+              <Select
+                sx={{ direction: "rtl" }}
+                size="small"
+                name="command"
+                defaultValue=""
+                {...register("command", {
+                  validate: (value) => {
+                    console.log(value !== "");
+                    if (value === "") {
+                      return "חובה לבחור פיקוד";
+                    } else {
+                      return true;
+                    }
+                  },
+                })}
+                onChange={handleInputChange}
+                displayEmpty
+                renderValue={(value) => (value ? value : "פיקוד")} // Render placeholder
               >
-                צור משתמש
-              </button>
-            </div>
-          </div>
+                <MenuItem sx={{ direction: "rtl" }} value="" disabled>
+                  פיקוד
+                </MenuItem>
+                {commands.map((command) => (
+                  <MenuItem
+                    sx={{ direction: "rtl" }}
+                    key={command}
+                    value={command}
+                  >
+                    {command}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors["command"] && (
+                <p style={{ color: "red" }}>{errors["command"].message}</p>
+              )}
+            </FormControl>
+
+            <PasswordStrength
+              id="confirmPasswordRegister"
+              placeholder="אימות סיסמא"
+              register={register}
+              errors={errors}
+              userSignUpInfo={userSignUpInfo}
+              onChangePassword={handleChangePassword}
+              onChangeConfirmPassword={handleChangeConfirmPassword}
+            />
+            <FormControl>
+              <FormLabel
+                sx={{
+                  alignSelf: "center",
+                  fontSize: "1.3rem",
+                  marginBottom: "5px",
+                }}
+              >
+                הרשאות משתמש
+              </FormLabel>
+              {/* <FormControlLabel>הרשאות משתמש</FormControlLabel> */}
+              <FormGroup
+                row
+                sx={{ display: "flex", justifyContent: "space-evenly" }}
+              >
+                <FormControlLabel
+                  sx={{ margin: "0px" }}
+                  control={
+                    <Checkbox
+                      checked={userSignUpInfo.editPerm || false}
+                      onChange={handleCheckBoxInputChange}
+                      name="editPerm"
+                    />
+                  }
+                  label="הרשאות עריכה"
+                />
+
+                <FormControlLabel
+                  sx={{ margin: "0px" }}
+                  control={
+                    <Checkbox
+                      checked={userSignUpInfo.managePerm || false}
+                      onChange={handleCheckBoxInputChange}
+                      name="managePerm"
+                    />
+                  }
+                  label="הרשאות מנהל"
+                />
+              </FormGroup>
+            </FormControl>
+          </form>
+          <Divider></Divider>
+
+          <Button
+            type="submit"
+            onClick={handleSubmit(handleSubmitForm)}
+            // style={{ marginTop: "10px" }}
+          >
+            צור משתמש
+          </Button>
         </div>
       </Dialog>
     </>
