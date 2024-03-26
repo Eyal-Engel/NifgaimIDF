@@ -108,7 +108,7 @@ export default function CreateHalalDialog({
     });
     console.log(defaultValues);
     setInputValues(defaultValues);
-  }, []);
+  }, [allDataOfHalalsColumns]);
 
   useEffect(() => {
     console.log(errors);
