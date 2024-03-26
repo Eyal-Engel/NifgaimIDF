@@ -49,7 +49,7 @@ const ReuseableItem = ({
 }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
-
+  const [error, setError] = useState();
   const [editedItemName, setEditedItemName] = useState(itemName);
   const [editedDefaultValue, setEditedDefaultValue] = useState(
     defaultValue || ""
@@ -80,17 +80,21 @@ const ReuseableItem = ({
   };
 
   const handleSaveClick = () => {
-    setIsInEditMode(false);
-
-    if (isColumn) {
-      handleItemNameChange(
-        itemId,
-        editedItemName,
-        columnType,
-        editedDefaultValue
-      );
+    if (editedItemName !== "") {
+      if (isColumn) {
+        handleItemNameChange(
+          itemId,
+          editedItemName,
+          columnType,
+          editedDefaultValue
+        );
+      } else {
+        handleItemNameChange(itemId, editedItemName);
+      }
+      setIsInEditMode(false);
+      setError(null);
     } else {
-      handleItemNameChange(itemId, editedItemName);
+      setError({ type: "required", message: "חובה להכניס שם" });
     }
   };
 
@@ -162,19 +166,22 @@ const ReuseableItem = ({
             {itemName}
           </Typography>
         ) : (
-          <Input
-            type="text"
-            value={editedItemName}
-            onChange={handleInputChange}
-            autoFocus
-            sx={{
-              fontSize: "1.2rem",
-              padding: "0px 8px",
-              margin: "10px",
-              direction: "rtl",
-            }}
-            inputProps={{maxLength: "500"}}
-          />
+          <>
+            <Input
+              type="text"
+              value={editedItemName}
+              onChange={handleInputChange}
+              autoFocus
+              sx={{
+                fontSize: "1.2rem",
+                padding: "0px 8px",
+                margin: "10px",
+                direction: "rtl",
+              }}
+              inputProps={{ maxLength: "500" }}
+            />
+            {error && <p style={{ color: "red" }}>{error.message}</p>}
+          </>
         )}
         {columnType === "UUID" && (
           <UuidTypeItem
