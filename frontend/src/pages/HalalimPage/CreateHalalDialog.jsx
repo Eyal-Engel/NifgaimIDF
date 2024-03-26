@@ -96,7 +96,9 @@ export default function CreateHalalDialog({
         // Remove the default value quotes
         let defaultValue = column.column_default.replace(/^'(.*)'::.*$/, "$1");
         // Parse the default value based on data type
-        if (column.data_type === "boolean") {
+        if (defaultValue === "NULL::character varying") {
+          defaultValue = "";
+        } else if (column.data_type === "boolean") {
           defaultValue = defaultValue === "true";
         } else if (column.data_type === "timestamp with time zone") {
           defaultValue = new Date(defaultValue);
@@ -106,7 +108,7 @@ export default function CreateHalalDialog({
     });
     console.log(defaultValues);
     setInputValues(defaultValues);
-  }, [allDataOfHalalsColumns]);
+  }, []);
 
   useEffect(() => {
     console.log(errors);
@@ -414,8 +416,10 @@ export default function CreateHalalDialog({
                             // label="תאריך פטירה "
                             sx={{ width: "100%" }}
                             format="DD/MM/YYYY"
-                            defaultValue={
-                              dayjs(inputValues[column.column_name]) || ""
+                            value={
+                              inputValues[column.column_name] !== undefined
+                                ? dayjs(inputValues[column.column_name])
+                                : ""
                             }
                             onChange={(date) => {
                               console.log(date);
