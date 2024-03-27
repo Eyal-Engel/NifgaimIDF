@@ -1003,7 +1003,6 @@ const resetColumnToDefault = async (req, res, next) => {
     );
 
     res.status(200).json({
-      message: "Column reset to default successfully.",
       columnName: columnName,
       defaultValue: defaultValue,
     });

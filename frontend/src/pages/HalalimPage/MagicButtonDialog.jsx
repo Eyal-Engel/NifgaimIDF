@@ -110,7 +110,7 @@ const MagicButtonDialog = ({
         (column) => column.column_name === columnName
       )[0];
 
-      if (columnInfo.data_type == "USER-DEFINED") {
+      if (columnInfo.data_type === "USER-DEFINED") {
         // Fetch enums for the selected column
         const response = await getColumnEnums(columnName);
         const result = removeQuotes(response);
@@ -178,20 +178,19 @@ const MagicButtonDialog = ({
         }).then(async (result) => {
           if (result.isConfirmed) {
             try {
-              const { message, columnName, newValue } =
-                await replaceColumnValue(
-                  loggedUserId,
-                  selectedColumnName,
-                  inputValue
-                );
+              const { columnName, newValue } = await replaceColumnValue(
+                loggedUserId,
+                selectedColumnName,
+                inputValue
+              );
 
               setRows((prevRows) =>
                 prevRows.map((row) => ({
                   ...row,
                   [columnName]:
-                    selectedColumnType == "boolean" && newValue === "true"
+                    selectedColumnType === "boolean" && newValue === "true"
                       ? true
-                      : selectedColumnType == "boolean" && newValue === "false"
+                      : selectedColumnType === "boolean" && newValue === "false"
                       ? false
                       : newValue,
                 }))
@@ -291,8 +290,10 @@ const MagicButtonDialog = ({
         }).then(async (result) => {
           if (result.isConfirmed) {
             try {
-              const { message, columnName, defaultValue } =
-                await resetColumnToDefault(loggedUserId, selectedColumnName);
+              const { columnName, defaultValue } = await resetColumnToDefault(
+                loggedUserId,
+                selectedColumnName
+              );
 
               let extractedValue = defaultValue;
 
@@ -316,9 +317,10 @@ const MagicButtonDialog = ({
                 prevRows.map((row) => ({
                   ...row,
                   [columnName]:
-                    selectedColumnType == "boolean" && extractedValue === "true"
+                    selectedColumnType === "boolean" &&
+                    extractedValue === "true"
                       ? true
-                      : selectedColumnType == "boolean" &&
+                      : selectedColumnType === "boolean" &&
                         extractedValue === "false"
                       ? false
                       : extractedValue,

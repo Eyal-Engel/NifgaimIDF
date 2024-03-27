@@ -8,8 +8,6 @@ import {
   getHalalColumnsAndTypes,
   getHalals,
   getOriginalColumns,
-  replaceColumnValue,
-  resetColumnToDefault,
 } from "../../utils/api/halalsApi";
 import EditHalalDialog from "./EditHalalDialog";
 import {
@@ -26,9 +24,6 @@ import HalalimCustomToolBar from "../../components/halalimTable/HalalimCustomToo
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
 import { getUserById } from "../../utils/api/usersApi";
 import pLimit from "p-limit";
-import { IconButton } from "@mui/material";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
-import MagicButtonDialog from "./MagicButtonDialog";
 export default function HalalimPage() {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);

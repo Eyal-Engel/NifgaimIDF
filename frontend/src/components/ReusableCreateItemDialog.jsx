@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
@@ -53,15 +53,21 @@ const ReusableCreateItemDialog = React.memo(
       show: false,
       message: "חובה להכניס שם",
     });
-
-    const cleanUpStates = () => {
+    const cleanUpStates = useCallback(() => {
       console.log("in cleanUpStates");
       setNewColumnName("");
       setTypeOfColumn("STRING");
       setEnumValues(["", ""]);
       setDefaultValue(null);
-      setEnumDefaultValue(enumValues[0]);
-    };
+      setEnumDefaultValue("");
+    }, []);
+
+    useEffect(() => {
+      console.log("dialog unmount")
+      return () => {
+        cleanUpStates();
+      };
+    }, [open, cleanUpStates]);
 
     const handleEnumValueChange = (index, event) => {
       const newEnumValues = [...enumValues];
@@ -101,10 +107,12 @@ const ReusableCreateItemDialog = React.memo(
                 resultString,
                 enumDefaultValue.trim(),
                 trimmedEnumValues
-              )
+              ).then(() => {
+                setErrorMessage({ ...errorMessage, show: false });
+              })
             : Swal.fire({
-                title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
-                html: `לא הכנסת ערכים לבחירה`, // Render errors as list items
+                title: `לא ניתן ליצור את העמודה ${newColumnName}`,
+                html: `לא הכנסת ערכים לבחירה`,
                 icon: "error",
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "אישור",
@@ -113,7 +121,6 @@ const ReusableCreateItemDialog = React.memo(
                   container: "swal-dialog-custom",
                 },
               });
-          setErrorMessage({ ...errorMessage, show: false });
         } else if (typeOfColumn === "DATE") {
           console.log(defaultValue);
           if (defaultValue) {
@@ -155,17 +162,17 @@ const ReusableCreateItemDialog = React.memo(
             setErrorMessage({ ...errorMessage, show: true });
           } else {
             onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+            // cleanUpStates();
             setErrorMessage({ ...errorMessage, show: false });
           }
         }
-        cleanUpStates();
       } else {
         if (newColumnName === "") {
           setErrorMessage({ ...errorMessage, show: true });
         } else {
           onCreateClicked(newColumnName);
           setErrorMessage({ ...errorMessage, show: false });
-          cleanUpStates();
+          // cleanUpStates();
         }
       }
     };
@@ -193,7 +200,6 @@ const ReusableCreateItemDialog = React.memo(
 
     const handleClose = () => {
       console.log("close");
-      cleanUpStates();
       setErrorMessage({ ...errorMessage, show: false });
       onClose();
     };
