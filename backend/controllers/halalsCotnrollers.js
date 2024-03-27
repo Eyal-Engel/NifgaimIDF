@@ -111,7 +111,10 @@ const getColumnNamesAndTypes = async (req, res, next) => {
     );
 
     // Combine original columns and additional columns
-    const allColumns = [...originalColumns, ...additionalColumns.map(column => column.column_name)];
+    const allColumns = [
+      ...originalColumns,
+      ...additionalColumns.map((column) => column.column_name),
+    ];
 
     // Fetch detailed information for all columns
     const detailedColumns = [];
@@ -134,7 +137,6 @@ const getColumnNamesAndTypes = async (req, res, next) => {
     return next(error);
   }
 };
-
 
 const getColumnNameAndTypeByColumnName = async (req, res, next) => {
   try {
@@ -1021,7 +1023,7 @@ const resetColumnToDefault = async (req, res, next) => {
 const replaceColumnValue = async (req, res, next) => {
   try {
     const { userId, columnName, newValue } = req.body;
-    console.log(req.body)
+    console.log(req.body);
 
     const user = await User.findByPk(userId);
     const editPerm = user.editPerm;

@@ -1,25 +1,25 @@
-export const filterColumns = (columns, searchInputValue, originalColumns) => {
-  const filteredColumnsBySearchInput = columns.filter((column) => {
-    return column.columnName?.includes(searchInputValue);
-  });
-  const matchingColumns = filteredColumnsBySearchInput.filter((column) =>
-    originalColumns.some((originColumn) => originColumn === column.columnName)
-  );
-  const nonMatchingColumns = filteredColumnsBySearchInput.filter(
-    (column) =>
-      !originalColumns.some(
-        (originColumn) => originColumn === column.columnName
-      )
-  );
-  matchingColumns.sort(
-    (a, b) =>
-      originalColumns.indexOf(a.columnName) -
-      originalColumns.indexOf(b.columnName)
-  );
+// export const filterColumns = (columns, searchInputValue, originalColumns) => {
+//   const filteredColumnsBySearchInput = columns.filter((column) => {
+//     return column.columnName?.includes(searchInputValue);
+//   });
+//   const matchingColumns = filteredColumnsBySearchInput.filter((column) =>
+//     originalColumns.some((originColumn) => originColumn === column.columnName)
+//   );
+//   const nonMatchingColumns = filteredColumnsBySearchInput.filter(
+//     (column) =>
+//       !originalColumns.some(
+//         (originColumn) => originColumn === column.columnName
+//       )
+//   );
+//   matchingColumns.sort(
+//     (a, b) =>
+//       originalColumns.indexOf(a.columnName) -
+//       originalColumns.indexOf(b.columnName)
+//   );
 
-  // Combine the matching and non-matching columns
-  return [...nonMatchingColumns, ...matchingColumns];
-};
+//   // Combine the matching and non-matching columns
+//   return [...nonMatchingColumns, ...matchingColumns];
+// };
 
 export const removeQuotes = (inputString) => {
   // Remove the overall quotes from the input string
