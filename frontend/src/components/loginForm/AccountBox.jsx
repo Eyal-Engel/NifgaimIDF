@@ -8,7 +8,9 @@ export default function AccountBox(props) {
     <div className="boxAccountContainer1">
       <div className="topAccountContainer">
         <motion.div className="backdrop" />
-        <div className="header-text">התחברות</div>
+        <div style={{margin: "20px", fontSize: "5rem", color: "#fff", zIndex: "10" }}>
+          התחברות
+        </div>
       </div>
       <div className="innerAccountContainer">
         <LoginForm />
