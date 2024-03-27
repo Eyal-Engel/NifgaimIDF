@@ -284,7 +284,7 @@ export default function HalalimPage() {
       }, []);
 
       // Limit concurrent requests here
-      const limit = pLimit(200); // Adjust the concurrency limit as per your requirements
+      const limit = pLimit(250); // Adjust the concurrency limit as per your requirements
       const halalsData = await getHalals();
       const halalsPromises = halalsData.map((halal) =>
         limit(() => fetchHalalData(halal))

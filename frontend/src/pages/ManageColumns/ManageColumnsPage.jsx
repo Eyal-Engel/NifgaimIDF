@@ -40,7 +40,11 @@ export default function ManageColumnsPage() {
       firstRender.current = false;
     } else {
       setLoading(true);
-      setSortColumns(filterColumns(columns, searchInputValue, originalColumns));
+      const filteredColumnsBySearchInput = columns.filter((column) => {
+        return column.columnName?.includes(searchInputValue);
+      });
+      setSortColumns(filteredColumnsBySearchInput.reverse());
+
       setLoading(false);
     }
   }, [columns, searchInputValue, originalColumns, setSortColumns]);

@@ -94,16 +94,45 @@ const getOriginalColumns = async (req, res, next) => {
 
 const getColumnNamesAndTypes = async (req, res, next) => {
   try {
-    const columns = await sequelize.query(
+    // Get original columns
+    const originalColumns = Object.keys(Halal.rawAttributes);
+
+    // Get additional columns from the database and sort them by column_name ASC
+    const additionalColumns = await sequelize.query(
       `SELECT column_name, data_type, is_nullable, column_default
        FROM information_schema.columns 
-       WHERE table_name = 'nifgaimHalals';`,
+       WHERE table_name = 'nifgaimHalals'
+       AND column_name NOT IN (:originalColumns)
+       ORDER BY column_name ASC;`,
       {
+        replacements: { originalColumns },
         type: QueryTypes.SELECT,
       }
     );
 
-    res.json(columns);
+    // Combine original columns and additional columns
+    const allColumns = [
+      ...originalColumns,
+      ...additionalColumns.map((column) => column.column_name),
+    ];
+
+    // Fetch detailed information for all columns
+    const detailedColumns = [];
+    for (const column of allColumns) {
+      let columnInfo = await sequelize.query(
+        `SELECT column_name, data_type, is_nullable, column_default
+         FROM information_schema.columns 
+         WHERE table_name = 'nifgaimHalals'
+         AND column_name = :column;`,
+        {
+          replacements: { column },
+          type: QueryTypes.SELECT,
+        }
+      );
+      detailedColumns.push(columnInfo[0]);
+    }
+
+    res.json(detailedColumns);
   } catch (error) {
     return next(error);
   }
@@ -994,7 +1023,7 @@ const resetColumnToDefault = async (req, res, next) => {
 const replaceColumnValue = async (req, res, next) => {
   try {
     const { userId, columnName, newValue } = req.body;
-    console.log(req.body)
+    console.log(req.body);
 
     const user = await User.findByPk(userId);
     const editPerm = user.editPerm;
