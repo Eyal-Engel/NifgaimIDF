@@ -166,7 +166,13 @@ const ReuseableItem = ({
             {itemName}
           </Typography>
         ) : (
-          <>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <Input
               type="text"
               value={editedItemName}
@@ -181,7 +187,7 @@ const ReuseableItem = ({
               inputProps={{ maxLength: "500" }}
             />
             {error && <p style={{ color: "red" }}>{error.message}</p>}
-          </>
+          </div>
         )}
         {columnType === "UUID" && (
           <UuidTypeItem

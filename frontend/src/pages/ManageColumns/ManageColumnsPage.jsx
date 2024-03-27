@@ -299,15 +299,22 @@ export default function ManageColumnsPage() {
         typeOfColumn = "ENUM";
       }
 
-      setColumns((prev) => [
-        ...prev,
-        {
-          columnName: newColumnName,
-          columnType: typeOfColumn,
-          columnDefault: defaultValue,
-          enumValues: typeOfColumn === "ENUM" ? enumValues : null,
-        },
-      ]);
+      if (
+        defaultValue === "" ||
+        defaultValue === null ||
+        defaultValue === undefined
+      ){
+        defaultValue = "לא הוגדר ערך ברירת מחדל"
+      }
+        setColumns((prev) => [
+          ...prev,
+          {
+            columnName: newColumnName,
+            columnType: typeOfColumn,
+            columnDefault: defaultValue,
+            enumValues: typeOfColumn === "ENUM" ? enumValues : null,
+          },
+        ]);
       Swal.fire({
         title: `עמודה "${newColumnName}" נוצרה בהצלחה!`,
         text: "",
