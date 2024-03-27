@@ -160,7 +160,7 @@ export default function ManageColumnsPage() {
             return {
               ...column,
               columnName: newName,
-              defaultValue: newDefaultValue,
+              columnDefault: newDefaultValue,
             };
           }
           return column; // changed from command
@@ -408,12 +408,14 @@ export default function ManageColumnsPage() {
         <Button color="secondary" onClick={handelOpenDialog}>
           <AddIcon fontSize="large"></AddIcon>
         </Button>
-        <ReusableCreateItemDialog
-          open={openDialog}
-          onClose={handleCloseDialog}
-          onCreateClicked={handelAddColumn} // changed from handelAddCommand
-          isColumn={true}
-        />
+        {openDialog && (
+          <ReusableCreateItemDialog
+            open={openDialog}
+            onClose={handleCloseDialog}
+            onCreateClicked={handelAddColumn} // changed from handelAddCommand
+            isColumn={true}
+          />
+        )}
       </div>
     </div>
   );

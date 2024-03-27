@@ -54,7 +54,6 @@ const ReusableCreateItemDialog = React.memo(
       message: "חובה להכניס שם",
     });
     const cleanUpStates = useCallback(() => {
-      console.log("in cleanUpStates");
       setNewColumnName("");
       setTypeOfColumn("STRING");
       setEnumValues(["", ""]);
@@ -63,7 +62,6 @@ const ReusableCreateItemDialog = React.memo(
     }, []);
 
     useEffect(() => {
-      console.log("dialog unmount")
       return () => {
         cleanUpStates();
       };
@@ -89,7 +87,6 @@ const ReusableCreateItemDialog = React.memo(
     const handleCreateClicked = () => {
       if (isColumn) {
         if (typeOfColumn === "ENUM") {
-          console.log(enumValues);
           let emptyFlag = false;
           const trimmedEnumValues = enumValues.map((value) => {
             if (value.trim() !== "") {
@@ -100,7 +97,6 @@ const ReusableCreateItemDialog = React.memo(
             return "";
           });
           const resultString = "select: [" + trimmedEnumValues.join(", ") + "]";
-          console.log(resultString);
           !emptyFlag
             ? onCreateClicked(
                 newColumnName,
@@ -122,7 +118,6 @@ const ReusableCreateItemDialog = React.memo(
                 },
               });
         } else if (typeOfColumn === "DATE") {
-          console.log(defaultValue);
           if (defaultValue) {
             const dateObject = new Date(defaultValue);
 
@@ -133,7 +128,6 @@ const ReusableCreateItemDialog = React.memo(
             const year = dateObject.getFullYear();
 
             const formatDate = `${day}/${month}/${year}`;
-            console.log(formatDate);
             onCreateClicked(newColumnName, typeOfColumn, formatDate);
           } else {
             const emptyValue = "לא הוגדר ערך ברירת מחדל";
@@ -199,7 +193,6 @@ const ReusableCreateItemDialog = React.memo(
     };
 
     const handleClose = () => {
-      console.log("close");
       setErrorMessage({ ...errorMessage, show: false });
       onClose();
     };

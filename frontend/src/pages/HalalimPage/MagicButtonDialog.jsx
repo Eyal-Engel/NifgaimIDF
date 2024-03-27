@@ -27,7 +27,6 @@ import { prefixer } from "stylis";
 import Swal from "sweetalert2";
 import {
   getColumnEnums,
-  getColumnNameAndTypeByColumnName,
   replaceColumnValue,
   resetColumnToDefault,
 } from "../../utils/api/halalsApi";

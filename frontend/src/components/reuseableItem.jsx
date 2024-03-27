@@ -47,7 +47,6 @@ const ReuseableItem = ({
   columnType,
   enumValues,
 }) => {
-  const [openDialog, setOpenDialog] = useState(false);
   const [isInEditMode, setIsInEditMode] = useState(isNewItem ? true : false);
   const [error, setError] = useState();
   const [editedItemName, setEditedItemName] = useState(itemName);
@@ -55,12 +54,7 @@ const ReuseableItem = ({
     defaultValue || ""
   );
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
   const formatDateToString = (dayjsObject) => {
-    console.log(dayjsObject);
     if (!dayjsObject || !dayjsObject.isValid()) {
       return "Invalid dayjs object";
     }
@@ -98,31 +92,31 @@ const ReuseableItem = ({
     }
   };
 
-  const handelSelectColumnSaved = (
-    newColumnName,
-    columnType,
-    defaultValue,
-    enumValues
-  ) => {
-    console.log(newColumnName, columnType, defaultValue, enumValues);
+  // const handelSelectColumnSaved = (
+  //   newColumnName,
+  //   columnType,
+  //   defaultValue,
+  //   enumValues
+  // ) => {
+  //   console.log(newColumnName, columnType, defaultValue, enumValues);
 
-    handleItemNameChange(
-      itemId,
-      newColumnName,
-      columnType,
-      defaultValue,
-      enumValues
-    );
-    setOpenDialog(false);
-  };
+  //   handleItemNameChange(
+  //     itemId,
+  //     newColumnName,
+  //     columnType,
+  //     defaultValue,
+  //     enumValues
+  //   );
+  //   setOpenDialog(false);
+  // };
 
   const handleDeleteClick = () => {
-    // Call the delete function with the index of the item to delete
     handleDeleteItem(itemId, itemName);
-    // You may also want to handle any additional logic, like making an API call to delete the item.
   };
 
   const handleCancelClick = () => {
+    setEditedItemName(itemName);
+    setEditedDefaultValue(defaultValue || "");
     setIsInEditMode(false);
   };
 
@@ -139,7 +133,6 @@ const ReuseableItem = ({
   };
 
   const isScreenSmall = useMediaQuery("(max-width:1000px)");
-
   return (
     <Card
       sx={{
@@ -201,10 +194,7 @@ const ReuseableItem = ({
         {columnType === "INTEGER" && (
           <IntegerTypeItem
             isInEditMode={isInEditMode}
-            itemName={itemName}
-            editedItemName={editedItemName}
-            handleInputChange={handleInputChange}
-            columnType={columnType}
+            defaultValue={defaultValue}
             editedDefaultValue={editedDefaultValue}
             handleInputDefaultValueChange={handleInputDefaultValueChange}
           />
@@ -212,10 +202,7 @@ const ReuseableItem = ({
         {columnType === "STRING" && (
           <StringTypeItem
             isInEditMode={isInEditMode}
-            itemName={itemName}
-            editedItemName={editedItemName}
-            handleInputChange={handleInputChange}
-            columnType={columnType}
+            defaultValue={defaultValue}
             editedDefaultValue={editedDefaultValue}
             handleInputDefaultValueChange={handleInputDefaultValueChange}
           />
@@ -223,10 +210,6 @@ const ReuseableItem = ({
         {columnType === "BOOLEAN" && (
           <BooleanTypeItem
             isInEditMode={isInEditMode}
-            itemName={itemName}
-            editedItemName={editedItemName}
-            handleInputChange={handleInputChange}
-            columnType={columnType}
             editedDefaultValue={editedDefaultValue}
             handleInputDefaultValueChange={handleInputDefaultValueChange}
           />
@@ -234,10 +217,6 @@ const ReuseableItem = ({
         {columnType === "DATE" && (
           <DateTypeItem
             isInEditMode={isInEditMode}
-            itemName={itemName}
-            editedItemName={editedItemName}
-            handleInputChange={handleInputChange}
-            columnType={columnType}
             editedDefaultValue={editedDefaultValue}
             handleInputDefaultValueChange={handleInputDefaultValueChange}
           />
@@ -248,16 +227,9 @@ const ReuseableItem = ({
             <ThemeProvider theme={theme}>
               {columnType === "ENUM" && (
                 <EnumTypeItem
-                  isInEditMode={isInEditMode}
-                  itemName={itemName}
-                  editedItemName={editedItemName}
-                  handleInputChange={handleInputChange}
                   columnType={columnType}
                   editedDefaultValue={editedDefaultValue}
                   enumValuesFromColumn={enumValues}
-                  open={openDialog}
-                  onClose={handleCloseDialog}
-                  onSaveClicked={handelSelectColumnSaved} // changed from handelAddCommand
                 />
               )}
             </ThemeProvider>

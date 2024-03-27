@@ -621,6 +621,7 @@ export default function EditHalalDIalog({
                             {enums[key] ? (
                               enums[key].map((option) => (
                                 <MenuItem
+                                  dir="rtl"
                                   key={option}
                                   value={option}
                                   selected={option.trim() === value?.trim()}
