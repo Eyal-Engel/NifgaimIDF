@@ -106,7 +106,9 @@ const MagicButtonDialog = ({
       setSelectedColumnType(column.data_type);
     }
     try {
-      const columnInfo = await getColumnNameAndTypeByColumnName(columnName);
+      const columnInfo = allDataOfHalalsColumns.filter(
+        (column) => column.column_name === columnName
+      )[0];
 
       if (columnInfo.data_type === "USER-DEFINED") {
         // Fetch enums for the selected column
