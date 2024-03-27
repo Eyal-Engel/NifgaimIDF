@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
@@ -53,6 +53,19 @@ const ReusableCreateItemDialog = React.memo(
       show: false,
       message: "חובה להכניס שם",
     });
+
+    const cleanUpStates = () => {
+      console.log("in cleanUpStates");
+      setNewColumnName("");
+      setTypeOfColumn("STRING");
+      setEnumValues(["", ""]);
+      setDefaultValue(null);
+      setEnumDefaultValue(enumValues[0]);
+      // setErrorMessage({
+      //   show: false,
+      //   message: "חובה להכניס שם",
+      // });
+    };
 
     const handleEnumValueChange = (index, event) => {
       const newEnumValues = [...enumValues];
@@ -146,13 +159,14 @@ const ReusableCreateItemDialog = React.memo(
             setErrorMessage({ ...errorMessage, show: false });
           }
         }
-        // }
+        cleanUpStates();
       } else {
         if (newColumnName === "") {
           setErrorMessage({ ...errorMessage, show: true });
         } else {
           onCreateClicked(newColumnName);
           setErrorMessage({ ...errorMessage, show: false });
+          cleanUpStates();
         }
       }
     };
@@ -181,6 +195,8 @@ const ReusableCreateItemDialog = React.memo(
     };
 
     const handleClose = () => {
+      console.log("close");
+      cleanUpStates();
       onClose();
     };
 
