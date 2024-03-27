@@ -105,7 +105,6 @@ const EnumTypeItem = ({
             className="selectEnums"
             sx={{
               m: 1,
-              width: "20%",
               zIndex: 0,
             }}
             size="small"

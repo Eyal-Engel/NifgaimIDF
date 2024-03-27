@@ -377,8 +377,6 @@ export default function ManageColumnsPage() {
     setSearchInputValue(e.target.value);
   };
 
-  console.log("the component render");
-  // console.log(sortedFilteredColumns);
   return (
     <div className="columnsContainer">
       <div className="columnsHeader">

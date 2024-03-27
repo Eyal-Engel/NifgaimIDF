@@ -300,7 +300,6 @@ const ReuseableItem = ({
               variant="outlined"
               color="secondary"
               startIcon={<LockIcon />}
-              // sx={{ marginRight: "46px" }}
             >
               עמודה קבועה
             </Button>

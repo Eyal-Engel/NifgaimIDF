@@ -38,12 +38,10 @@
   width: 80%;
 }
 
-  .actionColumnItemButtons {
-    /* changed from actionCommandItemButtons */
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
+.actionColumnItemButtons {
+  display: flex;
+  gap: 5px;
+}
 
 .loader {
   position: relative;
@@ -140,5 +138,12 @@
   }
   100% {
     transform: translate(0, 0);
+  }
+}
+@media only screen and (max-width: 1300px) {
+  .actionColumnItemButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 }
