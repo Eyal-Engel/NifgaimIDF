@@ -25,16 +25,9 @@ const cacheRtl = createCache({
 });
 
 const EnumTypeItem = ({
-  isInEditMode,
-  itemName,
-  editedItemName,
-  handleInputChange,
   columnType,
   editedDefaultValue,
   enumValuesFromColumn,
-  open,
-  onClose,
-  onSaveClicked,
 }) => {
   return (
     <>
@@ -112,7 +105,6 @@ const EnumTypeItem = ({
             className="selectEnums"
             sx={{
               m: 1,
-              width: "20%",
               zIndex: 0,
             }}
             size="small"

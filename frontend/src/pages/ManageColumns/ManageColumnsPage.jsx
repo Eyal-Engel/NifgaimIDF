@@ -299,15 +299,22 @@ export default function ManageColumnsPage() {
         typeOfColumn = "ENUM";
       }
 
-      setColumns((prev) => [
-        ...prev,
-        {
-          columnName: newColumnName,
-          columnType: typeOfColumn,
-          columnDefault: defaultValue,
-          enumValues: typeOfColumn === "ENUM" ? enumValues : null,
-        },
-      ]);
+      if (
+        defaultValue === "" ||
+        defaultValue === null ||
+        defaultValue === undefined
+      ){
+        defaultValue = "לא הוגדר ערך ברירת מחדל"
+      }
+        setColumns((prev) => [
+          ...prev,
+          {
+            columnName: newColumnName,
+            columnType: typeOfColumn,
+            columnDefault: defaultValue,
+            enumValues: typeOfColumn === "ENUM" ? enumValues : null,
+          },
+        ]);
       Swal.fire({
         title: `עמודה "${newColumnName}" נוצרה בהצלחה!`,
         text: "",
@@ -370,8 +377,6 @@ export default function ManageColumnsPage() {
     setSearchInputValue(e.target.value);
   };
 
-  console.log("the component render");
-  // console.log(sortedFilteredColumns);
   return (
     <div className="columnsContainer">
       <div className="columnsHeader">

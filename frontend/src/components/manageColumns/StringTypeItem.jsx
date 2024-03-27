@@ -111,7 +111,7 @@ const StringTypeItem = ({
                   margin: "10px",
                   direction: "rtl",
                 }}
-                inputProps={{ maxlength: "500" }}
+                inputProps={{ maxLength: "500" }}
               />
             )}
           </FormControl>
