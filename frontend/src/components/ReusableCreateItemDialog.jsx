@@ -204,7 +204,7 @@ const ReusableCreateItemDialog = React.memo(
       <Dialog
         onClose={handleClose}
         open={open}
-        sx={{ "& .MuiPaper-root": { width: "30vw", minWidth: "15rem" } }}
+        sx={{ "& .MuiPaper-root": { width: "40vw", minWidth: "15rem" } }}
       >
         <DialogTitle sx={{ textAlign: "center" }}>
           {!isGraveyard && !isColumn
@@ -359,34 +359,27 @@ const ReusableCreateItemDialog = React.memo(
               <div
                 key={index}
                 style={{
+                  margin: "auto",
+                  direction: "rtl",
                   display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
                   justifyContent: "center",
-                  position: "relative",
+                  alignItems: "center",
+                  marginTop: "15px",
+                  width: "80%",
                 }}
               >
                 <TextField
                   sx={{
-                    width: "80%",
-                    margin: "auto",
                     direction: "rtl",
-                    marginTop: "15px",
                   }}
+                  fullWidth
                   onChange={(event) => handleEnumValueChange(index, event)}
                   value={value}
                   placeholder={`ערך ${index + 1}`}
                   inputProps={{ maxLength: "500" }}
                 />
                 {index > 1 && (
-                  <IconButton
-                    onClick={() => deleteEnumValueField(index)}
-                    style={{
-                      position: "absolute",
-                      left: "0.5vw",
-                      bottom: "10px",
-                    }}
-                  >
+                  <IconButton onClick={() => deleteEnumValueField(index)}>
                     <DeleteIcon color="error" />
                   </IconButton>
                 )}
