@@ -61,10 +61,6 @@ const ReusableCreateItemDialog = React.memo(
       setEnumValues(["", ""]);
       setDefaultValue(null);
       setEnumDefaultValue(enumValues[0]);
-      // setErrorMessage({
-      //   show: false,
-      //   message: "חובה להכניס שם",
-      // });
     };
 
     const handleEnumValueChange = (index, event) => {
@@ -117,6 +113,7 @@ const ReusableCreateItemDialog = React.memo(
                   container: "swal-dialog-custom",
                 },
               });
+          setErrorMessage({ ...errorMessage, show: false });
         } else if (typeOfColumn === "DATE") {
           console.log(defaultValue);
           if (defaultValue) {
@@ -135,9 +132,11 @@ const ReusableCreateItemDialog = React.memo(
             const emptyValue = "לא הוגדר ערך ברירת מחדל";
             onCreateClicked(newColumnName, typeOfColumn, emptyValue);
           }
+          setErrorMessage({ ...errorMessage, show: false });
         } else if (typeOfColumn === "INTEGER") {
           if (!isNaN(defaultValue)) {
             onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+            setErrorMessage({ ...errorMessage, show: false });
           } else {
             Swal.fire({
               title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
@@ -173,8 +172,6 @@ const ReusableCreateItemDialog = React.memo(
 
     const handeldefaultValueChange = (event) => {
       if (typeOfColumn === "DATE") {
-        console.log("herre");
-        console.log(typeOfColumn);
         setDefaultValue(event?.$d);
       } else if (typeOfColumn === "ENUM") {
         setEnumDefaultValue(event.target.value);
@@ -197,6 +194,7 @@ const ReusableCreateItemDialog = React.memo(
     const handleClose = () => {
       console.log("close");
       cleanUpStates();
+      setErrorMessage({ ...errorMessage, show: false });
       onClose();
     };
 

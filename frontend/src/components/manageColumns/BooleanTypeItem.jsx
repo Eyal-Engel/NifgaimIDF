@@ -96,7 +96,11 @@ const BooleanTypeItem = ({
                   value={editedDefaultValue}
                   selected={editedDefaultValue !== null}
                 >
-                  {editedDefaultValue.toString() === "true" ? "כן" : "לא"}
+                  {editedDefaultValue.toString() === "true"
+                    ? "כן"
+                    : editedDefaultValue.toString() === "false"
+                    ? "לא"
+                    : editedDefaultValue.toString()}
                 </MenuItem>
               </Select>
             ) : (
