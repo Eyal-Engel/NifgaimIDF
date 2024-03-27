@@ -106,7 +106,6 @@ const MagicButtonDialog = ({
       setSelectedColumnType(column.data_type);
     }
     try {
-      console.log(columnName);
       const columnInfo = await getColumnNameAndTypeByColumnName(columnName);
 
       if (columnInfo.data_type == "USER-DEFINED") {
@@ -146,13 +145,10 @@ const MagicButtonDialog = ({
     } else {
       try {
         let value = inputValue;
-        console.log(inputValue);
-        console.log(typeof inputValue);
         if (
           selectedColumnType === "timestamp with time zone" &&
           !isNaN(Date.parse(inputValue))
         ) {
-          console.log("object");
           value = dayjs(inputValue).format("DD/MM/YYYY");
         } else if (selectedColumnType === "boolean" && inputValue === "false") {
           value = "לא";
@@ -179,8 +175,6 @@ const MagicButtonDialog = ({
           },
         }).then(async (result) => {
           if (result.isConfirmed) {
-            console.log(loggedUserId, selectedColumnName, inputValue);
-
             try {
               const { message, columnName, newValue } =
                 await replaceColumnValue(
@@ -188,8 +182,6 @@ const MagicButtonDialog = ({
                   selectedColumnName,
                   inputValue
                 );
-
-              console.log(message, columnName, newValue);
 
               setRows((prevRows) =>
                 prevRows.map((row) => ({
@@ -219,7 +211,6 @@ const MagicButtonDialog = ({
               let errorsForSwal = ""; // Start unordered list
               console.log(errors);
               if (errors) {
-                console.log(selectedColumnName);
                 errors.forEach((error) => {
                   if (error.message === `User is not exist.`) {
                     errorsForSwal += "<li>המשתמש שמנסה לשנות אינו קיים</li>";
@@ -303,15 +294,12 @@ const MagicButtonDialog = ({
 
               let extractedValue = defaultValue;
 
-              console.log(selectedColumnType);
-
               if (
                 selectedColumnType === "USER-DEFINED" ||
                 selectedColumnType === "timestamp with time zone" ||
                 selectedColumnType === "character varying"
               ) {
                 // Regular expression pattern to match anything between single quotes
-                console.log(extractedValue);
 
                 const regex = /'(.*?)'/;
 
@@ -321,7 +309,6 @@ const MagicButtonDialog = ({
                 // Extract the matched value
                 extractedValue = match ? match[1] : null;
               }
-              console.log(extractedValue);
 
               setRows((prevRows) =>
                 prevRows.map((row) => ({
@@ -349,10 +336,9 @@ const MagicButtonDialog = ({
               });
             } catch (error) {
               const errors = error.response.data.body?.errors;
-              let errorsForSwal = ""; // Start unordered list
               console.log(errors);
+              let errorsForSwal = ""; // Start unordered list
               if (errors) {
-                console.log(selectedColumnName);
                 errors.forEach((error) => {
                   if (error.message === `User is not exist.`) {
                     errorsForSwal += "<li>המשתמש שמנסה לשנות אינו קיים</li>";
