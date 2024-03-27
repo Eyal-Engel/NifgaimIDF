@@ -109,6 +109,26 @@ const getColumnNamesAndTypes = async (req, res, next) => {
   }
 };
 
+const getColumnNameAndTypeByColumnName = async (req, res, next) => {
+  try {
+    const { columnName } = req.params;
+
+    const column = await sequelize.query(
+      `SELECT column_name, data_type, is_nullable, column_default
+       FROM information_schema.columns 
+       WHERE table_name = 'nifgaimHalals' AND column_name = $1;`, // Using $1 as placeholder
+      {
+        bind: [columnName],
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    res.json(column[0]);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const getEnumsForColumn = async (req, res, next) => {
   const { columnName } = req.params;
   console.log(columnName);
@@ -931,9 +951,9 @@ const resetColumnToDefault = async (req, res, next) => {
     );
 
     // Check if the column exists and has a default value
-    if (columnInfo.length === 0 || !columnInfo[0].column_default) {
+    if (columnInfo.length === 0) {
       return res.status(400).json({
-        message: `Column '${columnName}' does not exist or does not have a default value.`,
+        message: `Column '${columnName}' does not exist.`,
       });
     }
 
@@ -941,7 +961,7 @@ const resetColumnToDefault = async (req, res, next) => {
 
     console.log("defaultValue");
     console.log(defaultValue);
-    if (!defaultValue) {
+    if (!defaultValue || defaultValue === "NULL::character varying") {
       return res.status(401).json({
         body: {
           errors: [{ message: "This column has no column default value" }],
@@ -975,6 +995,7 @@ const resetColumnToDefault = async (req, res, next) => {
 const replaceColumnValue = async (req, res, next) => {
   try {
     const { userId, columnName, newValue } = req.body;
+    console.log(req.body)
 
     const user = await User.findByPk(userId);
     const editPerm = user.editPerm;
@@ -993,10 +1014,32 @@ const replaceColumnValue = async (req, res, next) => {
     }
 
     // Check if the column name and new value are provided
-    if (!columnName || newValue === undefined) {
+    if (!columnName) {
       return res
         .status(400)
         .json({ message: "Column name and new value are required." });
+    }
+
+    if (newValue === undefined) {
+      return res.status(400).json({ message: "New value are required." });
+    }
+
+    const columnInfo = await sequelize.query(
+      `SELECT column_name
+       FROM information_schema.columns 
+       WHERE table_name = 'nifgaimHalals' 
+       AND column_name = :columnName;`,
+      {
+        replacements: { columnName },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    // Check if the column exists and has a default value
+    if (columnInfo.length === 0) {
+      return res.status(400).json({
+        message: `Column '${columnName}' does not exist.`,
+      });
     }
 
     // Update all rows in the table to set the specified column to the new value
@@ -1032,6 +1075,7 @@ module.exports = {
   updateHalal,
   deleteHalal,
   getColumnNamesAndTypes,
+  getColumnNameAndTypeByColumnName,
   addHalalColumn,
   updateHalalColumn,
   updateHalalSelectColumn,

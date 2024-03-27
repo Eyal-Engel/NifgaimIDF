@@ -38,6 +38,11 @@ router.delete("/:halalId", halalsCotnrollers.deleteHalal);
 
 router.get("/columns/names", halalsCotnrollers.getColumnNamesAndTypes);
 
+router.get(
+  "/columns/names/:columnName",
+  halalsCotnrollers.getColumnNameAndTypeByColumnName
+);
+
 router.post("/columns/add", halalsCotnrollers.addHalalColumn);
 
 // columnName will be in body
@@ -52,7 +57,10 @@ router.patch("/columns/update", halalsCotnrollers.updateHalalColumn);
 router.delete("/columns/delete", halalsCotnrollers.deleteHalalColumn);
 
 // columnName will be in body
-router.patch("/columns/replaceColumnValue", halalsCotnrollers.replaceColumnValue);
+router.patch(
+  "/columns/replaceColumnValue",
+  halalsCotnrollers.replaceColumnValue
+);
 
 // New route to reset all values in a specified column to their default values
 router.patch("/columns/resetValue", halalsCotnrollers.resetColumnToDefault);
