@@ -25,16 +25,9 @@ const cacheRtl = createCache({
 });
 
 const EnumTypeItem = ({
-  isInEditMode,
-  itemName,
-  editedItemName,
-  handleInputChange,
   columnType,
   editedDefaultValue,
   enumValuesFromColumn,
-  open,
-  onClose,
-  onSaveClicked,
 }) => {
   return (
     <>
