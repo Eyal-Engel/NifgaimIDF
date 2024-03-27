@@ -36,6 +36,7 @@
   align-items: center;
   direction: rtl;
   width: 80%;
+  flex-wrap: wrap;
 }
 
 .actionColumnItemButtons {
@@ -140,10 +141,22 @@
     transform: translate(0, 0);
   }
 }
-@media only screen and (max-width: 1300px) {
+@media only screen and (min-width: 1000px) and (max-width: 1300px) {
   .actionColumnItemButtons {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 5px;
+  }
+}
+
+/* Media query for screen widths between 0px and 1000px */
+@media only screen and (max-width: 1000px) {
+  .actionColumnItemButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+  }
+  .css-dnrpxu-MuiCardActions-root > :not(style) ~ :not(style) {
+    margin-left: 0px;
   }
 }
