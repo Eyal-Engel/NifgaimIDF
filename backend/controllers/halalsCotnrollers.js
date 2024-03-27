@@ -939,6 +939,16 @@ const resetColumnToDefault = async (req, res, next) => {
 
     const defaultValue = columnInfo[0].column_default;
 
+    console.log("defaultValue");
+    console.log(defaultValue);
+    if (!defaultValue) {
+      return res.status(401).json({
+        body: {
+          errors: [{ message: "This column has no column default value" }],
+        },
+      });
+    }
+
     // Update all rows in the table to set the specified column to its default value
     await sequelize.query(
       `UPDATE "nifgaimHalals" 
@@ -946,7 +956,9 @@ const resetColumnToDefault = async (req, res, next) => {
     );
 
     res.status(200).json({
-      message: `All values in column '${columnName}' reset to default value '${defaultValue}'.`,
+      message: "Column reset to default successfully.",
+      columnName: columnName,
+      defaultValue: defaultValue,
     });
   } catch (err) {
     console.log(err);
@@ -997,7 +1009,9 @@ const replaceColumnValue = async (req, res, next) => {
     );
 
     res.status(200).json({
-      message: `All values in column '${columnName}' replaced with new value '${newValue}'.`,
+      message: `Column reset to ${newValue} successfully.`,
+      columnName: columnName,
+      newValue: newValue,
     });
   } catch (error) {
     console.error("Error replacing column value:", error);
