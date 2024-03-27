@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, TextField, ThemeProvider, createTheme } from "@mui/material";
-import { CacheProvider } from "@emotion/react";
-import createCache from "@emotion/cache";
-import { prefixer } from "stylis";
-import rtlPlugin from "stylis-plugin-rtl";
+import { Button, TextField } from "@mui/material";
+
 import ReuseableItem from "../../components/ReuseableItem";
 import "./ManageColumnsPage.css";
 import {
@@ -25,16 +22,7 @@ import {
   handleDefaultValue,
   removeQuotes,
 } from "../../utils/utilsForCulomnPage";
-
-const theme = createTheme({
-  direction: "rtl",
-});
-
-// Create rtl cache
-const cacheRtl = createCache({
-  key: "muirtl",
-  stylisPlugins: [prefixer, rtlPlugin],
-});
+import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 
 export default function ManageColumnsPage() {
   const [columns, setColumns] = useState([]); // changed from commands
@@ -303,18 +291,18 @@ export default function ManageColumnsPage() {
         defaultValue === "" ||
         defaultValue === null ||
         defaultValue === undefined
-      ){
-        defaultValue = "לא הוגדר ערך ברירת מחדל"
+      ) {
+        defaultValue = "לא הוגדר ערך ברירת מחדל";
       }
-        setColumns((prev) => [
-          ...prev,
-          {
-            columnName: newColumnName,
-            columnType: typeOfColumn,
-            columnDefault: defaultValue,
-            enumValues: typeOfColumn === "ENUM" ? enumValues : null,
-          },
-        ]);
+      setColumns((prev) => [
+        ...prev,
+        {
+          columnName: newColumnName,
+          columnType: typeOfColumn,
+          columnDefault: defaultValue,
+          enumValues: typeOfColumn === "ENUM" ? enumValues : null,
+        },
+      ]);
       Swal.fire({
         title: `עמודה "${newColumnName}" נוצרה בהצלחה!`,
         text: "",
@@ -381,22 +369,20 @@ export default function ManageColumnsPage() {
     <div className="columnsContainer">
       <div className="columnsHeader">
         <h1>מאפייני חלל</h1>
-        <CacheProvider value={cacheRtl}>
-          <ThemeProvider theme={theme}>
-            <div style={{ direction: "rtl", display: "flex" }}>
-              <TextField
-                id="filled-search"
-                label="חפש עמודה"
-                type="search"
-                variant="filled"
-                value={searchInputValue}
-                onChange={handelSearchInput}
-                sx={{ zIndex: 0 }}
-                inputProps={{ maxLength: "7" }}
-              />
-            </div>
-          </ThemeProvider>
-        </CacheProvider>
+
+        <RtlPlugin>
+          <TextField
+            dir="rtl"
+            id="filled-search"
+            label="חפש עמודה"
+            type="search"
+            variant="filled"
+            value={searchInputValue}
+            onChange={handelSearchInput}
+            sx={{ zIndex: 0 }}
+            inputProps={{ maxLength: "7" }}
+          />
+        </RtlPlugin>
       </div>
       <ul className="columns-list">
         {sortColumns.map((column) => (

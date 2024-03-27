@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import { Button, TextField, ThemeProvider, createTheme } from "@mui/material";
-import { CacheProvider } from "@emotion/react";
-import createCache from "@emotion/cache";
-import { prefixer } from "stylis";
-import rtlPlugin from "stylis-plugin-rtl";
+import { Button, TextField } from "@mui/material";
 import ReuseableItem from "../../components/ReuseableItem";
 import "./ManageGraveyardsPage.css";
 import {
@@ -16,16 +12,7 @@ import Swal from "sweetalert2";
 import AddIcon from "@mui/icons-material/Add";
 import ReusableCreateItemDialog from "../../components/ReusableCreateItemDialog";
 import { useEffect } from "react";
-
-const theme = createTheme({
-  direction: "rtl",
-});
-
-// Create rtl cache
-const cacheRtl = createCache({
-  key: "muirtl",
-  stylisPlugins: [prefixer, rtlPlugin],
-});
+import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 
 export default function ManageCommandsPage() {
   const [graveyards, setGraveyards] = useState([]);
@@ -242,21 +229,18 @@ export default function ManageCommandsPage() {
     <div className="graveyardContainer">
       <div className="graveyardHeader">
         <h1>רשימת בתי עלמין</h1>
-        <CacheProvider value={cacheRtl}>
-          <ThemeProvider theme={theme}>
-            <div style={{ direction: "rtl", display: "flex" }}>
-              <TextField
-                id="filled-search"
-                label="חפש בית עלמין"
-                type="search"
-                variant="filled"
-                value={searchInputValue}
-                onChange={handelSearchInput}
-                sx={{ zIndex: 0 }}
-              />
-            </div>
-          </ThemeProvider>
-        </CacheProvider>
+
+        <RtlPlugin>
+          <TextField
+            id="filled-search"
+            label="חפש בית עלמין"
+            type="search"
+            variant="filled"
+            value={searchInputValue}
+            onChange={handelSearchInput}
+            sx={{ zIndex: 0 }}
+          />
+        </RtlPlugin>
       </div>
       <ul className="graveyard-list">
         {filteredGraveyards.map((graveyard) => (
