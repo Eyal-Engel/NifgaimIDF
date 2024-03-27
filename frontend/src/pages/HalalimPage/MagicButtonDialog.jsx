@@ -194,7 +194,12 @@ const MagicButtonDialog = ({
               setRows((prevRows) =>
                 prevRows.map((row) => ({
                   ...row,
-                  [columnName]: newValue === "true" ? true : newValue, // Update the specific column value to its default
+                  [columnName]:
+                    selectedColumnType == "boolean" && newValue === "true"
+                      ? true
+                      : selectedColumnType == "boolean" && newValue === "false"
+                      ? false
+                      : newValue,
                 }))
               );
 
@@ -300,7 +305,11 @@ const MagicButtonDialog = ({
 
               console.log(selectedColumnType);
 
-              if (selectedColumnType === "USER-DEFINED") {
+              if (
+                selectedColumnType === "USER-DEFINED" ||
+                selectedColumnType === "timestamp with time zone" ||
+                selectedColumnType === "character varying"
+              ) {
                 // Regular expression pattern to match anything between single quotes
                 console.log(extractedValue);
 
@@ -311,15 +320,19 @@ const MagicButtonDialog = ({
 
                 // Extract the matched value
                 extractedValue = match ? match[1] : null;
-
-                // Log the extracted value in the desired format
-                console.log(extractedValue);
               }
+              console.log(extractedValue);
 
               setRows((prevRows) =>
                 prevRows.map((row) => ({
                   ...row,
-                  [columnName]: extractedValue, // Update the specific column value to its default
+                  [columnName]:
+                    selectedColumnType == "boolean" && extractedValue === "true"
+                      ? true
+                      : selectedColumnType == "boolean" &&
+                        extractedValue === "false"
+                      ? false
+                      : extractedValue,
                 }))
               );
 
