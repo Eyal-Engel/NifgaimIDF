@@ -7,22 +7,22 @@ const LeftOver = require("./schemas/NifgaimLeftOver");
 const SoldierAccompanied = require("./schemas/NifgaimSoldierAccompanied");
 
 // // one to many relation (command as many users)
-// Command.hasMany(User, {
-//   foreignKey: {
-//     type: DataTypes.UUID,
-//     allowNull: false,
-//   },
-// });
-// User.belongsTo(Command);
+Command.hasMany(User, {
+  foreignKey: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
+});
+User.belongsTo(Command);
 
 // // one to many relation (Graveyard as many Halals)
-// Graveyard.hasMany(Halal, {
-//   foreignKey: {
-//     type: DataTypes.UUID,
-//     allowNull: false,
-//   },
-// });
-// Halal.belongsTo(Graveyard);
+Graveyard.hasMany(Halal, {
+  foreignKey: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
+});
+Halal.belongsTo(Graveyard);
 
 // one to many relation (Halal as many SoldierAccompanieds)
 Halal.hasMany(SoldierAccompanied, {
@@ -43,10 +43,10 @@ Halal.hasMany(LeftOver, {
 LeftOver.belongsTo(Halal);
 
 // one to many relation (command as many halals)
-// Command.hasMany(Halal, {
-//   foreignKey: {
-//     type: DataTypes.UUID,
-//     allowNull: false,
-//   },
-// });
-// Halal.belongsTo(Command);
+Command.hasMany(Halal, {
+  foreignKey: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
+});
+Halal.belongsTo(Command);

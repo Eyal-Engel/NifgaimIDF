@@ -661,8 +661,8 @@ const getHalalById = async (req, res, next) => {
   }
 };
 
-const getHalalsByCommandName = async (req, res, next) => {
-  const commandName = req.params.commandName;
+const getHalalsByCommandId = async (req, res, next) => {
+  const commandId = req.params.commandId;
   try {
     // Get all column names dynamically
     const columns = await sequelize.query(
@@ -675,7 +675,7 @@ const getHalalsByCommandName = async (req, res, next) => {
 
     // Fetch halals by command ID with all columns
     const halals = await Halal.findAll({
-      where: { commandName },
+      where: { nifgaimCommandId: commandId },
       attributes: columnNames,
     });
 
@@ -1095,7 +1095,7 @@ module.exports = {
   getOriginalColumns,
   getHalalById,
   getHalalByPrivateNumber,
-  getHalalsByCommandName,
+  getHalalsByCommandId,
   getEnumsForColumn,
   getSoldierAccompaniedsByHalalId,
   getLeftOversByHalalId,

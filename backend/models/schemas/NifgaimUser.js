@@ -1,6 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../../dbConfig");
-const NifgaimCommand = require("./NifgaimCommand");
 
 class NifgaimUser extends Model {}
 
@@ -27,15 +26,6 @@ NifgaimUser.init(
       allowNull: false,
       validate: {
         is: /^(?=.{2,30}$)[א-ת']+(\s[א-ת']{1,}){1,2}$/,
-      },
-    },
-    // commandName relation
-    commandName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      references: {
-        model: NifgaimCommand,
-        key: "commandName",
       },
     },
 

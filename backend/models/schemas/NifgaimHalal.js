@@ -1,7 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../../dbConfig");
-const NifgaimCommand = require("./NifgaimCommand"); // Import NifgaimCommand model
-const NifgaimGraveyard = require("./NifgaimGraveyard");
+
 
 class NifgaimHalal extends Model {}
 
@@ -35,27 +34,6 @@ NifgaimHalal.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-
-    // commandName relation
-    commandName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      references: {
-        model: NifgaimCommand,
-        key: "commandName",
-      },
-    },
-
-    // graveyard relation
-    graveyardName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      references: {
-        model: NifgaimGraveyard,
-        key: "graveyardName",
-      },
-    },
-
     dateOfDeath: {
       type: DataTypes.DATE,
       allowNull: false,
