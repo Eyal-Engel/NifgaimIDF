@@ -66,7 +66,7 @@ export default function ManageColumnsPage() {
     graveNumber: "מספר קבר",
     permanentRelationship: "קשר קבוע",
     comments: "הערות",
-    nifgaimGraveyardId: "בית קברות",
+    graveyardName: "בית קברות",
     commandName: "פיקוד",
   };
 
