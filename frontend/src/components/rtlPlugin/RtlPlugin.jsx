@@ -7,7 +7,8 @@ import { createTheme } from "@mui/material";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 
-export default function RtlPlugin({ children, style }) {
+// Memoized RtlPlugin component
+const RtlPlugin = React.memo(({ children, style }) => {
   const theme = (outerTheme) =>
     createTheme({
       direction: "rtl",
@@ -21,15 +22,11 @@ export default function RtlPlugin({ children, style }) {
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
   });
-
+  console.log("rendering theme rtl plugin");
   return (
     <div>
       <CacheProvider value={cacheRtl}>
-        <div
-          dir="rtl"
-          style={style}
-          //   style={{ margin: "auto", width: "80%", marginTop: "15px" }}
-        >
+        <div dir="rtl" style={style}>
           <ThemeProvider theme={theme}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               {children}
@@ -39,4 +36,6 @@ export default function RtlPlugin({ children, style }) {
       </CacheProvider>
     </div>
   );
-}
+});
+
+export default RtlPlugin;

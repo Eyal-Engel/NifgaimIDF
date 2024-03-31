@@ -7,113 +7,113 @@ import FormControl from "@mui/material/FormControl";
 import "../ReuseableItem.css";
 import RtlPlugin from "../rtlPlugin/RtlPlugin";
 
-const EnumTypeItem = ({
-  columnType,
-  editedDefaultValue,
-  enumValuesFromColumn,
-}) => {
-  return (
-    <RtlPlugin>
-      <FormControl
-        className="selectTypeOfColumn"
-        sx={{
-          m: 1,
-          zIndex: 0,
-        }}
-        size="small"
+const EnumTypeItem = React.memo(
+  ({ columnType, editedDefaultValue, enumValuesFromColumn }) => {
+    return (
+      <RtlPlugin
+        style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
       >
-        <InputLabel id="columnType">סוג</InputLabel>
-        <Select
-          dir="rtl"
-          labelId="columnType"
-          id="columnType"
-          value={columnType}
-          label="סוג"
-          disabled
-        >
-          <MenuItem
-            dir="rtl"
-            value={columnType}
-            selected={columnType.includes("select")}
-          >
-            בחירה
-          </MenuItem>
-          <MenuItem dir="rtl" value="ENUM" selected={columnType === "ENUM"}>
-            בחירה
-          </MenuItem>
-        </Select>
-      </FormControl>
-
-      <FormControl
-        className="selectDefaultValueOfColumn"
-        sx={{
-          m: 1,
-          minWidth: "7rem",
-          zIndex: 0,
-        }}
-        size="small"
-      >
-        <InputLabel
-          id="defaultValue"
+        <FormControl
+          className="selectTypeOfColumn"
           sx={{
-            background: "white",
-            paddingRight: "5px",
-            paddingLeft: "5px",
-            marginTop: "0px",
-            fontSize: "15px",
+            m: 1,
+            zIndex: 0,
           }}
+          size="small"
         >
-          ערך ברירת מחדל
-        </InputLabel>
+          <InputLabel id="columnType">סוג</InputLabel>
+          <Select
+            dir="rtl"
+            labelId="columnType"
+            id="columnType"
+            value={columnType}
+            label="סוג"
+            disabled
+          >
+            <MenuItem
+              dir="rtl"
+              value={columnType}
+              selected={columnType.includes("select")}
+            >
+              בחירה
+            </MenuItem>
+            <MenuItem dir="rtl" value="ENUM" selected={columnType === "ENUM"}>
+              בחירה
+            </MenuItem>
+          </Select>
+        </FormControl>
 
-        <Select
-          dir="rtl"
-          value={editedDefaultValue}
-          disabled
-          sx={{ textAlign: "left" }}
+        <FormControl
+          className="selectDefaultValueOfColumn"
+          sx={{
+            m: 1,
+            minWidth: "7rem",
+            zIndex: 0,
+          }}
+          size="small"
         >
-          <MenuItem
+          <InputLabel
+            id="defaultValue"
+            sx={{
+              background: "white",
+              paddingRight: "5px",
+              paddingLeft: "5px",
+              marginTop: "0px",
+              fontSize: "15px",
+            }}
+          >
+            ערך ברירת מחדל
+          </InputLabel>
+
+          <Select
             dir="rtl"
             value={editedDefaultValue}
-            selected={editedDefaultValue !== null}
+            disabled
+            sx={{ textAlign: "left" }}
           >
-            {editedDefaultValue}
-          </MenuItem>
-        </Select>
-      </FormControl>
+            <MenuItem
+              dir="rtl"
+              value={editedDefaultValue}
+              selected={editedDefaultValue !== null}
+            >
+              {editedDefaultValue}
+            </MenuItem>
+          </Select>
+        </FormControl>
 
-      <FormControl
-        className="selectEnums"
-        sx={{
-          m: 1,
-          zIndex: 0,
-        }}
-        size="small"
-      >
-        <Select
-          labelId="defaultValue"
-          id="defaultValue-select"
-          multiple
-          disabled
-          value={enumValuesFromColumn}
-          renderValue={(selected) => (
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {selected.map((value) => (
-                <Chip key={value} label={value} style={{ margin: 2 }} />
-              ))}
-            </div>
-          )}
+        <FormControl
+          className="selectEnums"
           sx={{
-            background: "white",
-            paddingRight: "5px",
-            paddingLeft: "5px",
-            marginTop: "0px",
-            fontSize: "15px",
+            m: 1,
+            zIndex: 0,
           }}
-        ></Select>
-      </FormControl>
-    </RtlPlugin>
-  );
-};
+          size="small"
+        >
+          <Select
+            labelId="defaultValue"
+            id="defaultValue-select"
+            multiple
+            disabled
+            value={enumValuesFromColumn}
+            renderValue={(selected) => (
+              <div style={{ display: "flex", flexWrap: "wrap" }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} style={{ margin: 2 }} />
+                ))}
+              </div>
+            )}
+            sx={{
+              background: "white",
+              paddingRight: "5px",
+              paddingLeft: "5px",
+              marginTop: "0px",
+              fontSize: "15px",
+            }}
+          ></Select>
+        </FormControl>
+      </RtlPlugin>
+    );
+  }
+);
 
 export default EnumTypeItem;

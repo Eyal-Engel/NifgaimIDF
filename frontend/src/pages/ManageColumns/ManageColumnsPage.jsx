@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, TextField } from "@mui/material";
 
 import ReuseableItem from "../../components/ReuseableItem";
@@ -17,13 +17,32 @@ import AddIcon from "@mui/icons-material/Add";
 import ReusableCreateItemDialog from "../../components/ReusableCreateItemDialog";
 import dayjs from "dayjs";
 import {
-  filterColumns,
   handleDataTypeName,
   handleDefaultValue,
   removeQuotes,
 } from "../../utils/utilsForCulomnPage";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 
+const translationDict = {
+  id: "מספר זיהוי",
+  privateNumber: "מספר אישי",
+  lastName: "שם משפחה",
+  firstName: "שם פרטי",
+  dateOfDeath: "תאריך פטירה",
+  serviceType: "סוג שירות",
+  circumstances: "נסיבות המוות",
+  unit: "יחידה",
+  division: "חטיבה",
+  specialCommunity: "קהילה מיוחדת",
+  area: "אזור",
+  plot: "חלקה",
+  line: "שורה",
+  graveNumber: "מספר קבר",
+  permanentRelationship: "קשר קבוע",
+  comments: "הערות",
+  nifgaimGraveyardId: "בית קברות",
+  nifgaimCommandId: "פיקוד",
+};
 export default function ManageColumnsPage() {
   const [columns, setColumns] = useState([]); // changed from commands
   const [searchInputValue, setSearchInputValue] = useState("");
@@ -43,43 +62,15 @@ export default function ManageColumnsPage() {
       const filteredColumnsBySearchInput = columns.filter((column) => {
         return column.columnName?.includes(searchInputValue);
       });
-      setSortColumns(filteredColumnsBySearchInput.reverse());
+      setSortColumns(filteredColumnsBySearchInput);
 
       setLoading(false);
     }
   }, [columns, searchInputValue, originalColumns, setSortColumns]);
 
-  const translationDict = {
-    id: "מספר זיהוי",
-    privateNumber: "מספר אישי",
-    lastName: "שם משפחה",
-    firstName: "שם פרטי",
-    dateOfDeath: "תאריך פטירה",
-    serviceType: "סוג שירות",
-    circumstances: "נסיבות המוות",
-    unit: "יחידה",
-    division: "חטיבה",
-    specialCommunity: "קהילה מיוחדת",
-    area: "אזור",
-    plot: "חלקה",
-    line: "שורה",
-    graveNumber: "מספר קבר",
-    permanentRelationship: "קשר קבוע",
-    comments: "הערות",
-    nifgaimGraveyardId: "בית קברות",
-    nifgaimCommandId: "פיקוד",
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  const handelOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
   useEffect(() => {
     const fetchColumnsData = async () => {
+      console.log("fetchColumnsData...");
       setLoading(true);
       try {
         const columnsWithAllData = await getHalalColumnsAndTypes(); // changed from getCommands
@@ -110,11 +101,12 @@ export default function ManageColumnsPage() {
           };
         });
 
-        setColumns(await Promise.all(columns));
+        setColumns((await Promise.all(columns)).reverse());
 
         // setColumns(columns); // changed from setCommands
 
         setLoading(false); // Data fetching completed, set loading to false
+        console.log("finished");
       } catch (error) {
         console.error("Error during get columns:", error); // changed from get commands
       }
@@ -123,252 +115,255 @@ export default function ManageColumnsPage() {
     fetchColumnsData();
   }, []);
 
+  const handleCloseDialog = useCallback(() => {
+    setOpenDialog(false);
+  }, []);
+
+  const handelOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handelColumnNameChange = useCallback(
+    async (columnName, newName, columnType, newDefaultValue, newEnums) => {
+      try {
+        if (columnType === "ENUM") {
+          console.log(columnName, newName, newEnums, newDefaultValue);
+
+          await updateHalalSelectColumn(
+            loggedUserId,
+            columnName,
+            newName,
+            newEnums,
+            newDefaultValue
+          );
+        } else {
+          await updateHalalColumn(
+            loggedUserId,
+            columnName,
+            newName,
+            columnType === "DATE"
+              ? dayjs(newDefaultValue, "DD/MM/YYYY")
+              : newDefaultValue,
+            columnType
+          ); // changed from updateCommandById
+        }
+
+        setColumns((prevColumns) => {
+          return prevColumns.map((column) => {
+            if (column.columnName === columnName) {
+              console.log(newDefaultValue);
+              return {
+                ...column,
+                columnName: newName,
+                columnDefault: newDefaultValue,
+              };
+            }
+            return column; // changed from command
+          });
+        });
+        Swal.fire({
+          title: `עמודה "${newName}" עודכנה בהצלחה!`,
+          text: "",
+          icon: "success",
+          confirmButtonText: "אישור",
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        }).then((result) => {});
+      } catch (error) {
+        console.log(error);
+        const errors = error.response.data.body?.errors;
+        let errorsForSwal = ""; // Start unordered list
+
+        if (errors) {
+          errors.forEach((error) => {
+            if (error.message === "columnName must be unique") {
+              errorsForSwal += "<li>השם כבר קיים במערכת</li>";
+            }
+            if (
+              error.message ===
+              "at least 1 of new column name or columnDefault are required."
+            ) {
+              errorsForSwal += "<li>נדרש להכניס שם וערך ברירת מחדל</li>";
+            }
+            if (error.message === `Column '${columnName}' does not exist.`) {
+              errorsForSwal += "<li>השם לא קיים במערכת</li>";
+            }
+            if (
+              error.message ===
+              `New column name and new enum values are required.`
+            ) {
+              errorsForSwal += "<li>נדרש להכניס שם וערך ברירת מחדל</li>";
+            }
+          });
+        } else {
+          errorsForSwal += `<li>${error}</li>`;
+        }
+
+        Swal.fire({
+          title: ` לא ניתן ליצור את העמודה ${newName}`, // changed from command
+          html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        });
+      }
+    },
+    [loggedUserId]
+  );
+
+  const handleDeleteColumn = useCallback(
+    async (columnName) => {
+      // changed from handleDeleteCommand
+      Swal.fire({
+        title: `האם את/ה בטוח/ה שתרצה/י למחוק את העמודה ${columnName}`, // changed from commandName
+        text: "פעולה זאת איננה ניתנת לשחזור",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "מחק עמודה",
+        cancelButtonText: "בטל",
+        reverseButtons: true,
+        customClass: {
+          container: "swal-dialog-custom",
+        },
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await deleteHalalColumn(loggedUserId, columnName); // changed from deleteCommandById
+            setColumns((prevColumns) => {
+              // changed from setCommands
+              const updatedColumns = prevColumns.filter(
+                (column) => column.columnName !== columnName
+              );
+              return updatedColumns;
+            });
+            Swal.fire({
+              title: `עמודה "${columnName}" נמחקה בהצלחה!`, // changed from commandName
+              text: "",
+              icon: "success",
+              confirmButtonText: "אישור",
+            });
+          } catch (error) {
+            Swal.fire({
+              title: `לא ניתן למחוק את העמודה`,
+              text: error,
+              icon: "error",
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "אישור",
+              reverseButtons: true,
+              customClass: {
+                container: "swal-dialog-custom",
+              },
+            });
+          }
+        }
+      });
+    },
+    [loggedUserId]
+  );
+
+  const handelAddColumn = useCallback(
+    async (newColumnName, typeOfColumn, defaultValue, enumValues) => {
+      try {
+        await addHalalColumn(
+          loggedUserId,
+          newColumnName.trim(),
+          typeOfColumn,
+          typeOfColumn === "DATE"
+            ? dayjs(defaultValue, "DD/MM/YYYY")
+            : defaultValue
+        ); // changed from createCommand
+        if (typeOfColumn.includes("select")) {
+          typeOfColumn = "ENUM";
+        }
+
+        if (
+          defaultValue === "" ||
+          defaultValue === null ||
+          defaultValue === undefined
+        ) {
+          defaultValue = "לא הוגדר ערך ברירת מחדל";
+        }
+        setColumns((prev) => [
+          ...prev,
+          {
+            columnName: newColumnName,
+            columnType: typeOfColumn,
+            columnDefault: defaultValue,
+            enumValues: typeOfColumn === "ENUM" ? enumValues : null,
+          },
+        ]);
+        Swal.fire({
+          title: `עמודה "${newColumnName}" נוצרה בהצלחה!`,
+          text: "",
+          icon: "success",
+          confirmButtonText: "אישור",
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        }).then(() => {
+          setSearchInputValue("");
+          setOpenDialog(false);
+        });
+      } catch (error) {
+        console.log(error);
+        const errors = error.response.data.body?.errors;
+        let errorsForSwal = ""; // Start unordered list
+        console.log(errors);
+        if (errors) {
+          errors.forEach((error) => {
+            if (
+              error.message ===
+              `Column '${newColumnName.trim()}' already exists.`
+            ) {
+              errorsForSwal += "<li>העמודה כבר קיימת במערכת</li>";
+            }
+            if (
+              error.message ===
+              `Default value '${defaultValue}' is not valid for data type '${typeOfColumn}'.`
+            ) {
+              errorsForSwal += "<li>ערך ברירת מחדל לא תקין</li>";
+            }
+            if (error.message === "Column name is required.") {
+              errorsForSwal += "<li>נדרש להכניס שם עמודה</li>";
+            }
+            if (error.message === "Data type is required.") {
+              errorsForSwal += "<li>נדרש להכניס סוג עמודה</li>";
+            }
+            if (error.message === "enumlabel must be unique") {
+              errorsForSwal += "<li>הכנסת ערכים דומים, שנה אחד מהם</li>";
+            }
+          });
+        } else {
+          errorsForSwal += `<li>${error}</li>`;
+        }
+
+        Swal.fire({
+          title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
+          html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "אישור",
+          reverseButtons: true,
+          customClass: {
+            container: "swal-dialog-custom",
+          },
+        });
+      }
+    },
+    [loggedUserId]
+  );
+
   if (loading) {
+    console.log("loading...");
     return <span className="loader"></span>; // Render loading indicator
   }
-
-  const handelColumnNameChange = async (
-    columnName,
-    newName,
-    columnType,
-    newDefaultValue,
-    newEnums
-  ) => {
-    try {
-      if (columnType === "ENUM") {
-        console.log(columnName, newName, newEnums, newDefaultValue);
-
-        await updateHalalSelectColumn(
-          loggedUserId,
-          columnName,
-          newName,
-          newEnums,
-          newDefaultValue
-        );
-      } else {
-        await updateHalalColumn(
-          loggedUserId,
-          columnName,
-          newName,
-          columnType === "DATE"
-            ? dayjs(newDefaultValue, "DD/MM/YYYY")
-            : newDefaultValue,
-          columnType
-        ); // changed from updateCommandById
-      }
-
-      setColumns((prevColumns) => {
-        return prevColumns.map((column) => {
-          if (column.columnName === columnName) {
-            console.log(newDefaultValue);
-            return {
-              ...column,
-              columnName: newName,
-              columnDefault: newDefaultValue,
-            };
-          }
-          return column; // changed from command
-        });
-      });
-      Swal.fire({
-        title: `עמודה "${newName}" עודכנה בהצלחה!`,
-        text: "",
-        icon: "success",
-        confirmButtonText: "אישור",
-        customClass: {
-          container: "swal-dialog-custom",
-        },
-      }).then((result) => {});
-    } catch (error) {
-      console.log(error);
-      const errors = error.response.data.body?.errors;
-      let errorsForSwal = ""; // Start unordered list
-
-      if (errors) {
-        errors.forEach((error) => {
-          if (error.message === "columnName must be unique") {
-            errorsForSwal += "<li>השם כבר קיים במערכת</li>";
-          }
-          if (
-            error.message ===
-            "at least 1 of new column name or columnDefault are required."
-          ) {
-            errorsForSwal += "<li>נדרש להכניס שם וערך ברירת מחדל</li>";
-          }
-          if (error.message === `Column '${columnName}' does not exist.`) {
-            errorsForSwal += "<li>השם לא קיים במערכת</li>";
-          }
-          if (
-            error.message ===
-            `New column name and new enum values are required.`
-          ) {
-            errorsForSwal += "<li>נדרש להכניס שם וערך ברירת מחדל</li>";
-          }
-        });
-      } else {
-        errorsForSwal += `<li>${error}</li>`;
-      }
-
-      Swal.fire({
-        title: ` לא ניתן ליצור את העמודה ${newName}`, // changed from command
-        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
-        icon: "error",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "אישור",
-        reverseButtons: true,
-        customClass: {
-          container: "swal-dialog-custom",
-        },
-      });
-    }
-  };
-
-  const handleDeleteColumn = async (columnName) => {
-    // changed from handleDeleteCommand
-    Swal.fire({
-      title: `האם את/ה בטוח/ה שתרצה/י למחוק את העמודה ${columnName}`, // changed from commandName
-      text: "פעולה זאת איננה ניתנת לשחזור",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "מחק עמודה",
-      cancelButtonText: "בטל",
-      reverseButtons: true,
-      customClass: {
-        container: "swal-dialog-custom",
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await deleteHalalColumn(loggedUserId, columnName); // changed from deleteCommandById
-          setColumns((prevColumns) => {
-            // changed from setCommands
-            const updatedColumns = prevColumns.filter(
-              (column) => column.columnName !== columnName
-            );
-            return updatedColumns;
-          });
-          Swal.fire({
-            title: `עמודה "${columnName}" נמחקה בהצלחה!`, // changed from commandName
-            text: "",
-            icon: "success",
-            confirmButtonText: "אישור",
-          });
-        } catch (error) {
-          Swal.fire({
-            title: `לא ניתן למחוק את העמודה`,
-            text: error,
-            icon: "error",
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "אישור",
-            reverseButtons: true,
-            customClass: {
-              container: "swal-dialog-custom",
-            },
-          });
-        }
-      }
-    });
-  };
-
-  const handelAddColumn = async (
-    newColumnName,
-    typeOfColumn,
-    defaultValue,
-    enumValues
-  ) => {
-    try {
-      await addHalalColumn(
-        loggedUserId,
-        newColumnName.trim(),
-        typeOfColumn,
-        typeOfColumn === "DATE"
-          ? dayjs(defaultValue, "DD/MM/YYYY")
-          : defaultValue
-      ); // changed from createCommand
-      if (typeOfColumn.includes("select")) {
-        typeOfColumn = "ENUM";
-      }
-
-      if (
-        defaultValue === "" ||
-        defaultValue === null ||
-        defaultValue === undefined
-      ) {
-        defaultValue = "לא הוגדר ערך ברירת מחדל";
-      }
-      setColumns((prev) => [
-        ...prev,
-        {
-          columnName: newColumnName,
-          columnType: typeOfColumn,
-          columnDefault: defaultValue,
-          enumValues: typeOfColumn === "ENUM" ? enumValues : null,
-        },
-      ]);
-      Swal.fire({
-        title: `עמודה "${newColumnName}" נוצרה בהצלחה!`,
-        text: "",
-        icon: "success",
-        confirmButtonText: "אישור",
-        customClass: {
-          container: "swal-dialog-custom",
-        },
-      }).then(() => {
-        setSearchInputValue("");
-        setOpenDialog(false);
-      });
-    } catch (error) {
-      console.log(error);
-      const errors = error.response.data.body?.errors;
-      let errorsForSwal = ""; // Start unordered list
-      console.log(errors);
-      if (errors) {
-        errors.forEach((error) => {
-          if (
-            error.message === `Column '${newColumnName.trim()}' already exists.`
-          ) {
-            errorsForSwal += "<li>העמודה כבר קיימת במערכת</li>";
-          }
-          if (
-            error.message ===
-            `Default value '${defaultValue}' is not valid for data type '${typeOfColumn}'.`
-          ) {
-            errorsForSwal += "<li>ערך ברירת מחדל לא תקין</li>";
-          }
-          if (error.message === "Column name is required.") {
-            errorsForSwal += "<li>נדרש להכניס שם עמודה</li>";
-          }
-          if (error.message === "Data type is required.") {
-            errorsForSwal += "<li>נדרש להכניס סוג עמודה</li>";
-          }
-          if (error.message === "enumlabel must be unique") {
-            errorsForSwal += "<li>הכנסת ערכים דומים, שנה אחד מהם</li>";
-          }
-        });
-      } else {
-        errorsForSwal += `<li>${error}</li>`;
-      }
-
-      Swal.fire({
-        title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
-        html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
-        icon: "error",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "אישור",
-        reverseButtons: true,
-        customClass: {
-          container: "swal-dialog-custom",
-        },
-      });
-    }
-  };
-
-  const handelSearchInput = (e) => {
-    setSearchInputValue(e.target.value);
-  };
-
   return (
     <div className="columnsContainer">
       <div className="columnsHeader">
@@ -382,9 +377,9 @@ export default function ManageColumnsPage() {
             type="search"
             variant="filled"
             value={searchInputValue}
-            onChange={handelSearchInput}
+            onChange={(e) => setSearchInputValue(e.target.value)}
             sx={{ zIndex: 0 }}
-            inputProps={{ maxLength: "7" }}
+            inputProps={{ maxLength: "500" }}
           />
         </RtlPlugin>
       </div>
@@ -401,13 +396,13 @@ export default function ManageColumnsPage() {
               defaultValue={column.columnDefault}
               handleItemNameChange={handelColumnNameChange}
               handleDeleteItem={handleDeleteColumn}
-              isNewItem={column.isNewItem ? true : false}
               columnType={column.columnType}
               enumValues={column.enumValues}
             />
           </li>
         ))}
       </ul>
+
       <div>
         <Button color="secondary" onClick={handelOpenDialog}>
           <AddIcon fontSize="large"></AddIcon>
