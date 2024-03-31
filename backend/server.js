@@ -7,7 +7,6 @@ const graveyardsRoutes = require("./routes/graveyardsRoutes");
 const halalsRoutes = require("./routes/halalsRoutes");
 const leftOversRoutes = require("./routes/leftOversRoutes");
 const soldierAccompaniedRoutes = require("./routes/soldierAccompaniedRoutes");
-const enumsRoutes = require("./routes/enumsRoutes");
 
 const db = require("./dbConfig");
 require("./models/relations");
@@ -55,7 +54,6 @@ app.use("/api/graveyards", graveyardsRoutes);
 app.use("/api/halals", halalsRoutes);
 app.use("/api/leftOvers", leftOversRoutes);
 app.use("/api/soldierAccompanied", soldierAccompaniedRoutes);
-app.use("/api/enums", enumsRoutes);
 
 app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

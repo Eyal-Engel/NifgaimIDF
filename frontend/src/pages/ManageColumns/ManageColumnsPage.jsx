@@ -23,26 +23,6 @@ import {
 } from "../../utils/utilsForCulomnPage";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 
-const translationDict = {
-  id: "מספר זיהוי",
-  privateNumber: "מספר אישי",
-  lastName: "שם משפחה",
-  firstName: "שם פרטי",
-  dateOfDeath: "תאריך פטירה",
-  serviceType: "סוג שירות",
-  circumstances: "נסיבות המוות",
-  unit: "יחידה",
-  division: "חטיבה",
-  specialCommunity: "קהילה מיוחדת",
-  area: "אזור",
-  plot: "חלקה",
-  line: "שורה",
-  graveNumber: "מספר קבר",
-  permanentRelationship: "קשר קבוע",
-  comments: "הערות",
-  nifgaimGraveyardId: "בית קברות",
-  nifgaimCommandId: "פיקוד",
-};
 export default function ManageColumnsPage() {
   const [columns, setColumns] = useState([]); // changed from commands
   const [searchInputValue, setSearchInputValue] = useState("");
@@ -54,6 +34,26 @@ export default function ManageColumnsPage() {
   const [sortColumns, setSortColumns] = useState([]);
   const firstRender = useRef(true);
 
+  const translationDict = {
+    id: "מספר זיהוי",
+    privateNumber: "מספר אישי",
+    lastName: "שם משפחה",
+    firstName: "שם פרטי",
+    dateOfDeath: "תאריך פטירה",
+    serviceType: "סוג שירות",
+    circumstances: "נסיבות המוות",
+    unit: "יחידה",
+    division: "חטיבה",
+    specialCommunity: "קהילה מיוחדת",
+    area: "אזור",
+    plot: "חלקה",
+    line: "שורה",
+    graveNumber: "מספר קבר",
+    permanentRelationship: "קשר קבוע",
+    comments: "הערות",
+    graveyardName: "בית קברות",
+    commandName: "פיקוד",
+  };
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
