@@ -12,7 +12,7 @@ export default function AboutPage() {
   }
 
   async function generateHalals() {
-    const userId = "d1e47f3e-b767-4030-b6ab-21bec850ba48";
+    const userId = "e9403c8c-482a-4914-9b7b-75b5b3eea2e6";
     const halalDataTemplate = {
       lastName: "Doe",
       firstName: "John",
@@ -46,7 +46,7 @@ export default function AboutPage() {
     const halals = [];
     const soldiers = [];
 
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 8000; i++) {
       const privateNumber = generateRandomNumber(1000000, 9999999); // Generate 7-digit random number
       console.log(halalDataTemplate);
       const halalData = { ...halalDataTemplate, privateNumber };
