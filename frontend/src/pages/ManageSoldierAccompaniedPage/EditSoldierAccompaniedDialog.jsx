@@ -311,7 +311,9 @@ const EditSoldierAccompaniedDialog = ({
         })
       );
       Swal.fire({
-        title: `מלווה "${inputValues.fullName}" עודכן בהצלחה!`,
+        title: `מלווה "${
+          inputValues.fullName || selectedRow.fullName
+        }" עודכן בהצלחה!`,
         text: "",
         icon: "success",
         confirmButtonText: "אישור",

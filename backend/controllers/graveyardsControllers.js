@@ -105,6 +105,8 @@ const updateGraveyardById = async (req, res, next) => {
     }
 
     graveyard.graveyardName = graveyardName;
+
+    console.log(graveyard);
     await graveyard.save();
 
     res.json(graveyard);

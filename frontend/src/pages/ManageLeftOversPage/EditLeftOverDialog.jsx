@@ -165,7 +165,7 @@ const EditLeftOverDialog = ({
         })
       );
       Swal.fire({
-        title: `שאר "${inputValues.fullName}" עודכן בהצלחה!`,
+        title: `שאר "${inputValues.fullName || selectedRow.fullName}" עודכן בהצלחה!`,
         text: "",
         icon: "success",
         confirmButtonText: "אישור",

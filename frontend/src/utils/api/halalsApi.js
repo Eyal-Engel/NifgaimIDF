@@ -137,7 +137,7 @@ export async function getHalalByPrivateNumber(privateNumber) {
 }
 
 export async function getHalalsByCommandId(commandId) {
-  const apiUrl = `http://localhost:${port}/api/halals/command/${commandId}`;
+  const apiUrl = `http://localhost:${port}/api/halals//byCommand/${commandId}`;
 
   const headers = {
     "Content-Type": "application/json",

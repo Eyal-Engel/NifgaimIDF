@@ -131,16 +131,16 @@ export default function HalalimPage() {
     return `${day}/${month}/${year}`;
   }, []);
 
-  const fetchHalalData = async (halal) => {
-    const graveyard = await getGraveyardById(halal.nifgaimGraveyardId);
-    const command = await getCommandById(halal.nifgaimCommandId);
+  // const fetchHalalData = async (halal) => {
+  //   const graveyard = await getGraveyardById(halal.nifgaimGraveyardId);
+  //   const command = await getCommandById(halal.nifgaimCommandId);
 
-    return {
-      ...halal,
-      nifgaimGraveyardId: graveyard.graveyardName,
-      nifgaimCommandId: command.commandName,
-    };
-  };
+  //   return {
+  //     ...halal,
+  //     nifgaimGraveyardId: graveyard.graveyardName,
+  //     nifgaimCommandId: command.commandName,
+  //   };
+  // };
 
   const fetchColumnsData = React.useCallback(async () => {
     const translationDict = {
@@ -207,9 +207,9 @@ export default function HalalimPage() {
           if (type === "boolean") {
             renderCell1 = (params) => (
               <div style={{ textAlign: "center" }}>
-                {params.value === true ? (
+                {params.value === true || params.value === "true" ? (
                   <span style={{ color: "green", fontSize: "1.2rem" }}>✓</span>
-                ) : params.value === false ? (
+                ) : params.value === false || params.value === "false" ? (
                   <span style={{ color: "red", fontSize: "1.2rem" }}>✗</span>
                 ) : null}
               </div>
@@ -284,15 +284,15 @@ export default function HalalimPage() {
       }, []);
 
       // Limit concurrent requests here
-      const limit = pLimit(250); // Adjust the concurrency limit as per your requirements
+      // const limit = pLimit(250); // Adjust the concurrency limit as per your requirements
       const halalsData = await getHalals();
-      const halalsPromises = halalsData.map((halal) =>
-        limit(() => fetchHalalData(halal))
-      );
-      const transformedHalals = await Promise.all(halalsPromises);
+      // const halalsPromises = halalsData.map((halal) =>
+      //   limit(() => fetchHalalData(halal))
+      // );
+      // const transformedHalals = await Promise.all(halalsPromises);
 
       setColumns(formattedColumns);
-      setRows(transformedHalals);
+      setRows(halalsData);
       setLoading(false);
     } catch (error) {
       setLoading(false);

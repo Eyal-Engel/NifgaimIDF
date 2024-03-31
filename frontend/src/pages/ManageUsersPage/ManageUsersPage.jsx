@@ -68,16 +68,17 @@ export default function ManageExistsUsers() {
       setLoading(true);
       try {
         const usersData = await getUsers();
-        const userPromises = usersData.map(async (user) => ({
-          id: user.id,
-          privateNumber: user.privateNumber,
-          fullName: user.fullName,
-          command: await getCommandNameById(user.nifgaimCommandId),
-          editPerm: user.editPerm,
-          managePerm: user.managePerm,
-        }));
-        const transformedUsers = await Promise.all(userPromises);
-        setRows(transformedUsers);
+        // const userPromises = usersData.map(async (user) => ({
+        //   id: user.id,
+        //   privateNumber: user.privateNumber,
+        //   fullName: user.fullName,
+        //   command: user.commandName,
+        //   editPerm: user.editPerm,
+        //   managePerm: user.managePerm,
+        // }));
+        // const transformedUsers = await Promise.all(userPromises);
+        console.log(usersData);
+        setRows(usersData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching or transforming users:", error);
@@ -286,22 +287,22 @@ export default function ManageExistsUsers() {
   const processRowUpdate = async (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
 
-    const { id, privateNumber, fullName, command, editPerm, managePerm } =
+    const { id, privateNumber, fullName, commandName, editPerm, managePerm } =
       updatedRow;
 
     console.log(updatedRow);
     try {
-      const nifgaimCommandId = await getCommandIdByName(command);
-      console.log(nifgaimCommandId);
+      // const nifgaimCommandId = await getCommandIdByName(command);
+      // console.log(nifgaimCommandId);
       const filteredUser = {
         privateNumber,
         fullName,
-        nifgaimCommandId,
+        commandName,
         editPerm,
         managePerm,
       };
 
-      console.log(filteredUser);
+      // console.log(filteredUser);
       await updateUser(loggedUserId, id, filteredUser);
 
       setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -349,7 +350,7 @@ export default function ManageExistsUsers() {
     },
 
     {
-      field: "command",
+      field: "commandName",
       headerName: "פיקוד",
       headerAlign: "center",
       tfontColor: "white",

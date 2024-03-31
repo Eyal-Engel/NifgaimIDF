@@ -67,8 +67,8 @@ const translationDict = {
   graveNumber: "מספר קבר",
   permanentRelationship: "קשר קבוע",
   comments: "הערות",
-  nifgaimGraveyardId: "בית קברות",
-  nifgaimCommandId: "פיקוד",
+  graveyardName: "בית קברות",
+  commandName: "פיקוד",
 };
 export default function EditHalalDIalog({
   openDialog,
@@ -150,6 +150,7 @@ export default function EditHalalDIalog({
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    setInputValues({});
   };
 
   function formatPhoneNumber(phone) {
@@ -195,18 +196,18 @@ export default function EditHalalDIalog({
         }
       }
 
-      // Get the command ID by name
-      const commandId = await getCommandIdByName(
-        updatedHalalData.nifgaimCommandId
-      );
-      // Get the graveyard ID by name
-      const graveyardId = await getGraveyardIdByName(
-        updatedHalalData.nifgaimGraveyardId
-      );
+      // // Get the command ID by name
+      // const commandId = await getCommandIdByName(
+      //   updatedHalalData.nifgaimCommandId
+      // );
+      // // Get the graveyard ID by name
+      // const graveyardId = await getGraveyardIdByName(
+      //   updatedHalalData.nifgaimGraveyardId
+      // );
 
-      // Update the relevant fields in updatedHalalData
-      updatedHalalData.nifgaimCommandId = commandId;
-      updatedHalalData.nifgaimGraveyardId = graveyardId;
+      // // Update the relevant fields in updatedHalalData
+      // updatedHalalData.nifgaimCommandId = commandId;
+      // updatedHalalData.nifgaimGraveyardId = graveyardId;
 
       const updatedHalal = await updateHalal(
         loggedUserId,
@@ -214,16 +215,16 @@ export default function EditHalalDIalog({
         updatedHalalData
       );
 
-      const commandName = await getCommandNameById(
-        updatedHalal.nifgaimCommandId
-      );
-      const graveyard = await getGraveyardById(updatedHalal.nifgaimGraveyardId);
+      // const commandName = await getCommandNameById(
+      //   updatedHalal.nifgaimCommandId
+      // );
+      // const graveyard = await getGraveyardById(updatedHalal.nifgaimGraveyardId);
 
-      const graveyardName = graveyard.graveyardName;
+      // const graveyardName = graveyard.graveyardName;
 
-      // Replace nifgaimCommandId and nifgaimGraveyardId in updatedHalal with their names
-      updatedHalal.nifgaimCommandId = commandName;
-      updatedHalal.nifgaimGraveyardId = graveyardName;
+      // // Replace nifgaimCommandId and nifgaimGraveyardId in updatedHalal with their names
+      // updatedHalal.nifgaimCommandId = commandName;
+      // updatedHalal.nifgaimGraveyardId = graveyardName;
 
       // Update the row in the state
       setRows((prevRows) =>
@@ -414,7 +415,7 @@ export default function EditHalalDIalog({
                     flexDirection: "column",
                   }}
                 >
-                  {key === "nifgaimCommandId" ? (
+                  {key === "commandName" ? (
                     <>
                       <InputLabel id={key}>
                         {translationDict[key] ? translationDict[key] : key}
@@ -456,7 +457,7 @@ export default function EditHalalDIalog({
                         )}
                       </FormControl>
                     </>
-                  ) : key === "nifgaimGraveyardId" ? (
+                  ) : key === "graveyardName" ? (
                     <>
                       <InputLabel id={key}>
                         {translationDict[key] ? translationDict[key] : key}

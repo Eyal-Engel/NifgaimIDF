@@ -156,13 +156,11 @@ export default function CustomToolBarManageUsers({
 
     if (errorsForSwalFrontendTesting === "") {
       try {
-        const commandId = await getCommandIdByName(userSignUpInfo.command);
-
         const user = {
           privateNumber: userSignUpInfo.privateNumber,
           fullName: userSignUpInfo.fullName,
           password: userSignUpInfo.password,
-          commandId: commandId,
+          commandName: userSignUpInfo.command,
           editPerm: userSignUpInfo.editPerm,
           managePerm: userSignUpInfo.managePerm,
         };
@@ -171,16 +169,16 @@ export default function CustomToolBarManageUsers({
           await createUser(loggedUserId, user);
 
           const updatedUsers = await getUsers();
-          const userPromises = updatedUsers.map(async (user) => ({
-            id: user.id,
-            privateNumber: user.privateNumber,
-            fullName: user.fullName,
-            command: await getCommandNameById(user.nifgaimCommandId),
-            editPerm: user.editPerm,
-            managePerm: user.managePerm,
-          }));
-          const transformedUsers = await Promise.all(userPromises);
-          setRows(transformedUsers);
+          // const userPromises = updatedUsers.map(async (user) => ({
+          //   id: user.id,
+          //   privateNumber: user.privateNumber,
+          //   fullName: user.fullName,
+          //   commandName: user.commandName ,
+          //   editPerm: user.editPerm,
+          //   managePerm: user.managePerm,
+          // }));
+          // const transformedUsers = await Promise.all(userPromises);
+          setRows(updatedUsers);
 
           Swal.fire({
             title: `משתמש "${userSignUpInfo.fullName}" נוצר בהצלחה!`,
@@ -201,9 +199,7 @@ export default function CustomToolBarManageUsers({
           let errorsForSwal = ""; // Start unordered list
 
           errors.forEach((error) => {
-            if (
-              error.message === "nifgaimUsers.nifgaimCommandId cannot be null"
-            ) {
+            if (error.message === "commandName cannot be null") {
               errorsForSwal += "<li>פיקוד לא יכול להיות ריק</li>";
             }
             if (
@@ -431,14 +427,9 @@ export default function CustomToolBarManageUsers({
                     value: true,
                     message: "שם מלא שדה חובה",
                   },
-                  pattern: {
-                    value: /^(?![\d\s]+$)(\w+\s){1,2}\w+$/,
-                    message: ` שם מלא חייב לכלול שם פרטי שם משפחה (ללא מספרים) `,
-                  },
                 })}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: "500" }}
-
               />
               {errors["fullName"] && (
                 <p style={{ color: "red" }}>{errors["fullName"].message}</p>

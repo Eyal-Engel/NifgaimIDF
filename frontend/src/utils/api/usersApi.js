@@ -76,9 +76,9 @@ export async function getCommandNameByUserId(userId) {
   try {
     const user = await getUserById(userId);
 
-    const commantName = await getCommandNameById(user.nifgaimCommandId);
+    // const commantName = await getCommandNameById(user.nifgaimCommandId);
 
-    return commantName;
+    return null;
   } catch (error) {
     console.error("Error getting command name by user id:", error);
     throw error; // Rethrow the error to handle it in the calling code
