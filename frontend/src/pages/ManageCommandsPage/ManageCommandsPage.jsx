@@ -148,6 +148,7 @@ export default function ManageCommandsPage() {
     // setSearchInputValue("");
     if (value !== "") {
       try {
+        console.log(loggedUserId, value)
         const command = await createCommand(loggedUserId, value);
         setCommands((prev) => [
           ...prev,

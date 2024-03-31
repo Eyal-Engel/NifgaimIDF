@@ -67,7 +67,7 @@ export default function ManageColumnsPage() {
     permanentRelationship: "קשר קבוע",
     comments: "הערות",
     nifgaimGraveyardId: "בית קברות",
-    nifgaimCommandId: "פיקוד",
+    commandName: "פיקוד",
   };
 
   const handleCloseDialog = () => {

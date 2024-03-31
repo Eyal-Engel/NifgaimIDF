@@ -45,8 +45,14 @@ const signup = async (req, res, next) => {
   const id = uuidv4();
 
   console.log(req.body);
-  const { privateNumber, fullName, password, commandId, editPerm, managePerm } =
-    req.body.creditentials;
+  const {
+    privateNumber,
+    fullName,
+    commandName,
+    password,
+    editPerm,
+    managePerm,
+  } = req.body.creditentials;
 
   const userId = req.body.userId;
 
@@ -87,7 +93,7 @@ const signup = async (req, res, next) => {
       privateNumber,
       fullName,
       password: hashedPassowrd,
-      nifgaimCommandId: commandId,
+      commandName: commandName,
       editPerm,
       managePerm,
     });
@@ -149,8 +155,10 @@ const login = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
   const userId = req.params.userId;
-  const { privateNumber, fullName, nifgaimCommandId, editPerm, managePerm } =
+  const { privateNumber, fullName, commandName, editPerm, managePerm } =
     req.body.updatedUserData;
+
+  console.log(req.body);
 
   const userUpdatingUserId = req.body.userUpdatingUserId;
 
@@ -186,11 +194,11 @@ const updateUser = async (req, res, next) => {
       return next(error);
     }
 
-    const command = await Command.findByPk(userRequested.nifgaimCommandId);
+    const command = await Command.findOne({ where: { commandName } });
     // If command not found, return null or handle accordingly
     if (!command) {
       const error = new Error(
-        `Could not update user ${userId}, command ${userRequested.nifgaimCommandId} doesn't exist.`,
+        `Could not update user ${userId}, command ${userRequested.commandName} doesn't exist.`,
         403
       );
       return next(error);
@@ -205,8 +213,8 @@ const updateUser = async (req, res, next) => {
       user.fullName = fullName;
     }
 
-    if (nifgaimCommandId !== undefined) {
-      user.nifgaimCommandId = nifgaimCommandId;
+    if (commandName !== undefined) {
+      user.commandName = commandName;
     }
 
     if (editPerm !== undefined) {
@@ -216,6 +224,8 @@ const updateUser = async (req, res, next) => {
     if (managePerm !== undefined) {
       user.managePerm = managePerm;
     }
+
+    console.log(user);
 
     // Save the updated user
     await user.save();

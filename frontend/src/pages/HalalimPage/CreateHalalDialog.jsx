@@ -63,8 +63,8 @@ const translationDict = {
   graveNumber: "מספר קבר",
   permanentRelationship: "קשר קבוע",
   comments: "הערות",
-  nifgaimGraveyardId: "בית קברות",
-  nifgaimCommandId: "פיקוד",
+  commandName: "פיקוד",
+  graveyardName: "בית קברות",
 };
 export default function CreateHalalDialog({
   openDialog,
@@ -140,6 +140,7 @@ export default function CreateHalalDialog({
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    setInputValues({});
   };
 
   const handleInputChange = useCallback(
@@ -147,13 +148,13 @@ export default function CreateHalalDialog({
       let v = value;
 
       try {
-        if (column === "nifgaimCommandId") {
-          const commandId = await getCommandIdByName(value);
-          v = commandId;
-        } else if (column === "nifgaimGraveyardId") {
-          const graveyardId = await getGraveyardIdByName(value);
-          v = graveyardId;
-        }
+        // if (column === "commandName") {
+        //   const commandId = await getCommandIdByName(value);
+        //   v = commandId;
+        // } else if (column === "nifgaimGraveyardId") {
+        //   const graveyardId = await getGraveyardIdByName(value);
+        //   v = graveyardId;
+        // }
         setInputValues((prevValues) => ({
           ...prevValues,
           [column]: v,
@@ -172,16 +173,16 @@ export default function CreateHalalDialog({
       console.log("Input values:", inputValues);
       const { id, halalData } = await createHalal(loggedUserId, inputValues);
 
-      const graveyard = await getGraveyardById(halalData.nifgaimGraveyardId);
-      const graveyardName = graveyard.graveyardName;
-      const commandName = await getCommandNameById(halalData.nifgaimCommandId);
+      // const graveyard = await getGraveyardById(halalData.nifgaimGraveyardId);
+      // const graveyardName = graveyard.graveyardName;
+      // const commandName = await getCommandNameById(halalData.nifgaimCommandId);
 
       // Create a new object with updated values
       const newHalalData = {
         id,
         ...halalData,
-        nifgaimGraveyardId: graveyardName,
-        nifgaimCommandId: commandName,
+        // nifgaimGraveyardId: graveyardName,
+        // nifgaimCommandId: commandName,
       };
 
       console.log(newHalalData);
@@ -291,7 +292,7 @@ export default function CreateHalalDialog({
                   flexDirection: "column",
                 }}
               >
-                {column.column_name === "nifgaimCommandId" ? (
+                {column.column_name === "commandName" ? (
                   <>
                     <InputLabel id={column.column_name}>פיקוד</InputLabel>
                     <FormControl>
@@ -337,7 +338,7 @@ export default function CreateHalalDialog({
                       )}
                     </FormControl>
                   </>
-                ) : column.column_name === "nifgaimGraveyardId" ? (
+                ) : column.column_name === "graveyardName" ? (
                   <>
                     <InputLabel id={column.column_name}>בית עלמין</InputLabel>
                     <FormControl>
