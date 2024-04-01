@@ -8,83 +8,84 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import RtlPlugin from "../rtlPlugin/RtlPlugin";
 
-const DateTypeItem = React.memo(
-  ({ isInEditMode, editedDefaultValue, handleInputDefaultValueChange }) => {
-    return (
-      <RtlPlugin
-        style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
+const DateTypeItem = ({
+  isInEditMode,
+  editedDefaultValue,
+  handleInputDefaultValueChange,
+}) => {
+  return (
+    <RtlPlugin
+      style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
+    >
+      <FormControl
+        className="selectTypeOfColumn"
+        sx={{
+          m: 1,
+          // width: "15%",
+          zIndex: 0,
+        }}
+        size="small"
       >
-        <FormControl
-          className="selectTypeOfColumn"
-          sx={{
-            m: 1,
-            // width: "15%",
-            zIndex: 0,
-          }}
-          size="small"
+        <InputLabel id="columnType">סוג</InputLabel>
+        <Select
+          dir="rtl"
+          labelId="columnType"
+          id="columnType"
+          value="DATE"
+          label="סוג"
+          disabled
         >
-          <InputLabel id="columnType">סוג</InputLabel>
+          <MenuItem dir="rtl" value="DATE" selected={true}>
+            תאריך
+          </MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl
+        className="selectDefaultValueOfColumn"
+        sx={{
+          m: 1,
+          minWidth: "7rem",
+          zIndex: 0,
+        }}
+        size="small"
+      >
+        <InputLabel
+          id="defaultValue"
+          sx={{
+            background: "white",
+            paddingRight: "5px",
+            paddingLeft: "5px",
+            marginTop: "0px",
+            fontSize: "15px",
+          }}
+        >
+          ערך ברירת מחדל
+        </InputLabel>
+        {!isInEditMode ? (
           <Select
             dir="rtl"
-            labelId="columnType"
-            id="columnType"
-            value="DATE"
-            label="סוג"
+            value={editedDefaultValue}
             disabled
+            sx={{ textAlign: "left" }}
           >
-            <MenuItem dir="rtl" value="DATE" selected={true}>
-              תאריך
-            </MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl
-          className="selectDefaultValueOfColumn"
-          sx={{
-            m: 1,
-            minWidth: "7rem",
-            zIndex: 0,
-          }}
-          size="small"
-        >
-          <InputLabel
-            id="defaultValue"
-            sx={{
-              background: "white",
-              paddingRight: "5px",
-              paddingLeft: "5px",
-              marginTop: "0px",
-              fontSize: "15px",
-            }}
-          >
-            ערך ברירת מחדל
-          </InputLabel>
-          {!isInEditMode ? (
-            <Select
+            <MenuItem
               dir="rtl"
               value={editedDefaultValue}
-              disabled
-              sx={{ textAlign: "left" }}
+              selected={editedDefaultValue !== null}
             >
-              <MenuItem
-                dir="rtl"
-                value={editedDefaultValue}
-                selected={editedDefaultValue !== null}
-              >
-                {editedDefaultValue}
-              </MenuItem>
-            </Select>
-          ) : (
-            <DatePicker
-              format="D/M/YYYY"
-              value={dayjs(editedDefaultValue, "D/M/YYYY")}
-              onChange={handleInputDefaultValueChange}
-            />
-          )}
-        </FormControl>
-      </RtlPlugin>
-    );
-  }
-);
-
-export default DateTypeItem;
+              {editedDefaultValue}
+            </MenuItem>
+          </Select>
+        ) : (
+          <DatePicker
+            format="D/M/YYYY"
+            value={dayjs(editedDefaultValue, "D/M/YYYY")}
+            onChange={handleInputDefaultValueChange}
+          />
+        )}
+      </FormControl>
+    </RtlPlugin>
+  );
+};
+export default React.memo(DateTypeItem);

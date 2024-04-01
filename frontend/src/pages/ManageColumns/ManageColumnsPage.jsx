@@ -22,7 +22,28 @@ import {
   removeQuotes,
 } from "../../utils/utilsForCulomnPage";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
+import ListOfColumns from "../../components/manageColumns/ListOfColumns";
 
+const translationDict = {
+  id: "מספר זיהוי",
+  privateNumber: "מספר אישי",
+  lastName: "שם משפחה",
+  firstName: "שם פרטי",
+  dateOfDeath: "תאריך פטירה",
+  serviceType: "סוג שירות",
+  circumstances: "נסיבות המוות",
+  unit: "יחידה",
+  division: "חטיבה",
+  specialCommunity: "קהילה מיוחדת",
+  area: "אזור",
+  plot: "חלקה",
+  line: "שורה",
+  graveNumber: "מספר קבר",
+  permanentRelationship: "קשר קבוע",
+  comments: "הערות",
+  graveyardName: "בית קברות",
+  commandName: "פיקוד",
+};
 export default function ManageColumnsPage() {
   const [columns, setColumns] = useState([]); // changed from commands
   const [searchInputValue, setSearchInputValue] = useState("");
@@ -34,33 +55,16 @@ export default function ManageColumnsPage() {
   const [sortColumns, setSortColumns] = useState([]);
   const firstRender = useRef(true);
 
-  const translationDict = {
-    id: "מספר זיהוי",
-    privateNumber: "מספר אישי",
-    lastName: "שם משפחה",
-    firstName: "שם פרטי",
-    dateOfDeath: "תאריך פטירה",
-    serviceType: "סוג שירות",
-    circumstances: "נסיבות המוות",
-    unit: "יחידה",
-    division: "חטיבה",
-    specialCommunity: "קהילה מיוחדת",
-    area: "אזור",
-    plot: "חלקה",
-    line: "שורה",
-    graveNumber: "מספר קבר",
-    permanentRelationship: "קשר קבוע",
-    comments: "הערות",
-    graveyardName: "בית קברות",
-    commandName: "פיקוד",
-  };
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
     } else {
       setLoading(true);
       const filteredColumnsBySearchInput = columns.filter((column) => {
-        return column.columnName?.includes(searchInputValue);
+        return (
+          translationDict[column.columnName]?.includes(searchInputValue) ||
+          column.columnName?.includes(searchInputValue)
+        );
       });
       setSortColumns(filteredColumnsBySearchInput);
 
@@ -291,13 +295,13 @@ export default function ManageColumnsPage() {
           defaultValue = "לא הוגדר ערך ברירת מחדל";
         }
         setColumns((prev) => [
-          ...prev,
           {
             columnName: newColumnName,
             columnType: typeOfColumn,
             columnDefault: defaultValue,
             enumValues: typeOfColumn === "ENUM" ? enumValues : null,
           },
+          ...prev,
         ]);
         Swal.fire({
           title: `עמודה "${newColumnName}" נוצרה בהצלחה!`,
@@ -383,25 +387,13 @@ export default function ManageColumnsPage() {
           />
         </RtlPlugin>
       </div>
-      <ul className="columns-list">
-        {sortColumns.map((column) => (
-          <li key={column.columnName}>
-            <ReuseableItem
-              isColumn={true}
-              isNewColumn={originalColumns.some(
-                (originColumn) => originColumn === column.columnName
-              )}
-              itemName={translationDict[column.columnName] || column.columnName} // Use translated value if available, otherwise use the original column name
-              itemId={column.columnName}
-              defaultValue={column.columnDefault}
-              handleItemNameChange={handelColumnNameChange}
-              handleDeleteItem={handleDeleteColumn}
-              columnType={column.columnType}
-              enumValues={column.enumValues}
-            />
-          </li>
-        ))}
-      </ul>
+      <ListOfColumns
+        sortColumns={sortColumns}
+        originalColumns={originalColumns}
+        translationDict={translationDict}
+        handelColumnNameChange={handelColumnNameChange}
+        handleDeleteColumn={handleDeleteColumn}
+      />
 
       <div>
         <Button color="secondary" onClick={handelOpenDialog}>

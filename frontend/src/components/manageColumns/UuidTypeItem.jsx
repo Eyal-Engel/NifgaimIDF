@@ -6,7 +6,7 @@ import FormControl from "@mui/material/FormControl";
 import "../ReuseableItem.css";
 import RtlPlugin from "../rtlPlugin/RtlPlugin";
 
-const UuidTypeItem = React.memo(({ columnType }) => {
+const UuidTypeItem = ({ columnType }) => {
   return (
     <RtlPlugin
       style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
@@ -36,6 +36,6 @@ const UuidTypeItem = React.memo(({ columnType }) => {
       </FormControl>
     </RtlPlugin>
   );
-});
+};
 
-export default UuidTypeItem;
+export default React.memo(UuidTypeItem);
