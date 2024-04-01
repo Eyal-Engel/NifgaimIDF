@@ -19,7 +19,7 @@ router.get(
   halalsCotnrollers.getHalalByPrivateNumber
 );
 
-router.get("/byCommand/:commandId", halalsCotnrollers.getHalalsByCommandId);
+router.get("/byCommand/:commandId", halalsCotnrollers.getHalalsByCommandName);
 
 router.get(
   "/soldierAccompanieds/:halalId",

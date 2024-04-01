@@ -47,6 +47,7 @@ const getGraveyardIdByName = async (req, res, next) => {
 const createGraveyard = async (req, res, next) => {
   const { graveyardName, userId, isNewSource } = req.body;
   const id = uuidv4();
+  console.log(req.body)
   try {
     const user = await User.findByPk(userId);
     const managePerm = user.managePerm;

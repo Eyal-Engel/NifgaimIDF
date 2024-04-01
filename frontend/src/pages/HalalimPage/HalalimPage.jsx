@@ -290,7 +290,7 @@ export default function HalalimPage() {
       //   limit(() => fetchHalalData(halal))
       // );
       // const transformedHalals = await Promise.all(halalsPromises);
-
+      console.log(halalsData);
       setColumns(formattedColumns);
       setRows(halalsData);
       setLoading(false);

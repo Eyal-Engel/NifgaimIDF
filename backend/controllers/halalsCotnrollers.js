@@ -10,21 +10,36 @@ const sequelize = require("../dbConfig");
 
 const getHalals = async (req, res, next) => {
   try {
-    // Get all column names dynamically
     const columns = await sequelize.query(
-      `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+      `SELECT
+      NH.*,
+      NG."graveyardName" AS "graveyardName",
+      NC."commandName" AS "commandName"
+  FROM
+      "nifgaimHalals" NH
+  LEFT JOIN
+      "nifgaimGraveyards" NG ON NH."nifgaimGraveyardId" = NG.id
+  LEFT JOIN
+      "nifgaimCommands" NC ON NH."nifgaimCommandId" = NC.id;
+  
+  `,
       { type: QueryTypes.SELECT }
     );
+    // Get all column names dynamically
+    // const columns = await sequelize.query(
+    //   `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+    //   { type: QueryTypes.SELECT }
+    // );
 
     // Extract column names from the query result
-    const columnNames = columns.map((column) => column.column_name);
+    // const columnNames = columns.map((column) => column.column_name);
 
     // Fetch all halals with all columns
-    const halals = await Halal.findAll({
-      attributes: columnNames, // Fetch all columns dynamically
-    });
+    // const halals = await Halal.findAll({
+    //   attributes: columnNames, 
+    // });
 
-    res.json(halals);
+    res.json(columns);
   } catch (err) {
     return next(err);
   }
@@ -661,8 +676,8 @@ const getHalalById = async (req, res, next) => {
   }
 };
 
-const getHalalsByCommandId = async (req, res, next) => {
-  const commandId = req.params.commandId;
+const getHalalsByCommandName = async (req, res, next) => {
+  const commandName = req.params.commandName;
   try {
     // Get all column names dynamically
     const columns = await sequelize.query(
@@ -675,7 +690,7 @@ const getHalalsByCommandId = async (req, res, next) => {
 
     // Fetch halals by command ID with all columns
     const halals = await Halal.findAll({
-      where: { nifgaimCommandId: commandId },
+      where: { commandName },
       attributes: columnNames,
     });
 
@@ -714,23 +729,23 @@ const createHalal = async (req, res, next) => {
   const id = uuidv4();
 
   try {
-    const { userId } = req.body;
+    // const { userId } = req.body;
 
-    const user = await User.findByPk(userId);
-    const editPerm = user.editPerm;
-    const managePerm = user.managePerm;
+    // const user = await User.findByPk(userId);
+    // const editPerm = user.editPerm;
+    // const managePerm = user.managePerm;
 
-    if (!user || user === null || user === undefined) {
-      return res
-        .status(404)
-        .json({ body: { errors: [{ message: "User is not exist" }] } });
-    }
+    // if (!user || user === null || user === undefined) {
+    //   return res
+    //     .status(404)
+    //     .json({ body: { errors: [{ message: "User is not exist" }] } });
+    // }
 
-    if (editPerm === false && managePerm === false) {
-      return res
-        .status(403)
-        .json({ body: { errors: [{ message: "User is not authorized" }] } });
-    }
+    // if (editPerm === false && managePerm === false) {
+    //   return res
+    //     .status(403)
+    //     .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    // }
 
     const columns = await sequelize.query(
       `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
@@ -1095,7 +1110,7 @@ module.exports = {
   getOriginalColumns,
   getHalalById,
   getHalalByPrivateNumber,
-  getHalalsByCommandId,
+  getHalalsByCommandName,
   getEnumsForColumn,
   getSoldierAccompaniedsByHalalId,
   getLeftOversByHalalId,

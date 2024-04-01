@@ -46,7 +46,7 @@ const signup = async (req, res, next) => {
 
   console.log(req.body);
   const { privateNumber, fullName, password, commandId, editPerm, managePerm } =
-    req.body.creditentials;
+    req.body;
 
   const userId = req.body.userId;
 
