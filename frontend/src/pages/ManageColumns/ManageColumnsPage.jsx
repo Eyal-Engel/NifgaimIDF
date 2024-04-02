@@ -6,6 +6,7 @@ import "./ManageColumnsPage.css";
 import {
   addHalalColumn,
   deleteHalalColumn,
+  getColumnDetailsWithJoin,
   getColumnEnums,
   getHalalColumnsAndTypes,
   getOriginalColumns,
@@ -77,7 +78,7 @@ export default function ManageColumnsPage() {
     const fetchColumnsData = async () => {
       setLoading(true);
       try {
-        const columnsWithAllData = await getHalalColumnsAndTypes(); // changed from getCommands
+        const columnsWithAllData = await getColumnDetailsWithJoin(); // changed from getCommands
 
         const originColumns = await getOriginalColumns();
 
