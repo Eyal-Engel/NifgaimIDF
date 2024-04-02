@@ -274,9 +274,10 @@ export default function HalalimPage() {
     <Box
       sx={{
         width: "80vw",
-        height: "75vh",
-        maxHeight: "70rem",
-        maxWidth: "70rem",
+        height: "80vh",
+        marginTop: "5vh",
+        // maxHeight: "100rem",
+        // maxWidth: "70rem",
         "@media screen and (max-width: 1200px)": {
           width: "100vw",
           height: "75vh",
@@ -332,9 +333,9 @@ export default function HalalimPage() {
           },
         }}
         initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
+          pagination: { paginationModel: { pageSize: 25 } },
         }}
-        pageSizeOptions={[5, 10, 25]}
+        pageSizeOptions={[5, 10, 25, 100]}
         slots={{
           toolbar: HalalimCustomToolBar,
           noRowsOverlay: CustomNoRowsOverlay,

@@ -448,9 +448,8 @@ export default function ManageExistsUsers() {
     <Box
       sx={{
         width: "80vw",
-        height: "75vh",
-        maxHeight: "70rem",
-        maxWidth: "70rem",
+        height: "80vh",
+        marginTop: "5vh",
         "@media screen and (max-width: 1200px)": {
           width: "100vw",
           height: "75vh",
@@ -504,9 +503,9 @@ export default function ManageExistsUsers() {
           },
         }}
         initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
+          pagination: { paginationModel: { pageSize: 25 } },
         }}
-        pageSizeOptions={[5, 10, 25]}
+        pageSizeOptions={[5, 10, 25, 100]}
         slots={{
           toolbar: CustomToolBarManageUsers,
           noRowsOverlay: CustomNoRowsOverlay,

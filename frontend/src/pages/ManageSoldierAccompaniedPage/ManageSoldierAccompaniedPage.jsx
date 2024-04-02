@@ -191,9 +191,8 @@ export default function ManageLeftOversPage() {
     <Box
       sx={{
         width: "80vw",
-        height: "75vh",
-        maxHeight: "70rem",
-        maxWidth: "70rem",
+        height: "80vh",
+        marginTop: "5vh",
         "@media screen and (max-width: 1200px)": {
           width: "100vw",
           height: "75vh",
@@ -245,10 +244,10 @@ export default function ManageLeftOversPage() {
           },
         }}
         initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
+          pagination: { paginationModel: { pageSize: 25 } },
           sortModel: [{ field: "halalId", sort: "asc" }], // Set default sorting by halalId in ascending order
         }}
-        pageSizeOptions={[5, 10, 25]}
+        pageSizeOptions={[5, 10, 25, 100]}
         slots={{
           toolbar: CustomToolBarSoliderAccompanied,
           noRowsOverlay: CustomNoRowsOverlay,
