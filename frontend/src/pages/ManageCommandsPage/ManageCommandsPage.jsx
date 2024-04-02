@@ -45,10 +45,6 @@ export default function ManageCommandsPage() {
     fetchCommandsData();
   }, []);
 
-  if (loading) {
-    return <span className="loader"></span>; // Render loading indicator
-  }
-
   const handelCommandNameChange = async (commandId, newName) => {
     try {
       await updateCommandById(loggedUserId, commandId, newName);
@@ -154,6 +150,7 @@ export default function ManageCommandsPage() {
           {
             id: command.newCommand.id,
             commandName: command.newCommand.commandName?.trim(),
+            isNewSource: true,
           },
         ]);
         Swal.fire({
@@ -220,6 +217,10 @@ export default function ManageCommandsPage() {
     });
   });
 
+  if (loading) {
+    return <span className="loader"></span>; // Render loading indicator
+  }
+
   return (
     <div className="commandsContainer">
       <div className="commandsHeader">
@@ -244,7 +245,7 @@ export default function ManageCommandsPage() {
               itemId={command.id}
               handleItemNameChange={handelCommandNameChange}
               handleDeleteItem={handleDeleteCommand}
-              isNewItem={command.isNewItem ? true : false}
+              isNewItem={command.isNewSource}
             />
           </li>
         ))}

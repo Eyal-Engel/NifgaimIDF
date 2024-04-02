@@ -7,107 +7,104 @@ import FormControl from "@mui/material/FormControl";
 import "../ReuseableItem.css";
 import RtlPlugin from "../rtlPlugin/RtlPlugin";
 
-const BooleanTypeItem = React.memo(
-  ({ isInEditMode, editedDefaultValue, handleInputDefaultValueChange }) => {
-    return (
-      <RtlPlugin
-        style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
+const BooleanTypeItem = ({
+  isInEditMode,
+  editedDefaultValue,
+  handleInputDefaultValueChange,
+}) => {
+  return (
+    <RtlPlugin
+      style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
+    >
+      <FormControl
+        className="selectTypeOfColumn"
+        sx={{
+          m: 1,
+          // width: "15%",
+          zIndex: 0,
+        }}
+        size="small"
       >
-        <FormControl
-          className="selectTypeOfColumn"
-          sx={{
-            m: 1,
-            // width: "15%",
-            zIndex: 0,
-          }}
-          size="small"
+        <InputLabel id="columnType">סוג</InputLabel>
+        <Select
+          dir="rtl"
+          labelId="columnType"
+          id="columnType"
+          value="BOOLEAN"
+          label="סוג"
+          disabled
         >
-          <InputLabel id="columnType">סוג</InputLabel>
+          <MenuItem dir="rtl" value="BOOLEAN" selected={true}>
+            כן/לא
+          </MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl
+        className="selectDefaultValueOfColumn"
+        sx={{
+          m: 1,
+          // width: "20%",
+          minWidth: "7rem",
+          zIndex: 0,
+        }}
+        size="small"
+      >
+        <InputLabel
+          id="defaultValue"
+          sx={{
+            background: "white",
+            paddingRight: "5px",
+            paddingLeft: "5px",
+            marginTop: "0px",
+            fontSize: "15px",
+          }}
+        >
+          ערך ברירת מחדל
+        </InputLabel>
+        {!isInEditMode ? (
           <Select
             dir="rtl"
-            labelId="columnType"
-            id="columnType"
-            value="BOOLEAN"
-            label="סוג"
+            value={editedDefaultValue}
             disabled
+            sx={{ textAlign: "left" }}
           >
-            <MenuItem dir="rtl" value="BOOLEAN" selected={true}>
-              כן/לא
-            </MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl
-          className="selectDefaultValueOfColumn"
-          sx={{
-            m: 1,
-            // width: "20%",
-            minWidth: "7rem",
-            zIndex: 0,
-          }}
-          size="small"
-        >
-          <InputLabel
-            id="defaultValue"
-            sx={{
-              background: "white",
-              paddingRight: "5px",
-              paddingLeft: "5px",
-              marginTop: "0px",
-              fontSize: "15px",
-            }}
-          >
-            ערך ברירת מחדל
-          </InputLabel>
-          {!isInEditMode ? (
-            <Select
+            <MenuItem
               dir="rtl"
               value={editedDefaultValue}
-              disabled
-              sx={{ textAlign: "left" }}
+              selected={editedDefaultValue !== null}
             >
-              <MenuItem
-                dir="rtl"
-                value={editedDefaultValue}
-                selected={editedDefaultValue !== null}
-              >
-                {editedDefaultValue.toString() === "true"
-                  ? "כן"
-                  : editedDefaultValue.toString() === "false"
-                  ? "לא"
-                  : editedDefaultValue.toString()}
-              </MenuItem>
-            </Select>
-          ) : (
-            <FormControl
-              sx={{
-                // width: "90%",
-                marginTop: "10px",
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "center",
-              }}
+              {editedDefaultValue.toString() === "true"
+                ? "כן"
+                : editedDefaultValue.toString() === "false"
+                ? "לא"
+                : editedDefaultValue.toString()}
+            </MenuItem>
+          </Select>
+        ) : (
+          <FormControl
+            sx={{
+              // width: "90%",
+              marginTop: "10px",
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "center",
+            }}
+          >
+            <RadioGroup
+              aria-labelledby="booleanSelect"
+              name="controlled-radio-buttons-group"
+              value={editedDefaultValue} // Convert boolean to string
+              onChange={handleInputDefaultValueChange}
+              row
             >
-              <RadioGroup
-                aria-labelledby="booleanSelect"
-                name="controlled-radio-buttons-group"
-                value={editedDefaultValue} // Convert boolean to string
-                onChange={handleInputDefaultValueChange}
-                row
-              >
-                <FormControlLabel value={true} control={<Radio />} label="כן" />
-                <FormControlLabel
-                  value={false}
-                  control={<Radio />}
-                  label="לא"
-                />
-              </RadioGroup>
-            </FormControl>
-          )}
-        </FormControl>
-      </RtlPlugin>
-    );
-  }
-);
-
-export default BooleanTypeItem;
+              <FormControlLabel value={true} control={<Radio />} label="כן" />
+              <FormControlLabel value={false} control={<Radio />} label="לא" />
+            </RadioGroup>
+          </FormControl>
+        )}
+      </FormControl>
+    </RtlPlugin>
+  );
+};
+export default React.memo(BooleanTypeItem);

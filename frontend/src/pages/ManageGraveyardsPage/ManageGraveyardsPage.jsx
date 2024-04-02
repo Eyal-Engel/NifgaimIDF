@@ -158,6 +158,7 @@ export default function ManageCommandsPage() {
           {
             id: graveyard.id,
             graveyardName: graveyard.graveyardName?.trim(),
+            isNewSource: true,
           },
         ]);
         Swal.fire({
@@ -250,7 +251,7 @@ export default function ManageCommandsPage() {
               itemId={graveyard.id}
               handleItemNameChange={handelGraveyardNameChange}
               handleDeleteItem={handleDeleteGraveyard}
-              isNewItem={graveyard.isNewItem ? true : false}
+              isNewItem={graveyard.isNewSource}
             />
           </li>
         ))}
