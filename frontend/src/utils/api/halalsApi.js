@@ -330,9 +330,6 @@ export async function addHalalColumn(
   dataType,
   defaultValue
 ) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/halals/columns/add`;
 
   const headers = {
@@ -368,9 +365,6 @@ export async function updateHalalColumn(
   dataType
 ) {
   console.log("no way bro");
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/halals/columns/update`;
 
   const headers = {
@@ -411,9 +405,6 @@ export async function updateHalalSelectColumn(
   newEnumValues,
   column_default
 ) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/halals/columns/update/select`;
 
   const headers = {
@@ -448,9 +439,6 @@ export async function updateHalalSelectColumn(
 }
 
 export async function deleteHalalColumn(userId, columnName) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/halals/columns/delete`;
 
   const headers = {

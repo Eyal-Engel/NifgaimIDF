@@ -107,10 +107,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {
-        // const commandUser = await getCommandNameByUserId(userId);
-        // setCommand(commandUser);
         const user = await getUserById(userId);
-        // setEditPerm(user.editPerm);
         setManagePerm(user.managePerm);
       }
     };

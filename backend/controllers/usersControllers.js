@@ -46,7 +46,7 @@ const signup = async (req, res, next) => {
 
   console.log(req.body);
   const { privateNumber, fullName, password, commandId, editPerm, managePerm } =
-    req.body;
+    req.body.creditentials;
 
   const userId = req.body.userId;
 
@@ -93,6 +93,7 @@ const signup = async (req, res, next) => {
     });
 
     res.status(201).json(newUser);
+    // return res.status(201).json({ id, ...req.body.creditentials });
   } catch (err) {
     // console.log(err.original.length);
     return next(err);

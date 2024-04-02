@@ -20,9 +20,7 @@ import {
   changePassword,
   getFullNameById,
 } from "../../utils/api/usersApi";
-import {
-  getAllCommandsNames,
-} from "../../utils/api/commandsApi";
+import { getAllCommandsNames } from "../../utils/api/commandsApi";
 import "./ManageUsersPage.css";
 import { validationPasswordsErrorType } from "../../utils/validators";
 import CustomToolBarManageUsers from "../../components/TableUtils/CustomToolBarManageUsers";
@@ -30,6 +28,8 @@ import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay
 import { useState } from "react";
 import { useEffect } from "react";
 import ResetPasswordDialog from "../../components/manageUsers/resetPasswordDialog";
+import { getCommandNameById } from "../../utils/api/commandsApi";
+import { getCommandIdByName } from "../../utils/api/commandsApi";
 
 export default function ManageExistsUsers() {
   const [rows, setRows] = useState([]);
@@ -66,16 +66,18 @@ export default function ManageExistsUsers() {
       setLoading(true);
       try {
         const usersData = await getUsers();
-        // const userPromises = usersData.map(async (user) => ({
-        //   id: user.id,
-        //   privateNumber: user.privateNumber,
-        //   fullName: user.fullName,
-        //   command: user.commandName,
-        //   editPerm: user.editPerm,
-        //   managePerm: user.managePerm,
-        // }));
-        // const transformedUsers = await Promise.all(userPromises);
-        setRows(usersData);
+        const userPromises = usersData.map(async (user) => ({
+          id: user.id,
+          privateNumber: user.privateNumber,
+          fullName: user.fullName,
+          commandName: await getCommandNameById(user.nifgaimCommandId),
+          editPerm: user.editPerm,
+          managePerm: user.managePerm,
+        }));
+        const transformedUsers = await Promise.all(userPromises);
+        console.log(usersData);
+        console.log(transformedUsers);
+        setRows(transformedUsers);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching or transforming users:", error);
@@ -291,7 +293,7 @@ export default function ManageExistsUsers() {
       const filteredUser = {
         privateNumber,
         fullName,
-        commandName,
+        nifgaimCommandId: await getCommandIdByName(commandName),
         editPerm,
         managePerm,
       };
