@@ -6,6 +6,7 @@ import "./ManageColumnsPage.css";
 import {
   addHalalColumn,
   deleteHalalColumn,
+  getColumnDetailsWithJoin,
   getColumnEnums,
   getHalalColumnsAndTypes,
   getOriginalColumns,
@@ -72,7 +73,7 @@ export default function ManageColumnsPage() {
     const fetchColumnsData = async () => {
       setLoading(true);
       try {
-        const columnsWithAllData = await getHalalColumnsAndTypes(); // changed from getCommands
+        const columnsWithAllData = await getColumnDetailsWithJoin(); // changed from getCommands
 
         const originColumns = await getOriginalColumns();
 
@@ -125,7 +126,6 @@ export default function ManageColumnsPage() {
     async (columnName, newName, columnType, newDefaultValue, newEnums) => {
       try {
         if (columnType === "ENUM") {
-
           await updateHalalSelectColumn(
             loggedUserId,
             columnName,
@@ -385,7 +385,7 @@ export default function ManageColumnsPage() {
               isColumn={true}
               isNewColumn={originalColumns.some(
                 (originColumn) => originColumn === column.columnName
-              )}
+              ) || column.columnName == "commandName" || column.columnName == "graveyardName" }
               itemName={translationDict[column.columnName] || column.columnName} // Use translated value if available, otherwise use the original column name
               itemId={column.columnName}
               defaultValue={column.columnDefault}
