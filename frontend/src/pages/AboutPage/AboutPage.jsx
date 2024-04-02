@@ -48,8 +48,12 @@ export default function AboutPage() {
     for (let i = 0; i < 100000; i++) {
       const privateNumber = generateRandomNumber(1000000, 9999999); // Generate 7-digit random number
       const halalData = { ...halalDataTemplate, privateNumber };
-      const halal = await createHalal(userId, halalData);
-      halals.push(halal);
+      try {
+        const halal = await createHalal(userId, halalData);
+        halals.push(halal);
+      } catch (error) {
+        console.log("")
+      }
     }
 
     return halals;
