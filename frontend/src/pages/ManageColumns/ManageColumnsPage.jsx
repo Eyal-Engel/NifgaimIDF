@@ -70,7 +70,6 @@ export default function ManageColumnsPage() {
 
   useEffect(() => {
     const fetchColumnsData = async () => {
-      console.log("fetchColumnsData...");
       setLoading(true);
       try {
         const columnsWithAllData = await getHalalColumnsAndTypes(); // changed from getCommands
@@ -106,7 +105,6 @@ export default function ManageColumnsPage() {
         // setColumns(columns); // changed from setCommands
 
         setLoading(false); // Data fetching completed, set loading to false
-        console.log("finished");
       } catch (error) {
         console.error("Error during get columns:", error); // changed from get commands
       }
@@ -127,7 +125,6 @@ export default function ManageColumnsPage() {
     async (columnName, newName, columnType, newDefaultValue, newEnums) => {
       try {
         if (columnType === "ENUM") {
-          console.log(columnName, newName, newEnums, newDefaultValue);
 
           await updateHalalSelectColumn(
             loggedUserId,
@@ -151,7 +148,6 @@ export default function ManageColumnsPage() {
         setColumns((prevColumns) => {
           return prevColumns.map((column) => {
             if (column.columnName === columnName) {
-              console.log(newDefaultValue);
               return {
                 ...column,
                 columnName: newName,
@@ -361,7 +357,6 @@ export default function ManageColumnsPage() {
   );
 
   if (loading) {
-    console.log("loading...");
     return <span className="loader"></span>; // Render loading indicator
   }
   return (

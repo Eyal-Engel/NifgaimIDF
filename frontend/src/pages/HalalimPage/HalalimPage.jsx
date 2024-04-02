@@ -4,35 +4,25 @@ import { heIL } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import "./HalalimPage.css";
 import {
+  getColumnDetailsWithJoin,
   getColumnEnums,
-  getHalalColumnsAndTypes,
   getHalals,
-  getOriginalColumns,
 } from "../../utils/api/halalsApi";
 import EditHalalDialog from "./EditHalalDialog";
-import {
-  getAllCommandsNames,
-  getCommandById,
-} from "../../utils/api/commandsApi";
-import {
-  getAllGraveyards,
-  getGraveyardById,
-} from "../../utils/api/graveyardsApi";
+import { getAllCommandsNames } from "../../utils/api/commandsApi";
+import { getAllGraveyards } from "../../utils/api/graveyardsApi";
 import { useEffect } from "react";
 import { useState } from "react";
 import HalalimCustomToolBar from "../../components/halalimTable/HalalimCustomToolBar";
 import CustomNoRowsOverlay from "../../components/TableUtils/CustomNoRowsOverlay";
 import { getUserById } from "../../utils/api/usersApi";
-import pLimit from "p-limit";
 export default function HalalimPage() {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
-  // const [commands, setCommands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [originalColumns, setOriginalColumns] = useState([]);
   const [allDataOfHalalsColumns, setAllDataOfHalalsColumns] = useState([]);
   const [commands, setCommands] = useState([]);
   const [graveyards, setGraveyards] = useState([]);
@@ -160,38 +150,23 @@ export default function HalalimPage() {
       graveNumber: "מספר קבר",
       permanentRelationship: "קשר קבוע",
       comments: "הערות",
-      nifgaimGraveyardId: "בית קברות",
-      nifgaimCommandId: "פיקוד",
+      graveyardName: "בית קברות",
+      commandName: "פיקוד",
     };
 
     setLoading(true);
     try {
       // Replace this with your actual method to fetch column data
-      const currentColumns = await getHalalColumnsAndTypes(); // This should fetch your columns data
-      const origin = await getOriginalColumns();
-      setOriginalColumns(origin);
-      setAllDataOfHalalsColumns(currentColumns);
-      // Sort the columns alphabetically by column name
-      currentColumns.sort((a, b) => a.column_name.localeCompare(b.column_name));
+      const currentColumns = await getColumnDetailsWithJoin(); // This should fetch your columns data
 
-      // Create an array for the sorted columns with originalColumns first
-      const sortedColumns = origin
-        .map((columnName) => {
-          const column = currentColumns.find(
-            (col) => col.column_name === columnName
-          );
-          return column || null; // Return null if no match is found
-        })
-        .filter(Boolean);
+      // Filter out the column with column_name equal to "id"
+      const filteredColumns = currentColumns.filter(
+        (column) => column.column_name !== "id"
+      );
 
-      // Append any additional columns that are not in originalColumns
-      currentColumns.forEach((column) => {
-        if (!origin.includes(column.column_name)) {
-          sortedColumns.push(column);
-        }
-      });
-
-      const formattedColumns = sortedColumns.reduce((acc, column) => {
+      // setAllDataOfHalalsColumns with the filteredColumns
+      setAllDataOfHalalsColumns(filteredColumns);
+      const formattedColumns = currentColumns.reduce((acc, column) => {
         // Exclude the column with the ID
         if (column) {
           const translatedHeader =
@@ -282,15 +257,7 @@ export default function HalalimPage() {
         }
         return acc;
       }, []);
-
-      // Limit concurrent requests here
-      // const limit = pLimit(250); // Adjust the concurrency limit as per your requirements
       const halalsData = await getHalals();
-      // const halalsPromises = halalsData.map((halal) =>
-      //   limit(() => fetchHalalData(halal))
-      // );
-      // const transformedHalals = await Promise.all(halalsPromises);
-      console.log(halalsData);
       setColumns(formattedColumns);
       setRows(halalsData);
       setLoading(false);
@@ -303,7 +270,6 @@ export default function HalalimPage() {
   useEffect(() => {
     fetchColumnsData();
   }, [fetchColumnsData]);
-  console.log("the component rernder");
   return (
     <Box
       sx={{
@@ -380,7 +346,7 @@ export default function HalalimPage() {
             columns,
             allDataOfHalalsColumns,
             setRowModesModel,
-            originalColumns,
+            // originalColumns,
             commands,
             graveyards,
             editPerm,
@@ -395,7 +361,7 @@ export default function HalalimPage() {
           setOpenDialog={setOpenDialog}
           selectedRow={selectedRow}
           allDataOfHalalsColumns={allDataOfHalalsColumns}
-          originalColumns={originalColumns}
+          // originalColumns={originalColumns}
           setRows={setRows}
           rows={rows}
           commands={commands}

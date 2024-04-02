@@ -33,7 +33,6 @@ export function LoginForm() {
 
   // Handle form submission
   const handleSubmit = async () => {
-    console.log("Form submitted with data:", userLoginInfo);
 
     const creditentials = {
       privateNumber: userLoginInfo.privateNumber,
@@ -42,14 +41,12 @@ export function LoginForm() {
 
     try {
       const response = await loginUser(creditentials);
-      console.log(response);
       auth.login(response.data.userId, response.data.token);
       navigate("/halalim");
     } catch (error) {
       console.log(error);
       if (error.response && error.response.status === 401) {
         // Unauthorized error
-        console.log("User is not authorized. Invalid credentials.");
         Swal.fire({
           title: `לא ניתן להתחבר`,
           text: "שם משתמש או סיסמא אינם תקינים",

@@ -10,7 +10,7 @@ const sequelize = require("../dbConfig");
 
 const getHalals = async (req, res, next) => {
   try {
-    const columns = await sequelize.query(
+    const halals = await sequelize.query(
       `SELECT
       NH.*,
       NG."graveyardName" AS "graveyardName",
@@ -25,23 +25,71 @@ const getHalals = async (req, res, next) => {
   `,
       { type: QueryTypes.SELECT }
     );
-    // Get all column names dynamically
-    // const columns = await sequelize.query(
-    //   `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
-    //   { type: QueryTypes.SELECT }
-    // );
 
-    // Extract column names from the query result
-    // const columnNames = columns.map((column) => column.column_name);
-
-    // Fetch all halals with all columns
-    // const halals = await Halal.findAll({
-    //   attributes: columnNames, 
-    // });
-
-    res.json(columns);
+    res.json(halals);
   } catch (err) {
     return next(err);
+  }
+};
+
+const getColumnDetailsWithJoin = async (req, res, next) => {
+  try {
+    const currentColumns = await sequelize.query(
+      `SELECT column_name, data_type, is_nullable, column_default
+      FROM information_schema.columns
+      WHERE 
+        (table_name = 'nifgaimGraveyards' AND column_name = 'graveyardName')
+        OR (table_name = 'nifgaimCommands' AND column_name = 'commandName')
+        OR (table_name = 'nifgaimHalals' AND column_name != 'nifgaimCommandId'
+        AND column_name != 'nifgaimGraveyardId')
+      ;`,
+      { type: QueryTypes.SELECT }
+    );
+
+    const origin = Object.keys(Halal.rawAttributes);
+    const sortedColumns = [];
+
+    // Sort the columns alphabetically by column name
+    currentColumns.sort((a, b) => a.column_name.localeCompare(b.column_name));
+
+    // Create an array for the sorted columns with originalColumns first
+    origin.forEach((columnName) => {
+      const column = currentColumns.find(
+        (col) => col.column_name === columnName
+      );
+      if (column) {
+        sortedColumns.push(column);
+        // Check if the current column is "firstName" or "specialCommunity"
+        if (columnName === "firstName") {
+          const commandNameColumn = currentColumns.find(
+            (col) => col.column_name === "commandName"
+          );
+          if (commandNameColumn) {
+            sortedColumns.push(commandNameColumn);
+          }
+        } else if (columnName === "specialCommunity") {
+          const graveyardNameColumn = currentColumns.find(
+            (col) => col.column_name === "graveyardName"
+          );
+          if (graveyardNameColumn) {
+            sortedColumns.push(graveyardNameColumn);
+          }
+        }
+      }
+    });
+
+    // Append any additional columns that are not in originalColumns
+    currentColumns.forEach((column) => {
+      if (!origin.includes(column.column_name)) {
+        sortedColumns.push(column);
+      }
+    });
+
+    sortedColumns.splice(-2);
+
+    res.json(sortedColumns);
+  } catch (error) {
+    return next(error);
   }
 };
 
@@ -1107,6 +1155,7 @@ const replaceColumnValue = async (req, res, next) => {
 
 module.exports = {
   getHalals,
+  getColumnDetailsWithJoin,
   getOriginalColumns,
   getHalalById,
   getHalalByPrivateNumber,

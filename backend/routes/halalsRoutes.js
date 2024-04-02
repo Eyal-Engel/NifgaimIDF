@@ -38,10 +38,14 @@ router.delete("/:halalId", halalsCotnrollers.deleteHalal);
 
 router.get("/columns/names", halalsCotnrollers.getColumnNamesAndTypes);
 
+router.get("/columns/names/join", halalsCotnrollers.getColumnDetailsWithJoin);
+
 router.get(
   "/columns/names/:columnName",
   halalsCotnrollers.getColumnNameAndTypeByColumnName
 );
+
+router.get("/columns/names", halalsCotnrollers.getColumnNamesAndTypes);
 
 router.post("/columns/add", halalsCotnrollers.addHalalColumn);
 

@@ -91,7 +91,7 @@ export default function HalalimCustomToolBar({
           openDialog={openCreateNewHalal}
           setOpenDialog={setOpenCreateNewHalal}
           allDataOfHalalsColumns={allDataOfHalalsColumns}
-          originalColumns={originalColumns}
+          // originalColumns={originalColumns}
           setRows={setRows}
           rows={rows}
           commands={commands}

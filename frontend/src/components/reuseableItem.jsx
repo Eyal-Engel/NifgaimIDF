@@ -88,7 +88,6 @@ const ReuseableItem = React.memo(
         setEditedDefaultValue(e.target.value);
       }
     };
-    console.log("rendering");
 
     const isScreenSmall = useMediaQuery("(max-width:1000px)");
     return (

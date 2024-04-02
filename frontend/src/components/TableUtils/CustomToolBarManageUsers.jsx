@@ -9,10 +9,6 @@ import {
 import Swal from "sweetalert2";
 import { getUsers, createUser } from "../../utils/api/usersApi";
 import {
-  getCommandIdByName,
-  getCommandNameById,
-} from "../../utils/api/commandsApi";
-import {
   Dialog,
   Button,
   Input,
@@ -444,7 +440,6 @@ export default function CustomToolBarManageUsers({
                 defaultValue=""
                 {...register("command", {
                   validate: (value) => {
-                    console.log(value !== "");
                     if (value === "") {
                       return "חובה לבחור פיקוד";
                     } else {

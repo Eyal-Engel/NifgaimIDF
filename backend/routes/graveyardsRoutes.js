@@ -15,7 +15,7 @@ router.get(
 
 router.get("/:graveyardId", graveyardsControllers.getGraveyardById);
 
-router.use(checkAuth);
+// router.use(checkAuth);
 
 router.post("/", graveyardsControllers.createGraveyard);
 

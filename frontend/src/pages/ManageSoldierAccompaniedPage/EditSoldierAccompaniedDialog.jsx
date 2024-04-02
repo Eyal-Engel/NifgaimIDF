@@ -550,7 +550,6 @@ const EditSoldierAccompaniedDialog = ({
                   value={rank}
                   {...register("rank", {
                     validate: (value) => {
-                      console.log(value);
                       if (!value && !rank) {
                         return "חובה לבחור דרגה";
                       } else {

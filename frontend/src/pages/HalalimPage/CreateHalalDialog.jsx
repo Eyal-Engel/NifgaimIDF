@@ -80,7 +80,6 @@ export default function CreateHalalDialog({
   const [inputValues, setInputValues] = useState({});
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
-
   const {
     register,
     handleSubmit,
@@ -129,14 +128,14 @@ export default function CreateHalalDialog({
   });
 
   // Rearrange allDataOfHalalsColumns to start with objects matching originalColumns
-  const rearrangedColumns = [
-    ...originalColumns.map((col) =>
-      allDataOfHalalsColumns.find((item) => item.column_name === col)
-    ),
-    ...allDataOfHalalsColumns.filter(
-      (item) => !originalColumns.includes(item.column_name)
-    ),
-  ].filter((column) => column.column_name !== "id"); // Filter out the "id" column
+  // const rearrangedColumns = [
+  //   ...originalColumns.map((col) =>
+  //     allDataOfHalalsColumns.find((item) => item.column_name === col)
+  //   ),
+  //   ...allDataOfHalalsColumns.filter(
+  //     (item) => !originalColumns.includes(item.column_name)
+  //   ),
+  // ].filter((column) => column.column_name !== "id"); // Filter out the "id" column
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -145,20 +144,25 @@ export default function CreateHalalDialog({
 
   const handleInputChange = useCallback(
     async (column, value) => {
-      let v = value;
-
       try {
-        // if (column === "commandName") {
-        //   const commandId = await getCommandIdByName(value);
-        //   v = commandId;
-        // } else if (column === "nifgaimGraveyardId") {
-        //   const graveyardId = await getGraveyardIdByName(value);
-        //   v = graveyardId;
-        // }
-        setInputValues((prevValues) => ({
-          ...prevValues,
-          [column]: v,
-        }));
+        if (column === "commandName") {
+          const commandId = await getCommandIdByName(value);
+          setInputValues((prevValues) => ({
+            ...prevValues,
+            ["nifgaimCommandId"]: commandId,
+          }));
+        } else if (column === "graveyardName") {
+          const graveyardId = await getGraveyardIdByName(value);
+          setInputValues((prevValues) => ({
+            ...prevValues,
+            ["nifgaimGraveyardId"]: graveyardId,
+          }));
+        } else {
+          setInputValues((prevValues) => ({
+            ...prevValues,
+            [column]: value,
+          }));
+        }
       } catch (error) {
         console.error("Error:", error);
         // Handle error appropriately, such as displaying an error message
@@ -170,22 +174,19 @@ export default function CreateHalalDialog({
   const handleSubmitForm = async () => {
     try {
       // Here you can send inputValues to your backend using a POST request
-      console.log("Input values:", inputValues);
       const { id, halalData } = await createHalal(loggedUserId, inputValues);
 
-      // const graveyard = await getGraveyardById(halalData.nifgaimGraveyardId);
-      // const graveyardName = graveyard.graveyardName;
-      // const commandName = await getCommandNameById(halalData.nifgaimCommandId);
+      const graveyard = await getGraveyardById(halalData.nifgaimGraveyardId);
+      const graveyardName = graveyard.graveyardName;
+      const commandName = await getCommandNameById(halalData.nifgaimCommandId);
 
       // Create a new object with updated values
       const newHalalData = {
         id,
         ...halalData,
-        // nifgaimGraveyardId: graveyardName,
-        // nifgaimCommandId: commandName,
+        graveyardName: graveyardName,
+        commandName: commandName,
       };
-
-      console.log(newHalalData);
 
       setRows([...rows, newHalalData]);
       Swal.fire({
@@ -240,7 +241,6 @@ export default function CreateHalalDialog({
     }
   };
 
-  console.log(inputValues);
   return (
     <div>
       <Dialog
@@ -282,7 +282,7 @@ export default function CreateHalalDialog({
         <DialogContent>
           <form onSubmit={handleSubmit(handleSubmitForm)}>
             {/* Render input fields based on columns */}
-            {rearrangedColumns.map((column) => (
+            {allDataOfHalalsColumns.map((column) => (
               <div
                 key={column.column_name}
                 style={{
@@ -312,7 +312,6 @@ export default function CreateHalalDialog({
                         displayEmpty
                         defaultValue={""}
                         onChange={(e) => {
-                          console.log(e.target.value);
                           handleInputChange(column.column_name, e.target.value);
                         }}
                         renderValue={(value) => (value ? value : "בחר פיקוד")} // Render placeholder
@@ -421,7 +420,6 @@ export default function CreateHalalDialog({
                                 : null
                             }
                             onChange={(date) => {
-                              console.log(date);
                               handleInputChange(column.column_name, date);
                             }}
                           />

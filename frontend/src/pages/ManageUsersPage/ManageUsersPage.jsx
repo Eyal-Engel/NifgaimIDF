@@ -22,8 +22,6 @@ import {
 } from "../../utils/api/usersApi";
 import {
   getAllCommandsNames,
-  getCommandIdByName,
-  getCommandNameById,
 } from "../../utils/api/commandsApi";
 import "./ManageUsersPage.css";
 import { validationPasswordsErrorType } from "../../utils/validators";
@@ -77,7 +75,6 @@ export default function ManageExistsUsers() {
         //   managePerm: user.managePerm,
         // }));
         // const transformedUsers = await Promise.all(userPromises);
-        console.log(usersData);
         setRows(usersData);
         setLoading(false);
       } catch (error) {
@@ -290,10 +287,7 @@ export default function ManageExistsUsers() {
     const { id, privateNumber, fullName, commandName, editPerm, managePerm } =
       updatedRow;
 
-    console.log(updatedRow);
     try {
-      // const nifgaimCommandId = await getCommandIdByName(command);
-      // console.log(nifgaimCommandId);
       const filteredUser = {
         privateNumber,
         fullName,
@@ -302,7 +296,6 @@ export default function ManageExistsUsers() {
         managePerm,
       };
 
-      // console.log(filteredUser);
       await updateUser(loggedUserId, id, filteredUser);
 
       setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));

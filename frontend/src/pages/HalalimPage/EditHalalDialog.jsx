@@ -75,7 +75,7 @@ export default function EditHalalDIalog({
   setOpenDialog,
   selectedRow,
   allDataOfHalalsColumns,
-  originalColumns,
+  // originalColumns,
   setRows,
   commands,
   graveyards,
@@ -100,14 +100,10 @@ export default function EditHalalDIalog({
         setInputValues(selectedRow);
 
         const halalId = selectedRow.id;
-        console.log(halalId);
         const soldierAccompaniedsData = await getSoldierAccompaniedsByHalalId(
           halalId
         );
         const LeftOversData = await getLeftOversByHalalId(halalId);
-
-        console.log(soldierAccompaniedsData);
-        console.log(LeftOversData);
 
         setSoldierAccompanieds(soldierAccompaniedsData);
         setLeftOvers(LeftOversData);
@@ -139,14 +135,14 @@ export default function EditHalalDIalog({
     stylisPlugins: [prefixer, rtlPlugin],
   });
 
-  const rearrangedColumns = [
-    ...originalColumns.map((col) =>
-      allDataOfHalalsColumns.find((item) => item.column_name === col)
-    ),
-    ...allDataOfHalalsColumns.filter(
-      (item) => !originalColumns.includes(item.column_name)
-    ),
-  ].filter((column) => column.column_name !== "id"); // Filter out the "id" column
+  // const rearrangedColumns = [
+  //   ...originalColumns.map((col) =>
+  //     allDataOfHalalsColumns.find((item) => item.column_name === col)
+  //   ),
+  //   ...allDataOfHalalsColumns.filter(
+  //     (item) => !originalColumns.includes(item.column_name)
+  //   ),
+  // ].filter((column) => column.column_name !== "id"); // Filter out the "id" column
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -175,12 +171,33 @@ export default function EditHalalDIalog({
   //   [allDataOfHalalsColumns]
   // );
 
-  const handleInputChange = useCallback((column, value) => {
-    setInputValues((prevValues) => ({
-      ...prevValues,
-      [column]: value, // Update state object with column name as key and value as value
-    }));
-  }, []);
+  const handleInputChange = useCallback(
+    async (column, value) => {
+      try {
+        if (column === "commandName") {
+          const commandId = await getCommandIdByName(value);
+          setInputValues((prevValues) => ({
+            ...prevValues,
+            ["nifgaimCommandId"]: commandId,
+          }));
+        } else if (column === "graveyardName") {
+          const graveyardId = await getGraveyardIdByName(value);
+          setInputValues((prevValues) => ({
+            ...prevValues,
+            ["nifgaimGraveyardId"]: graveyardId,
+          }));
+        }
+        setInputValues((prevValues) => ({
+          ...prevValues,
+          [column]: value,
+        }));
+      } catch (error) {
+        console.error("Error:", error);
+        // Handle error appropriately, such as displaying an error message
+      }
+    },
+    [setInputValues]
+  );
 
   const handleSubmitForm = async () => {
     try {
@@ -196,41 +213,31 @@ export default function EditHalalDIalog({
         }
       }
 
-      // // Get the command ID by name
-      // const commandId = await getCommandIdByName(
-      //   updatedHalalData.nifgaimCommandId
-      // );
-      // // Get the graveyard ID by name
-      // const graveyardId = await getGraveyardIdByName(
-      //   updatedHalalData.nifgaimGraveyardId
-      // );
-
-      // // Update the relevant fields in updatedHalalData
-      // updatedHalalData.nifgaimCommandId = commandId;
-      // updatedHalalData.nifgaimGraveyardId = graveyardId;
-
       const updatedHalal = await updateHalal(
         loggedUserId,
         selectedRow.id,
         updatedHalalData
       );
 
-      // const commandName = await getCommandNameById(
-      //   updatedHalal.nifgaimCommandId
-      // );
-      // const graveyard = await getGraveyardById(updatedHalal.nifgaimGraveyardId);
+      const graveyard = await getGraveyardById(updatedHalal.nifgaimGraveyardId);
+      const graveyardName = graveyard.graveyardName;
+      const commandName = await getCommandNameById(
+        updatedHalal.nifgaimCommandId
+      );
 
-      // const graveyardName = graveyard.graveyardName;
-
-      // // Replace nifgaimCommandId and nifgaimGraveyardId in updatedHalal with their names
-      // updatedHalal.nifgaimCommandId = commandName;
-      // updatedHalal.nifgaimGraveyardId = graveyardName;
+      // Create a new object with updated values
+      const halalUpdatedRow = {
+        id: selectedRow.id,
+        ...updatedHalal,
+        graveyardName: graveyardName,
+        commandName: commandName,
+      };
 
       // Update the row in the state
       setRows((prevRows) =>
         prevRows.map((row) => {
           if (row.id === selectedRow.id) {
-            return { ...row, ...updatedHalal };
+            return { ...row, ...halalUpdatedRow };
           }
           return row;
         })
@@ -398,7 +405,7 @@ export default function EditHalalDIalog({
 
         <DialogContent>
           <form onSubmit={handleSubmit(handleSubmitForm)}>
-            {rearrangedColumns.map((column) => {
+            {allDataOfHalalsColumns.map((column) => {
               const { column_name: key, data_type } = column;
               const value =
                 inputValues[key] !== undefined
@@ -568,7 +575,6 @@ export default function EditHalalDIalog({
                             {...register(key, {
                               validate: () => {
                                 if (value === null) {
-                                  console.log(value);
                                   return `${
                                     translationDict[key] || key
                                   } שדה חובה `;
@@ -579,7 +585,6 @@ export default function EditHalalDIalog({
                             })}
                             onChange={(e) => {
                               handleInputChange(key, e.target.value);
-                              console.log(e.target.value);
                             }}
                             row
                           >

@@ -24,6 +24,28 @@ export async function getHalalColumnsAndTypes() {
   }
 }
 
+export async function getColumnDetailsWithJoin() {
+  const apiUrl = `http://localhost:${port}/api/halals/columns/names/join`;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Methods": "GET",
+    Authorization:
+      "Bearer " + JSON.parse(localStorage.getItem("userData"))?.token,
+  };
+
+  try {
+    const response = await get(apiUrl, headers);
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching halal columns and types:", error);
+    throw error;
+  }
+}
+
 export async function getColumnNameAndTypeByColumnName(columnName) {
   const apiUrl = `http://localhost:${port}/api/halals/columns/names/${columnName}`;
 
@@ -245,7 +267,6 @@ export async function createHalal(userId, halalData) {
 
   const body = JSON.stringify({ halalData, userId });
 
-  console.log(body);
   try {
     const response = await post(apiUrl, body, headers);
     return response.data;
@@ -269,8 +290,6 @@ export async function updateHalal(userId, halalId, updatedHalalData) {
   };
 
   const body = JSON.stringify({ updatedHalalData, userId });
-
-  console.log(body);
 
   try {
     const response = await patch(apiUrl, body, headers);
@@ -455,11 +474,6 @@ export async function deleteHalalColumn(userId, columnName) {
   }
 }
 
-// const response = await resetColumnToDefault(
-//   loggedUserId,
-//   "מספר ברירת מחדל"
-// );
-// console.log(response);
 export async function resetColumnToDefault(userId, columnName) {
   const apiUrl = `http://localhost:${port}/api/halals/columns/resetValue`;
 
@@ -474,8 +488,6 @@ export async function resetColumnToDefault(userId, columnName) {
   };
 
   const body = JSON.stringify({ userId, columnName });
-
-  console.log(body);
 
   try {
     const response = await patch(apiUrl, body, headers);
