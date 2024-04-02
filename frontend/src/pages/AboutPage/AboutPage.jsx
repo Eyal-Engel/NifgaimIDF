@@ -30,8 +30,8 @@ export default function AboutPage() {
       graveNumber: "456",
       permanentRelationship: false,
       comments: "Lorem ipsum dolor sit.",
-      // nifgaimCommandId: "e5b9283c-dc2f-4f8f-bdea-618abef5fe22",
-      // nifgaimGraveyardId: "286ad23d-450c-47c4-b23d-377ac18b993b",
+      nifgaimCommandId: "e55fec19-5e16-4994-b6ed-b09a37c6bf8b",
+      nifgaimGraveyardId: "afb098a4-fc05-4172-9b3c-afdc907b5498",
     };
 
     const soldierDataTemplate = {
@@ -46,12 +46,14 @@ export default function AboutPage() {
     const halals = [];
     const soldiers = [];
 
-    for (let i = 0; i < 8000; i++) {
+    for (let i = 0; i < 20000; i++) {
       const privateNumber = generateRandomNumber(1000000, 9999999); // Generate 7-digit random number
       console.log(halalDataTemplate);
       const halalData = { ...halalDataTemplate, privateNumber };
-      const halal = await createHalal(userId, halalData);
-      halals.push(halal);
+      try {
+        const halal = await createHalal(userId, halalData);
+        halals.push(halal);
+      } catch (error) {}
     }
 
     return halals;

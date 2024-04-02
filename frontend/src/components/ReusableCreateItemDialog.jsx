@@ -53,6 +53,27 @@ const ReusableCreateItemDialog = React.memo(
       show: false,
       message: "חובה להכניס שם",
     });
+    const defaultColumns = [
+      "מספר זיהוי",
+      "מספר אישי",
+      "שם משפחה",
+      "שם פרטי",
+      "תאריך פטירה",
+      "סוג שירות",
+      "נסיבות המוות",
+      "יחידה",
+      "חטיבה",
+      "קהילה מיוחדת",
+      "אזור",
+      "חלקה",
+      "שורה",
+      "מספר קבר",
+      "קשר קבוע",
+      "הערות",
+      "בית קברות",
+      "פיקוד",
+    ];
+
     const cleanUpStates = useCallback(() => {
       setNewColumnName("");
       setTypeOfColumn("STRING");
@@ -86,29 +107,64 @@ const ReusableCreateItemDialog = React.memo(
 
     const handleCreateClicked = () => {
       if (isColumn) {
-        if (typeOfColumn === "ENUM") {
-          let emptyFlag = false;
-          const trimmedEnumValues = enumValues.map((value) => {
-            if (value.trim() !== "") {
-              return value.trim();
+        if (!defaultColumns.includes(newColumnName)) {
+          if (typeOfColumn === "ENUM") {
+            let emptyFlag = false;
+            const trimmedEnumValues = enumValues.map((value) => {
+              if (value.trim() !== "") {
+                return value.trim();
+              } else {
+                emptyFlag = true;
+              }
+              return "";
+            });
+            const resultString =
+              "select: [" + trimmedEnumValues.join(", ") + "]";
+            !emptyFlag
+              ? onCreateClicked(
+                  newColumnName,
+                  resultString,
+                  enumDefaultValue.trim(),
+                  trimmedEnumValues
+                ).then(() => {
+                  setErrorMessage({ ...errorMessage, show: false });
+                })
+              : Swal.fire({
+                  title: `לא ניתן ליצור את העמודה ${newColumnName}`,
+                  html: `לא הכנסת ערכים לבחירה`,
+                  icon: "error",
+                  confirmButtonColor: "#3085d6",
+                  confirmButtonText: "אישור",
+                  reverseButtons: true,
+                  customClass: {
+                    container: "swal-dialog-custom",
+                  },
+                });
+          } else if (typeOfColumn === "DATE") {
+            if (defaultValue) {
+              const dateObject = new Date(defaultValue);
+
+              const day = dateObject.getDate().toString().padStart(2, "0");
+              const month = (dateObject.getMonth() + 1)
+                .toString()
+                .padStart(2, "0");
+              const year = dateObject.getFullYear();
+
+              const formatDate = `${day}/${month}/${year}`;
+              onCreateClicked(newColumnName, typeOfColumn, formatDate);
             } else {
-              emptyFlag = true;
+              const emptyValue = "לא הוגדר ערך ברירת מחדל";
+              onCreateClicked(newColumnName, typeOfColumn, emptyValue);
             }
-            return "";
-          });
-          const resultString = "select: [" + trimmedEnumValues.join(", ") + "]";
-          !emptyFlag
-            ? onCreateClicked(
-                newColumnName,
-                resultString,
-                enumDefaultValue.trim(),
-                trimmedEnumValues
-              ).then(() => {
-                setErrorMessage({ ...errorMessage, show: false });
-              })
-            : Swal.fire({
-                title: `לא ניתן ליצור את העמודה ${newColumnName}`,
-                html: `לא הכנסת ערכים לבחירה`,
+            setErrorMessage({ ...errorMessage, show: false });
+          } else if (typeOfColumn === "INTEGER") {
+            if (!isNaN(defaultValue)) {
+              onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+              setErrorMessage({ ...errorMessage, show: false });
+            } else {
+              Swal.fire({
+                title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
+                html: `נדרש להכניס מספר לערך ברירת מחדל`, // Render errors as list items
                 icon: "error",
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "אישור",
@@ -117,48 +173,18 @@ const ReusableCreateItemDialog = React.memo(
                   container: "swal-dialog-custom",
                 },
               });
-        } else if (typeOfColumn === "DATE") {
-          if (defaultValue) {
-            const dateObject = new Date(defaultValue);
-
-            const day = dateObject.getDate().toString().padStart(2, "0");
-            const month = (dateObject.getMonth() + 1)
-              .toString()
-              .padStart(2, "0");
-            const year = dateObject.getFullYear();
-
-            const formatDate = `${day}/${month}/${year}`;
-            onCreateClicked(newColumnName, typeOfColumn, formatDate);
+            }
           } else {
-            const emptyValue = "לא הוגדר ערך ברירת מחדל";
-            onCreateClicked(newColumnName, typeOfColumn, emptyValue);
-          }
-          setErrorMessage({ ...errorMessage, show: false });
-        } else if (typeOfColumn === "INTEGER") {
-          if (!isNaN(defaultValue)) {
-            onCreateClicked(newColumnName, typeOfColumn, defaultValue);
-            setErrorMessage({ ...errorMessage, show: false });
-          } else {
-            Swal.fire({
-              title: ` לא ניתן ליצור את העמודה ${newColumnName}`, // changed from command
-              html: `נדרש להכניס מספר לערך ברירת מחדל`, // Render errors as list items
-              icon: "error",
-              confirmButtonColor: "#3085d6",
-              confirmButtonText: "אישור",
-              reverseButtons: true,
-              customClass: {
-                container: "swal-dialog-custom",
-              },
-            });
+            if (newColumnName === "") {
+              setErrorMessage({ ...errorMessage, show: true });
+            } else {
+              onCreateClicked(newColumnName, typeOfColumn, defaultValue);
+              // cleanUpStates();
+              setErrorMessage({ ...errorMessage, show: false });
+            }
           }
         } else {
-          if (newColumnName === "") {
-            setErrorMessage({ ...errorMessage, show: true });
-          } else {
-            onCreateClicked(newColumnName, typeOfColumn, defaultValue);
-            // cleanUpStates();
-            setErrorMessage({ ...errorMessage, show: false });
-          }
+          setErrorMessage({ message: "שם עמודה קיים במערכת", show: true });
         }
       } else {
         if (newColumnName === "") {
