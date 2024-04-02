@@ -5,7 +5,29 @@ const User = require("../models/schemas/NifgaimUser");
 // Get all commands
 const getAllCommands = async (req, res, next) => {
   try {
-    const commands = await Command.findAll();
+    // Fetch commands where isNewSource is true
+    const trueCommands = await Command.findAll({
+      where: {
+        isNewSource: true,
+      },
+      order: [
+        ["commandName", "ASC"], // Sort by commandName in ascending order
+      ],
+    });
+
+    // Fetch commands where isNewSource is false
+    const falseCommands = await Command.findAll({
+      where: {
+        isNewSource: false,
+      },
+      order: [
+        ["commandName", "ASC"], // Sort by commandName in ascending order
+      ],
+    });
+
+    // Combine the results
+    const commands = [...trueCommands, ...falseCommands];
+
     res.json(commands);
   } catch (err) {
     return next(err);

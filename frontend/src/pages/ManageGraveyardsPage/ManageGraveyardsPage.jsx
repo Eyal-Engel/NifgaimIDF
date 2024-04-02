@@ -219,13 +219,6 @@ export default function ManageCommandsPage() {
     return graveyard.graveyardName.includes(searchInputValue);
   });
 
-  // Sort the filtered list alphabetically
-  filteredGraveyards.sort((a, b) => {
-    return a.graveyardName.localeCompare(b.graveyardName, undefined, {
-      sensitivity: "base",
-    });
-  });
-
   return (
     <div className="graveyardContainer">
       <div className="graveyardHeader">

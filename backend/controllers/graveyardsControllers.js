@@ -5,7 +5,29 @@ const User = require("../models/schemas/NifgaimUser");
 // Get all commands
 const getAllGraveyards = async (req, res, next) => {
   try {
-    const graveyards = await Graveyard.findAll();
+    // Fetch graveyards where isNewSource is true
+    const trueGraveyards = await Graveyard.findAll({
+      where: {
+        isNewSource: true,
+      },
+      order: [
+        ["graveyardName", "ASC"], // Sort by graveyardName in ascending order
+      ],
+    });
+
+    // Fetch graveyards where isNewSource is false
+    const falseGraveyards = await Graveyard.findAll({
+      where: {
+        isNewSource: false,
+      },
+      order: [
+        ["graveyardName", "ASC"], // Sort by graveyardName in ascending order
+      ],
+    });
+
+    // Combine the results
+    const graveyards = [...trueGraveyards, ...falseGraveyards];
+
     res.json(graveyards);
   } catch (err) {
     return next(err);

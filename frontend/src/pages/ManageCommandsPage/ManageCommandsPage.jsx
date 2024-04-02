@@ -34,7 +34,7 @@ export default function ManageCommandsPage() {
       setLoading(true);
       try {
         const commands = await getCommands();
-
+        console.log(commands);
         setCommands(commands);
         setLoading(false); // Data fetching completed, set loading to false
       } catch (error) {
@@ -208,13 +208,6 @@ export default function ManageCommandsPage() {
   // Filter the list based on the search input
   const filteredCommands = commands.filter((command) => {
     return command.commandName.includes(searchInputValue);
-  });
-
-  // Sort the filtered list alphabetically
-  filteredCommands.sort((a, b) => {
-    return a.commandName.localeCompare(b.commandName, undefined, {
-      sensitivity: "base",
-    });
   });
 
   if (loading) {
