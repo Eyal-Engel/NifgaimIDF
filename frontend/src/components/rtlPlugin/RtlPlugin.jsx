@@ -22,7 +22,6 @@ const RtlPlugin = React.memo(({ children, style }) => {
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
   });
-  console.log("rendering theme rtl plugin");
   return (
     <div>
       <CacheProvider value={cacheRtl}>

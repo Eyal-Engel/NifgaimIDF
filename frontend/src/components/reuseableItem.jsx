@@ -25,7 +25,7 @@ const ReuseableItem = ({
   isGraveyard,
   isColumn,
   defaultValue,
-  isNewColumn,
+  isNewItem,
   columnType,
   enumValues,
 }) => {
@@ -87,7 +87,6 @@ const ReuseableItem = ({
       setEditedDefaultValue(e.target.value);
     }
   };
-  console.log("rendering");
 
   const isScreenSmall = useMediaQuery("(max-width:1000px)");
   return (
@@ -195,7 +194,21 @@ const ReuseableItem = ({
             : "actionCommandItemButtons"
         }
       >
-        {!isNewColumn &&
+        {!isNewItem &&
+          (isScreenSmall ? (
+            <IconButton>
+              <LockIcon color="secondary" />
+            </IconButton>
+          ) : (
+            <Button
+              variant="outlined"
+              color="secondary"
+              startIcon={<LockIcon />}
+            >
+              עמודה קבועה
+            </Button>
+          ))}
+        {isNewItem &&
           !isInEditMode &&
           (isScreenSmall ? (
             <IconButton onClick={handleDeleteClick}>
@@ -211,22 +224,8 @@ const ReuseableItem = ({
               מחק
             </Button>
           ))}
-        {isNewColumn &&
-          !isInEditMode &&
-          (isScreenSmall ? (
-            <IconButton>
-              <LockIcon color="secondary" />
-            </IconButton>
-          ) : (
-            <Button
-              variant="outlined"
-              color="secondary"
-              startIcon={<LockIcon />}
-            >
-              עמודה קבועה
-            </Button>
-          ))}
-        {!isNewColumn &&
+
+        {isNewItem &&
           !isInEditMode &&
           (isScreenSmall ? (
             <IconButton onClick={() => setIsInEditMode(true)} color="primary">
@@ -241,7 +240,7 @@ const ReuseableItem = ({
               עריכה
             </Button>
           ))}
-        {!isNewColumn &&
+        {isNewItem &&
           isInEditMode &&
           (isScreenSmall ? (
             <IconButton onClick={handleSaveClick}>
@@ -257,7 +256,7 @@ const ReuseableItem = ({
               שמור
             </Button>
           ))}
-        {!isNewColumn &&
+        {isNewItem &&
           isInEditMode &&
           (isScreenSmall ? (
             <IconButton onClick={handleCancelClick}>

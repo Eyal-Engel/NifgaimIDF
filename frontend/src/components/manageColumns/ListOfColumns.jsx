@@ -15,7 +15,7 @@ const ListOfColumns = ({
         <li key={column.columnName}>
           <ReuseableItem
             isColumn={true}
-            isNewColumn={originalColumns.some(
+            isNewItem={!originalColumns.some(
               (originColumn) => originColumn === column.columnName
             )}
             itemName={translationDict[column.columnName] || column.columnName} // Use translated value if available, otherwise use the original column name
