@@ -32,6 +32,10 @@ import Transition from "./Transition";
 import PaperComponent from "./PaperComponent";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+  getCommandIdByName,
+  getCommandNameById,
+} from "../../utils/api/commandsApi";
 export default function CustomToolBarManageUsers({
   setRows,
   rows,
@@ -152,29 +156,34 @@ export default function CustomToolBarManageUsers({
 
     if (errorsForSwalFrontendTesting === "") {
       try {
+        console.log(userSignUpInfo);
         const user = {
           privateNumber: userSignUpInfo.privateNumber,
           fullName: userSignUpInfo.fullName,
           password: userSignUpInfo.password,
-          commandName: userSignUpInfo.command,
+          commandId: await getCommandIdByName(userSignUpInfo.command),
           editPerm: userSignUpInfo.editPerm,
           managePerm: userSignUpInfo.managePerm,
         };
 
-        try {
-          await createUser(loggedUserId, user);
+        console.log(user);
 
-          const updatedUsers = await getUsers();
-          // const userPromises = updatedUsers.map(async (user) => ({
-          //   id: user.id,
-          //   privateNumber: user.privateNumber,
-          //   fullName: user.fullName,
-          //   commandName: user.commandName ,
-          //   editPerm: user.editPerm,
-          //   managePerm: user.managePerm,
-          // }));
-          // const transformedUsers = await Promise.all(userPromises);
-          setRows(updatedUsers);
+        try {
+          const newUser  = await createUser(loggedUserId, user);
+
+          console.log(newUser);
+          const commandName = await getCommandNameById(
+            newUser.nifgaimCommandId
+          );
+
+          const newUserData = {
+            ...newUser,
+            commandName: commandName,
+          };
+
+          console.log(newUserData);
+
+          setRows([...rows, newUserData]);
 
           Swal.fire({
             title: `משתמש "${userSignUpInfo.fullName}" נוצר בהצלחה!`,

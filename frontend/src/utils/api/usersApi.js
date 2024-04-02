@@ -1,5 +1,4 @@
 import { del, get, patch, post } from "./api";
-import { getCommandNameById } from "./commandsApi";
 
 const port = process.env.REACT_APP_API_PORT || 5000;
 
@@ -72,19 +71,6 @@ export async function getFullNameById(userId) {
   }
 }
 
-export async function getCommandNameByUserId(userId) {
-  try {
-    const user = await getUserById(userId);
-
-    // const commantName = await getCommandNameById(user.nifgaimCommandId);
-
-    return null;
-  } catch (error) {
-    console.error("Error getting command name by user id:", error);
-    throw error; // Rethrow the error to handle it in the calling code
-  }
-}
-
 export async function getCommandIdByUserId(userId) {
   try {
     const user = await getUserById(userId);
@@ -119,9 +105,6 @@ export async function loginUser(credentials) {
 }
 
 export async function createUser(userId, creditentials) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/users/signup/`;
 
   const headers = {
@@ -138,21 +121,14 @@ export async function createUser(userId, creditentials) {
 
   try {
     const response = await post(apiUrl, body, headers);
-    return response;
+    return response.data;
   } catch (error) {
     console.error("Error creating new user:", error);
     throw error;
   }
-  // } else {
-  //   const error = { body: { errors: [{ message: "User is not authorized" }] } };
-  //   throw error;
-  // }
 }
 
 export async function updateUser(userUpdatingUserId, userId, updatedUserData) {
-  // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/users/${userId}`;
 
   const headers = {
@@ -183,9 +159,6 @@ export async function updateUser(userUpdatingUserId, userId, updatedUserData) {
 }
 
 export async function changePassword(userUpdatingUserId, userId, newPassword) {
-  // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/users/password/${userId}`;
 
   const headers = {
@@ -214,9 +187,6 @@ export async function changePassword(userUpdatingUserId, userId, newPassword) {
 }
 
 export async function deleteUser(userUpdatingUserId, userId) {
-  // const commandUserId = getCommandNameByUserId(userUpdatingUserId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/users/${userId}`;
 
   const headers = {

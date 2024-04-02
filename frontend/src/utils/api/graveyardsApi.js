@@ -72,9 +72,6 @@ export async function getGraveyardIdByName(graveyardName) {
 }
 
 export async function createGraveyard(userId, graveyardName) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/graveyards/`;
 
   const headers = {
@@ -103,9 +100,6 @@ export async function createGraveyard(userId, graveyardName) {
 }
 
 export async function updateGraveyardById(userId, graveyardId, graveyardName) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/graveyards/${graveyardId}`;
 
   const headers = {
@@ -134,9 +128,6 @@ export async function updateGraveyardById(userId, graveyardId, graveyardName) {
 }
 
 export async function deleteGraveyardById(userId, graveyardId) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/graveyards/${graveyardId}`;
 
   const headers = {

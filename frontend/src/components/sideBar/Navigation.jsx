@@ -47,7 +47,6 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
     if (loggedUserId !== "") {
       const fetchCommand = async () => {
         try {
-          // const command = await getCommandNameByUserId(loggedUserId);
           const user = await getUserById(loggedUserId);
 
           // setLoggedUserCommand(user.loggedUserManagePerm);

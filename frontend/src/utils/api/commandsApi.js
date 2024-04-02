@@ -87,10 +87,6 @@ export async function getCommandNameById(commandId) {
 }
 
 export async function createCommand(userId, commandName) {
-  // {body:{ errors: [{message:}]}}
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/commands/`;
 
   const headers = {
@@ -118,9 +114,6 @@ export async function createCommand(userId, commandName) {
 }
 
 export async function updateCommandById(userId, commandId, commandName) {
-  // const commandUserId = getCommandNameByUserId(userId);
-
-  // if (commandUserId === "חיל הלוגיסטיקה") {
   const apiUrl = `http://localhost:${port}/api/commands/${commandId}`;
 
   const headers = {
