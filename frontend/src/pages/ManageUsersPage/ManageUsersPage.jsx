@@ -396,7 +396,7 @@ export default function ManageExistsUsers() {
       type: "actions",
       headerName: "פעולות",
       headerAlign: "center",
-      flex: 1,
+      flex: 1.5,
       cellClassName: "actions",
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -450,6 +450,7 @@ export default function ManageExistsUsers() {
         width: "80vw",
         height: "80vh",
         marginTop: "5vh",
+        overflow: "auto",
         "@media screen and (max-width: 1200px)": {
           width: "100vw",
           height: "75vh",

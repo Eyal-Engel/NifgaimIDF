@@ -7,7 +7,7 @@ import {
   GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
 import Swal from "sweetalert2";
-import { getUsers, createUser } from "../../utils/api/usersApi";
+import { createUser } from "../../utils/api/usersApi";
 import {
   Dialog,
   Button,
@@ -169,7 +169,7 @@ export default function CustomToolBarManageUsers({
         console.log(user);
 
         try {
-          const newUser  = await createUser(loggedUserId, user);
+          const newUser = await createUser(loggedUserId, user);
 
           console.log(newUser);
           const commandName = await getCommandNameById(

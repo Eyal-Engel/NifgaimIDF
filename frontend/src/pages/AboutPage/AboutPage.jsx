@@ -1,6 +1,5 @@
 import React from "react";
 import { createHalal } from "../../utils/api/halalsApi";
-import { createSoldierAccompanied } from "../../utils/api/soldierAccompaniedsApi";
 
 export default function AboutPage() {
   // Assuming you have a function for creating Halals like the provided `createHalal` function
@@ -34,17 +33,7 @@ export default function AboutPage() {
       nifgaimGraveyardId: "afb098a4-fc05-4172-9b3c-afdc907b5498",
     };
 
-    const soldierDataTemplate = {
-      fullName: "כהן ליאור",
-      rank: "Sergeant",
-      phone: "+972 50 299 6949",
-      unit: "Unit XYZ",
-      comments: "Some comments",
-      nifgaimHalalId: "ca94cd0f-1b52-44e8-a1f2-773ce83f5e97",
-    };
-
     const halals = [];
-    const soldiers = [];
 
     for (let i = 0; i < 20000; i++) {
       const privateNumber = generateRandomNumber(1000000, 9999999); // Generate 7-digit random number
@@ -57,17 +46,6 @@ export default function AboutPage() {
     }
 
     return halals;
-
-    // for (let i = 0; i < 5000; i++) {
-    //   const privateNumber = generateRandomNumber(1000000, 9999999); // Generate 7-digit random number
-    //   const soldierData = { ...soldierDataTemplate, privateNumber };
-    //   console.log(soldierData);
-
-    //   const sodlier = await createSoldierAccompanied(userId, soldierData);
-    //   soldiers.push(sodlier);
-    // }
-
-    // return soldiers;
   }
 
   // Usage example

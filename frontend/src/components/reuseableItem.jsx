@@ -205,7 +205,11 @@ const ReuseableItem = ({
               color="secondary"
               startIcon={<LockIcon />}
             >
-              עמודה קבועה
+              {isGraveyard
+                ? "בית עלמין קבוע"
+                : isColumn
+                ? "עמודה קבועה"
+                : "פיקוד קבוע"}
             </Button>
           ))}
 

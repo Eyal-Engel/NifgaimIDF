@@ -245,6 +245,7 @@ export default function ManageCommandsPage() {
               handleItemNameChange={handelGraveyardNameChange}
               handleDeleteItem={handleDeleteGraveyard}
               isNewItem={graveyard.isNewSource}
+              isGraveyard={true}
             />
           </li>
         ))}

@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, TextField } from "@mui/material";
 
-import ReuseableItem from "../../components/ReuseableItem";
 import "./ManageColumnsPage.css";
 import {
   addHalalColumn,
   deleteHalalColumn,
   getColumnDetailsWithJoin,
   getColumnEnums,
-  getHalalColumnsAndTypes,
   getOriginalColumns,
   updateHalalColumn,
   updateHalalSelectColumn,
@@ -79,7 +77,6 @@ export default function ManageColumnsPage() {
       setLoading(true);
       try {
         const columnsWithAllData = await getColumnDetailsWithJoin(); // changed from getCommands
-
         const originColumns = await getOriginalColumns();
 
         setOriginalColumns(originColumns);
