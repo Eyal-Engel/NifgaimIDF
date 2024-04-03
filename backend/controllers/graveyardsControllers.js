@@ -71,20 +71,20 @@ const createGraveyard = async (req, res, next) => {
   const id = uuidv4();
   console.log(req.body);
   try {
-    // const user = await User.findByPk(userId);
-    // const managePerm = user.managePerm;
+    const user = await User.findByPk(userId);
+    const managePerm = user.managePerm;
 
-    // if (!user || user === null || user === undefined) {
-    //   return res
-    //     .status(404)
-    //     .json({ body: { errors: [{ message: "User is not exist" }] } });
-    // }
+    if (!user || user === null || user === undefined) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
 
-    // if (!managePerm) {
-    //   return res
-    //     .status(403)
-    //     .json({ body: { errors: [{ message: "User is not authorized" }] } });
-    // }
+    if (!managePerm) {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
 
     const newGraveyard = await Graveyard.create({
       id,

@@ -114,6 +114,7 @@
   gap: 10px;
 }
 .MuiDataGrid-columnHeaderTitle {
+  text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: bold !important;
 }

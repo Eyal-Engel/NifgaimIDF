@@ -13,7 +13,7 @@ router.get("/:userId", usersController.getUserById);
 
 router.post("/login", usersController.login);
 
-// router.use(checkAuth);
+router.use(checkAuth);
 
 router.post("/signup", usersController.signup);
 

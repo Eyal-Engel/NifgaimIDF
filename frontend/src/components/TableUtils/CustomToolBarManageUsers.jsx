@@ -45,6 +45,15 @@ export default function CustomToolBarManageUsers({
   const [openCreateNewUser, setOpenCreateNewUser] = useState(false);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+  const [userSignUpInfo, setUserSignUpInfo] = useState({
+    privateNumber: "",
+    fullName: "",
+    password: "",
+    command: "",
+    confirmPassword: "",
+    editPerm: false,
+    managePerm: false,
+  });
   const {
     register,
     handleSubmit,
@@ -92,18 +101,18 @@ export default function CustomToolBarManageUsers({
   };
 
   const handleClose = () => {
+    console.log("object");
+    setUserSignUpInfo({
+      privateNumber: "",
+      fullName: "",
+      password: "",
+      command: "",
+      confirmPassword: "",
+      editPerm: false,
+      managePerm: false,
+    });
     setOpenCreateNewUser(false); // Close the dialog
   };
-
-  const [userSignUpInfo, setUserSignUpInfo] = useState({
-    privateNumber: "",
-    fullName: "",
-    password: "",
-    command: "",
-    confirmPassword: "",
-    editPerm: false,
-    managePerm: false,
-  });
 
   const handleChangePassword = (value) => {
     // setPassword(value);
@@ -403,6 +412,7 @@ export default function CustomToolBarManageUsers({
                 type="text"
                 name="privateNumber"
                 placeholder="מספר אישי"
+                value={userSignUpInfo.privateNumber || ""}
                 {...register("privateNumber", {
                   required: {
                     value: true,
@@ -427,6 +437,7 @@ export default function CustomToolBarManageUsers({
                 type="text"
                 name="fullName"
                 placeholder="שם מלא"
+                value={userSignUpInfo.fullName || ""}
                 {...register("fullName", {
                   required: {
                     value: true,
@@ -447,6 +458,7 @@ export default function CustomToolBarManageUsers({
                 size="small"
                 name="command"
                 defaultValue=""
+                value={userSignUpInfo.command || ""}
                 {...register("command", {
                   validate: (value) => {
                     if (value === "") {
