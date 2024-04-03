@@ -80,6 +80,8 @@ export default function ManageColumnsPage() {
         const originColumns = await getOriginalColumns();
 
         setOriginalColumns(originColumns);
+
+        columnsWithAllData.shift();
         const columns = columnsWithAllData.map(async (column) => {
           const columnType = handleDataTypeName(column.data_type);
           let arrayEnum;

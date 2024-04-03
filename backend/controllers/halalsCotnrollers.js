@@ -47,7 +47,7 @@ const getColumnDetailsWithJoin = async (req, res, next) => {
     );
 
     const origin = Object.keys(Halal.rawAttributes);
-    const sortedColumns = [];
+    let sortedColumns = [];
 
     // Sort the columns alphabetically by column name
     currentColumns.sort((a, b) => a.column_name.localeCompare(b.column_name));
@@ -85,8 +85,29 @@ const getColumnDetailsWithJoin = async (req, res, next) => {
       }
     });
 
-    sortedColumns.splice(-2);
+    let seenCommandName = false;
+    let seenGraveyardName = false;
+    let uniqueSortedColumns = [];
 
+    for (let i = 0; i < sortedColumns.length; i++) {
+      const column = sortedColumns[i];
+      if (column.column_name === "commandName" && !seenCommandName) {
+        seenCommandName = true;
+        uniqueSortedColumns.push(column);
+      } else if (column.column_name === "graveyardName" && !seenGraveyardName) {
+        seenGraveyardName = true;
+        uniqueSortedColumns.push(column);
+      } else if (
+        column.column_name !== "commandName" &&
+        column.column_name !== "graveyardName"
+      ) {
+        uniqueSortedColumns.push(column);
+      }
+    }
+
+    sortedColumns = uniqueSortedColumns;
+
+    console.log(sortedColumns)
     res.json(sortedColumns);
   } catch (error) {
     return next(error);
