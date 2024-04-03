@@ -3,6 +3,8 @@ const Halal = require("../models/schemas/NifgaimHalal");
 const User = require("../models/schemas/NifgaimUser");
 const SoldierAccompanied = require("../models/schemas/NifgaimSoldierAccompanied");
 const LeftOver = require("../models/schemas/NifgaimLeftOver");
+const Command = require("../models/schemas/NifgaimCommand");
+const Graveyard = require("../models/schemas/NifgaimGraveyard");
 
 const { v4: uuidv4 } = require("uuid");
 const { QueryTypes, Sequelize, Op } = require("sequelize");
@@ -107,7 +109,7 @@ const getColumnDetailsWithJoin = async (req, res, next) => {
 
     sortedColumns = uniqueSortedColumns;
 
-    console.log(sortedColumns)
+    console.log(sortedColumns);
     res.json(sortedColumns);
   } catch (error) {
     return next(error);
@@ -887,6 +889,154 @@ const createHalal = async (req, res, next) => {
   }
 };
 
+// {
+//   "privateNumber": "1010101",
+//   "lastName": "Doe",
+//   "firstName": "John",
+//   "dateOfDeath": "2024-03-03",
+//   "serviceType": "קבע",
+//   "circumstances": "Combat",
+//   "unit": "Alpha Company",
+//   "division": "1st Division",
+//   "specialCommunity": "Veterans",
+//   "area": "Section A",
+//   "plot": "Plot 123",
+//   "line": "Line 1",
+//   "graveNumber": "456",
+//   "permanentRelationship": false,
+//   "comments": "Lorem ipsum dolor sit.",
+//   "commandName": "דרום",
+//   "graveyardName": "צפון",
+// }
+const createHalalWithExcel = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new Error("Invalid inputs passed, please check your data.", 422)
+    );
+  }
+  const id = uuidv4();
+
+  try {
+    // const { userId } = req.body;
+
+    // const user = await User.findByPk(userId);
+
+    // const editPerm = user.editPerm;
+    // const managePerm = user.managePerm;
+
+    // if (!user || user === null || user === undefined) {
+    //     return res.status(404).json({ body: { errors: [{ message: "User is not exist" }] } });
+    // }
+
+    // if (editPerm === false && managePerm === false) {
+    //     return res.status(403).json({ body: { errors: [{ message: "User is not authorized" }] } });
+    // }
+
+    const columns = await sequelize.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
+      { type: QueryTypes.SELECT }
+    );
+
+    // const commands = await Command.findAll()
+    // console.log(commands)
+    // const graveyards = await Graveyard.findAll()
+    // console.log(graveyards)
+
+    // Extract column names from the query result
+    const columnNames = columns.map((column) => column.column_name);
+
+    // Map to replace keys and get IDs
+    const keyMap = {
+      commandName: "nifgaimCommandId",
+      graveyardName: "nifgaimGraveyardId",
+    };
+
+    // Loop through each data object to replace keys and values
+    const newData = req.body.map(async (data) => {
+      // Replace keys
+      for (const oldKey in keyMap) {
+        if (data.hasOwnProperty(oldKey)) {
+          const newKey = keyMap[oldKey];
+          data[newKey] = data[oldKey];
+          delete data[oldKey];
+        }
+      }
+
+      // Replace values
+      if (data.nifgaimCommandId) {
+        try {
+          const command = await Command.findOne({
+            where: { commandName: data.nifgaimCommandId },
+            attributes: ["id"],
+          });
+
+          data.nifgaimCommandId = command;
+        } catch (error) {
+          console.error("Error finding command:", error);
+        }
+      }
+      if (data.nifgaimGraveyardId) {
+        try {
+          const graveyard = await Graveyard.findOne({
+            where: { graveyardName: data.nifgaimGraveyardId },
+            attributes: ["id"],
+          });
+
+          data.nifgaimGraveyardId = graveyard;
+        } catch (error) {
+          console.error("Error finding graveyard:", error);
+        }
+      }
+
+      return data;
+    });
+    console.log(req.body)
+
+    return res.status(201).json(newData);
+
+    // // If you want to await all promises to resolve before moving forward
+    // const resolvedData = await Promise.all(newData);
+
+    // // Construct SQL INSERT statement dynamically
+    // const insertColumns = [];
+    // const insertValues = [];
+    // const placeholders = [];
+    // newData.forEach((newHalalData) => {
+    //   const values = [];
+    //   for (const columnName in newHalalData) {
+    //     if (columnNames.includes(columnName)) {
+    //       insertColumns.push(`"${columnName}"`); // Quote column names
+    //       const value = newHalalData[columnName];
+    //       if (typeof value === "boolean") {
+    //         // Convert boolean values to strings
+    //         values.push(value.toString());
+    //       } else {
+    //         values.push(value);
+    //       }
+    //       placeholders.push("?");
+    //     }
+    //   }
+    //   insertValues.push(values);
+    // });
+
+    // const insertQuery = `
+    //       INSERT INTO "nifgaimHalals" (${insertColumns.join(", ")})
+    //       VALUES (${placeholders.map(() => "?").join(", ")})
+    //   `;
+
+    // // Execute the SQL INSERT statement
+    // await sequelize.query(insertQuery, {
+    //   replacements: insertValues.flat(),
+    //   type: QueryTypes.INSERT,
+    // });
+
+    // return res.status(201).json(newData);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 // Function to filter out keys not present in columnNames
 function filterObjectKeys(object, allowedKeys) {
   const filtered = {};
@@ -1185,6 +1335,7 @@ module.exports = {
   getSoldierAccompaniedsByHalalId,
   getLeftOversByHalalId,
   createHalal,
+  createHalalWithExcel,
   updateHalal,
   deleteHalal,
   getColumnNamesAndTypes,
