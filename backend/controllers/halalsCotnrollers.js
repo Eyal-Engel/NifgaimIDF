@@ -798,23 +798,23 @@ const createHalal = async (req, res, next) => {
   const id = uuidv4();
 
   try {
-    // const { userId } = req.body;
+    const { userId } = req.body;
 
-    // const user = await User.findByPk(userId);
-    // const editPerm = user.editPerm;
-    // const managePerm = user.managePerm;
+    const user = await User.findByPk(userId);
+    const editPerm = user.editPerm;
+    const managePerm = user.managePerm;
 
-    // if (!user || user === null || user === undefined) {
-    //   return res
-    //     .status(404)
-    //     .json({ body: { errors: [{ message: "User is not exist" }] } });
-    // }
+    if (!user || user === null || user === undefined) {
+      return res
+        .status(404)
+        .json({ body: { errors: [{ message: "User is not exist" }] } });
+    }
 
-    // if (editPerm === false && managePerm === false) {
-    //   return res
-    //     .status(403)
-    //     .json({ body: { errors: [{ message: "User is not authorized" }] } });
-    // }
+    if (editPerm === false && managePerm === false) {
+      return res
+        .status(403)
+        .json({ body: { errors: [{ message: "User is not authorized" }] } });
+    }
 
     const columns = await sequelize.query(
       `SELECT column_name FROM information_schema.columns WHERE table_name = 'nifgaimHalals';`,
