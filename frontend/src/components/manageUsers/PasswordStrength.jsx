@@ -61,6 +61,7 @@ export const PasswordStrength = ({
           type={showPassword ? "text" : "password"}
           name="password"
           placeholder="סיסמא"
+          value={userSignUpInfo.password || ""}
           {...register("password", {
             required: {
               value: true,
@@ -92,6 +93,7 @@ export const PasswordStrength = ({
           type={showConfirmPassword ? "text" : "password"}
           name="confirmPassword"
           placeholder={placeholder}
+          value={userSignUpInfo.confirmPassword || ""}
           {...register("confirmPassword", {
             validate: (value) => {
               if (value === "") {
