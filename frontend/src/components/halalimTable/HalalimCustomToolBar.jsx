@@ -120,9 +120,11 @@ export default function HalalimCustomToolBar({
         }}
       >
         <div>
-          <IconButton onClick={() => handleMagicClick()}>
-            <AutoFixHighIcon />
-          </IconButton>
+          {(editPerm || managePerm) && (
+            <IconButton onClick={() => handleMagicClick()}>
+              <AutoFixHighIcon />
+            </IconButton>
+          )}
           <GridToolbarColumnsButton
             color="secondary"
             sx={{

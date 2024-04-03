@@ -247,17 +247,17 @@ export default function CreateSoldierAccompaniedDialog({
 
   const handleSubmitForm = async () => {
     try {
-      const newLeftOVer = await createSoldierAccompanied(
+      const newSoldierAccompanied = await createSoldierAccompanied(
         loggedUserId,
         inputValues
       );
 
-      const formmatedLeftOver = {
-        ...newLeftOVer,
+      const soldierAccompanied = {
+        ...newSoldierAccompanied,
         halalId: selectedHalal.privateNumber,
         halalFullName: selectedHalal.lastName + " " + selectedHalal.firstName,
       };
-      setRows([...rows, formmatedLeftOver]);
+      setRows([...rows, soldierAccompanied]);
       Swal.fire({
         title: `מלווה "${inputValues.fullName}" נוסף בהצלחה!`,
         text: "",
@@ -407,7 +407,7 @@ export default function CreateSoldierAccompaniedDialog({
                       }
                     },
                   })}
-                  onChange={(event, newValue) => {
+                  onChange={(_, newValue) => {
                     setSelectedHalal(newValue); // Update the selectedHalal state
                     handleInputChange(
                       "nifgaimHalalId",

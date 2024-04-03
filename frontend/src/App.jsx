@@ -41,8 +41,7 @@ const handleRouter = (token, managePerm) => {
         path: "/",
         element: <RootLayout />,
         children: [
-          { path: "/", element: <Navigate to="/login" replace /> },
-          { path: "/login", element: <LoginPage /> },
+          { path: "/", element: <Navigate to="/halalim" replace /> },
           { path: "about", element: <AboutPage /> },
           {
             path: "/halalim",
@@ -67,8 +66,8 @@ const handleRouter = (token, managePerm) => {
         path: "/",
         element: <RootLayout />,
         children: [
-          { path: "/", element: <Navigate to="/login" replace /> },
-          { path: "/login", element: <LoginPage /> },
+          { path: "/", element: <Navigate to="/halalim" replace /> },
+          { path: "/login", element: <Navigate to="/halalim" replace /> },
           { path: "about", element: <AboutPage /> },
           {
             path: "/halalim",
