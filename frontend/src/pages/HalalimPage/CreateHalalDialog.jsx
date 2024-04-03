@@ -70,7 +70,6 @@ export default function CreateHalalDialog({
   openDialog,
   setOpenDialog,
   allDataOfHalalsColumns,
-  originalColumns,
   setRows,
   rows,
   commands,
@@ -571,19 +570,24 @@ export default function CreateHalalDialog({
                         <Input
                           value={inputValues[column.column_name] || ""}
                           {...register(column.column_name, {
-                            validate: () => {
-                              if (
-                                inputValues[column.column_name] === "" ||
-                                inputValues[column.column_name] === undefined
-                              ) {
-                                return `${
-                                  translationDict[column.column_name] ||
-                                  column.column_name
-                                } שדה חובה `;
-                              } else {
-                                return true;
-                              }
-                            },
+                            ...(column.column_name !== "comments"
+                              ? {
+                                  validate: () => {
+                                    if (
+                                      inputValues[column.column_name] === "" ||
+                                      inputValues[column.column_name] ===
+                                        undefined
+                                    ) {
+                                      return `${
+                                        translationDict[column.column_name] ||
+                                        column.column_name
+                                      } שדה חובה `;
+                                    } else {
+                                      return true;
+                                    }
+                                  },
+                                }
+                              : {}),
                             ...(column.column_name === "privateNumber"
                               ? {
                                   pattern: {
