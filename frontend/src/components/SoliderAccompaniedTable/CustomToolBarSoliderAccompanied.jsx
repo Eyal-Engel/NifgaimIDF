@@ -22,10 +22,11 @@ export default function CustomToolBarSoliderAccompanied({
   managePerm,
   halals,
 }) {
-  const [openCreateNewLeftOver, setOpenCreateNewLeftOver] = useState(false);
+  const [openNewSoldierAccompaniedDialog, setOpenNewSoldierAccompaniedDialog] =
+    useState(false);
 
-  const handleCreateNewLeftOver = () => {
-    setOpenCreateNewLeftOver(true);
+  const handleCreateNewSoldierAccompanied = () => {
+    setOpenNewSoldierAccompaniedDialog(true);
   };
 
   const handleExportToExcel = () => {
@@ -58,7 +59,7 @@ export default function CustomToolBarSoliderAccompanied({
         <Button
           color="primary"
           startIcon={<AddIcon />}
-          onClick={handleCreateNewLeftOver}
+          onClick={handleCreateNewSoldierAccompanied}
           sx={{
             paddingRight: "80px",
             borderRadius: "5000px 5000px 0 0",
@@ -74,14 +75,15 @@ export default function CustomToolBarSoliderAccompanied({
           הוסף מלווה חדש
         </Button>
       )}
-
-      <CreateSoldierAccompaniedDialog
-        openDialog={openCreateNewLeftOver}
-        setOpenDialog={setOpenCreateNewLeftOver}
-        rows={rows}
-        setRows={setRows}
-        halals={halals}
-      />
+      {openNewSoldierAccompaniedDialog && (
+        <CreateSoldierAccompaniedDialog
+          openDialog={openNewSoldierAccompaniedDialog}
+          setOpenDialog={setOpenNewSoldierAccompaniedDialog}
+          rows={rows}
+          setRows={setRows}
+          halals={halals}
+        />
+      )}
       <GridToolbarContainer
         style={{
           direction: "rtl",

@@ -12,7 +12,7 @@ import { useState } from "react";
 import { getUserById } from "../../utils/api/usersApi";
 import { useEffect } from "react";
 
-export default function ManageLeftOversPage() {
+export default function ManageSoldierAccompaniedPage() {
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
   const [loading, setLoading] = useState(true);
