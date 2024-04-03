@@ -7,6 +7,7 @@ import {
   getColumnDetailsWithJoin,
   getColumnEnums,
   getHalals,
+  getOriginalColumns,
 } from "../../utils/api/halalsApi";
 import EditHalalDialog from "./EditHalalDialog";
 import { getAllCommandsNames } from "../../utils/api/commandsApi";
@@ -29,6 +30,7 @@ export default function HalalimPage() {
   const [editPerm, setEditPerm] = useState("");
   const [managePerm, setManagePerm] = useState("");
   const [enums, setEnums] = useState({});
+  const [originalColumns, setOriginalColumns] = useState([]);
 
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
@@ -67,6 +69,9 @@ export default function HalalimPage() {
 
         const graveyardsNames = await getAllGraveyards();
         setGraveyards(graveyardsNames);
+
+        const originColumns = await getOriginalColumns();
+        setOriginalColumns(originColumns);
 
         const user = await getUserById(loggedUserId);
 
@@ -346,8 +351,8 @@ export default function HalalimPage() {
             rows,
             columns,
             allDataOfHalalsColumns,
+            originalColumns,
             setRowModesModel,
-            // originalColumns,
             commands,
             graveyards,
             editPerm,

@@ -45,6 +45,7 @@ const MagicButtonDialog = ({
   const [selectedColumnType, setSelectedColumnType] = useState(""); // State to track selected column type
   const [enums, setEnums] = useState({}); // State to store column enums
 
+  console.log(allDataOfHalalsColumns)
   // Rearrange allDataOfHalalsColumns to start with objects matching originalColumns
   const columnsNotInOriginal = allDataOfHalalsColumns.filter(
     (column) => !originalColumns.some((col) => col === column.column_name)
