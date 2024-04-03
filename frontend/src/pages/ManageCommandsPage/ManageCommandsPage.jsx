@@ -146,12 +146,12 @@ export default function ManageCommandsPage() {
       try {
         const command = await createCommand(loggedUserId, value);
         setCommands((prev) => [
-          ...prev,
           {
             id: command.newCommand.id,
             commandName: command.newCommand.commandName?.trim(),
             isNewSource: true,
           },
+          ...prev,
         ]);
         Swal.fire({
           title: `פיקוד "${command.newCommand.commandName}" נוצר בהצלחה!`,

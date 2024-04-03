@@ -154,12 +154,12 @@ export default function ManageCommandsPage() {
         const graveyard = await createGraveyard(loggedUserId, value);
 
         setGraveyards((prev) => [
-          ...prev,
           {
             id: graveyard.id,
             graveyardName: graveyard.graveyardName?.trim(),
             isNewSource: true,
           },
+          ...prev,
         ]);
         Swal.fire({
           title: `בית העלמין "${graveyard.graveyardName}" נוצר בהצלחה!`,
