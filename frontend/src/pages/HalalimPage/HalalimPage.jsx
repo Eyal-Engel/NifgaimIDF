@@ -96,10 +96,6 @@ export default function HalalimPage() {
         if (column.data_type === "USER-DEFINED") {
           const columnEnums = await getColumnEnums(column.column_name);
           if (columnEnums) {
-            // const enumArray = columnEnums
-            //   .replace(/[{}]/g, "")
-            //   .split(",")
-            //   .map((item) => item.trim());
             result = removeQuotes(columnEnums);
             arrayEnum = result.slice(1, -1).split(",");
             enumsObject[column.column_name] = arrayEnum;
@@ -125,17 +121,6 @@ export default function HalalimPage() {
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
   }, []);
-
-  // const fetchHalalData = async (halal) => {
-  //   const graveyard = await getGraveyardById(halal.nifgaimGraveyardId);
-  //   const command = await getCommandById(halal.nifgaimCommandId);
-
-  //   return {
-  //     ...halal,
-  //     nifgaimGraveyardId: graveyard.graveyardName,
-  //     nifgaimCommandId: command.commandName,
-  //   };
-  // };
 
   const fetchColumnsData = React.useCallback(async () => {
     const translationDict = {
@@ -281,8 +266,6 @@ export default function HalalimPage() {
         width: "80vw",
         height: "80vh",
         marginTop: "5vh",
-        // maxHeight: "100rem",
-        // maxWidth: "70rem",
         "@media screen and (max-width: 1200px)": {
           width: "100vw",
           height: "75vh",

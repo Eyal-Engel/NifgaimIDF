@@ -73,7 +73,7 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
       //   url: "/about",
       // },
       {
-        name: "נפגעים",
+        name: "חללים",
         styles: {
           background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
         },
@@ -140,7 +140,7 @@ export const Navigation = ({ hideNavigation, toggleOpen }) => {
       //   url: "/about",
       // },
       {
-        name: "נפגעים",
+        name: "חללים",
         styles: {
           background: "linear-gradient( rgb(71, 111, 248), rgb(76, 99, 178))",
         },
