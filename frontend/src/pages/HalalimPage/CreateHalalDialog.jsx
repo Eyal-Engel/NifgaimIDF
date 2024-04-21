@@ -105,10 +105,6 @@ export default function CreateHalalDialog({
     setInputValues(defaultValues);
   }, [allDataOfHalalsColumns]);
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
-
   const theme = createTheme({
     direction: "rtl",
     palette: {
@@ -596,15 +592,15 @@ export default function CreateHalalDialog({
                                   },
                                 }
                               : {}),
-                            ...(column.column_name === "lastName" ||
-                            column.column_name === "firstName"
-                              ? {
-                                  pattern: {
-                                    value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
-                                    message: ` שם יכול לכלול רק אותיות `,
-                                  },
-                                }
-                              : {}),
+                            // ...(column.column_name === "lastName" ||
+                            // column.column_name === "firstName"
+                            //   ? {
+                            //       pattern: {
+                            //         value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
+                            //         message: ` שם יכול לכלול רק אותיות `,
+                            //       },
+                            //     }
+                            //   : {}),
                           })}
                           inputProps={{ maxLength: "500" }}
                           onChange={(e) =>
