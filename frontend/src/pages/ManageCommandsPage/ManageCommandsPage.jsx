@@ -190,7 +190,7 @@ export default function ManageCommandsPage() {
         const errors = error.response.data.body.errors;
         let errorsForSwal = ""; // Start unordered list
 
-        errors.forEach((error) => {
+        errors?.forEach((error) => {
           if (error.message === "commandName must be unique") {
             errorsForSwal += "<li>הפיקוד כבר קיים במערכת</li>";
           }

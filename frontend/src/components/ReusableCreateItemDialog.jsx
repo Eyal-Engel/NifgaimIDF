@@ -106,6 +106,7 @@ const ReusableCreateItemDialog = React.memo(
     };
 
     const handleCreateClicked = () => {
+      
       if (isColumn) {
         if (!defaultColumns.includes(newColumnName)) {
           if (typeOfColumn === "ENUM") {

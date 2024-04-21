@@ -69,7 +69,16 @@ const createCommand = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
 
-    const newCommand = await Command.create({ id, commandName, isNewSource });
+    const trimmedName = commandName
+      .trim()
+      .replace(/'/g, "׳")
+      .replace(/"/g, "״");
+
+    const newCommand = await Command.create({
+      id,
+      commandName: trimmedName,
+      isNewSource,
+    });
 
     // Return a flag indicating whether the command is related to logistics for the user
     res.status(201).json({ newCommand });

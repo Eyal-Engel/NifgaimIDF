@@ -86,9 +86,13 @@ const createGraveyard = async (req, res, next) => {
         .json({ body: { errors: [{ message: "User is not authorized" }] } });
     }
 
+    const trimmedName = graveyardName
+      .trim()
+      .replace(/'/g, "׳")
+      .replace(/"/g, "״");
     const newGraveyard = await Graveyard.create({
       id,
-      graveyardName,
+      graveyardName: trimmedName,
       isNewSource,
     });
     res.status(201).json(newGraveyard);
