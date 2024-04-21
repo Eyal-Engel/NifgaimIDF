@@ -319,10 +319,10 @@ const EditLeftOverDialog = ({
                     value: true,
                     message: "שם מלא שדה חובה",
                   },
-                  pattern: {
-                    value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
-                    message: ` שם יכול לכלול רק אותיות `,
-                  },
+                  // pattern: {
+                  //   value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
+                  //   message: ` שם יכול לכלול רק אותיות `,
+                  // },
                 })}
                 inputProps={{ maxLength: "500" }}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}

@@ -991,7 +991,7 @@ const createHalalWithExcel = async (req, res, next) => {
 
       return data;
     });
-    console.log(req.body)
+    console.log(req.body);
 
     return res.status(201).json(newData);
 
@@ -1053,6 +1053,7 @@ const updateHalal = async (req, res, next) => {
   const { userId } = req.body;
   const requestBody = req.body.updatedHalalData;
 
+  console.log(requestBody);
   try {
     const user = await User.findByPk(userId);
 
