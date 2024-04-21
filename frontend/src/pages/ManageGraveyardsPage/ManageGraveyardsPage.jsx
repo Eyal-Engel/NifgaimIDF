@@ -131,9 +131,25 @@ export default function ManageCommandsPage() {
             },
           });
         } catch (error) {
+          const errors = error.response.data.body?.errors;
+          let errorsForSwal = ""; // Start unordered list
+
+          if (errors) {
+            errors.forEach((error) => {
+              if (
+                error.message ===
+                "Cannot delete graveyard with associated NifgaimHalal"
+              ) {
+                errorsForSwal += "<li>יש חלל שמשוייך לבית עלמין זה</li>";
+              }
+            });
+          } else {
+            errorsForSwal += `<li>${error}</li>`;
+          }
+
           Swal.fire({
             title: `לא ניתן למחוק את בית העלמין ${graveyardName}`,
-            text: error,
+            html: `<ul style="direction: rtl; text-align: right">${errorsForSwal}</ul>`, // Render errors as list items
             icon: "error",
             confirmButtonColor: "#3085d6",
             confirmButtonText: "אישור",

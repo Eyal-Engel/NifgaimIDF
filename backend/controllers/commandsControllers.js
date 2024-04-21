@@ -144,6 +144,30 @@ const deleteCommandById = async (req, res, next) => {
         new Error(`You do not have access to delete this graveyard.`, 401)
       );
     }
+
+    // Check if there are any associated NifgaimHalal or NifgaimUser
+    const associateHalals = await command.countNifgaimHalals();
+    const associatedUsers = await command.countNifgaimUsers();
+
+    if (associateHalals > 0) {
+      return res.status(404).json({
+        body: {
+          errors: [
+            { message: "Cannot delete command with associated NifgaimHalal" },
+          ],
+        },
+      });
+    }
+
+    if (associatedUsers > 0) {
+      return res.status(404).json({
+        body: {
+          errors: [
+            { message: "Cannot delete command with associated NifgaimUser" },
+          ],
+        },
+      });
+    }
     await command.destroy();
     res.status(204).end();
   } catch (err) {

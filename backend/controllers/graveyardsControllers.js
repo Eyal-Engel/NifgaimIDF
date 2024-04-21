@@ -166,6 +166,18 @@ const deleteGraveyardById = async (req, res, next) => {
       );
     }
 
+    const associateHalals = await graveyard.countNifgaimHalals();
+
+    if (associateHalals > 0) {
+      return res.status(404).json({
+        body: {
+          errors: [
+            { message: "Cannot delete graveyard with associated NifgaimHalal" },
+          ],
+        },
+      });
+    }
+
     await graveyard.destroy();
     res.status(204).end();
   } catch (err) {
