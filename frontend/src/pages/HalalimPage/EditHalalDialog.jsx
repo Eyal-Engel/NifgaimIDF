@@ -205,11 +205,31 @@ export default function EditHalalDIalog({
 
       // Iterate over keys in selectedRow
       for (const key in selectedRow) {
+        let sanitizedValue;
         // Check if the key exists in inputValues and has a value
         if (inputValues.hasOwnProperty(key) && inputValues[key]) {
-          updatedHalalData[key] = inputValues[key]; // Use the value from inputValues
+          // Escape single quotes and double quotes in the value from inputValues
+          console.log(inputValues[key]);
+
+          if (typeof inputValues[key] === "string") {
+            sanitizedValue = inputValues[key]
+              .replace(/\\/g, "\\\\")
+              .replace(/'/g, "''");
+          } else {
+            sanitizedValue = inputValues[key];
+          }
+          updatedHalalData[key] = sanitizedValue; // Use the sanitized value
         } else {
-          updatedHalalData[key] = selectedRow[key]; // Use the value from selectedRow
+          // Escape single quotes and double quotes in the value from selectedRow
+          console.log(selectedRow[key]);
+          if (typeof selectedRow[key] === "string") {
+            sanitizedValue = selectedRow[key]
+              .replace(/\\/g, "\\\\")
+              .replace(/'/g, "''");
+          } else {
+            sanitizedValue = selectedRow[key];
+          }
+          updatedHalalData[key] = sanitizedValue; // Use the sanitized value
         }
       }
 
@@ -254,6 +274,7 @@ export default function EditHalalDIalog({
         handleCloseDialog();
       });
     } catch (error) {
+      console.log(error);
       const errors = error.response.data.body?.errors;
       let errorsForSwal = ""; // Start unordered list
 
