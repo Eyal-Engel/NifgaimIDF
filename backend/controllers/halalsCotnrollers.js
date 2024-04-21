@@ -287,7 +287,10 @@ const addHalalColumn = async (req, res, next) => {
     let defaultValuePost = defaultValue;
 
     // Trim columnName to remove leading and trailing spaces
-    const trimmedColumnName = columnName.trim();
+    const trimmedColumnName = columnName
+      .trim()
+      .replace(/'/g, "׳")
+      .replace(/"/g, "״");
 
     if (
       !userRequested ||
@@ -404,10 +407,12 @@ const addHalalColumn = async (req, res, next) => {
           : sequelize.Sequelize.DataTypes[dataType], // Data type of the new column
         allowNull: true, // or false based on your requirement
         defaultValue: defaultValuePost || null,
+        field: `"${trimmedColumnName}"`,
       }
     );
 
     console.log("New column added successfully.");
+    console.log("name: " + trimmedColumnName);
 
     res.status(200).json({ message: "New column added successfully." });
   } catch (error) {

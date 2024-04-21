@@ -85,6 +85,11 @@ export default function CreateHalalDialog({
     formState: { errors },
   } = useForm();
 
+  console.log(allDataOfHalalsColumns,
+    rows,
+    commands,
+    graveyards,
+    enums,)
   useEffect(() => {
     const defaultValues = {};
     allDataOfHalalsColumns.forEach((column) => {
