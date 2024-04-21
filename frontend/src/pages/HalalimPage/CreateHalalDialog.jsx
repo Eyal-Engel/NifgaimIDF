@@ -598,12 +598,7 @@ export default function CreateHalalDialog({
                               : {}),
                             ...(column.column_name === "lastName" ||
                             column.column_name === "firstName"
-                              ? {
-                                  pattern: {
-                                    value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
-                                    message: ` שם יכול לכלול רק אותיות `,
-                                  },
-                                }
+                              ? {}
                               : {}),
                           })}
                           inputProps={{ maxLength: "500" }}
