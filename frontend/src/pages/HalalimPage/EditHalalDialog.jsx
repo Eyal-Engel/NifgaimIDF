@@ -781,12 +781,16 @@ export default function EditHalalDIalog({
                           <FormControl fullWidth>
                             <DatePicker
                               {...register(key, {
-                                required: {
-                                  value: true,
-                                  message: `${
-                                    translationDict[key] || key
-                                  } שדה חובה `,
-                                },
+                                ...(translationDict[key] !== undefined
+                                  ? {
+                                      required: {
+                                        value: true,
+                                        message: `${
+                                          translationDict[key] || key
+                                        } שדה חובה `,
+                                      },
+                                    }
+                                  : {}),
                               })}
                               label="תאריך ברירת מחדל"
                               value={value ? dayjs(value) : null}
@@ -804,12 +808,16 @@ export default function EditHalalDIalog({
                         <>
                           <Input
                             {...register(key, {
-                              required: {
-                                value: true,
-                                message: `${
-                                  translationDict[key] || key
-                                } שדה חובה `,
-                              },
+                              ...(translationDict[key] !== undefined
+                                ? {
+                                    required: {
+                                      value: true,
+                                      message: `${
+                                        translationDict[key] || key
+                                      } שדה חובה `,
+                                    },
+                                  }
+                                : {}),
                             })}
                             type="number"
                             value={value || ""}
@@ -831,15 +839,19 @@ export default function EditHalalDIalog({
                             aria-labelledby="booleanSelect"
                             name="controlled-radio-buttons-group"
                             {...register(key, {
-                              validate: () => {
-                                if (value === null) {
-                                  return `${
-                                    translationDict[key] || key
-                                  } שדה חובה `;
-                                } else {
-                                  return true;
-                                }
-                              },
+                              ...(translationDict[key] !== undefined
+                                ? {
+                                    validate: () => {
+                                      if (value === null) {
+                                        return `${
+                                          translationDict[key] || key
+                                        } שדה חובה `;
+                                      } else {
+                                        return true;
+                                      }
+                                    },
+                                  }
+                                : {}),
                             })}
                             onChange={(e) => {
                               handleInputChange(key, e.target.value);
@@ -868,12 +880,16 @@ export default function EditHalalDIalog({
                         <FormControl fullWidth>
                           <Select
                             {...register(key, {
-                              required: {
-                                value: true,
-                                message: `${
-                                  translationDict[key] || key
-                                } שדה חובה `,
-                              },
+                              ...(translationDict[key] !== undefined
+                                ? {
+                                    required: {
+                                      value: true,
+                                      message: `${
+                                        translationDict[key] || key
+                                      } שדה חובה `,
+                                    },
+                                  }
+                                : {}),
                             })}
                             sx={{ direction: "rtl" }}
                             labelId={key}
@@ -908,28 +924,29 @@ export default function EditHalalDIalog({
                           <Input
                             value={value || ""}
                             {...register(key, {
-                              required: {
-                                value: true,
-                                message: `${
-                                  translationDict[key] || key
-                                } שדה חובה `,
-                              },
+                              ...(translationDict[key] !== undefined &&
+                              key !== "comments" &&
+                              key !== "unit" &&
+                              key !== "area" &&
+                              key !== "division"
+                                ? {
+                                    required: {
+                                      value: true,
+                                      message: `${
+                                        translationDict[key] || key
+                                      } שדה חובה `,
+                                    },
+                                  }
+                                : {}),
+
                               ...(key === "privateNumber"
                                 ? {
                                     pattern: {
-                                      value: /^\d{7}$/,
+                                      value: /^\d+$/,
                                       message: ` הכנס מספר אישי בעל 7 ספרות `,
                                     },
                                   }
                                 : {}),
-                              // ...(key === "lastName" || key === "firstName"
-                              //   ? {
-                              //       pattern: {
-                              //         value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
-                              //         message: ` שם יכול לכלול רק אותיות `,
-                              //       },
-                              //     }
-                              //   : {}),
                             })}
                             inputProps={{ maxLength: "500" }}
                             onChange={(e) =>

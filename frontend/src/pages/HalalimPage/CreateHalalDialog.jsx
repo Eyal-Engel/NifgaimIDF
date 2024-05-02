@@ -720,21 +720,28 @@ export default function CreateHalalDialog({
                           name="controlled-radio-buttons-group"
                           row
                           {...register(column.column_name, {
-                            validate: () => {
-                              if (
-                                inputValues[column.column_name]?.toString() !==
-                                  "true" &&
-                                inputValues[column.column_name]?.toString() !==
-                                  "false"
-                              ) {
-                                return `${
-                                  translationDict[column.column_name] ||
-                                  column.column_name
-                                } שדה חובה `;
-                              } else {
-                                return true;
-                              }
-                            },
+                            ...(translationDict[column.column_name] !==
+                            undefined
+                              ? {
+                                  validate: () => {
+                                    if (
+                                      inputValues[
+                                        column.column_name
+                                      ]?.toString() !== "true" &&
+                                      inputValues[
+                                        column.column_name
+                                      ]?.toString() !== "false"
+                                    ) {
+                                      return `${
+                                        translationDict[column.column_name] ||
+                                        column.column_name
+                                      } שדה חובה `;
+                                    } else {
+                                      return true;
+                                    }
+                                  },
+                                }
+                              : {}),
                           })}
                           value={
                             inputValues[column.column_name] !== undefined
@@ -855,15 +862,6 @@ export default function CreateHalalDialog({
                                   },
                                 }
                               : {}),
-                            // ...(column.column_name === "lastName" ||
-                            // column.column_name === "firstName"
-                            //   ? {
-                            //       pattern: {
-                            //         value: /^[a-zA-Z\u05D0-\u05EA\s]+$/,
-                            //         message: ` שם יכול לכלול רק אותיות `,
-                            //       },
-                            //     }
-                            //   : {}),
                           })}
                           inputProps={{ maxLength: "500" }}
                           onChange={(e) =>
