@@ -21,7 +21,7 @@ export default function AboutPage() {
     "סוג שירות": "serviceType",
     "נסיבות המוות": "circumstances",
     יחידה: "unit",
-    חטיבה: "division",
+    אוגדה: "division",
     "קהילה מיוחדת": "specialCommunity",
     "בית קברות": "nifgaimGraveyardId",
     אזור: "area",

@@ -21,7 +21,6 @@ NifgaimHalal.init(
       unique: true,
       validate: {
         isNumeric: true,
-        len: [7, 7],
       },
     },
 
@@ -48,11 +47,11 @@ NifgaimHalal.init(
     },
     unit: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     division: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     specialCommunity: {
       type: DataTypes.STRING,
@@ -61,7 +60,7 @@ NifgaimHalal.init(
 
     area: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     plot: {
       type: DataTypes.STRING,

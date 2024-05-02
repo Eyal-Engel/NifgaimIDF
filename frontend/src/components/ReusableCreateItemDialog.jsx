@@ -62,7 +62,7 @@ const ReusableCreateItemDialog = React.memo(
       "סוג שירות",
       "נסיבות המוות",
       "יחידה",
-      "חטיבה",
+      "אוגדה",
       "קהילה מיוחדת",
       "אזור",
       "חלקה",
@@ -106,7 +106,7 @@ const ReusableCreateItemDialog = React.memo(
     };
 
     const handleCreateClicked = () => {
-      
+
       if (isColumn) {
         if (!defaultColumns.includes(newColumnName)) {
           if (typeOfColumn === "ENUM") {

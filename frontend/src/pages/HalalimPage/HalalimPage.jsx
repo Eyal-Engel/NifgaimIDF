@@ -132,7 +132,7 @@ export default function HalalimPage() {
       serviceType: "סוג שירות",
       circumstances: "נסיבות המוות",
       unit: "יחידה",
-      division: "חטיבה",
+      division: "אוגדה",
       specialCommunity: "קהילה מיוחדת",
       area: "אזור",
       plot: "חלקה",
