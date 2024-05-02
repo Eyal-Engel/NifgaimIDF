@@ -126,6 +126,7 @@ export default function HalalimPage() {
     const translationDict = {
       id: "מספר זיהוי",
       privateNumber: "מספר אישי",
+      rank: "דרגה",
       lastName: "שם משפחה",
       firstName: "שם פרטי",
       dateOfDeath: "תאריך פטירה",

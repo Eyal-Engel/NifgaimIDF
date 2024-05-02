@@ -16,6 +16,7 @@ import {
   FormControl,
   createTheme,
   ThemeProvider,
+  ListSubheader,
 } from "@mui/material";
 import RtlPlugin from "../../components/rtlPlugin/RtlPlugin";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -37,6 +38,61 @@ import PaperComponent from "../../components/TableUtils/PaperComponent";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
+import alufAvir from "../../assets/images/ranks/אלוף אוויר.png";
+import alufYabasha from "../../assets/images/ranks/אלוף יבשה.png";
+import alufYam from "../../assets/images/ranks/אלוף ים.png";
+import alufMishnehAvir from "../../assets/images/ranks/אלוף משנה אוויר.png";
+import alufMishnehYabasha from "../../assets/images/ranks/אלוף משנה יבשה.png";
+import alufMishnehYam from "../../assets/images/ranks/אלוף משנה ים.png";
+import toraiYabasha from "../../assets/images/ranks/טוראי יבשה.png";
+import segamAvir from "../../assets/images/ranks/סגם אוויר.png";
+import segamYabasha from "../../assets/images/ranks/סגם יבשה.png";
+import segamYam from "../../assets/images/ranks/סגם ים.png";
+import seganAvir from "../../assets/images/ranks/סגן אוויר.png";
+import seganAlufAvir from "../../assets/images/ranks/סגן אלוף אוויר.png";
+import seganAlufYabasha from "../../assets/images/ranks/סגן אלוף יבשה.png";
+import seganAlufYam from "../../assets/images/ranks/סגן אלוף ים.png";
+import seganYabasha from "../../assets/images/ranks/סגן יבשה.png";
+import seganYam from "../../assets/images/ranks/סגן ים.png";
+import semelYabasha from "../../assets/images/ranks/סמל יבשה.png";
+import semarYabasha from "../../assets/images/ranks/סמר יבשה.png";
+import serenAvir from "../../assets/images/ranks/סרן אוויר.png";
+import serenYabasha from "../../assets/images/ranks/סרן יבשה.png";
+import serenYam from "../../assets/images/ranks/סרן ים.png";
+import kavAvir from "../../assets/images/ranks/קאב אוויר.png";
+import kavYabasha from "../../assets/images/ranks/קאב יבשה.png";
+import kavYam from "../../assets/images/ranks/קאב ים.png";
+import kamAvir from "../../assets/images/ranks/קאם אוויר.png";
+import kamYabasha from "../../assets/images/ranks/קאם יבשה.png";
+import kamYam from "../../assets/images/ranks/קאם ים.png";
+import kamaAvir from "../../assets/images/ranks/קמא אוויר.png";
+import kamaYabasha from "../../assets/images/ranks/קמא יבשה.png";
+import kamaYam from "../../assets/images/ranks/קמא ים.png";
+import ravAlufAvir from "../../assets/images/ranks/רב אלוף אוויר.png";
+import ravAlufYabasha from "../../assets/images/ranks/רב אלוף יבשה.png";
+import ravAlufYam from "../../assets/images/ranks/רב אלוף ים.png";
+import ravSerenAvir from "../../assets/images/ranks/רב סרן אוויר.png";
+import ravSerenYabasha from "../../assets/images/ranks/רב סרן יבשה.png";
+import ravSerenYam from "../../assets/images/ranks/רב סרן ים.png";
+import ravatYabasha from "../../assets/images/ranks/רבט יבשה.png";
+import rengAvir from "../../assets/images/ranks/רנג אוויר.png";
+import rengYabasha from "../../assets/images/ranks/רנג יבשה.png";
+import rengYam from "../../assets/images/ranks/רנג ים.png";
+import rsevAvir from "../../assets/images/ranks/רסב אוויר.png";
+import rsevYabasha from "../../assets/images/ranks/רסב יבשה.png";
+import rsevYam from "../../assets/images/ranks/רסב ים.png";
+import rselAvir from "../../assets/images/ranks/רסל אוויר.png";
+import rselYabasha from "../../assets/images/ranks/רסל יבשה.png";
+import rselYam from "../../assets/images/ranks/רסל ים.png";
+import rsemAvir from "../../assets/images/ranks/רסם אוויר.png";
+import rsemYabasha from "../../assets/images/ranks/רסם יבשה.png";
+import rsemYam from "../../assets/images/ranks/רסם ים.png";
+import rserAvir from "../../assets/images/ranks/רסר אוויר.png";
+import rserYabasha from "../../assets/images/ranks/רסר יבשה.png";
+import rserYam from "../../assets/images/ranks/רסר ים.png";
+import tateAlufYabasha from "../../assets/images/ranks/תת אלוף יבשה.png";
+import tateAlufAvir from "../../assets/images/ranks/תת אלוף אוויר.png";
+import tateAlufYam from "../../assets/images/ranks/תת אלוף ים.png";
 
 const MemoizedSelect = React.memo(Select);
 
@@ -49,6 +105,7 @@ const errorDict = {
 const translationDict = {
   id: "מספר זיהוי",
   privateNumber: "מספר אישי",
+  rank: "דרגה",
   lastName: "שם משפחה",
   firstName: "שם פרטי",
   dateOfDeath: "תאריך פטירה",
@@ -79,6 +136,59 @@ export default function CreateHalalDialog({
   const [inputValues, setInputValues] = useState({});
   const userData = JSON.parse(localStorage.getItem("userData"));
   const loggedUserId = userData ? userData.userId : "";
+  const ranksOptions = [
+    // category: חובה
+    `טירון`,
+    `טוראי`,
+    `רב"ט`,
+    `סמל`,
+    `סמ"ר`,
+    // category: אקמדאיים
+    `קמ"א`,
+    `קא"ב`,
+    `קא"ם`,
+    // category: נגדים
+    `רס"ל`,
+    `רס"ר`,
+    `רס"מ`,
+    `רס"ב`,
+    `רנ"ג`,
+    // category: קצינים
+    `סג"ם`,
+    `סגן`,
+    `סרן`,
+    `רס"ן`,
+    `סא"ל`,
+    `אל"ם`,
+    `תא"ל`,
+    `אלוף`,
+    `רא"ל`,
+  ];
+
+  const imageImports = [
+    [],
+    [toraiYabasha],
+    [ravatYabasha],
+    [semelYabasha],
+    [semarYabasha],
+    [kamaYabasha, kamaAvir, kamaYam],
+    [kavYabasha, kavAvir, kavYam],
+    [kamYabasha, kamAvir, kamYam],
+    [rselYabasha, rselAvir, rselYam],
+    [rserYabasha, rserAvir, rserYam],
+    [rsemYabasha, rsemAvir, rsemYam],
+    [rsevYabasha, rsevAvir, rsevYam],
+    [rengYabasha, rengAvir, rengYam],
+    [segamYabasha, segamAvir, segamYam],
+    [seganYabasha, seganAvir, seganYam],
+    [serenYabasha, serenAvir, serenYam],
+    [ravSerenYabasha, ravSerenAvir, ravSerenYam],
+    [seganAlufYabasha, seganAlufAvir, seganAlufYam],
+    [alufMishnehYabasha, alufMishnehAvir, alufMishnehYam],
+    [tateAlufYabasha, tateAlufAvir, tateAlufYam],
+    [alufYabasha, alufAvir, alufYam],
+    [ravAlufYabasha, ravAlufAvir, ravAlufYam],
+  ];
   const {
     register,
     handleSubmit,
@@ -132,6 +242,49 @@ export default function CreateHalalDialog({
   //     (item) => !originalColumns.includes(item.column_name)
   //   ),
   // ].filter((column) => column.column_name !== "id"); // Filter out the "id" column
+
+  const renderImageOptions = (start, end) => {
+    let images = [];
+    for (let i = start; i < end; i++) {
+      let imageArray = imageImports[i];
+      if (i === 0 || i === 1 || i === 2 || i === 3) {
+        // For ranks with only one image
+        imageArray = [imageArray[0]]; // Take only the first image
+      }
+
+      images.push(
+        <MenuItem
+          key={`${i}`}
+          value={ranksOptions[i]}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            direction: "rtl",
+          }}
+        >
+          <p style={{ fontSize: "large" }}>{ranksOptions[i]}</p>
+          <div>
+            {imageArray.map(
+              (image, index) =>
+                image !== undefined && (
+                  <img
+                    key={`${i}-${index}`}
+                    src={image}
+                    alt={""}
+                    style={{
+                      maxWidth: "100px",
+                      maxHeight: "100px",
+                      marginRight: "5px",
+                    }}
+                  />
+                )
+            )}
+          </div>
+        </MenuItem>
+      );
+    }
+    return images;
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -374,6 +527,90 @@ export default function CreateHalalDialog({
                           </MenuItem>
                         ))}
                       </Select>
+                      {errors[column.column_name] && (
+                        <p style={{ color: "red" }}>
+                          {errors[column.column_name].message}
+                        </p>
+                      )}
+                    </FormControl>
+                  </>
+                ) : column.column_name === "rank" ? (
+                  <>
+                    <InputLabel id={column.column_name}>דרגה</InputLabel>
+                    <FormControl>
+                      <RtlPlugin>
+                        <Select
+                          {...register(column.column_name, {
+                            required: {
+                              value: true,
+                              message: `${
+                                translationDict[column.column_name] ||
+                                column.column_name
+                              } שדה חובה `,
+                            },
+                          })}
+                          labelId={column.column_name}
+                          defaultValue=""
+                          displayEmpty
+                          onChange={(event) =>
+                            handleInputChange(
+                              column.column_name,
+                              event.target.value
+                            )
+                          }
+                          style={{
+                            direction: "rtl",
+                            width: "100%",
+                            marginTop: "8px",
+                          }}
+                        >
+                          <ListSubheader
+                            style={{
+                              textAlign: "right",
+                              fontSize: "large",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            חובה
+                          </ListSubheader>
+                          {renderImageOptions(0, 5)}
+                          <ListSubheader
+                            style={{
+                              textAlign: "right",
+                              fontSize: "large",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            אקדמאיים
+                          </ListSubheader>
+                          {renderImageOptions(5, 8)}
+                          <ListSubheader
+                            style={{
+                              textAlign: "right",
+                              fontSize: "large",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            נגדים
+                          </ListSubheader>
+                          {renderImageOptions(8, 13)}
+                          <ListSubheader
+                            style={{
+                              textAlign: "right",
+                              fontSize: "large",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            קצינים
+                          </ListSubheader>
+                          {renderImageOptions(13, imageImports.length)}
+                        </Select>
+                        {errors["rank"] && (
+                          <p style={{ color: "red" }}>
+                            {errors["rank"].message}
+                          </p>
+                        )}
+                      </RtlPlugin>
                       {errors[column.column_name] && (
                         <p style={{ color: "red" }}>
                           {errors[column.column_name].message}

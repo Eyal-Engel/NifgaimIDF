@@ -1,7 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../../dbConfig");
 
-
 class NifgaimHalal extends Model {}
 
 const serviceTypeOptions = ["מילואים", "קבע", "סדיר"];
@@ -23,7 +22,10 @@ NifgaimHalal.init(
         isNumeric: true,
       },
     },
-
+    rank: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -33,6 +35,7 @@ NifgaimHalal.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+
     dateOfDeath: {
       type: DataTypes.DATE,
       allowNull: false,
